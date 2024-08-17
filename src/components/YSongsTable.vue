@@ -3,14 +3,14 @@
         <!-- 3 表头 -->
         <div class="table-header">
             <!-- 4 歌曲序号-表头 -->
-            <div class="songsCounter">
+            <div class="songsCounter" v-show="showTrackCounter">
                 <!-- 5 歌曲序号-表头按钮 -->
                 <button class="header-button header-counter">
                     <span>#</span>
                 </button>
             </div>
             <!-- 4 歌曲标题-表头 -->
-            <div class="songsName" ref="songs_name_ref">
+            <div class="songsName" ref="songs_name_ref" v-show="showTrackTitle">
                 <!-- 5 标题排序按钮 -->
                 <button class="header-button" @click="handleSort">
                     <span>标题</span>
@@ -25,7 +25,7 @@
             <!-- 4 resize控件 -->
             <div class="resizer" @mousedown="startResize($event)"></div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref">
+            <div class="songsAlbum" ref="songs_album_ref" v-show="showTrackAlbum">
                 <!-- 5 专辑排序按钮 -->
                 <button class="header-button" @click="handleSort_Album">
                     <span>专辑</span>
@@ -39,13 +39,13 @@
                 </button>
             </div>
             <!-- 4 喜欢-表头 -->
-            <div class="likes">
+            <div class="likes" v-show="showTrackLikes">
                 <button class="header-button">
                     <span>喜欢</span>
                 </button>
             </div>
             <!-- 4 时长-表头 -->
-            <div class="songsDuration">
+            <div class="songsDuration" v-show="showTrackDuration">
                 <!-- 5 时长排序按钮 -->
                 <button class="header-button" @click="handleSort_Duration">
                     <span>时长</span>
@@ -61,20 +61,21 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul v-if="!isLoading">
-            <li v-for="(track, index) in filteredTracks" :key="track.id" class="track-item" ref="track_item_ref">
+            <li v-for="(track, index) in tracks" :key="track.id" class="track-item" ref="track_item_ref">
                 <!-- 4 左侧对齐 -->
                 <div class="align-left">
                     <!-- 5 歌曲序号 -->
-                    <div class="track-count">{{ (currentPage - 1) * 1000 + index + 1 }}</div>
+                    <div class="track-count" v-show="showTrackCounter">{{ index + 1 }}</div>
                     <!-- 5 封面图片 -->
                     <img class="track-cover" :src="track.al.picUrl" alt="Cover Image" />
                     <!-- 5 歌曲信息 -->
                     <div class="track-info" ref="trackInfo">
                         <!-- 6 歌曲名称 -->
                         <div class="track-name" ref="track_name_ref"
-                            :title="track.name + (track.tns ? ('\n' + track.tns) : '')">{{ track.name }}</div>
+                            :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
+                            track.name }}</div>
                         <!-- 6 歌手名称 -->
-                        <div class="track-artist">
+                        <div class="track-artist" v-show="showTrackArtist">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
                                 <!-- 7 歌手按钮 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
@@ -89,7 +90,7 @@
                 <!-- 4 右侧对齐 -->
                 <div class="align-right">
                     <!-- 5 专辑名称 -->
-                    <div class="track-album" ref="track_album_ref">
+                    <div class="track-album" ref="track_album_ref" v-show="showTrackAlbum">
                         <!-- 6 专辑按钮 -->
                         <button @click="handleAlbumClick(track.al.id)" class="album-button"
                             :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
@@ -97,14 +98,14 @@
                         </button>
                     </div>
                     <!-- 5 喜欢 -->
-                    <div class="likes" style="text-align: left;">
+                    <div class="likes" style="text-align: left;" v-show="showTrackLikes">
                         <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
                             style="width: 16.8px; height: 16.8px; padding-left:10px;" />
                         <img v-else src="../assets/unlikes.svg"
                             style="width: 16.8px; height: 16.8px; padding-left:10px;" />
                     </div>
                     <!-- 5 时长 -->
-                    <div class="track-duration">{{ formatDuration(track.dt) }}</div>
+                    <div class="track-duration" v-show="showTrackDuration">{{ formatDuration(track.dt) }}</div>
                 </div>
             </li>
         </ul>
@@ -112,20 +113,254 @@
 </template>
 
 <script lang="js">
-import { useApi } from '@/ncm/api';
 
-export default{
+export default {
     name: 'YSongsTable',
-    data(){
+    props: {
+        showTrackCounter: {
+            type: Boolean,
+            default: true,
+        },
+        showTrackTitle: {
+            type: Boolean,
+            default: true,
+        },
+        showTrackArtist: {
+            type: Boolean,
+            default: true,
+        },
+        showTrackAlbum: {
+            type: Boolean,
+            default: true,
+        },
+        showTrackLikes: {
+            type: Boolean,
+            default: true,
+        },
+        showTrackDuration: {
+            type: Boolean,
+            default: true,
+        },
+        tracks: {
+            type: Array,
+            default: () => [],
+            required: true,
+        },
+        likelist: {
+            type: Array,
+            default: () => [],
+        },
+    },
+    data() {
         return {
-            currentPage: 1, // 当前页码
-            totalPages: 1,  // 总页数
             initialMouseX: 0,   // 鼠标初始位置
             initialAlbumWidth: 0,   // 初始专辑宽度
-            deltaX: 0,
-            
+            deltaX: 0,  // resize控件的鼠标移动距离
+            newWidth: 0,    // resize控件的新的专辑宽度
+            // 歌曲标题栏的排序状态
+            sortingStates: [
+                { icon: require('../assets/updown-arrow.svg'), text: '默认排序', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: '标题升序', key: 'titleAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: '标题降序', key: 'titleDesc' },
+                { icon: require('../assets/up-arrow.svg'), text: '歌手升序', key: 'artistAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: '歌手降序', key: 'artistDesc' },
+            ],
+            // 专辑栏的排序状态
+            sortingStates_Album: [
+                { icon: require('../assets/updown-arrow.svg'), text: '默认排序', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: '专辑升序', key: 'albumAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: '专辑降序', key: 'albumDesc' },
+            ],
+            // 时长栏的排序状态
+            sortingStates_Duration: [
+                { icon: require('../assets/updown-arrow.svg'), text: '', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: '', key: 'albumAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: '', key: 'albumDesc' },
+            ],
+            currentSortingIndex: 0, // 标题栏当前排序状态的索引
+            currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引
+            currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
+            localTracks: [],
         }
-    }
+    },
+    watch:{
+        tracks(newVal){
+            this.localTracks = newVal;
+            // console.log('tracks', this.localTracks);
+        }
+    },
+    methods: {
+        // 格式化歌曲时长
+        formatDuration(duration) {
+            const minutes = Math.floor(duration / 60000);
+            const seconds = ((duration % 60000) / 1000).toFixed(0);
+            return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        },
+        // 开始resize
+        startResize(event) {
+            // 记录初始鼠标位置和专辑宽度
+            this.initialMouseX = event.clientX;
+            this.initialAlbumWidth = this.$refs.songs_album_ref.offsetWidth;
+
+            // 添加鼠标移动监听
+            window.addEventListener('mousemove', this.resize);
+            // 添加鼠标松开监听
+            window.addEventListener('mouseup', () => {
+                // 根据新的专辑宽度调整歌曲名称和专辑的宽度
+                this.resizeByNewWidth(this.newWidth);
+                // 移除鼠标移动和松开监听
+                window.removeEventListener('mousemove', this.resize);
+                window.removeEventListener('mouseup', this.stopResize);
+            });
+        },
+        // resize
+        resize(event) {
+            // 计算鼠标移动距离
+            this.deltaX = event.clientX - this.initialMouseX;
+            // 计算新的专辑宽度
+            if (this.initialAlbumWidth - this.deltaX > 200) {
+                this.newWidth = this.initialAlbumWidth - this.deltaX;
+            }
+            // 设置专辑宽度
+            if (this.$refs.songs_album_ref && this.newWidth > 200) {
+                this.$refs.songs_album_ref.style.width = `${this.newWidth}px`;
+            }
+
+        },
+        // 根据新的专辑宽度调整歌曲名称和专辑的宽度
+        resizeByNewWidth(newWidth) {
+            if (this.$refs.track_album_ref) {
+                this.$refs.track_album_ref.forEach(element => {
+                    if (element) { // 确保元素存在
+                        element.style.width = `${newWidth}px`;
+                    }
+                });
+            }
+        },
+        // 停止resize
+        stopResize() {
+            // 移除鼠标移动和松开监听
+            window.removeEventListener('mousemove', this.resize);
+            window.removeEventListener('mouseup', this.stopResize);
+        },
+        // 处理歌手点击
+        handleArtistClick(artistId) {
+            console.log('Artist ID:', artistId);
+            // 在这里处理点击事件，例如跳转到艺术家的详情页面
+        },
+        // 处理专辑点击
+        handleAlbumClick(albumId) {
+            console.log('Album ID:', albumId);
+            // 在这里处理点击事件，例如跳转到专辑详情页面
+        },
+        // 切换标题排序状态
+        handleSort() {
+            // 切换到下一个排序状态
+            this.currentSortingIndex = (this.currentSortingIndex + 1) % this.sortingStates.length;
+            // console.log('tracks', this.tracks);
+
+            // 发送消息到处理函数，根据 key 进行不同的排序操作
+            const currentSortKey = this.sortingStates[this.currentSortingIndex].key;
+            this.sortTracks(currentSortKey);
+        },
+        // 切换专辑排序状态
+        handleSort_Album() {
+            // 切换到下一个排序状态
+            this.currentSortingIndex_Album = (this.currentSortingIndex_Album + 1) % this.sortingStates_Album.length;
+
+            // 发送消息到处理函数，根据 key 进行不同的排序操作
+            const currentSortKey = this.sortingStates_Album[this.currentSortingIndex_Album].key;
+            this.sortTracks_Album(currentSortKey);
+        },
+        // 切换时长排序状态
+        handleSort_Duration() {
+            // 切换到下一个排序状态
+            this.currentSortingIndex_Duration = (this.currentSortingIndex_Duration + 1) % this.sortingStates_Duration.length;
+
+            // 发送消息到处理函数，根据 key 进行不同的排序操作
+            const currentSortKey = this.sortingStates_Duration[this.currentSortingIndex_Duration].key;
+            this.sortTracks_Duration(currentSortKey);
+        },
+        // 标题排序
+        sortTracks(sortKey) {
+            // 根据不同的排序 key 进行排序操作
+            switch (sortKey) {
+                case 'default':
+                    console.log('使用默认排序');
+                    // 处理默认排序逻辑
+                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    break;
+                case 'titleAsc':
+                    console.log('按标题升序排序');
+                    // 处理按标题升序排序逻辑
+                    this.localTracks.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'titleDesc':
+                    console.log('按标题降序排序');
+                    // 处理按标题降序排序逻辑
+                    this.localTracks.sort((a, b) => b.name.localeCompare(a.name));
+                    break;
+                case 'artistAsc':
+                    console.log('按歌手升序排序');
+                    // 处理按歌手升序排序逻辑
+                    this.localTracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
+                    break;
+                case 'artistDesc':
+                    console.log('按歌手降序排序');
+                    // 处理按歌手降序排序逻辑
+                    this.localTracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
+                    break;
+                default:
+                    console.log('未知排序选项');
+            }
+        },
+        // 专辑排序
+        sortTracks_Album(sortKey) {
+            // 根据不同的排序 key 进行排序操作
+            switch (sortKey) {
+                case 'default':
+                    console.log('使用默认排序');
+                    // 处理默认排序逻辑
+                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    break;
+                case 'albumAsc':
+                    console.log('按专辑升序排序');
+                    // 处理按专辑升序排序逻辑
+                    this.localTracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
+                    break;
+                case 'albumDesc':
+                    console.log('按专辑降序排序');
+                    // 处理按专辑降序排序逻辑
+                    this.localTracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
+                    break;
+                default:
+                    console.log('未知排序选项');
+            }
+        },
+        // 时长排序
+        sortTracks_Duration(sortKey) {
+            // 根据不同的排序 key 进行排序操作
+            switch (sortKey) {
+                case 'default':
+                    console.log('使用默认排序');
+                    // 处理默认排序逻辑
+                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    break;
+                case 'albumAsc':
+                    console.log('按时间升序排序');
+                    // 处理按时间升序排序逻辑
+                    this.localTracks.sort((a, b) => parseFloat(a.dt) - parseFloat(b.dt));
+                    break;
+                case 'albumDesc':
+                    console.log('按时间降序排序');
+                    // 处理按时间降序排序逻辑
+                    this.localTracks.sort((a, b) => parseFloat(b.dt) - parseFloat(a.dt));
+                    break;
+                default:
+                    console.log('未知排序选项');
+            }
+        },
+    },
 }
 
 
