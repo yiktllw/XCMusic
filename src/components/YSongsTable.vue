@@ -61,7 +61,7 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul v-if="!isLoading">
-            <li v-for="(track, index) in tracks" :key="track.id" class="track-item" ref="track_item_ref">
+            <li v-for="(track, index) in localTracks" :key="track.id" class="track-item" ref="track_item_ref">
                 <!-- 4 左侧对齐 -->
                 <div class="align-left">
                     <!-- 5 歌曲序号 -->
@@ -113,6 +113,7 @@
 </template>
 
 <script lang="js">
+import { formatDuration_mmss } from '@/ncm/time';
 
 export default {
     name: 'YSongsTable',
@@ -183,18 +184,17 @@ export default {
             localTracks: [],
         }
     },
+    mounted() {
+        this.localTracks = this.tracks;
+    },
     watch:{
         tracks(newVal){
             this.localTracks = newVal;
-            // console.log('tracks', this.localTracks);
         }
     },
     methods: {
-        // 格式化歌曲时长
-        formatDuration(duration) {
-            const minutes = Math.floor(duration / 60000);
-            const seconds = ((duration % 60000) / 1000).toFixed(0);
-            return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        formatDuration(duration){
+            return formatDuration_mmss(duration);
         },
         // 开始resize
         startResize(event) {
@@ -382,7 +382,6 @@ export default {
     top: 0;
     z-index: 1;
     justify-content: space-between;
-    margin-bottom: 10px;
     /* background-color: rgba(255, 255, 255, 0.8); */
     /* 设置一个半透明的背景 */
     backdrop-filter: blur(8px);
@@ -505,6 +504,7 @@ export default {
 ul {
     list-style-type: none;
     padding: 0;
+    margin: 5px 0 0 0;
 }
 
 /* 3 歌曲列表内容 */

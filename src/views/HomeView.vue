@@ -1,16 +1,20 @@
 <template>
     <div class="mainContainer">
         <div class="leftSidebar">
-            <YSidebar @button-click="handleButtonClick" @sidebar-resize="handleSidebarResize"
-                @update-display="updateDisplayUrl" :displayUrl="displayUrl" ref="YSidebar_ref" />
+            <YSidebar @sidebar-resize="handleSidebarResize" @update-display="updateDisplayUrl"
+                :opened_playlist="opened_playlist" ref="YSidebar_ref" />
         </div>
         <div class="mainContent">
             <YTitlebar @navigate-back="triggerNavigateBack" @navigate-forward="triggerNavigateForward"
                 @user-login="userLogin" />
             <div class="content">
                 <!-- Your main content goes here -->
-                <YDisplayArea class="display-area" :displayUrl="displayUrl" ref="YDisplayArea" />
+                <YDisplayArea class="display-area" :displayUrl="displayUrl" @newDisplayUrl="fetchNewUrl"
+                    ref="YDisplayArea" />
             </div>
+        </div>
+        <div class="playbar">
+            <YPlaybar />
         </div>
     </div>
 </template>
@@ -20,6 +24,7 @@ import YDisplayArea from '@/components/YDisplayArea.vue';
 import YSidebar from '../components/YSidebar.vue';
 import YTitlebar from '../components/YTitlebar.vue';
 import { mapActions } from 'vuex';
+import YPlaybar from '../components/YPlaybar.vue';
 
 export default {
     name: 'App',
@@ -27,18 +32,35 @@ export default {
         return {
             // Add your data here
             displayUrl: '',
+            newDisplayUrl: '',
+            opened_playlist: 0,
         };
     },
     components: {
         YSidebar,
         YTitlebar,
         YDisplayArea,
+        YPlaybar,
+    },
+    watch: {
+        newDisplayUrl(newUrl) {
+            console.log('newUrl:', newUrl);
+            if (newUrl.startsWith('http://localhost:4321/playlist/')) {
+                let parts = newUrl.split('playlist/');
+                let playlistId = parts[1];
+                this.opened_playlist = playlistId;
+                console.log('playlistId:', playlistId);
+            }
+        },
     },
     methods: {
         ...mapActions(['updateSidebarWidth']),
         triggerNavigateBack() {
             this.$refs.YDisplayArea.navigateBack();
             // console.log('triggerNavigateBack');
+        },
+        fetchNewUrl(newUrl) {
+            this.newDisplayUrl = newUrl;
         },
         triggerNavigateForward() {
             this.$refs.YDisplayArea.navigateForward();
@@ -97,7 +119,7 @@ export default {
 .leftSidebar {
     display: flex;
     background-color: rgba(255, 255, 255, 0.03);
-    margin-bottom: 40px;
+    margin-bottom: 80px;
     position: absolute;
     top: 0;
     left: 0;
@@ -116,14 +138,23 @@ export default {
 
 .content {
     /* 确保内容区域占据剩余空间 */
-    height: calc(100vh - 120px);
-    margin-bottom: 40px;
+    height: calc(100vh - 140px);
     background-color: transparent;
     /* 设置内容区域的背景颜色 */
 }
 
 .display-area {
     background-color: transparent;
+}
+
+.playbar {
+    background-color: rgb(45,45,55);
+    position: fixed;
+    bottom: 0;
+    height: 80px;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
 }
 
 #app {

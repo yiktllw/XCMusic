@@ -2,14 +2,15 @@
     <!-- 0 滚动容器 -->
     <div class="scrollable y-playlist-view" ref="scrollable">
         <!-- 1 歌单视图 -->
-        <div class="playlist-view" v-show="playlist.coverImgUrl && playlist.createrAvatarUrl" ref="playlist_view">
+        <div class="playlist-view" ref="playlist_view">
             <!-- 2 歌单信息 -->
             <div class="playlist-info">
                 <!-- 3 歌单封面 -->
                 <div class="playlist-cover-container">
                     <!-- 4 封面图片 -->
-                    <img v-show="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image"
-                        class="playlist-cover" @load="setBackgroundColor" />
+                    <img v-show="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
+                        @load="setBackgroundColor" />
+                    <div v-show="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                     <!-- 4 渐变层 -->
                     <div class="gradient-overlay"></div>
                     <!-- 4 播放次数 -->
@@ -19,64 +20,107 @@
                     </div>
                 </div>
                 <!-- 3 歌单详情 -->
-                <div class="playlist-details">
-                    <!-- 4 歌单名称 -->
-                    <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name }}</h1>
-                    <!-- 4 创建信息 -->
-                    <div class="createrInfo" v-show="playlist.createrAvatarUrl">
-                        <!-- 5 创建者头像 -->
-                        <img :src="playlist.createrAvatarUrl" alt="Creater Avatar" class="createrAvatar" />
-                        <!-- 5 创建者名称 -->
-                        <span class="creater-name">
-                            {{ playlist.createrName }}
-                        </span>
-                        <!-- 5 创建时间 -->
-                        <span class="create-time">
-                            {{ playlist.createTime }}创建
-                        </span>
-                    </div>
-                    <!-- <div>歌曲数量: {{ playlist.trackCount }}</div> -->
-                    <!-- 4 歌单按钮 -->
-                    <div class="play-buttons">
-                        <!-- 5 播放按钮 -->
-                        <button class="play-button" @click="playAll">
-                            <img src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
-                            <span style="padding-bottom: 2px;">
-                                播放
+                <div class="playlist-details" v-show="playlist.name">
+                    <div class="align-up">
+                        <!-- 4 歌单名称 -->
+                        <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name }}</h1>
+                        <!-- 4 创建信息 -->
+                        <div class="createrInfo">
+                            <!-- 5 创建者头像 -->
+                            <img v-show="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl"
+                                class="createrAvatar" />
+                            <div v-show="!playlist.createrAvatarUrl" class="createrAvatar" style="background-color: #333;">
+                            </div>
+                            <!-- 5 创建者名称 -->
+                            <span class="creater-name">
+                                {{ playlist.createrName }}
                             </span>
-                        </button>
-                        <!-- 5 添加到播放列表按钮 -->
-                        <button class="add-button" @click="addPlaylistToQueue">
-                            <img src="../assets/addtoplaylist.svg"
-                                style="width: 15px; height: 15px; padding-right:5px;" />
-                            添加到播放列表
-                        </button>
-                        <!-- 5 下载按钮 -->
-                        <button class="download-button" @click="downloadPlaylist">
-                            <img src="../assets/download.svg" style="width: 15px; height: 15px; padding-right:5px;" />
-                            下载
-                        </button>
-                        <!-- 5 多选按钮 -->
-                        <button class="multichoice-button" @click="multiChoice">
-                            <img src="../assets/multichoice.svg"
-                                style="width: 15px; height: 15px; padding-right:5px;" />
-                            多选
-                        </button>
-                        <!-- 5 搜索框 -->
-                        <input type="text" class="search-input" @keydown.enter="handleSearch($event.target.value,true)"
-                            @input="handleSearch($event.target.value,false)" placeholder="搜索..." spellcheck="false" />
+                            <span v-show="!playlist.createrAvatarUrl" class="creater-name"
+                                style="background-color: #333;">创建者
+                            </span>
+                            <!-- 5 创建时间 -->
+                            <span class="create-time">
+                                {{ playlist.createTime }}创建
+                            </span>
+                        </div>
+                    </div>
+                    <div class="align-down">
+                        <!-- 4 歌单按钮 -->
+                        <div class="play-buttons">
+                            <!-- 5 播放按钮 -->
+                            <button class="play-button" @click="playAll">
+                                <img src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
+                                <span style="padding-bottom: 2px;">
+                                    播放
+                                </span>
+                            </button>
+                            <!-- 5 添加到播放列表按钮 -->
+                            <button class="add-button" @click="addPlaylistToQueue">
+                                <img src="../assets/addtoplaylist.svg"
+                                    style="width: 15px; height: 15px; padding-right:5px;" />
+                                添加到播放列表
+                            </button>
+                            <!-- 5 下载按钮 -->
+                            <button class="download-button" @click="downloadPlaylist">
+                                <img src="../assets/download.svg" style="width: 15px; height: 15px; padding-right:5px;" />
+                                下载
+                            </button>
+                            <!-- 5 多选按钮 -->
+                            <button class="multichoice-button" @click="multiChoice">
+                                <img src="../assets/multichoice.svg"
+                                    style="width: 15px; height: 15px; padding-right:5px;" />
+                                多选
+                            </button>
+                            <!-- 5 搜索框 -->
+                            <input type="text" class="search-input" @keydown.enter="handleSearch($event.target.value, true)"
+                                @input="handleSearch($event.target.value, false)" placeholder="搜索..." spellcheck="false" />
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- 2 切换歌曲或评论 -->
+            <div class="orienter">
+                <!-- 3 歌曲 -->
+                <div class="orient-songs">
+                    <!-- 4 歌曲按钮 -->
+                    <button class="orient-button" @click="orient = 'songs'">
+                        <span :class="{ 'choosed-text': orient === 'songs' }" style="font-size: 16px; color:#fff;"
+                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs'? '#fff' : '#bbb' }">歌曲</span>
+                        <div class="choosed"
+                            style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
+                            v-show="orient === 'songs'">
+                        </div>
+                    </button>
+                </div>
+                <div class="songs-count"
+                    style="color:#fff; margin:0;padding:0 20px 0px 2px;font-size: 13px; font-weight: bold;"
+                    :style="{'color': orient==='songs' ? '#fff' : '#bbb'}">
+                    {{ playlist.trackCount }}
+                </div>
+                <!-- 3 评论 -->
+                <div class="orient-comments">
+                    <!-- 4 评论按钮 -->
+                    <button class="orient-button" @click="orient = 'comments'">
+                        <span :class="{ 'choosed-text': orient === 'comments' }" style="font-size: 16px;"
+                            :style="{ 'font-weight': orient === 'comments' ? 'bold' : '500', 'color': orient === 'comments' ? '#fff' : '#bbb' }">
+                            评论
+                        </span>
+                        <div class="choosed"
+                            style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
+                            v-show="orient === 'comments'">
+                        </div>
+                    </button>
+                </div>
+            </div>
             <!-- 2 加载中动画 -->
-            <div v-if="isLoading" class="loading-spinner">加载中...</div>
+            <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
-            <YSongsTable :tracks="this.filteredTracks" :likelist="likelist" />
+            <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist" />
             <!-- 2 分页 -->
             <div v-if="totalPages > 1" class="pagination">
-                <button @click="changePage(page)" v-for="page in totalPages" :key="page"
-                    :disabled="currentPage === page">
-                    <span :class="{ 'underline': currentPage === page }">{{ page }}</span>
+                <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
+                    <span :class="{ 'choosed-text': currentPage === page }" style="font-size: medium;">{{ page }}</span>
+                    <div class="choosed" v-show="currentPage === page"></div>
                 </button>
             </div>
         </div>
@@ -85,13 +129,16 @@
 
 <script>
 import { useApi } from '@/ncm/api';
-import Color from 'color';
 import YSongsTable from '@/components/YSongsTable.vue';
+import { formatDate_yyyymmdd } from '@/ncm/time';
+import { getColorFromImg } from '@/ncm/color'
+import YLoading from '@/components/YLoading.vue';
 
 export default {
     name: 'YPlaylist',
     components: {
         YSongsTable,
+        YLoading
     },
     props: {
         // 传入的歌单 ID
@@ -113,12 +160,13 @@ export default {
                 trackCount: 0,      // 歌曲数量
                 tracks: [], // 歌曲列表
             },
-            isLoading: false,   // 是否正在加载
+            isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字
             likelist: [],       // 用户喜欢的歌曲列表
             filteredTracks: [], // 搜索过滤后的歌曲列表
             currentPage: 1,     // 当前页数
             totalPages: 1,      // 总页数
+            orient: 'songs',    // 歌曲列表或评论列表
         };
     },
     watch: {
@@ -127,6 +175,10 @@ export default {
             immediate: true,
             handler(newVal) {
                 this.fetchPlaylist(newVal);
+                window.parent.postMessage({
+                    type: 'new-playlist-id',
+                    playlistId: newVal
+                })
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
@@ -150,60 +202,54 @@ export default {
         // 获取歌单
         async fetchPlaylist(id) {
             try {
-                // 并行请求歌单信息、用户喜欢歌曲列表、用户歌单列表、歌曲列表
-                const [response, myFavoriteId, getLikelist, getTracks] = await Promise.all([
-                    useApi(`/playlist/detail?id=${id}`),
+                const requests = [
+                    useApi(`/playlist/detail?id=${id}`).then(response => {
+                        this.playlist.name = response.playlist.name;
+                        this.playlist.coverImgUrl = response.playlist.coverImgUrl;
+                        this.playlist.playCount = response.playlist.playCount;
+                        this.playlist.createTime = formatDate_yyyymmdd(response.playlist.createTime);
+                        this.playlist.createrId = response.playlist.userId;
+                        this.playlist.createrName = response.playlist.creator.nickname;
+                        this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
+                        this.playlist.trackCount = response.playlist.trackCount;
+                        this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
+                        return response;
+                    }),
                     localStorage.getItem('login_uid')
-                        ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') })
+                        ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                            if (myFavoriteId.playlist[0].id == id) {
+                                this.playlist.name = '我喜欢的音乐';
+                            }
+                            return myFavoriteId;
+                        })
                         : null,
                     localStorage.getItem('login_uid')
-                        ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') })
+                        ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
+                            this.likelist = getLikelist.ids;
+                            return getLikelist;
+                        })
                         : null,
-                    this.fetchTracks(id, 1) // 并行执行 fetchTracks
-                ]);
+                    this.fetchTracks(id, 1).then(getTracks => {
+                        this.playlist.tracks = getTracks;
+                        this.updateTracks();
+                        this.isLoading = false;
+                        return getTracks;
+                    })
+                ];
 
-                // 更新歌单名称
-                this.playlist.name = response.playlist.name;
+                // 使用Promise.allSettled来处理可能出现的null值（避免报错）
+                await Promise.allSettled(requests);
 
-                // 如果是我喜欢的音乐歌单，则更新歌单名称
-                if (myFavoriteId && myFavoriteId.playlist[0].id == id) {
-                    this.playlist.name = '我喜欢的音乐';
-                }
-
-                if (getLikelist) {
-                    this.likelist = getLikelist.ids;
-                }
-
-                // 更新歌曲列表
-                if (getTracks) {
-                    this.playlist.tracks = getTracks;
-                }
-
-                // 更新歌单信息
-                this.playlist.coverImgUrl = response.playlist.coverImgUrl;
-                this.playlist.playCount = response.playlist.playCount;
-                this.playlist.createTime = this.formatDate(response.playlist.createTime);
-                this.playlist.createrId = response.playlist.userId;
-                this.playlist.createrName = response.playlist.creator.nickname;
-                this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
-                this.playlist.trackCount = response.playlist.trackCount;
-
-                this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
-                this.updateTracks();
-                // console.log('filteredTracks: ', this.filteredTracks);
-                // fetchTracks 的结果已经在 getTracks 中处理
+                // 处理fetchTracks获取的多个页面的track
                 if (this.totalPages > 1) {
                     const promises = [];
 
-                    // 创建每个 fetchTracks 调用的 Promise 并添加到 promises 数组中
                     for (let i = 2; i <= this.totalPages; i++) {
                         promises.push(this.fetchTracks(id, i));
                     }
 
-                    // 使用 Promise.all 并行执行所有的 fetchTracks
                     const addedTracksArray = await Promise.all(promises);
 
-                    // 将所有返回的 tracks 合并到一个数组中
                     this.playlist.tracks = this.playlist.tracks.concat(...addedTracksArray);
                     console.log('filteredTracks: ', this.filteredTracks);
                     this.updateTracks();
@@ -239,116 +285,33 @@ export default {
             console.log('changePage', page);
             console.log(this.currentPage);
         },
-        // 格式化时间戳
-        formatDate(timestamp) {
-            const date = new Date(timestamp);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        },
         // 设置背景颜色
-        setBackgroundColor() {
-            // 创建一个图片对象
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            // 设置图片 URL为歌单封面
-            img.src = this.playlist.coverImgUrl;
-            if (!img.src) return;
-
-            // 图片加载完成后执行
-            img.onload = () => {
-                // 创建一个画布对象, 用于获取图片的像素数据
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                context.drawImage(img, 0, 0, img.width, img.height);
-
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                let r = 0, g = 0, b = 0;
-                // 统计 RGB 值
-                let count = 0;
-
-                // RGB 值差异的阈值，越小表示越严格地过滤接近的颜色
-                const threshold = 30;
-
-                // 遍历图片的每个像素
-                for (let i = 0; i < data.length; i += 4) {
-                    const pixelR = data[i];
-                    const pixelG = data[i + 1];
-                    const pixelB = data[i + 2];
-                    const pixelA = data[i + 3];
-
-                    // 计算 RGB 三者的最大和最小值之间的差异
-                    const maxRGB = Math.max(pixelR, pixelG, pixelB);
-                    const minRGB = Math.min(pixelR, pixelG, pixelB);
-                    const rgbDifference = maxRGB - minRGB;
-
-                    // 如果 RGB 三者之间的差异小于阈值，则忽略该像素
-                    if (rgbDifference >= threshold && pixelA > 0) {
-                        r += pixelR;
-                        g += pixelG;
-                        b += pixelB;
-                        count++;
-                    }
-                }
-
-                if (count === 0) return; // 防止除以零的情况
-
-                // 计算平均 RGB 值
-                r = Math.floor(r / count);
-                g = Math.floor(g / count);
-                b = Math.floor(b / count);
-
-                // 增加饱和度
-                let increasedData = this.increaseSaturation(r, g, b);
-                // 减小亮度
-                r = increasedData.r * 0.5;
-                g = increasedData.g * 0.5;
-                b = increasedData.b * 0.5;
-
-                // 设置背景颜色
-                window.parent.postMessage({
-                    type: 'set-background-color',
-                    color: `rgb(${r}, ${g}, ${b})`
-                })
-            };
-        },
-        // 增加饱和度
-        increaseSaturation(r, g, b,) {
-            // 创建一个 Color 对象
-            const color = Color.rgb(r, g, b);
-
-            // 获取 HSL 颜色
-            let hsl = color.hsl();
-            // 使用平方根函数增加饱和度
-            let newHsl = hsl.saturationl(20 + 3 * Math.sqrt(hsl.saturationl()));
-
-            // 获取新的 RGB 值
-            const [newR, newG, newB] = newHsl.rgb().array();
-            // 返回新的 RGB 值
-            return { r: Math.round(newR), g: Math.round(newG), b: Math.round(newB) };
+        async setBackgroundColor() {
+            let color = await getColorFromImg(this.playlist.coverImgUrl, document);
+            // 设置背景颜色
+            window.parent.postMessage({
+                type: 'set-background-color',
+                color: `rgb(${color.r}, ${color.g}, ${color.b})`
+            })
         },
         // 处理搜索
-        handleSearch(input,fromEnter) {
+        handleSearch(input, fromEnter) {
             console.log('search', input);
             // 更新搜索关键字
-            if(fromEnter){
+            if (fromEnter) {
                 this.searchQuery = input;
-            }else if(this.playlist.tracks.length<1000 || input === ''){
+            } else if (this.playlist.tracks.length < 1000 || input === '') {
                 this.searchQuery = input;
             }
         },
         updateTracks() {
-            console.log('step1')
+            // console.log('step1')
             if (!this.searchQuery) {
                 this.filteredTracks = this.playlist.tracks.slice((this.currentPage - 1) * 1000, this.currentPage * 1000);
-                console.log('filter Tracks from step1',this.filteredTracks,'currentPage:',this.currentPage);
+                // console.log('filter Tracks from step1', this.filteredTracks, 'currentPage:', this.currentPage);
                 return;
             }
-            console.log('step2')
+            // console.log('step2')
             const query = this.searchQuery.toLowerCase();
             // 否则返回包含搜索关键字的歌曲
             this.filteredTracks = this.playlist.tracks.filter(track => {
@@ -369,7 +332,7 @@ export default {
                 const trackAlbumTns = track.al.tns[0] ? track.al.tns[0].toLowerCase() : '';
                 return trackName.includes(query) || trackNameTns.includes(query) || trackArtistTns.includes(query) || trackArtist.includes(query) || trackAlbum.includes(query) || trackAlbumTns.includes(query);
             });
-            console.log('log from updateTracks',this.filteredTracks);
+            // console.log('log from updateTracks', this.filteredTracks);
         },
     },
 }
@@ -384,7 +347,7 @@ export default {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 100vh;
+    max-height: calc(100vh - 10px);
     max-width: 100vw;
     user-select: none;
     -webkit-user-drag: none;
@@ -451,7 +414,6 @@ export default {
 
 /* 4 渐变层 */
 .gradient-overlay {
-    position: absolute;
     border-radius: 10px;
     top: 0;
     left: 0;
@@ -492,13 +454,27 @@ export default {
 /* 3 歌单详情 */
 .playlist-details {
     display: flex;
+    justify-content: space-between;
     width: 100%;
+    height: 160px;
     flex-direction: column;
-    align-items: flex-start;
+}
+
+.align-up {
+    display: inherit;
+    flex-direction: inherit;
+    margin-top: 5px;
+}
+
+.align-down {
+    display: inherit;
+    flex-direction: inherit;
+    margin-bottom: 5px;
 }
 
 /* 4 歌单名称 */
 h1 {
+    text-align: left;
     font-size: 24px;
     margin-bottom: 10px;
 }
@@ -534,7 +510,6 @@ h1 {
     display: inline-flex;
     width: 100%;
     height: 35px;
-    margin-top: 57px;
 }
 
 /* 5 播放按钮 */
@@ -547,7 +522,6 @@ h1 {
     border-style: none;
     border-radius: 5px;
     padding: 7px 15px 7px 12px;
-    margin-left: 5px;
     margin-right: 5px;
     background-color: rgb(254, 60, 90);
 }
@@ -620,11 +594,36 @@ h1 {
     outline: none;
 }
 
+/* 2 切换歌曲或评论 */
+.orienter {
+    display: flex;
+    margin-bottom: 20px;
+    background-color: transparent;
+}
+
+.orient-button {
+    color: #eee;
+    cursor: pointer;
+    background-color: transparent;
+    border-style: none;
+    padding: 0;
+}
+
+/* 3 歌曲 */
+.orient-songs {
+    background-color: transparent;
+}
+
+/* 3 评论 */
+.orient-comments {
+    background-color: transparent;
+}
+
 /* 2 分页 */
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 /* 2 分页按钮 */
@@ -641,7 +640,15 @@ h1 {
 }
 
 /* 2 分页按钮选中样式 */
-.underline {
-    text-decoration: underline;
+.choosed-text {
+    color: rgb(254, 80, 110);
+}
+
+.choosed {
+    width: 90%;
+    height: 2px;
+    background-color: rgb(254, 60, 90);
+    transform: translateY(1px);
+    transform: translateX(1px);
 }
 </style>

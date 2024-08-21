@@ -5,11 +5,38 @@
                 style="height: 28px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
         </div>
         <div class="scrollable">
-            <button class="button" v-for="button in buttons" :key="button.id" @click="handleButtonClick(button.id)"
-                :title="button.label">
-                <img :src="button.img" alt="button icon" class="button-icon" />
-                <span :style="{ color: buttonTextColor }">{{ button.label }}</span>
+            <button class="switch-user-playlist" @click="showMyPlaylist = !showMyPlaylist">
+                <span>创建的歌单({{ buttons.length }})</span>
+                <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
+                <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg"
+                    style=" padding-top: 3px; " />
             </button>
+            <transition name="fade">
+                <div class="fade-container" v-show="showMyPlaylist">
+                    <button class="playlist-button" v-for="button in buttons" :key="button.id"
+                        @click="handleButtonClick(button.id)" :title="button.label"
+                        :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
+                        <img :src="button.img" class="button-icon" />
+                        <div class="playlist-button-text" >{{ button.label }}</div>
+                    </button>
+                </div>
+            </transition>
+            <button class="switch-user-playlist" @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
+                <span>收藏的歌单({{ subscribedButtons.length }})</span>
+                <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
+                <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
+                    style=" padding-top: 3px; " />
+            </button>
+            <transition name="fade">
+                <div class="fade-container" v-show="showMySubscribedPlaylist">
+                    <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
+                        @click="handleButtonClick(button.id)" :title="button.label" v-show="showMySubscribedPlaylist"
+                        :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
+                        <img :src="button.img" class="button-icon" />
+                        <div class="playlist-button-text">{{ button.label }}</div>
+                    </button>
+                </div>
+            </transition>
         </div>
     </div>
     <div class="resizer" @mousedown="initResize"></div>
@@ -26,18 +53,22 @@ export default {
             loginStatus: state => state.loginStatus
         })
     },
+    emits: [
+        'update-display',
+        'sidebar-resize'
+    ],
     data() {
         return {
-            buttons: [
-                { label: 'Home', id: 0, img: '' }, // 主页按钮
-                // 其他按钮
-            ],
-            buttonTextColor: '#bbb', // 统一设置按钮的文字颜色
+            buttons: [],
+            subscribedButtons: [],
+            buttonTextColor: '#ccc', // 统一设置按钮的文字颜色
             activeButtonId: null,
+            showMyPlaylist: true,
+            showMySubscribedPlaylist: true,
         };
     },
     props: {
-        displayUrl: {
+        opened_playlist: {
             type: String,
             required: true,
         },
@@ -71,18 +102,36 @@ export default {
                 })
                 let userPlaylist = await useApi('/user/playlist', {
                     uid: userAccount.profile.userId,
+                    cookie: localStorage.getItem('login_cookie'),
                 })
                 this.buttons = [];
+                this.subscribedButtons = [];
                 userPlaylist.playlist.forEach(playlist => {
-                    this.buttons.push({
-                        label: playlist.name,
-                        id: playlist.id,
-                        img: playlist.coverImgUrl
-                    });
+                    if (!playlist.subscribed) {
+                        this.buttons.push({
+                            label: playlist.name,
+                            id: playlist.id,
+                            img: playlist.coverImgUrl
+                        });
+                    } else {
+                        this.subscribedButtons.push({
+                            label: playlist.name,
+                            id: playlist.id,
+                            img: playlist.coverImgUrl
+                        });
+                    }
                 });
                 this.buttons[0].label = '我喜欢的音乐';
             }
-        }
+        },
+        handleMessage(event) {
+            if (event.origin !== 'http://localhost:4321') {
+                return;
+            }
+            if (event.data.type === 'new-playlist-id') {
+                this.activeButtonId = event.data.playlistId;
+            }
+        },
     },
     async mounted() {
         // 获取侧边栏初始宽度并发送给父组件
@@ -92,6 +141,10 @@ export default {
         // Emit the initial width to the parent component
         this.$emit('sidebar-resize', initialWidth);
         this.fetchUserPlaylist();
+        window.addEventListener('message', this.handleMessage);
+    },
+    beforeUnmount() {
+        window.removeEventListener('message', this.handleMessage);
     },
     watch: {
         async loginStatus(newVal) {
@@ -104,6 +157,41 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+    transform-origin: top;
+    /* overflow: hidden; */
+}
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(-100%);
+    /* 初始状态：向上滚动 */
+    clip-path: inset(100% 0 0 0);
+}
+
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-100px);
+    /* 初始状态：向上滚动 */
+    clip-path: inset(100px 0 0 0);
+}
+
+.fade-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+    /* 最终状态：位置恢复 */
+    clip-path: insert(0 0 0 0);
+}
+
+.fade-leave {
+    opacity: 1;
+    transform: translateY(0);
+    /* 最终状态：位置恢复 */
+    clip-path: insert(0 0 0 0);
+}
+
 .title {
     font-size: 18px;
     color: #fff;
@@ -130,11 +218,12 @@ export default {
     flex-direction: column;
 }
 
-.button {
+.switch-user-playlist {
+    color: #bbb;
     display: inline-flex;
     align-items: center;
     background-color: transparent;
-    border: 2px solid transparent;
+    border: none;
     border-radius: 10px;
     cursor: pointer;
     padding-left: 5px;
@@ -149,8 +238,65 @@ export default {
     min-height: 40px;
 }
 
-.button:hover {
+.switch-user-playlist:hover {
+    color: #fff;
+}
+
+.switch-user-playlist-icon {
+    width: 16px;
+    height: 16px;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+    padding-left: 5px;
+}
+
+.switch-user-playlist:hover .switch-user-playlist-icon {
+    opacity: 1;
+}
+
+.fade-container {
+    display: inherit;
+    flex-direction: inherit;
+}
+
+.playlist-button {
+    color: #eee;
+    font-size: 12px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 6px 7px 6px 5px;
+    margin: 3px 0px 3px 0px;
+    transition: all 0.3s ease;
+    -webkit-app-region: no-drag;
+    user-select: none;
+    white-space: normal;
+    /* overflow: hidden; */
+    height: 40px;
+    width: 100%;
+    /* -webkit-box-orient: vertical; */
+    /* -webkit-line-clamp: 2; */
+    /* text-overflow: ellipsis; */
+}
+
+.activeButton {
+    background-color: rgb(254, 60, 90);
+}
+
+.playlist-button:hover:not(.activeButton) {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.playlist-button-text {
+    color: inherit;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 }
 
 .button-icon {
@@ -207,5 +353,4 @@ export default {
     width: 5px;
     cursor: ew-resize;
     background-color: transparent;
-}
-</style>
+}</style>

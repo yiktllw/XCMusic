@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow,ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -44,6 +44,20 @@ async function createWindow() {
     ipcMain.on('open-login-window', (win) => {
         createLoginWindow(win);
     })
+
+    win.on('resize', () => {
+        // const [width, height] = win.getSize();
+        // Store.set('windowSize', { width, height });
+        // console.log('resize', width, height);
+    });
+
+
+    // 监听窗口大小变化事件
+    // if (Store.get('windowSize')) {
+    // const { width, height } = Store.get('windowSize');
+    // win.setSize(width, height);
+    // console.log('setSize', width, height);
+    // }
 }
 
 // Quit when all windows are closed.

@@ -10,6 +10,9 @@ export default createStore({
     mutations: {
         setLoginStatus(state, status) {
             state.loginStatus = status;
+        },
+        setSidebarWidth(state, width) {
+            state.sidebarWidth = width;
         }
     },
     actions: {

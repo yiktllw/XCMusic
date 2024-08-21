@@ -3,34 +3,43 @@
         <!-- 后退和前进按钮 -->
         <div class="buttons arrows">
             <button class="back" @click="back" title="后退">
-                <img class="img arrow" src="../assets/backarrow.svg" alt="Back" />
+                <img class="img arrow" src="../assets/backarrow.svg" />
             </button>
             <button class="forward" @click="forward" title="前进">
-                <img class="img arrow" src="../assets/forwardarrow.svg" alt="Back" />
+                <img class="img arrow" src="../assets/forwardarrow.svg" />
             </button>
         </div>
         <!-- 搜索栏 -->
         <div class="searchbar">
-            <input type="text" class="search-input" @keydown.enter="handleSearch" placeholder="搜索..."
-                spellcheck="false" />
+            <input type="text" class="search-input" @keydown.enter="handleSearch" placeholder="搜索..." spellcheck="false" />
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
+            <button class="avatar" v-if="loginStatus">
+                <img class="avatarImg" :src="avatarSrc" />
+            </button>
             <button class="userInfo" @click="userInfo">
-                <div class="avatar" v-if="loginStatus">
-                    <img class="avatarImg" :src="avatarSrc" alt="avatar" />
-                </div>
                 <div class="userInfoTxt" v-if="loginStatus">
                     {{ userNickName }}
                 </div>
                 <div class="userInfoTxt" v-if="!loginStatus">
                     未登录
-                </div><img class="img userInfo" src="../assets/more.svg" alt="more" />
+                </div><img class="img-userInfo" src="../assets/more.svg" />
             </button>
             <!-- 扫码登录 -->
             <div v-if="showDropdown" ref="dropdownMenu" class="dropdown-menu">
                 <div class="login_text">扫码登录</div>
-                <img :src="base64Image" alt="Login QrCode" />
+                <img :src="base64Image" />
+            </div>
+            <div v-if="showUserInfo" class="user-info-menu">
+                <div class="user-info-item follows">
+                    <div class="followings">{{ userProfile.follows }}关注</div>
+                    <div class="followers">{{ userProfile.followeds }}粉丝</div>
+                </div>
+                <div class="user-info-item">我的会员</div>
+                <div class="user-info-item">我的等级</div>
+                <div class="user-info-item">个人信息设置</div>
+                <div class="user-info-item">退出登录</div>
             </div>
             <!-- 设置、最小化、最大化和关闭按钮 -->
             <button class="settings" @click="settings" title="设置">
@@ -54,12 +63,19 @@ import { useApi } from '@/ncm/api';
 import { mapState, mapActions } from 'vuex';
 export default {
     name: 'YTitlebar',
+    emits: [
+        'navigate-back',
+        'navigate-forward',
+        'user-login'
+    ],
     data() {
         return {
+            userProfile: {}, // 用于存储用户信息
             showDropdown: false, // 用于控制下拉登录菜单的显示
+            showUserInfo: false, // 用于控制用户信息菜单的显示
             base64Image: '', // 用于存储 Base64 图片
             userNickName: '用户昵称', // 用于存储用户昵称
-            avatarSrc: require('../assets/logo.png'), // 用于存储头像地址
+            avatarSrc: '', // 用于存储头像地址
         };
     },
     computed: {
@@ -82,15 +98,9 @@ export default {
         async userInfo(event) {
             event.stopPropagation(); // 阻止事件冒泡以免立即触发外部点击处理器
             // 如果已登录，则打开用户信息窗口
-            if (localStorage.getItem('login_cookie')) {
-                let loginStatus_ = await useApi('/login/status', { timestamp: new Date().getTime(), cookie: localStorage.getItem('login_cookie') });
-                if (loginStatus_.data.account.status >= 0) {
-                    window.electron.ipcRenderer.send('open-user-info');
-                    console.log('open userInfo');
-                    // console.log('loginStatus_:', loginStatus_.data.account.status);
-                    this.updateLoginStatus("titlebar userInfo set login_status to true", true);
-                    console.log('loginStatus:', this.loginStatus);
-                }
+            if (localStorage.getItem('login_cookie') && this.loginStatus) {
+                this.showUserInfo = !this.showUserInfo;
+                console.log('open userInfo');
             } else {
                 // 如果未登录，则显示二维码登录
                 // console.log('未登录');
@@ -100,6 +110,7 @@ export default {
                 this.qrKey = qrKey.data.unikey;
                 let qrCode = await useApi('/login/qr/create', { key: this.qrKey, qrimg: true, timestamp: new Date().getTime() });
                 this.base64Image = qrCode.data.qrimg;
+                this.updateLoginStatus("titlebar userInfo set login_status to false", false);
                 this.toggleDropdown(); // 切换下拉菜单显示
                 this.pollQRCodeStatus(); // 轮询二维码状态
             }
@@ -116,6 +127,7 @@ export default {
                     this.$emit('user-login');
                     await this.init();
                     localStorage.setItem('login_cookie', checkResponse.cookie);
+                    this.updateLoginStatus("titlebar pollQRCodeStatus set login_status to true", true);
                 }
                 // console.log('checkResponse:', checkResponse.message);
                 // console.log('qrKey:', this.qrKey);
@@ -171,6 +183,10 @@ export default {
                 let uid = statusCheck.data.profile.userId;
                 localStorage.setItem('login_uid', uid);
                 // console.log(this.avatarSrc);
+
+                let userProfile = await useApi('/user/detail', { uid: uid, cookie: localStorage.getItem('login_cookie') });
+                this.userProfile = userProfile.profile;
+                // console.log('userProfile:', this.userProfile);
             }
         },
     },
@@ -186,13 +202,22 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+
 .titlebar {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    padding-right: 15px;
+    padding: 15px 15px 10px 10px;
     background-color: transparent;
     color: #fff;
     -webkit-app-region: drag;
@@ -261,16 +286,19 @@ export default {
 }
 
 .buttons {
+    display: flex;
     -webkit-app-region: no-drag;
     gap: 0px;
+    align-items: center;
 }
 
 .buttons button {
+    display: flex;
+    align-items: center;
     background: none;
     border: none;
     color: #fff;
     font-size: 18px;
-    margin-left: 10px;
     cursor: pointer;
     position: relative;
     user-select: none;
@@ -293,27 +321,47 @@ button:hover .tooltip {
     opacity: 1;
 }
 
+.avatar {
+    margin: 0;
+    padding: 0;
+}
+
 .avatarImg {
     width: 30px;
     height: 30px;
     border-radius: 100%;
-    margin-right: 5px;
 }
 
 .userInfo {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     flex-direction: row;
+    color: #bbb;
+    transition: all 0.3s ease;
+    margin: 0;
 }
 
 .userInfoTxt {
     color: #bbb;
     font-size: 15px;
     margin-right: 6px;
+    transition: all 0.3s ease;
 }
 
 .userInfoTxt:hover {
     color: #eee;
+}
+
+.img-userInfo {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+    margin-right: 10px;
+}
+
+.userInfo:hover .img-userInfo {
+    transition: all 0.3s ease;
+    opacity: 1;
 }
 
 .dropdown-menu {
@@ -339,6 +387,31 @@ button:hover .tooltip {
     border-radius: 5px;
 }
 
+.user-info-menu {
+    position: fixed;
+    top: 50px;
+    background-color: #333;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.user-info-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #fff;
+    padding: 5px;
+    margin: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-info-item:not(:last-child) {
+    border-bottom: 1px solid #555;
+}
+
 .img {
     width: 14px;
     height: 14px;
@@ -348,19 +421,19 @@ button:hover .tooltip {
 .img.settings {
     width: 16px;
     height: 16px;
-    padding-bottom: 5px;
+    margin-right: 10px;
 }
 
 .img.minimize {
-    padding-bottom: 5px;
+    margin-right: 10px;
 }
 
 .img.maximize {
-    padding-bottom: 5px;
+    margin-right: 10px;
 }
 
 .img.close {
-    padding-bottom: 5px;
+    margin-right: 10px;
 }
 
 .img:hover {

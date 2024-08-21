@@ -14,6 +14,10 @@ export default {
             default: 'http://localhost:4321/greeting'
         },
     },
+    emits: [
+        'opened-playlist',
+        'newDisplayUrl'
+    ],
     data() {
         return {
             history: [this.displayUrl],
@@ -36,7 +40,14 @@ export default {
     },
     mounted() {
         window.addEventListener('popstate', this.handlePopState);
-        window.addEventListener('message', (event) => {
+        window.addEventListener('message', this.handleMessage);
+    },
+    beforeUnmount() {
+        window.removeEventListener('popstate', this.handlePopState);
+        window.removeEventListener('message', this.handleMessage);
+    },
+    methods: {
+        handleMessage(event){
             if (event.origin !== 'http://localhost:4321') {
                 return;
             }
@@ -47,12 +58,7 @@ export default {
                 const backgroundDOM = document.querySelector('.mainContainer');
                 backgroundDOM.style.background = `linear-gradient(180deg, ${color} 0%,  #131319 500px, #131319 100%)`;
             }
-        });
-    },
-    beforeUnmount() {
-        window.removeEventListener('popstate', this.handlePopState);
-    },
-    methods: {
+        },
         handlePopState(event) {
             if (event.state && event.state.index !== undefined) {
                 this.currentIndex = event.state.index;

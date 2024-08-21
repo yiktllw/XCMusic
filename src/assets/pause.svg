@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 971.44 1024">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <g id="_暂停" data-name="暂停">
+    <rect class="cls-1" x="610" y="0" width="240" height="1024" rx="66.92" ry="66.92"/>
+    <rect class="cls-1" x="118" y="0" width="240" height="1024" rx="66.92" ry="66.92"/>
+  </g>
+</svg>
