@@ -31,13 +31,14 @@
                 <div class="login_text">扫码登录</div>
                 <img :src="base64Image" />
             </div>
+            <!-- 用户名下拉菜单 -->
             <div v-if="showUserInfo" class="user-info-menu">
                 <div class="user-info-item follows">
                     <div class="followings">{{ userProfile.follows }}关注</div>
                     <div class="followers">{{ userProfile.followeds }}粉丝</div>
                 </div>
                 <div class="user-info-item">我的会员</div>
-                <div class="user-info-item">我的等级</div>
+                <div class="user-info-item">我的等级{{ userProfile.level }}</div>
                 <div class="user-info-item">个人信息设置</div>
                 <div class="user-info-item">退出登录</div>
             </div>
@@ -186,6 +187,7 @@ export default {
 
                 let userProfile = await useApi('/user/detail', { uid: uid, cookie: localStorage.getItem('login_cookie') });
                 this.userProfile = userProfile.profile;
+                this.userProfile.level = userProfile.level;
                 // console.log('userProfile:', this.userProfile);
             }
         },
