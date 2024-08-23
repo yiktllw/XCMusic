@@ -87,6 +87,14 @@ export default {
             console.log('User logged in');
             this.$refs.YSidebar_ref.fetchUserPlaylist();
         },
+        _updateDisplay(event) {
+            if (event.origin !== 'http://localhost:4321') {
+                return;
+            }
+            if (event.data.type === 'update-display') {
+                this.displayUrl = event.data.url;
+            }
+        },
     },
     mounted() {
         // Add your mounted hook here
@@ -98,6 +106,12 @@ export default {
 
         const titlebarHeight = 50;
         this.display_height = window.innerHeight - titlebarHeight;
+
+        window.addEventListener('message', this._updateDisplay);
+    },
+    beforeUnmount() {
+        window.removeEventListener('message', this._updateDisplay);
+        // Add your beforeUnmount hook here
     },
 };
 </script>
@@ -148,7 +162,7 @@ export default {
 }
 
 .playbar {
-    background-color: rgb(45,45,55);
+    background-color: rgb(45, 45, 55);
     position: fixed;
     bottom: 0;
     height: 80px;

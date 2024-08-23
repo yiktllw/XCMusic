@@ -16,7 +16,8 @@
         <div class="buttons">
             <!-- 用户信息 -->
             <button class="avatar" v-if="loginStatus">
-                <img class="avatarImg" :src="avatarSrc" />
+                <img class="avatarImg" :src="avatarSrc" v-show="avatarSrc" />
+                <div class="avatarImg avatarImgPlaceholder" v-if="!avatarSrc"></div>
             </button>
             <button class="userInfo" @click="userInfo">
                 <div class="userInfoTxt" v-if="loginStatus">
@@ -332,6 +333,10 @@ button:hover .tooltip {
     width: 30px;
     height: 30px;
     border-radius: 100%;
+}
+
+.avatarImgPlaceholder {
+    background-color: #333;
 }
 
 .userInfo {

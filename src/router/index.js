@@ -32,7 +32,15 @@ const routes = [
         props: route => ({
             playlistId: Number(route.params.id),
         })
-    }
+    },
+    {
+        path: '/album/:id',
+        name: 'Album',
+        component: () => import(/* webpackChunkName: "about" */ '../views/YAlbumView.vue'),
+        props: route => ({
+            playlistId: Number(route.params.id),
+        })
+    },
 ]
 
 const router = createRouter({

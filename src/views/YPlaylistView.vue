@@ -85,7 +85,7 @@
                     <!-- 4 歌曲按钮 -->
                     <button class="orient-button" @click="orient = 'songs'">
                         <span :class="{ 'choosed-text': orient === 'songs' }" style="font-size: 16px; color:#fff;"
-                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs'? '#fff' : '#bbb' }">歌曲</span>
+                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? '#fff' : '#bbb' }">歌曲</span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
                             v-show="orient === 'songs'">
@@ -94,7 +94,7 @@
                 </div>
                 <div class="songs-count"
                     style="color:#fff; margin:0;padding:0 20px 0px 2px;font-size: 13px; font-weight: bold;"
-                    :style="{'color': orient==='songs' ? '#fff' : '#bbb'}">
+                    :style="{ 'color': orient === 'songs' ? '#fff' : '#bbb' }">
                     {{ playlist.trackCount }}
                 </div>
                 <!-- 3 评论 -->
@@ -115,7 +115,8 @@
             <!-- 2 加载中动画 -->
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
-            <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist" />
+            <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
+                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist" />
             <!-- 2 分页 -->
             <div v-if="totalPages > 1" class="pagination">
                 <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
@@ -133,6 +134,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg } from '@/ncm/color'
 import YLoading from '@/components/YLoading.vue';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'YPlaylist',
@@ -146,6 +148,11 @@ export default {
             type: Number,
             required: true
         },
+    },
+    computed: {
+        ...mapState({
+            likelist: state => state.likelist
+        }),
     },
     data() {
         return {
@@ -162,7 +169,6 @@ export default {
             },
             isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字
-            likelist: [],       // 用户喜欢的歌曲列表
             filteredTracks: [], // 搜索过滤后的歌曲列表
             currentPage: 1,     // 当前页数
             totalPages: 1,      // 总页数
@@ -200,6 +206,7 @@ export default {
     },
     methods: {
         // 获取歌单
+        ...mapActions(['updateLikelist']),
         async fetchPlaylist(id) {
             try {
                 const requests = [
@@ -225,7 +232,8 @@ export default {
                         : null,
                     localStorage.getItem('login_uid')
                         ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
-                            this.likelist = getLikelist.ids;
+                            this.updateLikelist(getLikelist.ids);
+                            console.log('update likelist from YPlayilst.vue', getLikelist.ids);
                             return getLikelist;
                         })
                         : null,
@@ -304,6 +312,7 @@ export default {
                 this.searchQuery = input;
             }
         },
+        // 更新歌曲列表 搜索过滤
         updateTracks() {
             // console.log('step1')
             if (!this.searchQuery) {
@@ -334,6 +343,54 @@ export default {
             });
             // console.log('log from updateTracks', this.filteredTracks);
         },
+        async playAll() {
+            // 播放歌单
+            console.log('playAll');
+            let playlist = this.playlist.tracks.map(track => {
+                return {
+                    ...track,
+                    url: '',
+                }
+            });
+            await this.scrobble();
+            window.parent.postMessage({
+                type: 'update-playlist-and-play',
+                playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
+            });
+        },
+        playSongs(track) {
+            // 播放歌曲
+            console.log('playSongs');
+            window.parent.postMessage({
+                type: 'play-songs',
+                track: track,
+                playlistId: this.playlistId,
+            });
+        },
+        async sendPlaylist() {
+            // 发送歌单
+            let playlist = this.playlist.tracks.map(track => {
+                return {
+                    ...track,
+                    url: '',
+                }
+            });
+            console.log('sendPlaylist');
+            await this.scrobble();
+            window.parent.postMessage({
+                type: 'update-playlist',
+                playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
+            });
+        },
+        async scrobble() {
+            let result = await useApi('/scrobble', {
+                sourceid: this.playlistId,
+                cookie: localStorage.getItem('login_cookie')
+            });
+            console.log('scrobble:', result);
+        }
     },
 }
 </script>
