@@ -6,6 +6,7 @@ export default createStore({
             loginStatus: false, // 初始化 loginStatus 为 false
             sidebarWidth: 230, // 初始化 sidebarWidth 为 230
             likelist: [], // 初始化 likelist 为一个空数组
+            nowPlaying: 0, // 初始化 正在播放的歌曲id 为 0
         };
     },
     mutations: {
@@ -17,7 +18,10 @@ export default createStore({
         },
         setLikeList(state, list) {
             state.likelist = list;
-        }
+        },
+        setNowPlaying(state, id) {
+            state.nowPlaying = id;
+        },
     },
     actions: {
         updateLoginStatus({ commit }, status) {
@@ -28,6 +32,9 @@ export default createStore({
         },
         updateLikelist({ commit }, list) {
             commit('setLikeList', list);
+        },
+        updateNowPlaying({ commit }, id) {
+            commit('setNowPlaying', id);
         },
     },
 });
