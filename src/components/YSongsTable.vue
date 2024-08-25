@@ -66,13 +66,16 @@
             </div>
         </div>
         <!-- 3 歌曲列表内容 -->
-        <ul v-if="!isLoading">
+        <ul>
             <li v-for="(track, index) in localTracks" :key="track.id" class="track-item" ref="track_item_ref"
-                @dblclick="playSongs(track)">
+                @dblclick="playSongAndPlaylist(track)">
                 <!-- 4 左侧对齐 -->
                 <div class="align-left">
                     <!-- 5 歌曲序号 -->
-                    <div class="track-count" v-show="showTrackCounter">{{ index + 1 }}</div>
+                    <div class="track-count" v-show="showTrackCounter">
+                        <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
+                        <YPlaying v-else />
+                    </div>
                     <!-- 5 封面图片 -->
                     <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
                     <img v-show="showTrackCover" class="track-cover" :src="track.al.picUrl" alt="Cover Image" />
@@ -80,17 +83,20 @@
                     <div class="track-info" ref="trackInfo">
                         <!-- 6 歌曲名称 -->
                         <div class="track-name" ref="track_name_ref"
+                            :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
                             :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
                                 track.name + (track.tns ? (' (' + track.tns + ')') : '') }}</div>
                         <!-- 6 歌手名称 -->
                         <div class="track-artist" v-show="showTrackArtist">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
                                 <!-- 7 歌手按钮 -->
-                                <span @click="handleArtistClick(artist.id)" class="artist-button"
-                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                <span @click="handleArtistClick(artist.id)"
+                                    :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"
+                                    class="artist-button" :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                     {{ artist.name }}
                                 </span>
-                                <span v-if="index < track.ar.length - 1"> / </span>
+                                <span v-if="index < track.ar.length - 1"
+                                    :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> / </span>
                             </span>
                         </div>
                     </div>
@@ -108,8 +114,9 @@
                     <!-- 5 喜欢 -->
                     <div class="likes" style="text-align: left;" v-show="showTrackLikes">
                         <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
-                            style="width: 16.8px; height: 16.8px; padding-left:10px;" />
-                        <img v-else src="../assets/unlikes.svg" style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
+                            style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
+                        <img v-else src="../assets/unlikes.svg"
+                            style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
                     </div>
                     <!-- 5 时长 -->
                     <div class="track-duration" v-show="showTrackDuration">{{ formatDuration(track.dt) }}</div>
@@ -133,6 +140,7 @@
 import { useApi } from '@/ncm/api';
 import { formatDuration_mmss } from '@/ncm/time';
 import { mapState, mapActions } from 'vuex';
+import YPlaying from './YPlaying.vue';
 
 export default {
     name: 'YSongsTable',
@@ -177,20 +185,29 @@ export default {
             type: Boolean,
             default: true,
         },
+        canSendPlaylist: {
+            type: Boolean,
+            default: true,
+        },
         tracks: {
             type: Array,
             default: () => [],
             required: true,
         },
     },
+    components: {
+        YPlaying,
+    },
     emits: [
         'play-songs',
         'send-playlist',
         'update-display',
+        'play-song-and-playlist',
     ],
     computed: {
         ...mapState({
             likelist: state => state.likelist,
+            nowPlaying: state => state.nowPlaying,
         }),
     },
     data() {
@@ -227,7 +244,7 @@ export default {
     },
     async mounted() {
         this.localTracks = this.tracks;
-        console.log('likelist:', this.likelist);
+        console.log('update likelist from YSongsTable');
         if (this.likelist.length === 0) {
             let result = await useApi('/likelist', {
                 uid: localStorage.getItem('login_uid'),
@@ -235,14 +252,23 @@ export default {
             });
             this.updateLikelist(result.ids);
         }
+        window.addEventListener('message', this.handleMessage);
+    },
+    beforeUnmount() {
+        window.removeEventListener('message', this.handleMessage);
     },
     watch: {
         tracks(newVal) {
             this.localTracks = newVal;
-        }
+        },
     },
     methods: {
-        ...mapActions(['updateLikelist']),
+        ...mapActions(['updateLikelist', 'updateNowPlaying']),
+        handleMessage(event) {
+            if (event.data.type === 'update-now-playing') {
+                this.updateNowPlaying(JSON.parse(event.data.track));
+            }
+        },
         playSongs(track) {
             console.log('Play Songs:', track.id);
             this.$emit('play-songs', JSON.stringify(track));
@@ -250,6 +276,18 @@ export default {
         },
         sendPlaylist() {
             this.$emit('send-playlist');
+        },
+        playSongAndPlaylist(track) {
+            console.log('Play Song And Playlist:', track.id);
+            if (this.canSendPlaylist) {
+                this.$emit('play-song-and-playlist', JSON.stringify(track));
+            } else {
+                window.postMessage({
+                    type: 'play-songs',
+                    track: JSON.stringify(track),
+                    playlistId: 0,
+                })
+            }
         },
         formatDuration(duration) {
             return formatDuration_mmss(duration);
@@ -434,7 +472,6 @@ export default {
 .table-container {
     display: flex;
     max-width: 100vw;
-    overflow: hidden;
     flex-direction: column;
 }
 
@@ -611,6 +648,9 @@ li {
     flex: 0 0 auto;
     width: 50px;
     color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 5 封面图片 */
