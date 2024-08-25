@@ -10,8 +10,14 @@
             </button>
         </div>
         <!-- 搜索栏 -->
-        <div class="searchbar">
-            <input type="text" class="search-input" @keydown.enter="handleSearch" placeholder="搜索..." spellcheck="false" />
+        <div class="searchbar" ref="search_panel_trigger">
+            <input type="text" class="search-input" @keydown.enter="handleSearch" @input="getSearchSuggestions"
+                placeholder="搜索..." @click="this.$refs.search_panel._showPanel()" spellcheck="false" />
+            <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px">
+                <div class="search-panel">
+
+                </div>
+            </YPanel>
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
@@ -19,7 +25,7 @@
                 <img class="avatarImg" :src="avatarSrc" v-show="avatarSrc" />
                 <div class="avatarImg avatarImgPlaceholder" v-if="!avatarSrc"></div>
             </button>
-            <button class="userInfo" @click="userInfo">
+            <button class="userInfo" @click="userInfo" ref="user_info_menu_trigger">
                 <div class="userInfoTxt" v-if="loginStatus">
                     {{ userNickName }}
                 </div>
@@ -28,21 +34,23 @@
                 </div><img class="img-userInfo" src="../assets/more.svg" />
             </button>
             <!-- 扫码登录 -->
-            <div v-if="showDropdown" ref="dropdownMenu" class="dropdown-menu">
+            <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
                 <div class="login_text">扫码登录</div>
                 <img :src="base64Image" />
             </div>
             <!-- 用户名下拉菜单 -->
-            <div v-if="showUserInfo" class="user-info-menu">
-                <div class="user-info-item follows">
-                    <div class="followings">{{ userProfile.follows }}关注</div>
-                    <div class="followers">{{ userProfile.followeds }}粉丝</div>
+            <YPanel class="userInfoPanel" :trigger="this.$refs.user_info_menu_trigger" ref="user_info_panel">
+                <div class="user-info-menu">
+                    <div class="user-info-item follows">
+                        <div class="followings">{{ userProfile.follows }}关注</div>
+                        <div class="followers">{{ userProfile.followeds }}粉丝</div>
+                    </div>
+                    <div class="user-info-item">我的会员</div>
+                    <div class="user-info-item">我的等级{{ userProfile.level }}</div>
+                    <div class="user-info-item">个人信息设置</div>
+                    <div class="user-info-item">退出登录</div>
                 </div>
-                <div class="user-info-item">我的会员</div>
-                <div class="user-info-item">我的等级{{ userProfile.level }}</div>
-                <div class="user-info-item">个人信息设置</div>
-                <div class="user-info-item">退出登录</div>
-            </div>
+            </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
             <button class="settings" @click="settings" title="设置">
                 <img class="img settings" src="../assets/settings.svg" alt="Settings" />
@@ -63,6 +71,8 @@
 <script lang="js">
 import { useApi } from '@/ncm/api';
 import { mapState, mapActions } from 'vuex';
+import YPanel from './YPanel.vue';
+
 export default {
     name: 'YTitlebar',
     emits: [
@@ -70,11 +80,13 @@ export default {
         'navigate-forward',
         'user-login'
     ],
+    components: {
+        YPanel,
+    },
     data() {
         return {
             userProfile: {}, // 用于存储用户信息
             showDropdown: false, // 用于控制下拉登录菜单的显示
-            showUserInfo: false, // 用于控制用户信息菜单的显示
             base64Image: '', // 用于存储 Base64 图片
             userNickName: '用户昵称', // 用于存储用户昵称
             avatarSrc: '', // 用于存储头像地址
@@ -101,7 +113,7 @@ export default {
             event.stopPropagation(); // 阻止事件冒泡以免立即触发外部点击处理器
             // 如果已登录，则打开用户信息窗口
             if (localStorage.getItem('login_cookie') && this.loginStatus) {
-                this.showUserInfo = !this.showUserInfo;
+                this.$refs.user_info_panel.tooglePanel();
                 console.log('open userInfo');
             } else {
                 // 如果未登录，则显示二维码登录
@@ -172,8 +184,17 @@ export default {
         // 搜索
         handleSearch(event) {
             const searchText = event.target.value;
-            window.electron.ipcRenderer.send('search', searchText);
-            // console.log('search:', searchText);
+            console.log('search:', searchText);
+        },
+        async getSearchSuggestions(event) {
+            const searchText = event.target.value;
+            let result = await useApi('/search/suggest', {
+                keywords: searchText,
+                type: 'mobile',
+            });
+            if (result.code === 200) {
+                console.log('get suggestions', result);
+            }
         },
         async init() {
             document.addEventListener('click', this.handleOutsideClick);
@@ -224,6 +245,7 @@ export default {
     background-color: transparent;
     color: #fff;
     -webkit-app-region: drag;
+    -webkit-user-drag: none;
 }
 
 .img.arrow {
@@ -247,9 +269,26 @@ export default {
 }
 
 .searchbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-grow: 1;
     margin-right: 10px;
     margin-left: var(--sidebar-width);
+}
+
+.search-panel {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 300px;
+    height: calc(100vh - 300px);
+    transform: translateX(calc(-100% + 35px));
+    background-color: #333;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    top: 30px;
 }
 
 .search-input {
@@ -276,6 +315,7 @@ export default {
     margin-left: 7px;
     background-color: transparent;
     -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
 }
 
 .search-input::placeholder {
@@ -291,6 +331,7 @@ export default {
 .buttons {
     display: flex;
     -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
     gap: 0px;
     align-items: center;
 }
@@ -333,6 +374,7 @@ button:hover .tooltip {
     width: 30px;
     height: 30px;
     border-radius: 100%;
+    -webkit-user-drag: none;
 }
 
 .avatarImgPlaceholder {
@@ -364,6 +406,7 @@ button:hover .tooltip {
     height: 14px;
     opacity: 0.7;
     margin-right: 10px;
+    -webkit-user-drag: none;
 }
 
 .userInfo:hover .img-userInfo {
@@ -395,8 +438,9 @@ button:hover .tooltip {
 }
 
 .user-info-menu {
-    position: fixed;
-    top: 50px;
+    position: absolute;
+    top: 56px;
+    right: 175px;
     background-color: #333;
     border-radius: 5px;
     padding: 10px;
@@ -423,6 +467,7 @@ button:hover .tooltip {
     width: 14px;
     height: 14px;
     opacity: 0.7;
+    -webkit-user-drag: none;
 }
 
 .img.settings {

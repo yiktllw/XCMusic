@@ -210,7 +210,7 @@ export default {
                             }
                         });
                         this.updateTracks();
-                        console.log('playlist.tracks', this.filteredTracks);
+                        // console.log('playlist.tracks', this.filteredTracks);
                         this.isLoading = false;
                         return response;
                     }),
@@ -225,7 +225,7 @@ export default {
                     localStorage.getItem('login_uid')
                         ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
                             this.updateLikelist(getLikelist.ids);
-                            console.log('update likelist from YPlayilst.vue', getLikelist.ids);
+                            console.log('update likelist from YAlbumView.vue');
                             return getLikelist;
                         })
                         : null,

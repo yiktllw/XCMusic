@@ -113,6 +113,7 @@
         </div>
         <!-- 1 右侧 -->
         <div class="align-right">
+            <YProgressBar lineLength="100" lineWidth="6" />
             <div class="buttons" style="margin-right: 10px;">
                 <img class="img" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
@@ -120,12 +121,13 @@
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger">
                     <div class="volume-container">
                         <div class="volume-slider" ref="volume_position" @click="handleVolumeClick">
-                            <div class="volume-bar" :style="{ height: volume * 100 + '%' }">
-                            </div>
                             <!-- 鼠标按下开始调整音量 -->
-                            <div @mousedown="startSetVolume"
-                                style="left:-3.21px;width:13px;height:13px;border-radius:50%; position:absolute;background-color: #fff;"
+                            <div class="volume-pointer" @mousedown="startSetVolume" style=""
                                 :style="{ top: 'calc(' + (1 - volume) * 100 + '%' + ' - 7px )' }">
+                            </div>
+                            <div class="volume-bar-controller">
+                            </div>
+                            <div class="volume-bar" :style="{ height: volume * 100 + '%' }">
                             </div>
                         </div>
                         <div class="volume-text">
@@ -167,12 +169,14 @@ import { useApi, toogleLikeAndGetLikelist } from '@/ncm/api';
 import { mapState, mapActions } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
+import YProgressBar from './YProgressBar.vue';
 
 export default {
     name: 'YPlaybar',
     components: {
         YSongsTable,
         YPanel,
+        YProgressBar,
     },
     emits: [
         'update-now-playing'
@@ -645,6 +649,24 @@ export default {
     border-radius: 5px;
     padding: 10px 10px 20px 10px;
     transform: translate(-100%, calc(-100% - 20px));
+}
+
+.volume-pointer {
+    left: -3.21px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    position: absolute;
+    background-color: #fff;
+    z-index: 4;
+}
+
+.volume-bar-controller {
+    width: 100%;
+    position: absolute;
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 0.35);
+    width: 6px;
 }
 
 .volume-slider {
