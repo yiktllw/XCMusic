@@ -230,7 +230,6 @@ export default {
     padding-top: 6px;
     padding-bottom: 6px;
     transition: all 0.3s ease;
-    -webkit-app-region: no-drag;
     user-select: none;
     white-space: nowrap;
     vertical-align: middle;
