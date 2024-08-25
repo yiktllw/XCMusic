@@ -108,7 +108,7 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
-                :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs" @send-playlist="sendPlaylist" />
+                :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs" @send-playlist="sendPlaylist"  @play-song-and-playlist="playSongAndPlaylist"/>
         </div>
     </div>
 </template>
@@ -120,6 +120,7 @@ import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg } from '@/ncm/color'
 import YLoading from '@/components/YLoading.vue';
 import { mapState, mapActions } from 'vuex';
+import { preparePlaylist } from '@/tools/playlist';
 
 export default {
     name: 'YPlaylist',
@@ -286,15 +287,11 @@ export default {
         playAll() {
             // 播放歌单
             console.log('playAll');
-            let playlist = this.playlist.tracks.map(track => {
-                return {
-                    ...track,
-                    url: '',
-                }
-            });
+            let playlist = preparePlaylist(this.this.playlist.tracks);
             window.parent.postMessage({
                 type: 'update-playlist-and-play',
-                playlist: JSON.stringify(playlist)
+                playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
             });
         },
         playSongs(track) {
@@ -302,21 +299,29 @@ export default {
             console.log('playSongs');
             window.parent.postMessage({
                 type: 'play-songs',
-                track: track
+                track: track,
+                playlistId: this.playlistId,
             });
         },
         sendPlaylist() {
             // 发送歌单
-            let playlist = this.playlist.tracks.map(track => {
-                return {
-                    ...track,
-                    url: '',
-                }
-            });
+            let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
             window.parent.postMessage({
                 type: 'update-playlist',
                 playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
+            });
+        },
+        playSongAndPlaylist(track) {
+            // 播放歌曲并发送歌单
+            console.log('playSongAndPlaylist');
+            let playlist = preparePlaylist(this.playlist.tracks);
+            window.parent.postMessage({
+                type: 'play-song-and-playlist',
+                track: track,
+                playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
             });
         },
         handleArtistClick(artistId) {

@@ -116,7 +116,7 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
-                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist" />
+                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
             <!-- 2 分页 -->
             <div v-if="totalPages > 1" class="pagination">
                 <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
@@ -129,18 +129,19 @@
 </template>
 
 <script>
-import { useApi } from '@/ncm/api';
 import YSongsTable from '@/components/YSongsTable.vue';
+import YLoading from '@/components/YLoading.vue';
+import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg } from '@/ncm/color'
-import YLoading from '@/components/YLoading.vue';
 import { mapState, mapActions } from 'vuex';
+import { preparePlaylist } from '@/tools/playlist';
 
 export default {
     name: 'YPlaylist',
     components: {
         YSongsTable,
-        YLoading
+        YLoading,
     },
     props: {
         // 传入的歌单 ID
@@ -233,7 +234,7 @@ export default {
                     localStorage.getItem('login_uid')
                         ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
                             this.updateLikelist(getLikelist.ids);
-                            console.log('update likelist from YPlayilst.vue', getLikelist.ids);
+                            console.log('update likelist from YPlayilst.vue');
                             return getLikelist;
                         })
                         : null,
@@ -346,12 +347,7 @@ export default {
         async playAll() {
             // 播放歌单
             console.log('playAll');
-            let playlist = this.playlist.tracks.map(track => {
-                return {
-                    ...track,
-                    url: '',
-                }
-            });
+            let playlist = preparePlaylist(this.playlist.tracks);
             await this.scrobble();
             window.parent.postMessage({
                 type: 'update-playlist-and-play',
@@ -370,16 +366,22 @@ export default {
         },
         async sendPlaylist() {
             // 发送歌单
-            let playlist = this.playlist.tracks.map(track => {
-                return {
-                    ...track,
-                    url: '',
-                }
-            });
+            let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
             await this.scrobble();
             window.parent.postMessage({
                 type: 'update-playlist',
+                playlist: JSON.stringify(playlist),
+                playlistId: this.playlistId,
+            });
+        },
+        playSongAndPlaylist(track) {
+            // 播放歌曲并发送歌单
+            console.log('playSongAndPlaylist');
+            let playlist = preparePlaylist(this.playlist.tracks);
+            window.parent.postMessage({
+                type: 'play-song-and-playlist',
+                track: track,
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });

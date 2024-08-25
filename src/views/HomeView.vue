@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="playbar">
-            <YPlaybar />
+            <YPlaybar @update-now-playing="updateNowPlaying" />
         </div>
     </div>
 </template>
@@ -95,6 +95,12 @@ export default {
                 this.displayUrl = event.data.url;
             }
         },
+        updateNowPlaying(track){
+            this.$refs.YDisplayArea.$refs.myIframe.contentWindow.postMessage({
+                type: 'update-now-playing',
+                track: JSON.stringify(track)
+            });
+        }
     },
     mounted() {
         // Add your mounted hook here
