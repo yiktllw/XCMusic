@@ -181,8 +181,28 @@ module.exports = [
     },
     {
         identifier: 'search',
-        route: '/search',
+        route: '/search/result',
         module: require('NeteaseCloudMusicApi/module/search'),
+    },
+    {
+        identifier: 'search_default',
+        route: '/search/default',
+        module: require('NeteaseCloudMusicApi/module/search_default'),
+    },
+    {
+        identifier: 'search_suggest',
+        route: '/search/suggest',
+        module: require('NeteaseCloudMusicApi/module/search_suggest'),
+    },
+    {
+        identifier: 'search_hot',
+        route: '/search/hot/detail',
+        module: require('NeteaseCloudMusicApi/module/search_hot'),
+    },
+    {
+        identifier: 'search_multimatch',
+        route: '/search/multimatch',
+        module: require('NeteaseCloudMusicApi/module/search_multimatch'),
     },
     {
         identifier: 'scrobble',
