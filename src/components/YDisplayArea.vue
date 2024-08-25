@@ -1,10 +1,11 @@
 <template>
     <div>
-        <iframe class="display-area" :src="currentUrl" scrolling="no"></iframe>
+        <iframe class="display-area" :src="currentUrl" scrolling="no" ref="myIframe"></iframe>
     </div>
 </template>
 
 <script>
+
 export default {
     name: 'YDisplayarea',
     props: {
@@ -16,7 +17,10 @@ export default {
     },
     emits: [
         'opened-playlist',
-        'newDisplayUrl'
+        'newDisplayUrl',
+        'iframe-click',
+        'iframe-mousemove',
+        'iframe-mouseup'
     ],
     data() {
         return {
@@ -41,13 +45,29 @@ export default {
     mounted() {
         window.addEventListener('popstate', this.handlePopState);
         window.addEventListener('message', this.handleMessage);
+        this.$refs.myIframe.onload = () => {
+            const iframeWindow = this.$refs.myIframe.contentWindow;
+            // 监听 iframe 内部的点击事件
+            iframeWindow.addEventListener('click', this.handleIframeClick);
+            // 监听 iframe 内部的鼠标移动事件
+            iframeWindow.addEventListener('mousemove', this.handleIframeMouseMove);
+            // 监听 iframe 内部的鼠标抬起事件
+            iframeWindow.addEventListener('mouseup', this.handleIframeMouseUp);
+        };
     },
     beforeUnmount() {
         window.removeEventListener('popstate', this.handlePopState);
         window.removeEventListener('message', this.handleMessage);
+        // 在组件销毁前移除事件监听器以防止内存泄漏
+        const iframeWindow = this.$refs.myIframe.contentWindow;
+        if (iframeWindow) {
+            iframeWindow.removeEventListener('click', this.handleIframeClick);
+            iframeWindow.removeEventListener('mousemove', this.handleIframeMouseMove);
+            iframeWindow.removeEventListener('mouseup', this.handleIframeMouseUp);
+        }
     },
     methods: {
-        handleMessage(event){
+        handleMessage(event) {
             if (event.origin !== 'http://localhost:4321') {
                 return;
             }
@@ -75,7 +95,36 @@ export default {
                 this.currentIndex++;
                 window.history.pushState({ index: this.currentIndex }, '', '');
             }
-        }
+        },
+        handleIframeClick(event) {
+            event = this.adjustEvent(event);
+            this.$refs.myIframe.contentWindow.parent.postMessage({
+                type: 'iframe-click',
+                data: event,
+            }, '*');
+        },
+        handleIframeMouseMove(event) {
+            event = this.adjustEvent(event);
+            this.$refs.myIframe.contentWindow.parent.postMessage({
+                type: 'iframe-mouse-move',
+                data: event,
+            }, '*');
+        },
+        handleIframeMouseUp(event) {
+            event = this.adjustEvent(event);
+            this.$refs.myIframe.contentWindow.parent.postMessage({
+                type: 'iframe-mouse-up',
+                data: event,
+            }, '*');
+        },
+        adjustEvent(event) {
+            const { left, top } = this.$refs.myIframe.getBoundingClientRect();
+            return {
+                ...event,
+                adjustX: event.clientX + left,
+                adjustY: event.clientY + top,
+            };
+        },
     }
 };
 </script>
