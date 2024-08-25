@@ -7,11 +7,11 @@ const progress = defineModel();
     <div class="progress-bigframe">
         <div class="progress-bar" @click="updateProgressEvent" ref="progress_bar">
             <div class="progress-fill" />
-            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
+            <div class="progress-pointer" :style="{ top: 'calc(100% - ' + progress * 100 + '%' + ' - 5px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
             <div class="overflow-hidden">
-                <div class="progress-fill-corner" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
-                <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
+                <div class="progress-fill-corner" :style="{ bottom: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
+                <div class="progress-track" :style="{ bottom: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
             </div>
         </div>
     </div>
@@ -25,10 +25,10 @@ export default {
         'update:modelValue'
     ],
     methods: {
-        updateProgress(x){
+        updateProgress(y) {
             const rect = this.$refs.progress_bar.getBoundingClientRect();
-            const dx = x - rect.left;
-            let progress = dx / rect.width;
+            const dy = y - rect.top;
+            let progress = 1 - dy / rect.height;
             if (progress < 0) {
                 progress = 0;
             } else if (progress > 1) {
@@ -37,12 +37,12 @@ export default {
             this.$emit('update:modelValue', progress);
         },
         updateProgressEvent(e) {
-            this.updateProgress(e.clientX);
+            this.updateProgress(e.clientY);
         },
         handleMessageForProgress(event) {
-            if(event.data.type === 'iframe-mouse-move') {
-                this.updateProgress(event.data.data.adjustX);
-            }else if(event.data.type === 'iframe-mouse-up') {
+            if (event.data.type === 'iframe-mouse-move') {
+                this.updateProgress(event.data.data.adjustY);
+            } else if (event.data.type === 'iframe-mouse-up') {
                 this.endSetProgress();
             }
         },
@@ -66,12 +66,13 @@ export default {
     width: 100%;
     height: 100%;
     align-items: center;
+    justify-content: center;
     position: relative;
 }
 
 .progress-bar {
-    width: 100%;
-    height: 5px;
+    width: 5px;
+    height: 100%;
     position: relative;
     cursor: pointer;
 }
@@ -89,39 +90,33 @@ export default {
     background-color: rgb(254, 60, 90);
     border-radius: 50%;
     position: absolute;
-    top: 0;
     z-index: 2;
 }
 
 .progress-pointer {
-    width: 10px;
-    height: 10px;
+    width: 13px;
+    height: 13px;
+    left: -4px;
     background-color: #fff;
     border-radius: 50%;
     position: absolute;
-    top: -3.0px;
     z-index: 3;
-    opacity: 0;
-}
-
-.progress-bigframe:hover .progress-pointer {
-    opacity: 1;
 }
 
 .overflow-hidden {
     position: relative;
-    width: 100%;
-    top: -5px;
-    height: 5px;
+    width: 5px;
+    bottom:100%;
+    height: 100%;
     border-radius: 5px;
     overflow: hidden;
+    /* transform: translateY(-200%); */
 }
 
 .progress-track {
     position: absolute;
-    top: 0;
-    width: 120%;
-    height: 5px;
+    width: 5px;
+    height: 120%;
     background-color: #555;
     border-radius: 10px;
     z-index: 1;

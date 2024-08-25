@@ -99,13 +99,7 @@
                 <div class="time">
                     {{ this.$refs.audio ? formatDuration(this.$refs.audio.currentTime) : '00:00' }}
                 </div>
-                <div class="hover-container">
-                    <div class="progress-container" @click="seek">
-                        <div class="progress-bar" :style="{ width: progress + '%' }"></div>
-                        <div class="pointer" :style="{ left: progress - 4.321 + 3.21 + '%' }">
-                        </div>
-                    </div>
-                </div>
+                <YProgressBar v-model="progress" style="height:20px;width: 321px" @update:model-value="setAudioProgress" />
                 <div class="time">
                     {{ formatDuration(this.duration) }}
                 </div>
@@ -113,23 +107,14 @@
         </div>
         <!-- 1 右侧 -->
         <div class="align-right">
-            <YProgressBar lineLength="100" lineWidth="6" />
             <div class="buttons" style="margin-right: 10px;">
                 <img class="img" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger">
                     <div class="volume-container">
-                        <div class="volume-slider" ref="volume_position" @click="handleVolumeClick">
-                            <!-- 鼠标按下开始调整音量 -->
-                            <div class="volume-pointer" @mousedown="startSetVolume" style=""
-                                :style="{ top: 'calc(' + (1 - volume) * 100 + '%' + ' - 7px )' }">
-                            </div>
-                            <div class="volume-bar-controller">
-                            </div>
-                            <div class="volume-bar" :style="{ height: volume * 100 + '%' }">
-                            </div>
-                        </div>
+                        <YProgressBarV v-model="volume"
+                            style="height: 120px;width: 20px;position: absolute; bottom: 30px;" />
                         <div class="volume-text">
                             {{ Math.round(volume * 100) + '%' }}
                         </div>
@@ -170,6 +155,7 @@ import { mapState, mapActions } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
+import YProgressBarV from './YProgressBarV.vue';
 
 export default {
     name: 'YPlaybar',
@@ -177,6 +163,7 @@ export default {
         YSongsTable,
         YPanel,
         YProgressBar,
+        YProgressBarV,
     },
     emits: [
         'update-now-playing'
@@ -203,6 +190,11 @@ export default {
     },
     methods: {
         ...mapActions(['updateLikelist', 'updateNowPlaying']),
+        setAudioProgress(progress) {
+            if (this.$refs.audio.src && this.$refs.audio.src !== 'http://localhost:4321/') {
+                this.$refs.audio.currentTime = progress * this.$refs.audio.duration;
+            }
+        },
         // 初始化音量均衡控件
         initAudioContext() {
             if (!this.audioContext) {
@@ -245,7 +237,7 @@ export default {
         updateProgress() {
             const audio = this.$refs.audio;
             if (audio?.duration) {
-                this.progress = (audio.currentTime / audio.duration) * 100;
+                this.progress = (audio.currentTime / audio.duration);
             }
         },
         // 设置音频总时长
@@ -253,16 +245,6 @@ export default {
             const audio = this.$refs.audio;
             this.duration = audio?.duration;
             // console.log('setDuration', this.duration);
-        },
-        // 拖动进度条
-        seek(event) {
-            const audio = this.$refs.audio;
-            const rect = event.currentTarget.getBoundingClientRect();
-            const offsetX = event.clientX - rect.left;
-            const seekTime = (offsetX / rect.width) * audio?.duration;
-            if (audio?.src && audio?.src !== 'http://localhost:4321/') {
-                audio.currentTime = seekTime;
-            }
         },
         // 切换喜欢状态
         async toogleLike(status) {
@@ -468,51 +450,6 @@ export default {
             console.log('Artist ID:', artistId);
             // 在这里处理点击事件，例如跳转到艺术家的详情页面
         },
-        handleVolumeClick(event) {
-            let positionY = this.$refs.volume_position.getBoundingClientRect().top;
-            const offsetY = event.clientY - positionY;
-            this.setVolume(1 - offsetY / 120);
-        },
-        startSetVolume(event) {
-            console.log('startSetVolume');
-            let positionY = this.$refs.volume_position.getBoundingClientRect().top;
-            const offsetY = event.clientY - positionY;
-            this.setVolume(1 - offsetY / 120);
-            window.addEventListener('mousemove', this.setVolumeWhenMoving);
-            window.addEventListener('message', this.handleMessage)
-            window.addEventListener('mouseup', this.endSetVolume);
-        },
-        handleMessage(event) {
-            if (event.data.type === 'iframe-mouse-move') {
-                let positionY = this.$refs.volume_position.getBoundingClientRect().top;
-                const offsetY = event.data.data.adjustY - positionY;
-                console.log('message: ', positionY, event.data.data.adjustY)
-                this.setVolume(1 - offsetY / 120);
-            } else if (event.data.type === 'iframe-mouse-up') {
-                this.endSetVolume();
-            }
-        },
-        setVolumeWhenMoving(event) {
-            console.log('setVolumeWhenMoving');
-            let positionY = this.$refs.volume_position.getBoundingClientRect().top;
-            console.log('positionY:', positionY, event.clientY);
-            const offsetY = event.clientY - positionY;
-            this.setVolume(1 - offsetY / 120);
-        },
-        setVolume(volume) {
-            if (volume >= 0 && volume <= 1) {
-                this.volume = volume;
-                console.log('volume:', this.volume);
-                if (this.$refs.audio.src && this.$refs.audio.src !== 'http://localhost:4321/') {
-                    this.$refs.audio.volume = this.volume;
-                }
-            }
-        },
-        endSetVolume() {
-            window.removeEventListener('mousemove', this.setVolumeWhenMoving);
-            window.removeEventListener('message', this.handleMessage)
-            window.removeEventListener('mouseup', this.endSetVolume);
-        }
     },
     async mounted() {
         window.addEventListener('message', this.play)
@@ -529,9 +466,6 @@ export default {
     beforeUnmount() {
         window.removeEventListener('message', this.play);
         window.removeEventListener('message', this.updatePlaylist);
-        window.removeEventListener('message', this.handleMessage);
-        window.removeEventListener('mousemove', this.setVolumeWhenMoving);
-        window.removeEventListener('mouseup', this.endSetVolume);
     }
 }
 
@@ -649,43 +583,6 @@ export default {
     border-radius: 5px;
     padding: 10px 10px 20px 10px;
     transform: translate(-100%, calc(-100% - 20px));
-}
-
-.volume-pointer {
-    left: -3.21px;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    position: absolute;
-    background-color: #fff;
-    z-index: 4;
-}
-
-.volume-bar-controller {
-    width: 100%;
-    position: absolute;
-    z-index: 3;
-    background-color: rgba(255, 255, 255, 0.35);
-    width: 6px;
-}
-
-.volume-slider {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    justify-content: flex-end;
-    width: 6px;
-    height: 120px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 3px;
-    margin: 5px;
-}
-
-.volume-bar {
-    width: 100%;
-    background-color: rgb(254, 60, 90);
-    border-radius: 3px;
-    transition: height 0.1s;
 }
 
 .volume-text {
@@ -808,48 +705,6 @@ export default {
     color: #888;
     font-size: 12px;
     margin: 0 8px;
-}
-
-.hover-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 321px;
-    height: 20px;
-}
-
-.progress-container {
-    align-items: center;
-    width: 321px;
-    height: 5px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 5px;
-    position: relative;
-    cursor: pointer;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: rgb(254, 60, 90);
-    width: 0;
-    border-radius: 5px;
-    transition: width 0.1s;
-    /* 添加平滑过渡效果 */
-}
-
-.pointer {
-    position: absolute;
-    top: -2.5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #fff;
-    opacity: 0;
-    transition: all 0.2s ease;
-}
-
-.hover-container:hover .pointer {
-    opacity: 1;
 }
 
 .align-right {

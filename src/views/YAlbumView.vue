@@ -287,7 +287,7 @@ export default {
         playAll() {
             // 播放歌单
             console.log('playAll');
-            let playlist = preparePlaylist(this.this.playlist.tracks);
+            let playlist = preparePlaylist(this.playlist.tracks);
             window.parent.postMessage({
                 type: 'update-playlist-and-play',
                 playlist: JSON.stringify(playlist),
