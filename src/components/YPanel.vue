@@ -1,9 +1,9 @@
 <template>
-    <div v-show="showPanel" class="panel" ref="panel">
-        <slot>
-
-        </slot>
-    </div>
+    <transition name="slide-fade" v-bind:style="{ '--slide-transform': slideTransform }">
+        <div class="panel" v-show="showPanel" ref="panel">
+            <slot></slot>
+        </div>
+    </transition>
 </template>
 
 <script lang="js">
@@ -18,16 +18,28 @@ export default {
         trigger: {
             type: Element,
             default: null,
-        }
+        },
+        defaultShow: {
+            type: Boolean,
+            default: false,
+        },
+        slideDirection: {
+            type: Number,
+            default: 1,
+        },
+    },
+    computed: {
+        slideTransform() {
+            const directions = ['translateY(-20px)', 'translate(14px, -14px)', 'translateX(20px)', 'translate(14px, 14px)', 'translateY(20px)', 'translate(-14px, 14px)', 'translateX(-20px)', 'translate(-14px, -14px)'];
+            return directions[this.slideDirection - 1];
+        },
     },
     watch: {
         showPanel(val) {
             if (val) {
                 window.addEventListener('click', this.handleClickOutside);
-                window.addEventListener('message', this.handleMessage);
             } else {
                 window.removeEventListener('click', this.handleClickOutside);
-                window.removeEventListener('message', this.handleMessage);
             }
         }
     },
@@ -41,12 +53,6 @@ export default {
         closePanel() {
             this.showPanel = false;
         },
-        handleMessage(event) {
-            if (event.data.type === 'iframe-click' && this.showPanel) {
-                this.showPanel = false;
-                console.log('handleMessage and close panel',event.data);
-            }
-        },
         handleClickOutside(event) {
             console.log('handleClickOutside');
             if (this.$refs.panel && !this.$refs.panel.contains(event.target) && this.trigger && !this.trigger.contains(event.target) && this.showPanel) {
@@ -55,15 +61,34 @@ export default {
             }
         },
     },
+    mounted() {
+        if (this.defaultShow) {
+            this.showPanel = true;
+        }
+    },
     beforeUnmount() {
         window.removeEventListener('click', this.handleClickOutside);
-        window.removeEventListener('message', this.handleMessage);
     },
 }
 
 </script>
 
+
 <style scoped>
+.slide-fade-enter-active {
+    transition: all 0.15s ease-out;
+}
+
+.slide-fade-leave-active {
+    transition: all 0.15s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: var(--slide-transform);
+    opacity: 0;
+}
+
 .panel {
     display: relative;
     margin: 0;

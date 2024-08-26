@@ -41,7 +41,7 @@
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
                 </button>
                 <!-- 3 上一首按钮 -->
-                <button class="button previous-button" @click="previous" title="上一首">
+                <button class="button previous-button" @click="goTo('backwards')" title="上一首">
                     <img class="img-previous img" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
@@ -50,7 +50,7 @@
                     <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
                 <!-- 3 下一首按钮 -->
-                <button class="button next-button" @click="next" title="下一首">
+                <button class="button next-button" @click="goTo('forward')" title="下一首">
                     <img class="img-next img" src="../assets/next.svg">
                 </button>
                 <!-- 3 播放模式按钮 -->
@@ -111,7 +111,7 @@
                 <img class="img" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
-                <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger">
+                <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;" />
@@ -123,7 +123,7 @@
                 <img class="img" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
                     @click="this.$refs.playlist_panel.tooglePanel" title="播放列表" ref="playlist_panel_trigger">
-                <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger">
+                <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4">
                     <div class="playlist-container">
                         <div class="playlist-title">
                             <span>播放列表</span>
@@ -165,9 +165,6 @@ export default {
         YProgressBar,
         YProgressBarV,
     },
-    emits: [
-        'update-now-playing'
-    ],
     data() {
         return {
             playState: 'pause', // 播放状态
@@ -187,6 +184,13 @@ export default {
             likelist: state => state.likelist,
             nowPlaying: state => state.nowPlaying,
         })
+    },
+    watch:{
+        volume(value) {
+            if(this.$refs.audio.readyState) {
+                this.$refs.audio.volume = value;
+            }
+        },
     },
     methods: {
         ...mapActions(['updateLikelist', 'updateNowPlaying']),
@@ -256,21 +260,15 @@ export default {
             let result = await toogleLikeAndGetLikelist(this.playlist[this.playlistIndex].id, status);
             this.updateLikelist(result);
         },
-        // 上一首
-        previous() {
-            console.log('previous');
-        },
         // 切换播放状态
         tooglePlayState() {
-            this.playState = this.playState === 'play' ? 'pause' : 'play';
-            if (this.playState === 'play' && this.$refs.audio.src !== 'http://localhost:4321/' && this.$refs.audio.src) {
-                this.$refs.audio.play();
-            } else if (this.$refs.audio.src && this.$refs.audio.src !== 'http://localhost:4321/') {
-                this.$refs.audio.pause();
-            } else {
-                this.playState = this.playState === 'play' ? 'pause' : 'play';
+            if (!this.$refs.audio.src || !this.$refs.audio.readyState) {
                 return;
             }
+            this.playState = this.playState === 'play' ? 'pause' : 'play';
+            this.playState === 'play' ?
+                this.$refs.audio.play() :
+                this.$refs.audio.pause();
             console.log('tooglePlayState');
         },
         async onAudioEnded() {
@@ -280,7 +278,7 @@ export default {
                 this.$refs.audio.currentTime = 0;
                 this.$refs.audio.play();
             } else {
-                await this.next();
+                await this.goTo('forward');
             }
         },
         async scrobble() {
@@ -302,8 +300,9 @@ export default {
             console.log('scrobble:', result);
         },
         // 下一首
-        async next() {
-            console.log('next');
+        async goTo(direction) {
+            let forward = direction === 'forward' ? true : false;
+            console.log(forward ? 'next' : 'previous');
             // 如果没有播放列表，直接返回
             if (!this.playlist) {
                 return;
@@ -314,10 +313,11 @@ export default {
                 // 处理Index
                 if (this.playMode === 'order') {
                     // 如果播放模式是单曲循环或顺序播放
-                    this.playlistIndex = (this.playlistIndex + 1);
-                    if (this.playlistIndex >= this.playlist.length) {
+                    this.playlistIndex = forward ? (this.playlistIndex + 1) : (this.playlistIndex - 1);
+                    if (this.playlistIndex >= this.playlist.length || this.playlistIndex < 0) {
                         this.$refs.audio.src = '';
                         this.playState = 'pause';
+                        this.playlistIndex = 0;
                         return;
                     }
                 } else if (this.playMode === 'random') {
@@ -325,7 +325,7 @@ export default {
                     this.playlistIndex = Math.floor(Math.random() * this.playlist.length);
                 } else if (this.playMode === 'listloop' || this.playMode === 'loop' || this.playMode === 'listrandom') {
                     // 如果播放模式是列表循环 / 单曲循环 / 列表随机
-                    this.playlistIndex = (this.playlistIndex + 1) % this.playlist.length;
+                    this.playlistIndex = forward ? ((this.playlistIndex + 1) % this.playlist.length) : ((this.playlistIndex - 1 + this.playlist.length) % this.playlist.length);
                 }
                 // 得到指标歌曲的URL
                 if (this.playlist[this.playlistIndex]) {
@@ -390,7 +390,6 @@ export default {
                 this.setGain(this.dBToGain(gain));
                 console.log('gain_linear:', this.gainNode.gain.value);
                 this.updateNowPlaying(track.id);
-                this.$emit('update-now-playing', track.id);
             }
         },
         async getUrl(id) {
@@ -452,6 +451,7 @@ export default {
         },
     },
     async mounted() {
+        this.$refs.audio.src = '';
         window.addEventListener('message', this.play)
         window.addEventListener('message', this.updatePlaylist)
         if (this.likelist.length === 0) {
@@ -725,11 +725,9 @@ export default {
     padding: 10px;
     /* align-items: left; */
     justify-content: flex-start;
-    right: 15px;
-    bottom: 95px;
+    transform: translate3d(calc(-100% ),calc(-100% - 65px),0);
     width: 300px;
     height: calc(100vh - 230px);
-    z-index: 100;
     box-shadow: -1px -1px 10px #111;
 }
 

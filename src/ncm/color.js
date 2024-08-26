@@ -1,5 +1,10 @@
 import Color from "color";
 
+export function setBackgroundColor(color) {
+    const DOM = document.querySelector('.mainContainer');
+    DOM.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  #131319 500px, #131319 100%)`;
+}
+
 export function increaseSaturation(r, g, b,) {
     // 创建一个 Color 对象
     const color = Color.rgb(r, g, b);

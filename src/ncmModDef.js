@@ -210,6 +210,11 @@ module.exports = [
         module: require('NeteaseCloudMusicApi/module/scrobble'),
     },
     {
+        identifier: 'song_wiki_summary',
+        route: '/song/wiki/summary',
+        module: require('NeteaseCloudMusicApi/module/song_wiki_summary'),
+    },
+    {
         identifier: 'recommend_songs',
         route: '/recommend/songs',
         module: require('NeteaseCloudMusicApi/module/recommend_songs'),

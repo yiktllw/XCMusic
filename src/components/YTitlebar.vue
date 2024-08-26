@@ -11,11 +11,19 @@
         </div>
         <!-- 搜索栏 -->
         <div class="searchbar" ref="search_panel_trigger">
-            <input type="text" class="search-input" @keydown.enter="handleSearch" @input="getSearchSuggestions"
-                placeholder="搜索..." @click="this.$refs.search_panel._showPanel()" spellcheck="false" />
-            <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px">
+            <input type="text" class="search-input" @keydown.enter="handleSearch" v-model="searchInput"
+                @input="getSearchSuggestions" placeholder="搜索..." @click="this.$refs.search_panel._showPanel()"
+                spellcheck="false" ref="search_input" />
+            <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
+                :default-show="true" :slide-direction="1">
                 <div class="search-panel">
-
+                    <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
+                        <div class="search-suggestions-title">猜你想搜</div>
+                        <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
+                            :title="suggestion.keyword" @click="search(suggestion.keyword)"
+                            v-html="highlightMatching(suggestion.keyword)">
+                        </div>
+                    </div>
                 </div>
             </YPanel>
         </div>
@@ -39,14 +47,30 @@
                 <img :src="base64Image" />
             </div>
             <!-- 用户名下拉菜单 -->
-            <YPanel class="userInfoPanel" :trigger="this.$refs.user_info_menu_trigger" ref="user_info_panel">
+            <YPanel class="userInfoPanel" :trigger="this.$refs.user_info_menu_trigger" ref="user_info_panel"
+                :default-show="false" :slide-direction="1">
                 <div class="user-info-menu">
                     <div class="user-info-item follows">
-                        <div class="followings">{{ userProfile.follows }}关注</div>
-                        <div class="followers">{{ userProfile.followeds }}粉丝</div>
+                        <div class="follows-container follows-container-left">
+                            <div class="follows-number">
+                                {{ userProfile.follows }}
+                            </div>
+                            <div class="follows-text">
+                                关注
+                            </div>
+                        </div>
+                        <div class="follows-splitline" />
+                        <div class="follows-container follows-container-right">
+                            <div class="follows-number">
+                                {{ userProfile.followeds }}
+                            </div>
+                            <div class="follows-text">
+                                粉丝
+                            </div>
+                        </div>
                     </div>
                     <div class="user-info-item">我的会员</div>
-                    <div class="user-info-item">我的等级{{ userProfile.level }}</div>
+                    <div class="user-info-item">等级{{ userProfile.level }}</div>
                     <div class="user-info-item">个人信息设置</div>
                     <div class="user-info-item">退出登录</div>
                 </div>
@@ -85,27 +109,30 @@ export default {
     },
     data() {
         return {
-            userProfile: {}, // 用于存储用户信息
-            showDropdown: false, // 用于控制下拉登录菜单的显示
-            base64Image: '', // 用于存储 Base64 图片
-            userNickName: '用户昵称', // 用于存储用户昵称
-            avatarSrc: '', // 用于存储头像地址
+            userProfile: {},    // 用于存储用户信息
+            showDropdown: false,    // 用于控制下拉登录菜单的显示
+            base64Image: '',    // 用于存储 Base64 图片
+            userNickName: '用户昵称',   // 用于存储用户昵称
+            avatarSrc: '',      // 用于存储头像地址
+            searchInput: '',    // 用于存储搜索输入
+            searchSuggestions: [],  // 用于存储搜索建议
+            selectedSuggestion: 0,  // 用于存储选中的搜索建议
         };
     },
     computed: {
         ...mapState({
-            loginStatus: state => state.loginStatus, // 用于存储登录状态
+            loginStatus: state => state.loginStatus,    // 用于存储登录状态
         })
     },
     methods: {
         ...mapActions(['updateLoginStatus']),
         // 后退和前进
         back() {
-            this.$emit('navigate-back');
+            this.$router.go(-1);
             // console.log('back');
         },
         forward() {
-            this.$emit('navigate-forward');
+            this.$router.go(1);
             // console.log('forward');
         },
         // 用户信息
@@ -183,17 +210,24 @@ export default {
         },
         // 搜索
         handleSearch(event) {
-            const searchText = event.target.value;
-            console.log('search:', searchText);
+            this.search(event.target.value);
+        },
+        search(text) {
+            console.log('search:', text);
         },
         async getSearchSuggestions(event) {
             const searchText = event.target.value;
+            if (!searchText) {
+                this.searchSuggestions = [];
+                return;
+            }
             let result = await useApi('/search/suggest', {
                 keywords: searchText,
                 type: 'mobile',
             });
             if (result.code === 200) {
                 console.log('get suggestions', result);
+                this.searchSuggestions = result.result.allMatch;
             }
         },
         async init() {
@@ -212,6 +246,12 @@ export default {
                 this.userProfile.level = userProfile.level;
                 // console.log('userProfile:', this.userProfile);
             }
+        },
+        highlightMatching(keyword) {
+            if (keyword.startsWith(this.searchInput)) {
+                return `<span style="color: rgb(255, 60, 90);">${this.searchInput}</span>${keyword.slice(this.searchInput.length)}`;
+            }
+            return keyword;
         },
     },
     async mounted() {
@@ -274,6 +314,7 @@ export default {
     justify-content: center;
     flex-grow: 1;
     margin-right: 10px;
+    z-index: 10;
     margin-left: var(--sidebar-width);
 }
 
@@ -285,10 +326,42 @@ export default {
     width: 300px;
     height: calc(100vh - 300px);
     transform: translateX(calc(-100% + 35px));
-    background-color: #333;
+    background-color: rgb(44, 44, 55);
     border-radius: 5px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     top: 30px;
+}
+
+.search-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+}
+
+.search-suggestions-title {
+    color: #aaa;
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.search-suggestion {
+    width: calc(100% - 20px);
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-align: left;
+    color: #eee;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.search-suggestion:hover {
+    background-color: rgba(255, 255, 255, .1);
 }
 
 .search-input {
@@ -439,28 +512,71 @@ button:hover .tooltip {
 
 .user-info-menu {
     position: absolute;
-    top: 56px;
-    right: 175px;
-    background-color: #333;
+    width: 200px;
+    height: 300px;
+    /* top: 56px; */
+    /* right: 130px; */
+    transform: translate3d(-180px, 32.1px, 0px);
+    background-color: rgb(44, 44, 55);
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
+    user-select: none;
 }
 
 .user-info-item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    color: #fff;
+    color: #bbb;
+    font-weight: 600;
+    font-size: medium;
     padding: 5px;
     margin: 0;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.user-info-item:not(:last-child) {
-    border-bottom: 1px solid #555;
+.follows {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: unset;
+}
+
+.follows-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.follows-container-left {
+    padding: 0px 8px 5px 0px;
+}
+
+.follows-container-right {
+    padding: 0px 0px 5px 8px;
+}
+
+.follows-number {
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.follows-text {
+    font-size: 14px;
+    font-weight: bolder;
+    color: #999;
+    cursor: default;
+}
+
+.follows-splitline {
+    width: 1px;
+    height: 45px;
+    background-color: #555;
 }
 
 .img {

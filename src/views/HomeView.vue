@@ -1,20 +1,17 @@
 <template>
     <div class="mainContainer">
         <div class="leftSidebar">
-            <YSidebar @sidebar-resize="handleSidebarResize" @update-display="updateDisplayUrl"
-                :opened_playlist="opened_playlist" ref="YSidebar_ref" />
+            <YSidebar @sidebar-resize="handleSidebarResize" :opened_playlist="opened_playlist" ref="YSidebar_ref" />
         </div>
         <div class="mainContent">
-            <YTitlebar @navigate-back="triggerNavigateBack" @navigate-forward="triggerNavigateForward"
-                @user-login="userLogin" />
+            <YTitlebar />
             <div class="content">
                 <!-- Your main content goes here -->
-                <YDisplayArea class="display-area" :displayUrl="displayUrl" @newDisplayUrl="fetchNewUrl"
-                    ref="YDisplayArea" />
+                <YDisplayArea class="display-area" ref="YDisplayArea" />
             </div>
         </div>
         <div class="playbar">
-            <YPlaybar @update-now-playing="updateNowPlaying" />
+            <YPlaybar />
         </div>
     </div>
 </template>
@@ -42,34 +39,8 @@ export default {
         YDisplayArea,
         YPlaybar,
     },
-    watch: {
-        newDisplayUrl(newUrl) {
-            console.log('newUrl:', newUrl);
-            if (newUrl.startsWith('/playlist/')) {
-                let parts = newUrl.split('/playlist/');
-                let playlistId = parts[1];
-                this.opened_playlist = playlistId;
-                console.log('playlistId:', playlistId);
-            }
-        },
-    },
     methods: {
         ...mapActions(['updateSidebarWidth']),
-        triggerNavigateBack() {
-            this.$refs.YDisplayArea.navigateBack();
-            // console.log('triggerNavigateBack');
-        },
-        fetchNewUrl(newUrl) {
-            this.newDisplayUrl = newUrl;
-        },
-        triggerNavigateForward() {
-            this.$refs.YDisplayArea.navigateForward();
-            // console.log('triggerNavigateForward');
-        },
-        handleButtonClick(buttonId) {
-            // Handle button click event
-            console.log(`Button with ID ${buttonId} clicked`);
-        },
         handleSidebarResize(newWidth) {
             const mainContent = document.querySelector('.mainContent');
             if (parseInt(newWidth, 10) < 260 && parseInt(newWidth, 10) > 170) {
@@ -79,28 +50,6 @@ export default {
                 // this.display_width = window.innerWidth - parseInt(newWidth, 10);
             }
         },
-        updateDisplayUrl(url) {
-            this.displayUrl = url;
-        },
-        userLogin() {
-            // Handle user login event
-            console.log('User logged in');
-            this.$refs.YSidebar_ref.fetchUserPlaylist();
-        },
-        _updateDisplay(event) {
-            if (event.origin !== 'http://localhost:4321') {
-                return;
-            }
-            if (event.data.type === 'update-display') {
-                this.displayUrl = event.data.url;
-            }
-        },
-        updateNowPlaying(track){
-            this.$refs.YDisplayArea.$refs.myIframe.contentWindow.postMessage({
-                type: 'update-now-playing',
-                track: JSON.stringify(track)
-            });
-        }
     },
     mounted() {
         // Add your mounted hook here
@@ -112,12 +61,6 @@ export default {
 
         const titlebarHeight = 50;
         this.display_height = window.innerHeight - titlebarHeight;
-
-        window.addEventListener('message', this._updateDisplay);
-    },
-    beforeUnmount() {
-        window.removeEventListener('message', this._updateDisplay);
-        // Add your beforeUnmount hook here
     },
 };
 </script>
@@ -154,7 +97,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    width:0px;
+    width: 0px;
 }
 
 .content {

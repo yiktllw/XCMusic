@@ -39,21 +39,12 @@ export default {
         updateProgressEvent(e) {
             this.updateProgress(e.clientY);
         },
-        handleMessageForProgress(event) {
-            if (event.data.type === 'iframe-mouse-move') {
-                this.updateProgress(event.data.data.adjustY);
-            } else if (event.data.type === 'iframe-mouse-up') {
-                this.endSetProgress();
-            }
-        },
         startSetProgress() {
             window.addEventListener('mousemove', this.updateProgressEvent);
             window.addEventListener('mouseup', this.endSetProgress);
-            window.addEventListener('message', this.handleMessageForProgress);
         },
         endSetProgress() {
             window.removeEventListener('mousemove', this.updateProgressEvent);
-            window.removeEventListener('message', this.handleMessageForProgress);
         }
     }
 };

@@ -9,7 +9,7 @@
                 <div class="playlist-cover-container">
                     <!-- 4 封面图片 -->
                     <img v-show="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
-                        @load="setBackgroundColor" />
+                        @load="_setBackgroundColor" />
                     <div v-show="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                 </div>
                 <!-- 3 歌单详情 -->
@@ -108,7 +108,8 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
-                :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs" @send-playlist="sendPlaylist"  @play-song-and-playlist="playSongAndPlaylist"/>
+                :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
+                @play-song-and-playlist="playSongAndPlaylist" />
         </div>
     </div>
 </template>
@@ -117,7 +118,7 @@
 import { useApi } from '@/ncm/api';
 import YSongsTable from '@/components/YSongsTable.vue';
 import { formatDate_yyyymmdd } from '@/ncm/time';
-import { getColorFromImg } from '@/ncm/color'
+import { getColorFromImg,setBackgroundColor } from '@/ncm/color'
 import YLoading from '@/components/YLoading.vue';
 import { mapState, mapActions } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
@@ -168,12 +169,12 @@ export default {
                     type: 'new-playlist-id',
                     playlistId: newVal
                 })
-                this.isLoading=true;
+                this.isLoading = true;
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
         'playlist.coverImgUrl': function () {
-            this.setBackgroundColor();
+            this._setBackgroundColor();
         },
         searchQuery: {
             handler() {
@@ -210,6 +211,7 @@ export default {
                                 },
                             }
                         });
+                        console.log('playlist.tracks', this.playlist.tracks);
                         this.updateTracks();
                         // console.log('playlist.tracks', this.filteredTracks);
                         this.isLoading = false;
@@ -240,13 +242,10 @@ export default {
             }
         },
         // 设置背景颜色
-        async setBackgroundColor() {
+        async _setBackgroundColor() {
             let color = await getColorFromImg(this.playlist.coverImgUrl, document);
             // 设置背景颜色
-            window.postMessage({
-                type: 'set-background-color',
-                color: `rgb(${color.r}, ${color.g}, ${color.b})`
-            })
+            setBackgroundColor(color);
         },
         // 处理搜索
         handleSearch(input, fromEnter) {
@@ -342,7 +341,7 @@ export default {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100vh - 10px);
+    max-height: calc(100vh - 142px);
     max-width: 100vw;
     user-select: none;
     -webkit-user-drag: none;
@@ -420,7 +419,7 @@ export default {
 .align-up {
     display: inherit;
     flex-direction: inherit;
-    width:100%;
+    width: 100%;
     margin-top: 5px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -438,7 +437,7 @@ export default {
     text-overflow: ellipsis;
 }
 
-.artist-button{
+.artist-button {
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;

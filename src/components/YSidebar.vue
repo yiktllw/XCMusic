@@ -11,13 +11,13 @@
                 <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg"
                     style=" padding-top: 3px; " />
             </button>
-            <transition name="fade">
+            <transition name="slide-fade">
                 <div class="fade-container" v-show="showMyPlaylist">
                     <button class="playlist-button" v-for="button in buttons" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
                         <img :src="button.img" class="button-icon" />
-                        <div class="playlist-button-text" >{{ button.label }}</div>
+                        <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
             </transition>
@@ -27,10 +27,10 @@
                 <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
                     style=" padding-top: 3px; " />
             </button>
-            <transition name="fade">
+            <transition name="slide-fade">
                 <div class="fade-container" v-show="showMySubscribedPlaylist">
                     <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
-                        @click="handleButtonClick(button.id)" :title="button.label" v-show="showMySubscribedPlaylist"
+                        @click="handleButtonClick(button.id)" :title="button.label" 
                         :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
                         <img :src="button.img" class="button-icon" />
                         <div class="playlist-button-text">{{ button.label }}</div>
@@ -54,7 +54,6 @@ export default {
         })
     },
     emits: [
-        'update-display',
         'sidebar-resize'
     ],
     data() {
@@ -69,14 +68,15 @@ export default {
     },
     props: {
         opened_playlist: {
-            type: String,
-            required: true,
+            type: Number,
+            default: 0,
         },
     },
     methods: {
         handleButtonClick(buttonId) {
             const url = `/playlist/${buttonId}`;
-            this.$emit('update-display', url);
+            // this.$emit('update-display', url);
+            this.$router.push(url);
             console.log(`Button with ID ${buttonId} clicked`);
         },
         initResize() {
@@ -157,40 +157,20 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: all 0.3s ease;
-    transform-origin: top;
-    /* overflow: hidden; */
+.slide-fade-enter-active {
+    transition: all 0.15s ease-out;
 }
 
-.fade-enter {
+.slide-fade-leave-active {
+    transition: all 0.15s ease-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateY(-15px);
     opacity: 0;
-    transform: translateY(-100%);
-    /* 初始状态：向上滚动 */
-    clip-path: inset(100% 0 0 0);
 }
 
-.fade-leave-to {
-    opacity: 0;
-    transform: translateY(-100px);
-    /* 初始状态：向上滚动 */
-    clip-path: inset(100px 0 0 0);
-}
-
-.fade-enter-to {
-    opacity: 1;
-    transform: translateY(0);
-    /* 最终状态：位置恢复 */
-    clip-path: insert(0 0 0 0);
-}
-
-.fade-leave {
-    opacity: 1;
-    transform: translateY(0);
-    /* 最终状态：位置恢复 */
-    clip-path: insert(0 0 0 0);
-}
 
 .title {
     font-size: 18px;
@@ -255,6 +235,7 @@ export default {
 
 .fade-container {
     display: inherit;
+    /* position: absolute; */
     flex-direction: inherit;
 }
 
@@ -352,4 +333,5 @@ export default {
     width: 5px;
     cursor: ew-resize;
     background-color: transparent;
-}</style>
+}
+</style>

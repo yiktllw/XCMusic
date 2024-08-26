@@ -348,10 +348,7 @@ export default {
         handleAlbumClick(albumId) {
             console.log('Album ID:', albumId);
             const url = `/album/${albumId}`;
-            window.postMessage({
-                type: 'update-display',
-                url: url,
-            }, '*');
+            this.$router.push(url);
             // 在这里处理点击事件，例如跳转到专辑详情页面
         },
         // 切换标题排序状态
@@ -480,7 +477,7 @@ export default {
     display: flex;
     position: sticky;
     top: 0;
-    z-index: 1;
+    /* z-index: 1; */
     justify-content: space-between;
     /* background-color: rgba(255, 255, 255, 0.8); */
     /* 设置一个半透明的背景 */
@@ -520,7 +517,7 @@ export default {
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 10;
+    /* z-index: 10; */
     /* 确保它位于其他内容之上 */
 }
 

@@ -9,7 +9,7 @@
                 <div class="playlist-cover-container">
                     <!-- 4 封面图片 -->
                     <img v-show="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
-                        @load="setBackgroundColor" />
+                        @load="_setBackgroundColor" />
                     <div v-show="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                     <!-- 4 渐变层 -->
                     <div class="gradient-overlay"></div>
@@ -116,7 +116,8 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
-                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
+                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
+                @play-song-and-playlist="playSongAndPlaylist" />
             <!-- 2 分页 -->
             <div v-if="totalPages > 1" class="pagination">
                 <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
@@ -133,7 +134,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
-import { getColorFromImg } from '@/ncm/color'
+import { getColorFromImg,setBackgroundColor } from '@/ncm/color'
 import { mapState, mapActions } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
 
@@ -186,12 +187,12 @@ export default {
                     type: 'new-playlist-id',
                     playlistId: newVal
                 })
-                this.isLoading=true;
+                this.isLoading = true;
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
         'playlist.coverImgUrl': function () {
-            this.setBackgroundColor();
+            this._setBackgroundColor();
         },
         searchQuery: {
             handler() {
@@ -296,13 +297,11 @@ export default {
             console.log(this.currentPage);
         },
         // 设置背景颜色
-        async setBackgroundColor() {
+        async _setBackgroundColor() {
             let color = await getColorFromImg(this.playlist.coverImgUrl, document);
             // 设置背景颜色
-            window.postMessage({
-                type: 'set-background-color',
-                color: `rgb(${color.r}, ${color.g}, ${color.b})`
-            })
+            setBackgroundColor(color);
+
         },
         // 处理搜索
         handleSearch(input, fromEnter) {
@@ -407,7 +406,7 @@ export default {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100vh - 10px);
+    max-height: calc(100vh - 142px);
     /* max-width: 100vw; */
     /* width: 100px; */
     user-select: none;
