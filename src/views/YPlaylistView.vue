@@ -182,10 +182,11 @@ export default {
             immediate: true,
             handler(newVal) {
                 this.fetchPlaylist(newVal);
-                window.parent.postMessage({
+                window.postMessage({
                     type: 'new-playlist-id',
                     playlistId: newVal
                 })
+                this.isLoading=true;
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
@@ -298,7 +299,7 @@ export default {
         async setBackgroundColor() {
             let color = await getColorFromImg(this.playlist.coverImgUrl, document);
             // 设置背景颜色
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'set-background-color',
                 color: `rgb(${color.r}, ${color.g}, ${color.b})`
             })
@@ -349,7 +350,7 @@ export default {
             console.log('playAll');
             let playlist = preparePlaylist(this.playlist.tracks);
             await this.scrobble();
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'update-playlist-and-play',
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
@@ -358,7 +359,7 @@ export default {
         playSongs(track) {
             // 播放歌曲
             console.log('playSongs');
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'play-songs',
                 track: track,
                 playlistId: this.playlistId,
@@ -369,7 +370,7 @@ export default {
             let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
             await this.scrobble();
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'update-playlist',
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
@@ -379,7 +380,7 @@ export default {
             // 播放歌曲并发送歌单
             console.log('playSongAndPlaylist');
             let playlist = preparePlaylist(this.playlist.tracks);
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'play-song-and-playlist',
                 track: track,
                 playlist: JSON.stringify(playlist),
@@ -407,7 +408,8 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: calc(100vh - 10px);
-    max-width: 100vw;
+    /* max-width: 100vw; */
+    /* width: 100px; */
     user-select: none;
     -webkit-user-drag: none;
 }

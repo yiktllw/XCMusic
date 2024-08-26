@@ -347,8 +347,8 @@ export default {
         // 处理专辑点击
         handleAlbumClick(albumId) {
             console.log('Album ID:', albumId);
-            const url = `http://localhost:4321/album/${albumId}`;
-            window.parent.postMessage({
+            const url = `/album/${albumId}`;
+            window.postMessage({
                 type: 'update-display',
                 url: url,
             }, '*');

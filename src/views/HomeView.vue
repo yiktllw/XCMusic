@@ -45,8 +45,8 @@ export default {
     watch: {
         newDisplayUrl(newUrl) {
             console.log('newUrl:', newUrl);
-            if (newUrl.startsWith('http://localhost:4321/playlist/')) {
-                let parts = newUrl.split('playlist/');
+            if (newUrl.startsWith('/playlist/')) {
+                let parts = newUrl.split('/playlist/');
                 let playlistId = parts[1];
                 this.opened_playlist = playlistId;
                 console.log('playlistId:', playlistId);
@@ -75,8 +75,8 @@ export default {
             if (parseInt(newWidth, 10) < 260 && parseInt(newWidth, 10) > 170) {
                 mainContent.style.marginLeft = newWidth;
                 mainContent.style.maxWidth = `calc(100% - ${newWidth}px)`;
-                this.updateSidebarWidth('resized', newWidth);
-                this.display_width = window.innerWidth - parseInt(newWidth, 10);
+                // this.updateSidebarWidth(newWidth);
+                // this.display_width = window.innerWidth - parseInt(newWidth, 10);
             }
         },
         updateDisplayUrl(url) {
@@ -104,7 +104,7 @@ export default {
     },
     mounted() {
         // Add your mounted hook here
-        this.displayUrl = 'http://localhost:4321/greeting';
+        // this.displayUrl = '/greeting';
 
         const sidebar = this.$refs.YSidebar_ref;
         const sidebarWidth = sidebar.offsetWidth;
@@ -154,6 +154,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
+    width:0px;
 }
 
 .content {

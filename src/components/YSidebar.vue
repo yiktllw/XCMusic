@@ -75,7 +75,7 @@ export default {
     },
     methods: {
         handleButtonClick(buttonId) {
-            const url = `http://localhost:4321/playlist/${buttonId}`;
+            const url = `/playlist/${buttonId}`;
             this.$emit('update-display', url);
             console.log(`Button with ID ${buttonId} clicked`);
         },
