@@ -41,6 +41,15 @@ const routes = [
                     playlistId: Number(route.params.id),
                 })
             },
+            {
+                path: 'search/:search/:position',
+                name: 'Search',
+                component: () => import(/* webpackChunkName: "about" */ '../views/YSearchView.vue'),
+                props: route => ({
+                    search: route.params.search,
+                    position: route.params.position,
+                })
+            }
         ],
     },
 ]

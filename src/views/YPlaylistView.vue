@@ -354,8 +354,9 @@ export default {
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
+            await this.updatePlayCount();
         },
-        playSongs(track) {
+        async playSongs(track) {
             // 播放歌曲
             console.log('playSongs');
             window.postMessage({
@@ -363,6 +364,7 @@ export default {
                 track: track,
                 playlistId: this.playlistId,
             });
+            await this.updatePlayCount();
         },
         async sendPlaylist() {
             // 发送歌单
@@ -374,8 +376,9 @@ export default {
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
+            await this.updatePlayCount();
         },
-        playSongAndPlaylist(track) {
+        async playSongAndPlaylist(track) {
             // 播放歌曲并发送歌单
             console.log('playSongAndPlaylist');
             let playlist = preparePlaylist(this.playlist.tracks);
@@ -385,6 +388,7 @@ export default {
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
+            await this.updatePlayCount();
         },
         async scrobble() {
             let result = await useApi('/scrobble', {
@@ -392,6 +396,12 @@ export default {
                 cookie: localStorage.getItem('login_cookie')
             });
             console.log('scrobble:', result);
+        },
+        async updatePlayCount(){
+            let result = await useApi('/playlist/update/playcount',{
+                id: this.playlistId,
+            });
+            console.log('updatePlayCount:', result);
         }
     },
 }
@@ -401,7 +411,7 @@ export default {
 /* 0 滚动容器 */
 .scrollable {
     display: flex;
-    padding-left: 15pt;
+    /* padding-left: 15pt; */
     padding-right: 15pt;
     flex-direction: column;
     overflow-y: auto;

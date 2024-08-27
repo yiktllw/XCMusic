@@ -235,6 +235,11 @@ module.exports = [
         module: require('NeteaseCloudMusicApi/module/playlist_video_recent'),
     },
     {
+        identifier: 'playlist_update_playcount',
+        route: '/playlist/update/playcount',
+        module: require('NeteaseCloudMusicApi/module/playlist_update_playcount'),
+    },
+    {
         identifier: 'playlist_update',
         route: '/playlist/update',
         module: require('NeteaseCloudMusicApi/module/playlist_update'),

@@ -64,7 +64,7 @@
                         title="列表随机" style="opacity: 1;">
                     <img v-show="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
-                <YPanel ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger">
+                <YPanel ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger" :slide-direction="5">
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
@@ -185,9 +185,9 @@ export default {
             nowPlaying: state => state.nowPlaying,
         })
     },
-    watch:{
+    watch: {
         volume(value) {
-            if(this.$refs.audio.readyState) {
+            if (this.$refs.audio.readyState) {
                 this.$refs.audio.volume = value;
             }
         },
@@ -372,14 +372,16 @@ export default {
             this.playTrack(track);
         },
         async playTrack(track) {
-            let result = await this.getUrl(track.id);
-            let url = result.url;
-            let gain = result.gain;
-            console.log('gain_db:', gain);
-
             // 找到 track.id 对应的 playlist 项的 index
             let trackIndex = this.playlist.findIndex(_track => _track.id === track.id);
-            if (trackIndex !== -1) {
+            if (trackIndex === -1) {
+                this.addTrackToPlaylist(track);
+            } else {
+                let result = await this.getUrl(track.id);
+                let url = result.url;
+                let gain = result.gain;
+                console.log('gain_db:', gain);
+
                 this.playlist[trackIndex].url = url;
                 this.playlistIndex = trackIndex; // 更新 playlistIndex
                 this.playState = 'play';
@@ -391,6 +393,10 @@ export default {
                 console.log('gain_linear:', this.gainNode.gain.value);
                 this.updateNowPlaying(track.id);
             }
+        },
+        addTrackToPlaylist(track) {
+            this.playlist.splice(this.playlistIndex + 1, 0, track);
+            this.playTrack(track);
         },
         async getUrl(id) {
             let result = await useApi('/song/url/v1', {
@@ -440,7 +446,11 @@ export default {
                         }
                     } else if (this.playMode === 'listrandom') {
                         this.playlist = this.playlist.sort(() => Math.random() - 0.5);
-                        await this.playTrack(this.playlist[0]);
+                        if (track) {
+                            await this.playTrack(track);
+                        } else {
+                            await this.playTrack(this.playlist[0]);
+                        }
                     }
                 }
             }
@@ -725,7 +735,7 @@ export default {
     padding: 10px;
     /* align-items: left; */
     justify-content: flex-start;
-    transform: translate3d(calc(-100% ),calc(-100% - 65px),0);
+    transform: translate3d(calc(-100%), calc(-100% - 65px), 0);
     width: 300px;
     height: calc(100vh - 230px);
     box-shadow: -1px -1px 10px #111;

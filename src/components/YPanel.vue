@@ -90,7 +90,7 @@ export default {
 }
 
 .panel {
-    display: relative;
+    position: relative;
     margin: 0;
     padding: 0;
     background-color: transparent;

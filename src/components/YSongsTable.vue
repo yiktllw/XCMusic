@@ -85,7 +85,11 @@
                         <div class="track-name" ref="track_name_ref"
                             :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
                             :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
-                                track.name + (track.tns ? (' (' + track.tns + ')') : '') }}</div>
+                                track.name +
+                                (track.tns ?
+                                    (' (' + track.tns + ')') :
+                                    '')
+                            }}</div>
                         <!-- 6 歌手名称 -->
                         <div class="track-artist" v-show="showTrackArtist">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
@@ -477,7 +481,7 @@ export default {
     display: flex;
     position: sticky;
     top: 0;
-    /* z-index: 1; */
+    z-index: 1;
     justify-content: space-between;
     /* background-color: rgba(255, 255, 255, 0.8); */
     /* 设置一个半透明的背景 */
@@ -564,7 +568,7 @@ export default {
     text-align: left;
     width: 100%;
     border-radius: 5px;
-    transition: all 0.3s;
+    /* transition: all 0.3s; */
 }
 
 /* 5 排序按钮悬停样式 */
@@ -585,7 +589,7 @@ export default {
     background-color: transparent;
     border: none;
     opacity: 0;
-    transition: all 0.3s;
+    /* transition: all 0.3s; */
 }
 
 /* 6 排序内容悬停样式 */
@@ -622,7 +626,7 @@ li {
     margin: 0px;
     padding: 7px 0px 7px 0px;
     border-radius: 10px;
-    transition: all 0.3s;
+    /* transition: all 0.3s; */
 }
 
 /* 3 歌曲列表内容悬停样式 */

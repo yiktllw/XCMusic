@@ -43,12 +43,10 @@ export default {
         ...mapActions(['updateSidebarWidth']),
         handleSidebarResize(newWidth) {
             const mainContent = document.querySelector('.mainContent');
-            if (parseInt(newWidth, 10) < 260 && parseInt(newWidth, 10) > 170) {
-                mainContent.style.marginLeft = newWidth;
-                mainContent.style.maxWidth = `calc(100% - ${newWidth}px)`;
-                // this.updateSidebarWidth(newWidth);
-                // this.display_width = window.innerWidth - parseInt(newWidth, 10);
-            }
+            mainContent.style.marginLeft = `calc(${newWidth} + 20px)`;
+            mainContent.style.maxWidth = `calc(100% - ${newWidth}px)`;
+            // this.updateSidebarWidth(newWidth);
+            // this.display_width = window.innerWidth - parseInt(newWidth, 10);
         },
     },
     mounted() {

@@ -336,7 +336,7 @@ export default {
 /* 0 滚动容器 */
 .scrollable {
     display: flex;
-    padding-left: 15pt;
+    /* padding-left: 15pt; */
     padding-right: 15pt;
     flex-direction: column;
     overflow-y: auto;

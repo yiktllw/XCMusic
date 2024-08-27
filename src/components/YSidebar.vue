@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar y_sidebar_component">
+    <div class="sidebar y_sidebar_component" ref="sidebar_component">
         <div class="title">
             <img src="@/assets/logo.svg" alt="Logo"
                 style="height: 28px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
@@ -30,7 +30,7 @@
             <transition name="slide-fade">
                 <div class="fade-container" v-show="showMySubscribedPlaylist">
                     <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
-                        @click="handleButtonClick(button.id)" :title="button.label" 
+                        @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
                         <img :src="button.img" class="button-icon" />
                         <div class="playlist-button-text">{{ button.label }}</div>
@@ -44,7 +44,7 @@
 
 <script lang="js">
 import { useApi } from '@/ncm/api';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'YSidebar',
@@ -73,6 +73,7 @@ export default {
         },
     },
     methods: {
+        ...mapActions(['updateNowPlaying']),
         handleButtonClick(buttonId) {
             const url = `/playlist/${buttonId}`;
             // this.$emit('update-display', url);
@@ -84,8 +85,11 @@ export default {
             window.addEventListener('mouseup', this.stopResize);
         },
         resize(e) {
-            const sidebar = document.querySelector('.sidebar.y_sidebar_component');
+            const sidebar = this.$refs.sidebar_component
             const newWidth = e.clientX + 'px';
+            if (parseInt(newWidth) < 180 || parseInt(newWidth) > 260) {
+                return;
+            }
             sidebar.style.width = newWidth;
             // Emit the new width to the parent component
             this.$emit('sidebar-resize', newWidth);
@@ -151,8 +155,8 @@ export default {
             if (newVal === true) {
                 this.fetchUserPlaylist();
             }
-        }
-    }
+        },
+    },
 };
 </script>
 

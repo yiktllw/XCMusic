@@ -45,11 +45,11 @@ async function createWindow() {
         createLoginWindow(win);
     })
 
-    win.on('resize', () => {
-        // const [width, height] = win.getSize();
-        // Store.set('windowSize', { width, height });
-        // console.log('resize', width, height);
-    });
+    // win.on('resize', () => {
+    // const [width, height] = win.getSize();
+    // Store.set('windowSize', { width, height });
+    // console.log('resize', width, height);
+    // });
 
 
     // 监听窗口大小变化事件

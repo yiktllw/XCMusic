@@ -15,7 +15,7 @@
                 @input="getSearchSuggestions" placeholder="搜索..." @click="this.$refs.search_panel._showPanel()"
                 spellcheck="false" ref="search_input" />
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
-                :default-show="true" :slide-direction="1">
+                :default-show="false" :slide-direction="1">
                 <div class="search-panel">
                     <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
                         <div class="search-suggestions-title">猜你想搜</div>
@@ -23,6 +23,13 @@
                             :title="suggestion.keyword" @click="search(suggestion.keyword)"
                             v-html="highlightMatching(suggestion.keyword)">
                         </div>
+                    </div>
+                    <div class="search-suggestions" v-else>
+                        <div class="search-suggestions-title">热搜榜
+                        </div>
+                        <div class="search-suggestion" v-for="(hotSearch) in hotSearches" :key="hotSearch"
+                            :title="hotSearch.first" @click="search(hotSearch.first)"
+                            v-html="highlightMatching(hotSearch.first)" />
                     </div>
                 </div>
             </YPanel>
@@ -116,6 +123,7 @@ export default {
             avatarSrc: '',      // 用于存储头像地址
             searchInput: '',    // 用于存储搜索输入
             searchSuggestions: [],  // 用于存储搜索建议
+            hotSearches: [],    // 用于存储热搜榜
             selectedSuggestion: 0,  // 用于存储选中的搜索建议
         };
     },
@@ -214,6 +222,8 @@ export default {
         },
         search(text) {
             console.log('search:', text);
+            this.$router.push({ path: `/search/${text}/song` });
+            this.$refs.search_panel.closePanel();
         },
         async getSearchSuggestions(event) {
             const searchText = event.target.value;
@@ -253,10 +263,17 @@ export default {
             }
             return keyword;
         },
+        async getHotSearches() {
+            // 获取热搜榜
+            let result = await useApi('/search/hot/detail', {});
+            console.log('get hot searches', result.result.hots);
+            this.hotSearches = result.result.hots;
+        }
     },
     async mounted() {
         // 添加外部点击处理器
         await this.init();
+        await this.getHotSearches();
     },
     beforeUnmount() {
         // 移除外部点击处理器
@@ -323,13 +340,43 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    width: 300px;
-    height: calc(100vh - 300px);
-    transform: translateX(calc(-100% + 35px));
+    width: 250px;
+    height: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    transform: translateX(calc(-100% + 15px));
     background-color: rgb(44, 44, 55);
     border-radius: 5px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     top: 30px;
+}
+
+.search-panel::-webkit-scrollbar {
+    /* 滚动条宽度 */
+    width: 6px;
+}
+
+.search-panel::-webkit-scrollbar-track {
+    /* 滚动条轨道背景 */
+    background: transparent;
+}
+
+.search-panel::-webkit-scrollbar-thumb {
+    /* 滚动条滑块背景 */
+    background: transparent;
+    /* 滚动条滑块圆角 */
+    border-radius: 6px;
+}
+
+/* 鼠标悬停时显示滚动条 */
+.search-panel:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* 滚动条滑块背景 */
+}
+
+.search-panel:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* 滚动条滑块悬停背景 */
 }
 
 .search-suggestions {
