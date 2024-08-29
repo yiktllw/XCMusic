@@ -96,6 +96,7 @@ export default {
     left: 0;
     right: 0;
     width: 0px;
+    margin-right:5px;
 }
 
 .content {
