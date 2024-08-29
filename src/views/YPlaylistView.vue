@@ -12,20 +12,21 @@
                         @load="_setBackgroundColor" />
                     <div v-show="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                     <!-- 4 渐变层 -->
-                    <div class="gradient-overlay"></div>
+                    <div class="gradient-overlay" v-if="type === 'playlist'"></div>
                     <!-- 4 播放次数 -->
-                    <div class="play-info">
+                    <div class="play-info" v-if="type === 'playlist'">
                         <img src="../assets/play.svg" class="play-icon" />
                         <span class="play-count">{{ playlist.playCount }}</span>
                     </div>
                 </div>
                 <!-- 3 歌单详情 -->
                 <div class="playlist-details" v-show="playlist.name">
-                    <div class="align-up">
+                    <div class="align-up" :class="type === 'playlist' ? '' : 'align-up-album'">
                         <!-- 4 歌单名称 -->
-                        <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name }}</h1>
+                        <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name + (playlist.transName ?
+                            playlist.transName : '') }}</h1>
                         <!-- 4 创建信息 -->
-                        <div class="createrInfo">
+                        <div class="createrInfo" v-if="type === 'playlist'">
                             <!-- 5 创建者头像 -->
                             <img v-show="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl"
                                 class="createrAvatar" />
@@ -41,6 +42,23 @@
                             <!-- 5 创建时间 -->
                             <span class="create-time">
                                 {{ playlist.createTime }}创建
+                            </span>
+                        </div>
+                        <!-- 4 创建信息 -->
+                        <div class="album-artist" v-else>
+                            <span v-for="(artist, index) in playlist.artists" :key="artist.id">
+                                <!-- 5 歌手按钮 -->
+                                <span @click="handleArtistClick(artist.id)" class="artist-button"
+                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                    {{ artist.name }}
+                                </span>
+                                <span v-if="index < playlist.artists.length - 1"> /&nbsp; </span>
+                            </span>
+                        </div>
+                        <div class="createrInfo" v-if="type === 'album'">
+                            <!-- 5 创建时间 -->
+                            <span class="create-time-album">
+                                {{ playlist.createTime }}&nbsp;发布
                             </span>
                         </div>
                     </div>
@@ -115,11 +133,14 @@
             <!-- 2 加载中动画 -->
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
-            <YSongsTable v-if="!isLoading" v-show="orient === 'songs'" :tracks="this.filteredTracks" :likelist="likelist"
-                :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
+            <YSongsTable v-if="!isLoading && type === 'playlist'" v-show="orient === 'songs'" :tracks="this.filteredTracks"
+                :likelist="likelist" :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" />
+            <YSongsTable v-if="!isLoading && type === 'album'" v-show="orient === 'songs'" :tracks="this.filteredTracks"
+                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs"
+                @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
             <!-- 2 分页 -->
-            <div v-if="totalPages > 1" class="pagination">
+            <div v-if="totalPages > 1 && type === 'playlist'" class="pagination">
                 <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
                     <span :class="{ 'choosed-text': currentPage === page }" style="font-size: medium;">{{ page }}</span>
                     <div class="choosed" v-show="currentPage === page"></div>
@@ -134,7 +155,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
-import { getColorFromImg,setBackgroundColor } from '@/ncm/color'
+import { getColorFromImg, setBackgroundColor } from '@/ncm/color'
 import { mapState, mapActions } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
 
@@ -150,6 +171,10 @@ export default {
             type: Number,
             required: true
         },
+        type: {
+            type: String,
+            default: 'playlist'
+        },
     },
     computed: {
         ...mapState({
@@ -160,7 +185,9 @@ export default {
         return {
             playlist: {
                 name: '',           // 歌单名称
+                transName: '',      // 歌单翻译名称
                 coverImgUrl: '',    // 封面图片 URL
+                artists: [],        // 歌单歌手
                 playCount: 0,       // 播放次数
                 createTime: '',     // 创建时间
                 createrId: 0,       // 创建者 ID
@@ -212,47 +239,93 @@ export default {
         ...mapActions(['updateLikelist']),
         async fetchPlaylist(id) {
             try {
-                const requests = [
-                    useApi(`/playlist/detail?id=${id}`).then(response => {
-                        this.playlist.name = response.playlist.name;
-                        this.playlist.coverImgUrl = response.playlist.coverImgUrl;
-                        this.playlist.playCount = response.playlist.playCount;
-                        this.playlist.createTime = formatDate_yyyymmdd(response.playlist.createTime);
-                        this.playlist.createrId = response.playlist.userId;
-                        this.playlist.createrName = response.playlist.creator.nickname;
-                        this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
-                        this.playlist.trackCount = response.playlist.trackCount;
-                        this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
-                        return response;
-                    }),
-                    localStorage.getItem('login_uid')
-                        ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
-                            if (myFavoriteId.playlist[0].id == id) {
-                                this.playlist.name = '我喜欢的音乐';
-                            }
-                            return myFavoriteId;
+                let requests = [];
+                if (this.type === 'playlist') {
+                    requests = [
+                        useApi(`/playlist/detail?id=${id}`).then(response => {
+                            this.playlist.name = response.playlist.name;
+                            this.playlist.transName = '';
+                            this.playlist.coverImgUrl = response.playlist.coverImgUrl;
+                            this.playlist.playCount = response.playlist.playCount;
+                            this.playlist.createTime = formatDate_yyyymmdd(response.playlist.createTime);
+                            this.playlist.createrId = response.playlist.userId;
+                            this.playlist.createrName = response.playlist.creator.nickname;
+                            this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
+                            this.playlist.trackCount = response.playlist.trackCount;
+                            this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
+                            return response;
+                        }),
+                        localStorage.getItem('login_uid')
+                            ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                                if (myFavoriteId.playlist[0].id == id) {
+                                    this.playlist.name = '我喜欢的音乐';
+                                }
+                                return myFavoriteId;
+                            })
+                            : null,
+                        localStorage.getItem('login_uid')
+                            ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
+                                this.updateLikelist(getLikelist.ids);
+                                console.log('update likelist from YPlayilst.vue');
+                                return getLikelist;
+                            })
+                            : null,
+                        this.fetchTracks(id, 1).then(getTracks => {
+                            this.playlist.tracks = getTracks;
+                            this.updateTracks();
+                            this.isLoading = false;
+                            return getTracks;
                         })
-                        : null,
-                    localStorage.getItem('login_uid')
-                        ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
-                            this.updateLikelist(getLikelist.ids);
-                            console.log('update likelist from YPlayilst.vue');
-                            return getLikelist;
-                        })
-                        : null,
-                    this.fetchTracks(id, 1).then(getTracks => {
-                        this.playlist.tracks = getTracks;
-                        this.updateTracks();
-                        this.isLoading = false;
-                        return getTracks;
-                    })
-                ];
+                    ];
+                } else {
+                    requests = [
+                        useApi(`/album?id=${id}`).then(response => {
+                            this.playlist.name = response.album.name;
+                            this.playlist.transName = response.album.transNames ? (' (' + response.album.transNames + ')') : '';
+                            this.playlist.coverImgUrl = response.album.picUrl;
+                            this.playlist.createTime = formatDate_yyyymmdd(response.album.publishTime);
+                            this.playlist.artists = response.album.artists;
+                            this.playlist.trackCount = response.album.size;
+                            this.playlist.tracks = response.songs.map(track => {
+                                return {
+                                    ...track,
+                                    al: {
+                                        id: track.al.id,
+                                        name: track.al.name,
+                                        picUrl: response.album.picUrl,
+                                        tns: track.al.tns,
+                                    },
+                                }
+                            });
+                            // console.log('playlist.tracks', this.playlist.tracks);
+                            this.updateTracks();
+                            // console.log('playlist.tracks', this.filteredTracks);
+                            this.isLoading = false;
+                            return response;
+                        }),
+                        localStorage.getItem('login_uid')
+                            ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                                if (myFavoriteId.playlist[0].id == id) {
+                                    this.playlist.name = '我喜欢的音乐';
+                                }
+                                return myFavoriteId;
+                            })
+                            : null,
+                        localStorage.getItem('login_uid')
+                            ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
+                                this.updateLikelist(getLikelist.ids);
+                                console.log('update likelist from YAlbumView.vue');
+                                return getLikelist;
+                            })
+                            : null,
+                    ];
+                }
 
                 // 使用Promise.allSettled来处理可能出现的null值（避免报错）
                 await Promise.allSettled(requests);
 
                 // 处理fetchTracks获取的多个页面的track
-                if (this.totalPages > 1) {
+                if (this.totalPages > 1 && this.type === 'playlist') {
                     const promises = [];
 
                     for (let i = 2; i <= this.totalPages; i++) {
@@ -262,7 +335,7 @@ export default {
                     const addedTracksArray = await Promise.all(promises);
 
                     this.playlist.tracks = this.playlist.tracks.concat(...addedTracksArray);
-                    console.log('filteredTracks: ', this.filteredTracks);
+                    // console.log('filteredTracks: ', this.filteredTracks);
                     this.updateTracks();
                 }
             } catch (error) {
@@ -280,7 +353,8 @@ export default {
                 // 加入新的属性 originalIndex，用于排序
                 let result = getTracks.songs.map((track, index) => ({
                     ...track,
-                    originalIndex: index
+                    originalIndex: index,
+                    _picUrl: track.al.picUrl + '?param=40y40',
                 }));
                 return result;
             } catch (error) {
@@ -316,9 +390,12 @@ export default {
         // 更新歌曲列表 搜索过滤
         updateTracks() {
             // console.log('step1')
-            if (!this.searchQuery) {
+            if (!this.searchQuery && this.type === 'playlist') {
                 this.filteredTracks = this.playlist.tracks.slice((this.currentPage - 1) * 1000, this.currentPage * 1000);
                 // console.log('filter Tracks from step1', this.filteredTracks, 'currentPage:', this.currentPage);
+                return;
+            } else if (!this.searchQuery && this.type === 'album') {
+                this.filteredTracks = this.playlist.tracks;
                 return;
             }
             // console.log('step2')
@@ -348,13 +425,15 @@ export default {
             // 播放歌单
             console.log('playAll');
             let playlist = preparePlaylist(this.playlist.tracks);
-            await this.scrobble();
             window.postMessage({
                 type: 'update-playlist-and-play',
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
-            await this.updatePlayCount();
+            if (this.type === 'playlist') {
+                await this.scrobble();
+                await this.updatePlayCount();
+            }
         },
         async playSongs(track) {
             // 播放歌曲
@@ -364,19 +443,23 @@ export default {
                 track: track,
                 playlistId: this.playlistId,
             });
-            await this.updatePlayCount();
+            if (this.type === 'playlist') {
+                await this.updatePlayCount();
+            }
         },
         async sendPlaylist() {
             // 发送歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
-            await this.scrobble();
             window.postMessage({
                 type: 'update-playlist',
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
-            await this.updatePlayCount();
+            if (this.type === 'playlist') {
+                await this.scrobble();
+                await this.updatePlayCount();
+            }
         },
         async playSongAndPlaylist(track) {
             // 播放歌曲并发送歌单
@@ -388,7 +471,10 @@ export default {
                 playlist: JSON.stringify(playlist),
                 playlistId: this.playlistId,
             });
-            await this.updatePlayCount();
+            if (this.type === 'playlist') {
+                await this.scrobble();
+                await this.updatePlayCount();
+            }
         },
         async scrobble() {
             let result = await useApi('/scrobble', {
@@ -397,13 +483,24 @@ export default {
             });
             console.log('scrobble:', result);
         },
-        async updatePlayCount(){
-            let result = await useApi('/playlist/update/playcount',{
+        async updatePlayCount() {
+            let result = await useApi('/playlist/update/playcount', {
                 id: this.playlistId,
             });
             console.log('updatePlayCount:', result);
-        }
+        },
+        handleArtistClick(artistId) {
+            // 处理歌手点击
+            console.log('artistId:', artistId);
+        },
     },
+    beforeUnmount() {
+        // 组件销毁时发送消息
+        window.postMessage({
+            type: 'new-playlist-id',
+            playlistId: 0,
+        });
+    }
 }
 </script>
 
@@ -536,6 +633,33 @@ export default {
     margin-top: 5px;
 }
 
+.align-up-album {
+    width: 100%;
+    margin-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.album-artist {
+    display: flex;
+    color: #eee;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist-button {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
 .align-down {
     display: inherit;
     flex-direction: inherit;
@@ -553,6 +677,11 @@ h1 {
 .createrInfo {
     display: inline-flex;
     align-items: center;
+}
+
+.create-time-album {
+    color: #bbb;
+    font-size: 14px;
 }
 
 /* 5 创建者头像 */
