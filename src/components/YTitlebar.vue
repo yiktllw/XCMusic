@@ -222,7 +222,7 @@ export default {
         },
         search(text) {
             console.log('search:', text);
-            this.$router.push({ path: `/search/${text}/song` });
+            this.$router.push({ path: `/search/${text}/default` });
             this.$refs.search_panel.closePanel();
         },
         async getSearchSuggestions(event) {
@@ -298,7 +298,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 15px 10px 10px;
+    padding: 15px 10px 10px 10px;
     background-color: transparent;
     color: #fff;
     -webkit-app-region: drag;
@@ -634,8 +634,8 @@ button:hover .tooltip {
 }
 
 .img.settings {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     margin-right: 10px;
 }
 

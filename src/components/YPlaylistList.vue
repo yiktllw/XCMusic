@@ -1,7 +1,7 @@
 <template>
     <div class="table-container">
         <!-- 3 表头 -->
-        <div class="table-header">
+        <div class="table-header" :style="{ top: stickyTop }">
             <!-- 4 歌单序号-表头 -->
             <div class="playlists-counter">
                 <div class="header-button header-counter">
@@ -42,8 +42,7 @@
                 </div>
                 <!-- 5 歌单标题 -->
                 <div class="playlists-name" :title="playlist.name">
-                    <img :src="type === 'playlist' ? playlist.coverImgUrl : playlist.blurPicUrl"
-                        style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
+                    <img :src="playlist._picUrl" style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
                     <span class="playlists-name-text">{{ playlist.name }}</span>
                 </div>
                 <!-- 5 歌曲数 -->
@@ -51,7 +50,8 @@
                     <span>{{ type === 'playlist' ? playlist.trackCount : playlist.size }}首</span>
                 </div>
                 <!-- 5 作者 -->
-                <div class="playlists-author" @click="openUserPage(type === 'playlist' ? playlist.creator.userId : playlist.artist.id)"
+                <div class="playlists-author"
+                    @click="openUserPage(type === 'playlist' ? playlist.creator.userId : playlist.artist.id)"
                     :title="type === 'playlist' ? playlist.creator.nickname : playlist.artist.name">
                     <span>{{ type === 'playlist' ? playlist.creator.nickname : playlist.artist.name }}</span>
                 </div>
@@ -65,6 +65,7 @@
 </template>
 
 <script lang="js">
+import { formatDate_yyyymmdd } from '@/ncm/time';
 export default {
     name: 'YPlaylistList',
     props: {
@@ -75,6 +76,10 @@ export default {
         type: {
             type: String,
             default: 'playlist',
+        },
+        stickyTop: {
+            type: String,
+            default: '0px',
         },
     },
     methods: {
@@ -90,7 +95,7 @@ export default {
             return count > 10000 ? `${(count / 10000).toFixed(1)}万` : count;
         },
         formatedTime(time) {
-            return new Date(time).toLocaleDateString();
+            return formatDate_yyyymmdd(time);
         },
     },
 }
@@ -139,7 +144,7 @@ export default {
     margin-right: 10px;
 }
 
-.playlists-name-text{
+.playlists-name-text {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -176,6 +181,7 @@ export default {
     font-size: 13px;
     padding-bottom: 5px;
     margin-bottom: 5px;
+    padding-left: 6px;
     background: none;
     border: none;
     color: #ccc;
@@ -187,6 +193,7 @@ export default {
 
 /* 5 歌曲序号-表头按钮 */
 .header-counter {
+    width: 40px;
     text-align: center;
 }
 

@@ -115,13 +115,13 @@ export default {
                         this.buttons.push({
                             label: playlist.name,
                             id: playlist.id,
-                            img: playlist.coverImgUrl
+                            img: playlist.coverImgUrl + '?param=30y30',
                         });
                     } else {
                         this.subscribedButtons.push({
                             label: playlist.name,
                             id: playlist.id,
-                            img: playlist.coverImgUrl
+                            img: playlist.coverImgUrl + '?param=30y30',
                         });
                     }
                 });

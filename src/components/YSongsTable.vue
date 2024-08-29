@@ -1,7 +1,7 @@
 <template>
     <div class="table-container">
         <!-- 3 表头 -->
-        <div v-if="showHeader" class="table-header">
+        <div v-if="showHeader" class="table-header" :style="{ top: stickyTop }">
             <!-- 4 歌曲序号-表头 -->
             <div class="songsCounter" v-show="showTrackCounter">
                 <!-- 5 歌曲序号-表头按钮 -->
@@ -69,70 +69,82 @@
         <ul>
             <li v-for="(track, index) in localTracks" :key="track.id" class="track-item" ref="track_item_ref"
                 @dblclick="playSongAndPlaylist(track)">
-                <!-- 4 左侧对齐 -->
-                <div class="align-left">
-                    <!-- 5 歌曲序号 -->
-                    <div class="track-count" v-show="showTrackCounter">
-                        <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
-                        <YPlaying v-else />
-                    </div>
-                    <!-- 5 封面图片 -->
-                    <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
-                    <img v-show="showTrackCover" class="track-cover" :src="track.al.picUrl" alt="Cover Image" />
-                    <!-- 5 歌曲信息 -->
-                    <div class="track-info" ref="trackInfo">
-                        <!-- 6 歌曲名称 -->
-                        <div class="track-name" ref="track_name_ref"
-                            :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
-                            :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
-                                track.name +
-                                (track.tns ?
-                                    (' (' + track.tns + ')') :
-                                    '')
-                            }}</div>
-                        <!-- 6 歌手名称 -->
-                        <div class="track-artist" v-show="showTrackArtist">
-                            <span v-for="(artist, index) in track.ar" :key="artist.id">
-                                <!-- 7 歌手按钮 -->
-                                <span @click="handleArtistClick(artist.id)"
-                                    :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"
-                                    class="artist-button" :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
-                                    {{ artist.name }}
+                <div class="align-up">
+                    <!-- 4 左侧对齐 -->
+                    <div class="align-left">
+                        <!-- 5 歌曲序号 -->
+                        <div class="track-count" v-show="showTrackCounter">
+                            <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
+                            <YPlaying v-else />
+                        </div>
+                        <!-- 5 封面图片 -->
+                        <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
+                        <img v-show="showTrackCover" class="track-cover"
+                            :src="track._picUrl ? track._picUrl : track.al.picUrl" alt="Cover Image" />
+                        <!-- 5 歌曲信息 -->
+                        <div class="track-info" ref="trackInfo">
+                            <!-- 6 歌曲名称 -->
+                            <div class="track-name" ref="track_name_ref"
+                                :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
+                                :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
+                                    track.name +
+                                    (track.tns ?
+                                        (' (' + track.tns + ')') :
+                                        '')
+                                }}</div>
+                            <!-- 6 歌手名称 -->
+                            <div class="track-artist" v-show="showTrackArtist">
+                                <span v-for="(artist, index) in track.ar" :key="artist.id">
+                                    <!-- 7 歌手按钮 -->
+                                    <span @click="handleArtistClick(artist.id)"
+                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"
+                                        class="artist-button"
+                                        :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                        {{ artist.name }}
+                                    </span>
+                                    <span v-if="index < track.ar.length - 1"
+                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> / </span>
                                 </span>
-                                <span v-if="index < track.ar.length - 1"
-                                    :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> / </span>
-                            </span>
+                            </div>
                         </div>
                     </div>
+                    <!-- 4 右侧对齐 -->
+                    <div class="align-right">
+                        <!-- 5 专辑名称 -->
+                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum">
+                            <!-- 6 专辑按钮 -->
+                            <button @click="handleAlbumClick(track.al.id)" class="album-button"
+                                :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
+                                {{ track.al.name + (track.al.tns[0] ? (' (' + track.al.tns + ')') : '') }}
+                            </button>
+                        </div>
+                        <!-- 5 喜欢 -->
+                        <div class="likes" style="text-align: left;" v-show="showTrackLikes">
+                            <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
+                                style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
+                            <img v-else src="../assets/unlikes.svg"
+                                style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
+                        </div>
+                        <!-- 5 时长 -->
+                        <div class="track-duration" v-show="showTrackDuration">{{ formatDuration(track.dt) }}</div>
+                        <!-- 5 热度 -->
+                        <div class="popularity" v-if="showTrackPopularity">
+                            <div class="popularity-bar"
+                                style="margin-left: 5px;width: 50px; height: 4px; background-color: #444; border-radius: 2px;">
+                            </div>
+                            <div class="popularity-bar"
+                                style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
+                                :style="{ width: (track.pop / 100 * 50) + 'px' }">
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <!-- 4 右侧对齐 -->
-                <div class="align-right">
-                    <!-- 5 专辑名称 -->
-                    <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum">
-                        <!-- 6 专辑按钮 -->
-                        <button @click="handleAlbumClick(track.al.id)" class="album-button"
-                            :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
-                            {{ track.al.name + (track.al.tns[0] ? (' (' + track.al.tns + ')') : '') }}
-                        </button>
-                    </div>
-                    <!-- 5 喜欢 -->
-                    <div class="likes" style="text-align: left;" v-show="showTrackLikes">
-                        <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
-                            style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
-                        <img v-else src="../assets/unlikes.svg"
-                            style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
-                    </div>
-                    <!-- 5 时长 -->
-                    <div class="track-duration" v-show="showTrackDuration">{{ formatDuration(track.dt) }}</div>
-                    <!-- 5 热度 -->
-                    <div class="popularity" v-if="showTrackPopularity">
-                        <div class="popularity-bar"
-                            style="margin-left: 5px;width: 50px; height: 4px; background-color: #444; border-radius: 2px;">
-                        </div>
-                        <div class="popularity-bar"
-                            style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
-                            :style="{ width: (track.pop / 100 * 50) + 'px' }">
-                        </div>
+                <div class="align-down" v-if="showLyrics">
+                    <div class="lyrics" style="color: #aaa; font-size: 14px; margin-top: 5px; margin-left: 50px;">
+                        歌词:
+                        <span v-for="(lyric, index) in track.lyrics" :key="index" v-html="formatLyric(lyric)">
+                        </span>
                     </div>
                 </div>
             </li>
@@ -181,6 +193,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        showLyrics: {
+            type: Boolean,
+            default: false,
+        },
         resortable: {
             type: Boolean,
             default: true,
@@ -197,6 +213,10 @@ export default {
             type: Array,
             default: () => [],
             required: true,
+        },
+        stickyTop: {
+            type: String,
+            default: '0px',
         },
     },
     components: {
@@ -462,6 +482,9 @@ export default {
                     console.log('未知排序选项');
             }
         },
+        formatLyric(lyric) {
+            return '   ' + lyric + '   ';
+        },
     },
 }
 
@@ -620,6 +643,7 @@ li {
 /* 3 歌曲列表内容 */
 .track-item {
     display: flex;
+    flex-direction: column;
     width: 100%;
     align-items: center;
     justify-content: space-between;
@@ -632,6 +656,31 @@ li {
 /* 3 歌曲列表内容悬停样式 */
 .track-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.align-up {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.align-down {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* align-items: ; */
+    justify-content: space-between;
+}
+
+.lyrics {
+    width: 100%;
+    text-align: left;
+    max-height: 5em;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 4 左侧对齐 */
