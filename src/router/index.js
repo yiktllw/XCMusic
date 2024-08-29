@@ -31,14 +31,16 @@ const routes = [
                 component: () => import(/* webpackChunkName: "about" */ '../views/YPlaylistView.vue'),
                 props: route => ({
                     playlistId: Number(route.params.id),
+                    type: 'playlist',
                 })
             },
             {
                 path: 'album/:id',
                 name: 'Album',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YAlbumView.vue'),
+                component: () => import(/* webpackChunkName: "about" */ '../views/YPlaylistView.vue'),
                 props: route => ({
                     playlistId: Number(route.params.id),
+                    type: 'album',
                 })
             },
             {
