@@ -380,7 +380,13 @@ export default {
                 let result = await this.getUrl(track.id);
                 let url = result.url;
                 let gain = result.gain;
-                console.log('gain_db:', gain);
+                let peak = result.peak;
+                let gain_linear = this.dBToGain(gain);
+                console.log('gain_db:', gain, 'gain_linear:', gain_linear, 'peak:', peak);
+                if (peak * gain_linear > 1 || peak * gain_linear < 0.9 && peak !== 0) {
+                    gain_linear = 1 / peak;
+                    console.log('gain_linear:', gain_linear, 'new peak:', peak * gain_linear);
+                }
 
                 this.playlist[trackIndex].url = url;
                 this.playlistIndex = trackIndex; // 更新 playlistIndex
@@ -389,8 +395,7 @@ export default {
                 this.$refs.audio.volume = this.volume;
                 this.$refs.audio.play();
                 this.initAudioContext();
-                this.setGain(this.dBToGain(gain));
-                console.log('gain_linear:', this.gainNode.gain.value);
+                this.setGain(gain_linear);
                 this.updateNowPlaying(track.id);
             }
         },
@@ -401,7 +406,7 @@ export default {
         async getUrl(id) {
             let result = await useApi('/song/url/v1', {
                 id: id,
-                level: 'jymaster',
+                level: 'higher',
                 cookie: localStorage.getItem('login_cookie')
             });
             return result.data[0];
