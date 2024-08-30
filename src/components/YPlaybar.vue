@@ -239,15 +239,13 @@ export default {
         },
         // 更新进度条
         updateProgress() {
-            const audio = this.$refs.audio;
-            if (audio?.duration) {
-                this.progress = (audio.currentTime / audio.duration);
+            if (this.$refs.audio?.duration) {
+                this.progress = (this.$refs.audio.currentTime / this.$refs.audio.duration);
             }
         },
         // 设置音频总时长
         setDuration() {
-            const audio = this.$refs.audio;
-            this.duration = audio?.duration;
+            this.duration = this.$refs.audio?.duration;
             // console.log('setDuration', this.duration);
         },
         // 切换喜欢状态

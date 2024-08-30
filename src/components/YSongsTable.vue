@@ -365,15 +365,13 @@ export default {
         },
         // 处理歌手点击
         handleArtistClick(artistId) {
-            console.log('Artist ID:', artistId);
-            // 在这里处理点击事件，例如跳转到艺术家的详情页面
+            this.$router.push(`/artist/${artistId}`);
+            console.log('Open Artist with ID:', artistId);
         },
         // 处理专辑点击
         handleAlbumClick(albumId) {
-            console.log('Album ID:', albumId);
-            const url = `/album/${albumId}`;
-            this.$router.push(url);
-            // 在这里处理点击事件，例如跳转到专辑详情页面
+            this.$router.push(`/album/${albumId}`);
+            console.log('Open Album with ID:', albumId);
         },
         // 切换标题排序状态
         handleSort() {

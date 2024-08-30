@@ -1,7 +1,7 @@
 <template>
     <div class="table-container">
         <!-- 3 表头 -->
-        <div class="table-header" :style="{ top: stickyTop }">
+        <div class="table-header" :style="{ top: stickyTop }" v-if="showHeader">
             <!-- 4 歌单序号-表头 -->
             <div class="playlists-counter">
                 <div class="header-button header-counter">
@@ -80,6 +80,10 @@ export default {
         stickyTop: {
             type: String,
             default: '0px',
+        },
+        showHeader: {
+            type: Boolean,
+            default: true,
         },
     },
     methods: {

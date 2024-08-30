@@ -36,7 +36,7 @@
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
-            <button class="avatar" v-if="loginStatus">
+            <button class="avatar" v-if="loginStatus" @click="openUserPage">
                 <img class="avatarImg" :src="avatarSrc" v-show="avatarSrc" />
                 <div class="avatarImg avatarImgPlaceholder" v-if="!avatarSrc"></div>
             </button>
@@ -142,6 +142,10 @@ export default {
         forward() {
             this.$router.go(1);
             // console.log('forward');
+        },
+        async openUserPage() {
+            this.$router.push({ path: `/user/${localStorage.getItem('login_uid')}` });
+            console.log('openUserPage', localStorage.getItem('login_uid'));
         },
         // 用户信息
         async userInfo(event) {

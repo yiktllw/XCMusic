@@ -21,6 +21,7 @@ ipcMain.on('maximize', () => {
             win.maximize();
         }
     }
+    console.log(process.memoryUsage());
 });
 
 // 监听关闭事件
@@ -29,4 +30,16 @@ ipcMain.on('close', () => {
     if (win) {
         win.close();
     }
+});
+
+// 清除网络缓存
+ipcMain.on('clear-cache', () => {
+    const windows = BrowserWindow.getAllWindows();
+    windows.forEach(win => {
+        win.webContents.session.clearCache().then(() => {
+            console.log('Network cache cleared');
+        }).catch(err => {
+            console.error('Error clearing cache:', err);
+        });
+    });
 });
