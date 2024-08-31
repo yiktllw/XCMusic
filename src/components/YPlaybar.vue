@@ -93,7 +93,7 @@
             <div class="progress">
                 <!-- 3 音频元素 -->
                 <audio src="" ref="audio" @timeupdate="updateProgress" @loadedmetadata="setDuration"
-                    @ended="onAudioEnded"></audio>
+                    @ended="onAudioEnded" :preload="auto"></audio>
 
                 <!-- 3 自定义进度条 -->
                 <div class="time">

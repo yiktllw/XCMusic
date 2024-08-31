@@ -435,6 +435,13 @@ export default {
                 await this.updatePlayCount();
             }
         },
+        async addPlaylistToQueue() {
+            window.postMessage({
+                type: 'add-playlist-to-queue',
+                playlist: JSON.stringify(preparePlaylist(this.playlist.tracks)),
+                playlistId: this.playlistId,
+            });
+        },
         async playSongs(track) {
             // 播放歌曲
             console.log('playSongs');

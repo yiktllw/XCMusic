@@ -51,6 +51,24 @@ const routes = [
                     search: route.params.search,
                     position: route.params.position,
                 })
+            },
+            {
+                path: 'user/:id',
+                name: 'UserPage',
+                component: () => import(/* webpackChunkName: "about" */ '../views/YUserView.vue'),
+                props: route => ({
+                    userId: Number(route.params.id),
+                    type: 'user',
+                })
+            },
+            {
+                path: 'artist/:id',
+                name: 'Artist',
+                component: () => import(/* webpackChunkName: "about" */ '../views/YUserView.vue'),
+                props: route => ({
+                    userId: Number(route.params.id),
+                    type: 'artist',
+                })
             }
         ],
     },
