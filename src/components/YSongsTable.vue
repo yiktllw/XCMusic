@@ -231,8 +231,11 @@ export default {
     computed: {
         ...mapState({
             likelist: state => state.likelist,
-            nowPlaying: state => state.nowPlaying,
+            player: state => state.player,
         }),
+        nowPlaying() {
+            return this.player.currentTrack.id;
+        },
     },
     data() {
         return {
@@ -306,11 +309,7 @@ export default {
             if (this.canSendPlaylist) {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
             } else {
-                window.postMessage({
-                    type: 'play-songs',
-                    track: JSON.stringify(track),
-                    playlistId: 0,
-                })
+                this.player.playTrack(track);
             }
         },
         formatDuration(duration) {

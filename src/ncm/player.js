@@ -1,14 +1,15 @@
-import { Howl, Howler } from "howler";
 import { useApi } from "./api";
 
 export class Player {
     constructor() {
         // 初始化音频为空
-        this._audio = null;
+        this._audio = new Audio('');
         // 初始化音频上下文
-        this._audioContext = Howler.ctx;
+        this._audioContext = null;
         // 初始化增益节点
-        this._gainNode = this._audioContext.createGain();
+        this._gainNode = null;
+        // 初始化音量均衡控件
+        this.initAudioContext();
         // 初始化播放列表为空
         this._playlist = [];
         // 初始化当前播放索引为0
@@ -23,8 +24,12 @@ export class Player {
         this._playState = 'pause';
         // 初始化音量为1
         this._volume = 1;
-        // 初始化 接收播放时间更新的函数 为空
-        this._onTimeUpdate = () => { };
+        // 初始化播放时间为0
+        this._currentTime = 0;
+        // 初始化播放进度为0
+        this._progress = 0;
+        // 初始化总时长为0
+        this._duration = 0;
     }
     // 播放指定的歌曲
     async playTrack(track) {
@@ -33,6 +38,8 @@ export class Player {
         if (trackIndex === -1) {
             // 如果不在播放列表中则添加到播放列表
             this.addTrack(track);
+            console.log('Track not in playlist, added to playlist and played', track);
+            await this.playTrack(track);
         } else {
             // 如果在播放列表中
             // 获取歌曲播放信息
@@ -40,26 +47,46 @@ export class Player {
             let url = result.url;
             let gain = result.gain;
             let peak = result.peak;
-            this.setGain(gain, peak);
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
             // 更新播放状态
             this._playState = 'play';
-            // 停止播放上一首音乐
-            this._audio?.unload();
-            // 创建Howl实例
-            this._audio = new Howl({
-                src: url,
-                html5: true,
-                volume: this._volume,
-                format: ['mp3', 'flac'],
-                onend: this.next(),
-            });
-            this._audio._sounds[0]._node.connect(this._gainNode);
+            this._audio.src = url;
+            this._audio.ontimeupdate = () => this.updateTime();
+            this._audio.onended = () => this.next();
+            this.setGain(gain, peak);
+            this._audio.play();
+            console.log('Playing', track);
         }
     }
+    // 初始化音量均衡控件
+    initAudioContext() {
+        if (!this._audioContext) {
+            // 创建一个新的 AudioContext
+            this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // console.log('audioContext', this.audioContext);
+
+            // 创建一个增益节点
+            this._gainNode = this._audioContext.createGain();
+            // console.log('gainNode', this.gainNode);
+
+            // 连接增益节点到 AudioContext 的目标
+            this._gainNode.connect(this._audioContext.destination);
+            var audioElement = this._audio;
+            audioElement.crossOrigin = 'anonymous';
+
+            // 创建一个新的音频源
+            var source = this._audioContext.createMediaElementSource(audioElement);
+            source.connect(this._gainNode);
+        }
+    }
+    updateTime() {
+        if (!this._audio.readyState) return;
+        this._currentTime = this._audio.currentTime;
+        this._duration = this._audio.duration;
+        this._progress = this._currentTime / this._duration;
+    }
     next() {
-        this._audio?.unload();
         if (this.playlistCount === 0) return;
         if (this._mode === 'random') {
             this._current = Math.floor(Math.random * this.playlistCount)
@@ -92,7 +119,7 @@ export class Player {
                 }
             }
         })
-        this._playlist.concat(value);
+        this._playlist.concat(list);
         this.fetchSortedPlaylist();
     }
     // 添加单曲到播放列表
@@ -111,6 +138,15 @@ export class Player {
     // 获取当前播放歌曲
     get currentTrack() {
         return this._playlist[this._current];
+    }
+    get currentTrackCover() {
+        return this._playlist[this._current]?.al.picUrl;
+    }
+    get currentTrackName() {
+        return this._playlist[this._current]?.name;
+    }
+    get currentTrackArtists() {
+        return this._playlist[this._current]?.ar;
     }
     // 获取播放歌单ID
     get playlistId() {
@@ -151,7 +187,7 @@ export class Player {
     // 向前/向后跳转
     goTo(position) {
         if (position === -1 || position === 1) {
-
+            console.log('Go to', position);
         }
     }
     // 获取播放状态
@@ -160,13 +196,10 @@ export class Player {
     }
     // 设置播放状态 'play' : 'pause'
     set playState(value) {
-        if (value === 'play' || value === 'pause') {
+        if (value === 'play' || value === 'pause' && this._audio) {
             this._playState = value;
+            this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
         }
-    }
-    // 切换播放状态
-    tooglePlayState() {
-        this._playState === 'play' ? 'pause' : 'play';
     }
     // 获取歌曲id对应的url及其他信息
     async getUrl(id) {
@@ -189,6 +222,7 @@ export class Player {
     set volume(value) {
         if (value >= 0 && value <= 1) {
             this._volume = value;
+            this._audio.volume = value;
         }
     }
     setGain(gain, peak) {
@@ -197,16 +231,41 @@ export class Player {
             gain_linear = 1 / peak;
         }
         this._gainNode.gain.value = gain_linear;
+        console.log('Gain set to', gain_linear, 'Peak', peak * gain_linear);
     }
-    // 初始化播放列表和历史
-    initPlaylistAndHistory() {
-        if (this._mode === 'order') {
-
-        } else if (this._mode === 'loop' || this._mode === 'random' || this._mode === 'listloop') {
-            if (this._mode === 'random') {
-                this._history = [];
-            }
-        } else if (this._mode === 'listrandom') {
+    addTimeUpdateListener(fn) {
+        this._onTimeUpdate.push(fn);
+    }
+    clearTimeUpdateListener() {
+        this._onTimeUpdate = [];
+    }
+    deleteTimeUpdateListener(fn) {
+        let index = this._onTimeUpdate.indexOf(fn);
+        if (index !== -1) {
+            this._onTimeUpdate.splice(index, 1);
         }
+    }
+    get currentTime() {
+        return this._currentTime;
+    }
+    set currentTime(value) {
+        if (value >= 0 && value <= this._duration) {
+            this._audio.currentTime = value;
+            this._currentTime = value;
+            this._progress = value / this._duration;
+        }
+    }
+    get progress() {
+        return this._progress;
+    }
+    set progress(value) {
+        if (value >= 0 && value <= 1) {
+            this._progress = value;
+            this._currentTime = this._duration * value;
+            this._audio.currentTime = this._currentTime;
+        }
+    }
+    get duration() {
+        return this._duration;
     }
 }

@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';  // 使用 createStore 创建 Vuex store
+import { Player } from '@/ncm/player';  // 引入 Player 类
 
 export default createStore({
     state() {
@@ -7,6 +8,7 @@ export default createStore({
             sidebarWidth: 230, // 初始化 sidebarWidth 为 230
             likelist: [], // 初始化 likelist 为一个空数组
             nowPlaying: 0, // 初始化 正在播放的歌曲id 为 0
+            player: new Player(), // 初始化 player 为一个 Player 实例
         };
     },
     mutations: {

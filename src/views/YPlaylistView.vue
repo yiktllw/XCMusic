@@ -178,7 +178,8 @@ export default {
     },
     computed: {
         ...mapState({
-            likelist: state => state.likelist
+            likelist: state => state.likelist,
+            player: state => state.player,
         }),
     },
     data() {
@@ -425,31 +426,21 @@ export default {
             // 播放歌单
             console.log('playAll');
             let playlist = preparePlaylist(this.playlist.tracks);
-            window.postMessage({
-                type: 'update-playlist-and-play',
-                playlist: JSON.stringify(playlist),
-                playlistId: this.playlistId,
-            });
+            this.player.playlist = playlist;
             if (this.type === 'playlist') {
                 await this.scrobble();
                 await this.updatePlayCount();
             }
         },
         async addPlaylistToQueue() {
-            window.postMessage({
-                type: 'add-playlist-to-queue',
-                playlist: JSON.stringify(preparePlaylist(this.playlist.tracks)),
-                playlistId: this.playlistId,
-            });
+            let playlist = preparePlaylist(this.playlist.tracks);
+            this.player.addPlaylist(playlist);
         },
         async playSongs(track) {
             // 播放歌曲
             console.log('playSongs');
-            window.postMessage({
-                type: 'play-songs',
-                track: track,
-                playlistId: this.playlistId,
-            });
+            this.player.playTrack(track);
+            this.player.playState = 'play';
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
@@ -458,11 +449,7 @@ export default {
             // 发送歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
-            window.postMessage({
-                type: 'update-playlist',
-                playlist: JSON.stringify(playlist),
-                playlistId: this.playlistId,
-            });
+            this.player.playlist = playlist;
             if (this.type === 'playlist') {
                 await this.scrobble();
                 await this.updatePlayCount();
@@ -472,12 +459,9 @@ export default {
             // 播放歌曲并发送歌单
             console.log('playSongAndPlaylist');
             let playlist = preparePlaylist(this.playlist.tracks);
-            window.postMessage({
-                type: 'play-song-and-playlist',
-                track: track,
-                playlist: JSON.stringify(playlist),
-                playlistId: this.playlistId,
-            });
+            this.player.playlist = playlist;
+            this.player.playTrack(track);
+            this.player.playState = 'play';
             if (this.type === 'playlist') {
                 await this.scrobble();
                 await this.updatePlayCount();

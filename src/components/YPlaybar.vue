@@ -6,25 +6,24 @@
             <!-- 2 播放信息 -->
             <div class="play-info">
                 <!-- 3 封面 -->
-                <img class="img-cover img"
-                    :src="this.playlist[playlistIndex]?.al.picUrl ? this.playlist[playlistIndex].al.picUrl : ''"
-                    v-show="this.playlist[playlistIndex]?.al.picUrl">
+                <img class="img-cover img" :src="this.player.currentTrackCover ? this.player.currentTrackCover : ''"
+                    v-if="this.player.currentTrackCover">
                 <!-- 4 封面占位图片 -->
-                <div class="img-cover-placeholder img" v-show="!this.playlist[playlistIndex]?.al.picUrl"></div>
+                <div class="img-cover-placeholder img" v-else></div>
                 <!-- 4 播放信息文本 -->
                 <div class="play-info-text">
                     <!-- 5 播放信息文本:标题 -->
                     <div class="play-info-text-title">
-                        {{ this.playlist[playlistIndex]?.name }}
+                        {{ this.player.currentTrackName }}
                     </div>
                     <!-- 5 播放信息文本:艺术家 -->
                     <div class="play-info-text-artist">
-                        <span v-for="(artist, index) in playlist[playlistIndex]?.ar" :key="artist.id">
+                        <span v-for="(artist, index) in this.player.currentTrackArtists" :key="artist.id">
                             <span @click="handleArtistClick(artist.id)" class="artist-button"
                                 :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                 {{ artist.name }}
                             </span>
-                            <span v-if="index < playlist[playlistIndex]?.ar.length - 1"> / </span>
+                            <span v-if="index < this.player.currentTrackArtists.length - 1"> /&nbsp; </span>
                         </span>
                     </div>
                 </div>
@@ -35,9 +34,9 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="toogleLike(likelist.includes(playlist[playlistIndex]?.id))">
+                <button class="button like-button" @click="toogleLike(likelist.includes(this.player.currentTrack?.id))">
                     <img class="img-like img" src="../assets/likes.svg"
-                        v-if="likelist.includes(playlist[playlistIndex]?.id)" title="取消喜欢">
+                        v-if="likelist.includes(this.player.currentTrack?.id)" title="取消喜欢">
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
                 </button>
                 <!-- 3 上一首按钮 -->
@@ -92,12 +91,12 @@
             <!-- 2 进度条 -->
             <div class="progress">
                 <!-- 3 音频元素 -->
-                <audio src="" ref="audio" @timeupdate="updateProgress" @loadedmetadata="setDuration"
-                    @ended="onAudioEnded" :preload="auto"></audio>
+                <!-- <audio src="" ref="audio" @timeupdate="updateProgress" @loadedmetadata="setDuration"
+                    @ended="onAudioEnded" :preload="auto"></audio> -->
 
                 <!-- 3 自定义进度条 -->
                 <div class="time">
-                    {{ this.$refs.audio ? formatDuration(this.$refs.audio.currentTime) : '00:00' }}
+                    {{ this.player.currentTime ? formatDuration(this.player.currentTime) : '00:00' }}
                 </div>
                 <YProgressBar v-model="progress" style="height:20px;width: 321px" @update:model-value="setAudioProgress" />
                 <div class="time">
@@ -113,10 +112,10 @@
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
                     <div class="volume-container">
-                        <YProgressBarV v-model="volume"
+                        <YProgressBarV v-model="this.player.volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;" />
                         <div class="volume-text">
-                            {{ Math.round(volume * 100) + '%' }}
+                            {{ Math.round(this.player.volume * 100) + '%' }}
                         </div>
                     </div>
                 </YPanel>
@@ -165,71 +164,38 @@ export default {
         YProgressBar,
         YProgressBarV,
     },
-    data() {
-        return {
-            playState: 'pause', // 播放状态
-            playMode: 'order',  // 播放模式
-            playlist: [], // playlist
-            playlistId: 0, // playlist id
-            playlistIndex: 0, // current playing index
-            progress: 0, // 进度条的宽度百分比
-            duration: 0, // 音频的总时长
-            audioContext: null, // 音频上下文
-            gainNode: null, // 音量控制节点
-            volume: 1, // 音量
-        }
-    },
     computed: {
         ...mapState({
             likelist: state => state.likelist,
             nowPlaying: state => state.nowPlaying,
-        })
-    },
-    watch: {
-        volume(value) {
-            if (this.$refs.audio.readyState) {
-                this.$refs.audio.volume = value;
-            }
+            player: state => state.player,
+        }),
+        playState() {
+            return this.player.playState;
+        },
+        playMode() {
+            return this.player.mode;
+        },
+        playlist() {
+            return this.player.playlist;
+        },
+        playlistId() {
+            return this.player.playlistId;
+        },
+        playlistIndex() {
+            return this.player.playlistIndex;
+        },
+        progress() {
+            return this.player.progress;
+        },
+        duration() {
+            return this.player.duration;
         },
     },
     methods: {
         ...mapActions(['updateLikelist', 'updateNowPlaying']),
         setAudioProgress(progress) {
-            if (this.$refs.audio.src && this.$refs.audio.src !== 'http://localhost:4321/') {
-                this.$refs.audio.currentTime = progress * this.$refs.audio.duration;
-            }
-        },
-        // 初始化音量均衡控件
-        initAudioContext() {
-            if (!this.audioContext) {
-                // 创建一个新的 AudioContext
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                // console.log('audioContext', this.audioContext);
-
-                // 创建一个增益节点
-                this.gainNode = this.audioContext.createGain();
-                // console.log('gainNode', this.gainNode);
-
-                // 连接增益节点到 AudioContext 的目标
-                this.gainNode.connect(this.audioContext.destination);
-                var audioElement = this.$refs.audio;
-                audioElement.crossOrigin = 'anonymous';
-
-                // 创建一个新的音频源
-                var source = this.audioContext.createMediaElementSource(audioElement);
-                source.connect(this.gainNode);
-            }
-
-        },
-        // 设置音量均衡
-        setGain(value) {
-            if (this.gainNode) {
-                this.gainNode.gain.value = value;
-            }
-        },
-        // 将 dB 转换为线性增益值
-        dBToGain(dB) {
-            return Math.pow(10, (dB) / 20);
+            this.player.progress = progress;
         },
         // 格式化时间
         formatDuration(time) {
@@ -237,132 +203,28 @@ export default {
             const seconds = Math.floor(time % 60);
             return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         },
-        // 更新进度条
-        updateProgress() {
-            if (this.$refs.audio?.duration) {
-                this.progress = (this.$refs.audio.currentTime / this.$refs.audio.duration);
-            }
-        },
-        // 设置音频总时长
-        setDuration() {
-            this.duration = this.$refs.audio?.duration;
-            // console.log('setDuration', this.duration);
-        },
         // 切换喜欢状态
         async toogleLike(status) {
-            if (!this.playlist[this.playlistIndex]) {
+            if (!this.player.currentTrack) {
                 return;
             }
             console.log('toogleLike');
             console.log('status:', status);
-            let result = await toogleLikeAndGetLikelist(this.playlist[this.playlistIndex].id, status);
+            let result = await toogleLikeAndGetLikelist(this.player.currentTrack.id, status);
             this.updateLikelist(result);
         },
         // 切换播放状态
         tooglePlayState() {
-            if (!this.$refs.audio.src || !this.$refs.audio.readyState) {
-                return;
-            }
-            this.playState = this.playState === 'play' ? 'pause' : 'play';
-            this.playState === 'play' ?
-                this.$refs.audio.play() :
-                this.$refs.audio.pause();
-            console.log('tooglePlayState');
-        },
-        async onAudioEnded() {
-            console.log('onAudioEnded');
-            await this.scrobble();
-            if (this.playMode === 'loop') {
-                this.$refs.audio.currentTime = 0;
-                this.$refs.audio.play();
-            } else {
-                await this.goTo('forward');
-            }
-        },
-        async scrobble() {
-            let result = null;
-            if (this.playlist[this.playlistIndex]) {
-                result = await useApi('/scrobble', {
-                    id: this.playlist[this.playlistIndex].id,
-                    time: this.duration,
-                    sourceid: this.playlistId,
-                    cookie: localStorage.getItem('login_cookie')
-                });
-            } else if (this.playlistId !== 0) {
-                result = await useApi('/scrobble', {
-                    time: this.duration,
-                    sourceid: this.playlistId,
-                    cookie: localStorage.getItem('login_cookie')
-                });
-            }
-            console.log('scrobble:', result);
+            this.player.playState = this.player.playState === 'play' ? 'pause' : 'play';
         },
         // 下一首
         async goTo(direction) {
             let forward = direction === 'forward' ? true : false;
             console.log(forward ? 'next' : 'previous');
-            // 如果没有播放列表，直接返回
-            if (!this.playlist) {
-                return;
-            }
-            this.scrobble();
-            // 如果指标指向的歌曲存在 
-            if (this.playlist[this.playlistIndex]) {
-                // 处理Index
-                if (this.playMode === 'order') {
-                    // 如果播放模式是单曲循环或顺序播放
-                    this.playlistIndex = forward ? (this.playlistIndex + 1) : (this.playlistIndex - 1);
-                    if (this.playlistIndex >= this.playlist.length || this.playlistIndex < 0) {
-                        this.$refs.audio.src = '';
-                        this.playState = 'pause';
-                        this.playlistIndex = 0;
-                        return;
-                    }
-                } else if (this.playMode === 'random') {
-                    // 如果播放模式是随机播放
-                    this.playlistIndex = Math.floor(Math.random() * this.playlist.length);
-                } else if (this.playMode === 'listloop' || this.playMode === 'loop' || this.playMode === 'listrandom') {
-                    // 如果播放模式是列表循环 / 单曲循环 / 列表随机
-                    this.playlistIndex = forward ? ((this.playlistIndex + 1) % this.playlist.length) : ((this.playlistIndex - 1 + this.playlist.length) % this.playlist.length);
-                }
-                // 得到指标歌曲的URL
-                if (this.playlist[this.playlistIndex]) {
-                    this.playTrack(this.playlist[this.playlistIndex]);
-                }
-            }
+            forward ? this.player.next() : this.player.previous();
         },
         tooglePlayMode(mode) {
-            if (this.playMode === mode) {
-                return;
-            }
-            this.playMode = mode;
-            if (!this.playlist[0]) {
-                return;
-            }
-            if (mode === 'listrandom') {
-                this.playlist = this.playlist.sort(() => Math.random() - 0.5);
-                let currentIndex = this.playlist.findIndex(track => track.id === this.nowPlaying);
-                // 将当前播放的歌曲移动到列表的第一个位置
-                this.playlist.unshift(this.playlist.splice(currentIndex, 1)[0]);
-                this.playlistIndex = 0;
-            } else {
-                this.playlist = this.playlist.sort((a, b) => a.originalIndex - b.originalIndex);
-                this.playlistIndex = this.playlist.findIndex(track => track.id === this.nowPlaying);
-            }
-            console.log('playMode:', this.playMode);
-        },
-        async play(event) {
-            if (event.origin !== 'http://localhost:4321') {
-                return;
-            }
-            if (event.data.type === 'play-songs') {
-                let track = JSON.parse(event.data.track);
-                this.playlistId = event.data.playlistId;
-                console.log('play', track);
-                await this.playTrack(track);
-                // console.log(this.playlist);
-                // console.log(trackIndex);
-            }
+            this.player.mode = mode;
         },
         playSongs(track) {
             console.log('playSongs', track);
@@ -370,103 +232,17 @@ export default {
             this.playTrack(track);
         },
         async playTrack(track) {
-            // 找到 track.id 对应的 playlist 项的 index
-            let trackIndex = this.playlist.findIndex(_track => _track.id === track.id);
-            if (trackIndex === -1) {
-                this.addTrackToPlaylist(track);
-            } else {
-                let result = await this.getUrl(track.id);
-                let url = result.url;
-                let gain = result.gain;
-                let peak = result.peak;
-                let gain_linear = this.dBToGain(gain);
-                console.log('gain_db:', gain, 'gain_linear:', gain_linear, 'peak:', peak);
-                if (peak * gain_linear > 1 || peak * gain_linear < 0.9 && peak !== 0) {
-                    gain_linear = 1 / peak;
-                    console.log('gain_linear:', gain_linear, 'new peak:', peak * gain_linear);
-                }
-
-                this.playlist[trackIndex].url = url;
-                this.playlistIndex = trackIndex; // 更新 playlistIndex
-                this.playState = 'play';
-                this.$refs.audio.src = url;
-                this.$refs.audio.volume = this.volume;
-                this.$refs.audio.play();
-                this.initAudioContext();
-                this.setGain(gain_linear);
-                this.updateNowPlaying(track.id);
-            }
+            await this.player.playTrack(track);
         },
         addTrackToPlaylist(track) {
-            this.playlist.splice(this.playlistIndex + 1, 0, track);
-            this.playTrack(track);
-        },
-        async getUrl(id) {
-            let result = await useApi('/song/url/v1', {
-                id: id,
-                level: 'higher',
-                cookie: localStorage.getItem('login_cookie')
-            });
-            return result.data[0];
-        },
-        async updatePlaylist(event) {
-            if (event.origin !== 'http://localhost:4321') {
-                return;
-            }
-            if (event.data.type === 'update-playlist') {
-                console.log('update-playlist', JSON.parse(event.data.playlist));
-                if (this.playlist.length > 0) {
-                    this.scrobble();
-                }
-                this.playlist = JSON.parse(event.data.playlist);
-                this.playlistId = event.data.playlistId;
-                if (this.playMode === 'listrandom') {
-                    this.playlist = this.playlist.sort(() => Math.random() - 0.5);
-                }
-            } else {
-                if (event.data.type === 'update-playlist-and-play' || event.data.type === 'play-song-and-playlist') {
-                    let track = null;
-                    if (event.data.type === 'play-song-and-playlist') {
-                        track = JSON.parse(event.data.track);
-                    }
-                    console.log('update-playlist-and-play', JSON.parse(event.data.playlist));
-                    if (this.playlist.length > 0) {
-                        this.scrobble();
-                    }
-                    this.playlist = JSON.parse(event.data.playlist);
-                    this.playlistId = event.data.playlistId;
-                    if (this.playMode === 'order' || this.playMode === 'loop' || this.playMode === 'listloop') {
-                        if (track) {
-                            await this.playTrack(track);
-                        } else {
-                            await this.playTrack(this.playlist[0]);
-                        }
-                    } else if (this.playMode === 'random') {
-                        if (track) {
-                            await this.playTrack(track);
-                        } else {
-                            await this.playTrack(this.playlist[Math.floor(Math.random() * this.playlist.length)]);
-                        }
-                    } else if (this.playMode === 'listrandom') {
-                        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
-                        if (track) {
-                            await this.playTrack(track);
-                        } else {
-                            await this.playTrack(this.playlist[0]);
-                        }
-                    }
-                }
-            }
+            this.player.addTrack(track);
         },
         handleArtistClick(artistId) {
             console.log('Artist ID:', artistId);
-            // 在这里处理点击事件，例如跳转到艺术家的详情页面
+            this.$router.push({ path: '/artist/' + artistId });
         },
     },
     async mounted() {
-        this.$refs.audio.src = '';
-        window.addEventListener('message', this.play)
-        window.addEventListener('message', this.updatePlaylist)
         if (this.likelist.length === 0) {
             let result = await useApi('/likelist', {
                 uid: localStorage.getItem('login_uid'),
@@ -476,10 +252,6 @@ export default {
         }
         console.log('update likelist from YPlaybar.vue');
     },
-    beforeUnmount() {
-        window.removeEventListener('message', this.play);
-        window.removeEventListener('message', this.updatePlaylist);
-    }
 }
 
 </script>
