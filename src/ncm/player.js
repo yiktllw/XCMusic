@@ -20,6 +20,8 @@ export class Player {
         this._mode = 'order';
         // 初始化随机播放历史为空
         this._history = [];
+        // 初始化历史索引为0
+        this._historyIndex = 0;
         // 初始化播放状态为暂停
         this._playState = 'pause';
         // 初始化音量为1
@@ -86,15 +88,36 @@ export class Player {
         this._duration = this._audio.duration;
         this._progress = this._currentTime / this._duration;
     }
+    randomPlay(direction) {
+        if (this._history[this._historyIndex + direction]) {
+            this._current = this._playlist.findIndex(track => track.id === this._history[this._historyIndex + direction].id);
+            this._historyIndex += direction;
+        } else if (direction === 1) {
+            this._current = Math.floor(Math.random() * this.playlistCount)
+            this.appendToHistory(this.currentTrack);
+        } else if (direction === -1) {
+            this._current = Math.floor(Math.random() * this.playlistCount)
+            this.insertToHistory(this.currentTrack);
+        }
+        this.playTrack(this.currentTrack);
+    }
     next() {
         if (this.playlistCount === 0) return;
         if (this._mode === 'random') {
-            this._current = Math.floor(Math.random * this.playlistCount)
-            this.appendToHistory(this.currentTrack);
+            this.randomPlay(1);
         } else {
             this._current = (this._current + 1) % this.playlistCount;
+            this.playTrack(this.currentTrack);
         }
-        this.playTrack(this.currentTrack);
+    }
+    previous() {
+        if (this.playlistCount === 0) return;
+        if (this._mode === 'random') {
+            this.randomPlay(-1);
+        } else {
+            this._current = (this._current - 1 + this.playlistCount) % this.playlistCount;
+            this.playTrack(this.currentTrack);
+        }
     }
     // 获取播放列表
     get playlist() {
@@ -104,8 +127,13 @@ export class Player {
         return this._playlist.length;
     }
     // 设置播放列表
-    set playlist(value) {
-        this._playlist = value;
+    set playlist(list) {
+        this.clearHistory();
+        if (this._mode === 'listrandom') {
+            this._playlist = list.sort(() => Math.random() - 0.5);
+        } else {
+            this._playlist = list;
+        }
     }
     // 添加播放列表
     addPlaylist(list) {
@@ -120,7 +148,16 @@ export class Player {
             }
         })
         this._playlist.concat(list);
-        this.fetchSortedPlaylist();
+    }
+    playAll(list) {
+        this.playlist = list;
+        this._current = 0;
+        this.clearHistory();
+        if (this._mode === 'random') {
+            this.randomPlay(1);
+        } else {
+            this.playTrack(this.currentTrack);
+        }
     }
     // 添加单曲到播放列表
     addTrack(value) {
@@ -129,6 +166,9 @@ export class Player {
             this._playlist.splice(this._current + 1, 0, value);
         } else {
             this._playlist.splice(trackIndex, 1);
+        }
+        if (this._mode === 'random') {
+            this._history = this._history.splice(this._historyIndex +1, 0, value);
         }
     }
     // 获取当前播放索引
@@ -163,7 +203,7 @@ export class Player {
     // 设置播放模式
     set mode(value) {
         if (value !== this._mode) {
-            this._history = [];
+            this.clearHistory();
             this._mode = value;
         }
         if (value === 'order' || value === 'listloop' || value === 'random' || value === 'loop') {
@@ -179,10 +219,16 @@ export class Player {
     // 添加到历史
     appendToHistory(track) {
         this._history.push(track)
+        this._historyIndex = this._history.length - 1;
     }
     // 插入到历史开头
     insertToHistory(track) {
         this._history.splice(0, 0, track);
+        this._historyIndex = 0;
+    }
+    clearHistory() {
+        this._history = [];
+        this._historyIndex = 0;
     }
     // 向前/向后跳转
     goTo(position) {

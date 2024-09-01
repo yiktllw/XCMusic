@@ -426,7 +426,7 @@ export default {
             // 播放歌单
             console.log('playAll');
             let playlist = preparePlaylist(this.playlist.tracks);
-            this.player.playlist = playlist;
+            this.player.playAll(playlist);
             if (this.type === 'playlist') {
                 await this.scrobble();
                 await this.updatePlayCount();
@@ -460,7 +460,7 @@ export default {
             console.log('playSongAndPlaylist');
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playlist = playlist;
-            this.player.playTrack(track);
+            this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {
                 await this.scrobble();

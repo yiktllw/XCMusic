@@ -80,7 +80,7 @@
                         <!-- 5 封面图片 -->
                         <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
                         <img v-show="showTrackCover" class="track-cover"
-                            :src="track._picUrl ? track._picUrl : track.al.picUrl" alt="Cover Image" />
+                            :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
                         <!-- 5 歌曲信息 -->
                         <div class="track-info" ref="trackInfo">
                             <!-- 6 歌曲名称 -->
@@ -234,7 +234,7 @@ export default {
             player: state => state.player,
         }),
         nowPlaying() {
-            return this.player.currentTrack.id;
+            return this.player.currentTrack?.id;
         },
     },
     data() {
@@ -309,6 +309,7 @@ export default {
             if (this.canSendPlaylist) {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
             } else {
+                console.log('playTrack:', track);
                 this.player.playTrack(track);
             }
         },
