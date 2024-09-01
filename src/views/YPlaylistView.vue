@@ -428,7 +428,6 @@ export default {
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playAll(playlist);
             if (this.type === 'playlist') {
-                await this.scrobble();
                 await this.updatePlayCount();
             }
         },
@@ -451,7 +450,6 @@ export default {
             console.log('sendPlaylist');
             this.player.playlist = playlist;
             if (this.type === 'playlist') {
-                await this.scrobble();
                 await this.updatePlayCount();
             }
         },
@@ -463,16 +461,8 @@ export default {
             this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {
-                await this.scrobble();
                 await this.updatePlayCount();
             }
-        },
-        async scrobble() {
-            let result = await useApi('/scrobble', {
-                sourceid: this.playlistId,
-                cookie: localStorage.getItem('login_cookie')
-            });
-            console.log('scrobble:', result);
         },
         async updatePlayCount() {
             let result = await useApi('/playlist/update/playcount', {

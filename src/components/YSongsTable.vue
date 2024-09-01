@@ -3,19 +3,19 @@
         <!-- 3 表头 -->
         <div v-if="showHeader" class="table-header" :style="{ top: stickyTop }">
             <!-- 4 歌曲序号-表头 -->
-            <div class="songsCounter" v-show="showTrackCounter">
+            <div class="songsCounter" v-if="showTrackCounter">
                 <!-- 5 歌曲序号-表头按钮 -->
                 <button class="header-button header-counter">
                     <span>#</span>
                 </button>
             </div>
             <!-- 4 歌曲标题-表头 -->
-            <div class="songsName" ref="songs_name_ref" v-show="showTrackTitle">
+            <div class="songsName" ref="songs_name_ref" v-if="showTrackTitle">
                 <!-- 5 标题排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort">
                     <span>标题</span>
                     <!-- 6 排序内容 -->
-                    <div v-show="resortable" class="sort-content">
+                    <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon" />
                         <span style="font-size:13px; color: #aaa;">{{ sortingStates[currentSortingIndex].text
                         }}</span>
@@ -23,9 +23,9 @@
                 </button>
             </div>
             <!-- 4 resize控件 -->
-            <div v-show="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
+            <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref" v-show="showTrackAlbum">
+            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
                     <span>专辑</span>
@@ -39,13 +39,13 @@
                 </button>
             </div>
             <!-- 4 喜欢-表头 -->
-            <div class="likes" v-show="showTrackLikes">
+            <div class="likes" v-if="showTrackLikes">
                 <button class="header-button">
                     <span>喜欢</span>
                 </button>
             </div>
             <!-- 4 时长-表头 -->
-            <div class="songsDuration" v-show="showTrackDuration">
+            <div class="songsDuration" v-if="showTrackDuration">
                 <!-- 5 时长排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Duration">
                     <span>时长</span>
@@ -59,7 +59,7 @@
                 </button>
             </div>
             <!-- 4 热度-表头 -->
-            <div class="popularity" v-show="showTrackPopularity">
+            <div class="popularity" v-if="showTrackPopularity">
                 <button class="header-button">
                     <span>热度</span>
                 </button>
@@ -73,27 +73,27 @@
                     <!-- 4 左侧对齐 -->
                     <div class="align-left">
                         <!-- 5 歌曲序号 -->
-                        <div class="track-count" v-show="showTrackCounter">
+                        <div class="track-count" v-if="showTrackCounter">
                             <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
                             <YPlaying v-else />
                         </div>
                         <!-- 5 封面图片 -->
                         <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
-                        <img v-show="showTrackCover" class="track-cover"
+                        <img v-if="showTrackCover" class="track-cover"
                             :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
                         <!-- 5 歌曲信息 -->
                         <div class="track-info" ref="trackInfo">
                             <!-- 6 歌曲名称 -->
                             <div class="track-name" ref="track_name_ref"
                                 :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
-                                :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-show="showTrackTitle">{{
+                                :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">{{
                                     track.name +
                                     (track.tns ?
                                         (' (' + track.tns + ')') :
                                         '')
                                 }}</div>
                             <!-- 6 歌手名称 -->
-                            <div class="track-artist" v-show="showTrackArtist">
+                            <div class="track-artist" v-if="showTrackArtist">
                                 <span v-for="(artist, index) in track.ar" :key="artist.id">
                                     <!-- 7 歌手按钮 -->
                                     <span @click="handleArtistClick(artist.id)"
@@ -115,18 +115,18 @@
                             <!-- 6 专辑按钮 -->
                             <button @click="handleAlbumClick(track.al.id)" class="album-button"
                                 :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
-                                {{ track.al.name + (track.al.tns[0] ? (' (' + track.al.tns + ')') : '') }}
+                                {{ track.al.name + (track.al.tns ? (' (' + track.al.tns + ')') : '') }}
                             </button>
                         </div>
                         <!-- 5 喜欢 -->
-                        <div class="likes" style="text-align: left;" v-show="showTrackLikes">
+                        <div class="likes" style="text-align: left;" v-if="showTrackLikes">
                             <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
                                 style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
                             <img v-else src="../assets/unlikes.svg"
                                 style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
                         </div>
                         <!-- 5 时长 -->
-                        <div class="track-duration" v-show="showTrackDuration">{{ formatDuration(track.dt) }}</div>
+                        <div class="track-duration" v-if="showTrackDuration">{{ formatDuration(track.dt) }}</div>
                         <!-- 5 热度 -->
                         <div class="popularity" v-if="showTrackPopularity">
                             <div class="popularity-bar"
@@ -309,7 +309,6 @@ export default {
             if (this.canSendPlaylist) {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
             } else {
-                console.log('playTrack:', track);
                 this.player.playTrack(track);
             }
         },

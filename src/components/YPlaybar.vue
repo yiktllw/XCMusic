@@ -464,7 +464,7 @@ export default {
     width: 100%;
     height: 30px;
     cursor: pointer;
-    color: white;
+    color: #eee;
     font-size: 15px;
     padding: 10px 0px;
     margin: 0px;

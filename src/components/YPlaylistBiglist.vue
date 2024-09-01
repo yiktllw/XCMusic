@@ -15,7 +15,7 @@
                     {{ playlist.name }}
                 </div>
                 <div class="playlist-item-count">
-                    {{ playlist.trackCount }}首
+                    {{ playlist.trackCount ?? playlist.size }}首
                 </div>
             </div>
         </div>

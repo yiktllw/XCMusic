@@ -168,7 +168,7 @@ export class Player {
             this._playlist.splice(trackIndex, 1);
         }
         if (this._mode === 'random') {
-            this._history = this._history.splice(this._historyIndex +1, 0, value);
+            this._history = this._history.splice(this._historyIndex + 1, 0, value);
         }
     }
     // 获取当前播放索引
@@ -242,7 +242,7 @@ export class Player {
     }
     // 设置播放状态 'play' : 'pause'
     set playState(value) {
-        if (value === 'play' || value === 'pause' && this._audio) {
+        if ((value === 'play' || value === 'pause') && this._audio && this._audio.readyState) {
             this._playState = value;
             this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
         }
@@ -251,7 +251,7 @@ export class Player {
     async getUrl(id) {
         let response = await useApi('/song/url/v1', {
             id: id,
-            level: 'higher',
+            level: 'hires',
             cookie: localStorage.getItem('login_cookie'),
         });
         return response.data[0];
