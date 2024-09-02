@@ -103,11 +103,15 @@ export default {
                 let userAccount = await useApi('/user/account', {
                     cookie: localStorage.getItem('login_cookie'),
                     timestamp: new Date().getTime()
-                })
+                }).catch((error) => {
+                    console.error('Failed to get user account:', error);
+                });
                 let userPlaylist = await useApi('/user/playlist', {
                     uid: userAccount.profile.userId,
                     cookie: localStorage.getItem('login_cookie'),
-                })
+                }).catch((error) => {
+                    console.error('Failed to get user playlist:', error);
+                });
                 this.buttons = [];
                 this.subscribedButtons = [];
                 userPlaylist.playlist.forEach(playlist => {

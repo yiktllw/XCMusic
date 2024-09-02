@@ -95,6 +95,8 @@ export async function getColorFromImg(imgSrc, document) {
         img.onerror = (error) => {
             reject(error); // 处理图片加载错误
         };
+    }).catch((error) => {
+        console.error('get color from image error: ',error); // 捕获错误
     });
 
     // console.log('color of img', color);

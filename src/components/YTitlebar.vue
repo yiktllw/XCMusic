@@ -159,9 +159,13 @@ export default {
                 // console.log('未登录');
                 // console.log('loginStatus_:', loginStatus_.data.account);
                 // window.electron.ipcRenderer.send('open-login-window');
-                let qrKey = await useApi('/login/qr/key', { timestamp: new Date().getTime() });
+                let qrKey = await useApi('/login/qr/key', { timestamp: new Date().getTime() }).catch((error) => {
+                    console.error('Failed to get QR key:', error);
+                });
                 this.qrKey = qrKey.data.unikey;
-                let qrCode = await useApi('/login/qr/create', { key: this.qrKey, qrimg: true, timestamp: new Date().getTime() });
+                let qrCode = await useApi('/login/qr/create', { key: this.qrKey, qrimg: true, timestamp: new Date().getTime() }).catch((error) => {
+                    console.error('Failed to get QR code:', error);
+                });
                 this.base64Image = qrCode.data.qrimg;
                 this.updateLoginStatus("titlebar userInfo set login_status to false", false);
                 this.toggleDropdown(); // 切换下拉菜单显示
@@ -171,7 +175,9 @@ export default {
         // 轮询二维码状态
         async pollQRCodeStatus() {
             const interval = setInterval(async () => {
-                let checkResponse = await useApi('/login/qr/check', { key: this.qrKey, timestamp: new Date().getTime() });
+                let checkResponse = await useApi('/login/qr/check', { key: this.qrKey, timestamp: new Date().getTime() }).catch((error) => {
+                    console.error('Failed to check QR code:', error);
+                });
                 if (checkResponse.code === 803) {
                     // 关闭扫码窗口
                     this.showDropdown = false;
@@ -238,6 +244,8 @@ export default {
             let result = await useApi('/search/suggest', {
                 keywords: searchText,
                 type: 'mobile',
+            }).catch((error) => {
+                console.error('Failed to get search suggestions:', error);
             });
             if (result.code === 200) {
                 console.log('get suggestions', result);
@@ -248,14 +256,18 @@ export default {
             document.addEventListener('click', this.handleOutsideClick);
             if (localStorage.getItem('login_cookie')) {
                 this.updateLoginStatus("titlebar mounted set login_status to ture", true);
-                let statusCheck = await useApi('/login/status', { timestamp: new Date().getTime(), cookie: localStorage.getItem('login_cookie') });
+                let statusCheck = await useApi('/login/status', { timestamp: new Date().getTime(), cookie: localStorage.getItem('login_cookie') }).catch((error) => {
+                    console.error('Failed to check login status:', error);
+                });
                 this.userNickName = statusCheck.data.profile.nickname;
                 this.avatarSrc = statusCheck.data.profile.avatarUrl;
                 let uid = statusCheck.data.profile.userId;
                 localStorage.setItem('login_uid', uid);
                 // console.log(this.avatarSrc);
 
-                let userProfile = await useApi('/user/detail', { uid: uid, cookie: localStorage.getItem('login_cookie') });
+                let userProfile = await useApi('/user/detail', { uid: uid, cookie: localStorage.getItem('login_cookie') }).catch((error) => {
+                    console.error('Failed to get user profile:', error);
+                });
                 this.userProfile = userProfile.profile;
                 this.userProfile.level = userProfile.level;
                 // console.log('userProfile:', this.userProfile);
@@ -269,7 +281,9 @@ export default {
         },
         async getHotSearches() {
             // 获取热搜榜
-            let result = await useApi('/search/hot/detail', {});
+            let result = await useApi('/search/hot/detail', {}).catch((error) => {
+                console.error('Failed to get hot searches:', error);
+            });
             console.log('get hot searches', result.result.hots);
             this.hotSearches = result.result.hots;
         }

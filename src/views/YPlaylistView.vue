@@ -171,9 +171,10 @@ export default {
             type: Number,
             required: true
         },
+        // 传入的歌单类型
         type: {
             type: String,
-            default: 'playlist'
+            default: 'playlist' // playlist, album
         },
     },
     computed: {
@@ -222,12 +223,14 @@ export default {
         'playlist.coverImgUrl': function () {
             this._setBackgroundColor();
         },
+        // 监听 searchQuery 的变化，当 searchQuery 变化时重新过滤歌曲列表
         searchQuery: {
             handler() {
                 this.updateTracks();
                 // console.log('filterTracks', this.filteredTracks);
             }
         },
+        // 监听 currentPage 的变化，当 currentPage 变化时重新过滤歌曲列表
         currentPage: {
             handler() {
                 this.updateTracks();
@@ -236,57 +239,91 @@ export default {
         },
     },
     methods: {
-        // 获取歌单
         ...mapActions(['updateLikelist']),
+
+        // 获取歌单
         async fetchPlaylist(id) {
             try {
                 let requests = [];
                 if (this.type === 'playlist') {
+                    // 获取歌单详情
                     requests = [
                         useApi(`/playlist/detail?id=${id}`).then(response => {
+                            // 歌单名称
                             this.playlist.name = response.playlist.name;
+                            // 歌单翻译名称
                             this.playlist.transName = '';
+                            // 封面图片 URL
                             this.playlist.coverImgUrl = response.playlist.coverImgUrl;
+                            // 播放次数
                             this.playlist.playCount = response.playlist.playCount;
+                            // 创建时间
                             this.playlist.createTime = formatDate_yyyymmdd(response.playlist.createTime);
+                            // 创建者ID
                             this.playlist.createrId = response.playlist.userId;
+                            // 创建者名称
                             this.playlist.createrName = response.playlist.creator.nickname;
+                            // 创建者头像 URL
                             this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
+                            // 歌曲数量
                             this.playlist.trackCount = response.playlist.trackCount;
+                            // 总页数
                             this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
                             return response;
+                        }).catch(error => {
+                            console.error('Failed to fetch playlist:', error);
+                            throw error;
                         }),
                         localStorage.getItem('login_uid')
                             ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                                // 如果是我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
                                     this.playlist.name = '我喜欢的音乐';
                                 }
                                 return myFavoriteId;
+                            }).catch(error => {
+                                console.error('Failed to fetch myFavoriteId:', error);
+                                throw error;
                             })
                             : null,
                         localStorage.getItem('login_uid')
                             ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
+                                // 更新喜欢列表
                                 this.updateLikelist(getLikelist.ids);
                                 console.log('update likelist from YPlayilst.vue');
                                 return getLikelist;
+                            }).catch(error => {
+                                console.error('Failed to fetch likelist:', error);
+                                throw error;
                             })
                             : null,
                         this.fetchTracks(id, 1).then(getTracks => {
+                            // 第一页的歌曲列表
                             this.playlist.tracks = getTracks;
                             this.updateTracks();
                             this.isLoading = false;
                             return getTracks;
-                        })
+                        }).catch(error => {
+                            console.error('Failed to fetch tracks:', error);
+                            throw error;
+                        }),
                     ];
                 } else {
                     requests = [
                         useApi(`/album?id=${id}`).then(response => {
+                            // 专辑名称
                             this.playlist.name = response.album.name;
+                            // 专辑翻译名称
                             this.playlist.transName = response.album.transNames ? (' (' + response.album.transNames + ')') : '';
+                            // 封面图片 URL
                             this.playlist.coverImgUrl = response.album.picUrl;
+                            // 创建时间
                             this.playlist.createTime = formatDate_yyyymmdd(response.album.publishTime);
+                            // 创建者ID
                             this.playlist.artists = response.album.artists;
+                            // 歌曲数量
                             this.playlist.trackCount = response.album.size;
+                            // 添加专辑信息
                             this.playlist.tracks = response.songs.map(track => {
                                 return {
                                     ...track,
@@ -298,32 +335,46 @@ export default {
                                     },
                                 }
                             });
-                            // console.log('playlist.tracks', this.playlist.tracks);
+                            // 更新歌曲列表
                             this.updateTracks();
-                            // console.log('playlist.tracks', this.filteredTracks);
+                            // 加载完成
                             this.isLoading = false;
                             return response;
+                        }).catch(error => {
+                            console.error('Failed to fetch album:', error);
+                            throw error;
                         }),
                         localStorage.getItem('login_uid')
                             ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                                // 我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
                                     this.playlist.name = '我喜欢的音乐';
                                 }
                                 return myFavoriteId;
+                            }).catch(error => {
+                                console.error('Failed to fetch myFavoriteId:', error);
+                                throw error;
                             })
                             : null,
                         localStorage.getItem('login_uid')
                             ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
+                                // 获取喜欢列表
                                 this.updateLikelist(getLikelist.ids);
                                 console.log('update likelist from YAlbumView.vue');
                                 return getLikelist;
+                            }).catch(error => {
+                                console.error('Failed to fetch likelist:', error);
+                                throw error;
                             })
                             : null,
                     ];
                 }
 
                 // 使用Promise.allSettled来处理可能出现的null值（避免报错）
-                await Promise.allSettled(requests);
+                await Promise.allSettled(requests).catch(error => {
+                    console.error('Failed to fetch playlist or tracks:', error);
+                    throw error;
+                });
 
                 // 处理fetchTracks获取的多个页面的track
                 if (this.totalPages > 1 && this.type === 'playlist') {
@@ -350,7 +401,10 @@ export default {
                 // 获取当前页的歌曲列表
                 const offset = (page - 1) * 1000;
                 const limit = 1000;
-                let getTracks = await useApi('/playlist/track/all', { id: id, limit: limit, offset: offset });
+                let getTracks = await useApi('/playlist/track/all', { id: id, limit: limit, offset: offset }).catch(error => {
+                    console.error('Failed to fetch tracks:', error);
+                    throw error;
+                });
                 // 加入新的属性 originalIndex，用于排序
                 let result = getTracks.songs.map((track, index) => ({
                     ...track,
@@ -375,7 +429,16 @@ export default {
         async _setBackgroundColor() {
             let color = await getColorFromImg(this.playlist.coverImgUrl, document);
             // 设置背景颜色
-            setBackgroundColor(color);
+            if (color) {
+                setBackgroundColor(color);
+            } else {
+                // 默认背景颜色
+                setBackgroundColor({
+                    r: 19,
+                    g: 19,
+                    b: 25,
+                });
+            }
 
         },
         // 处理搜索
@@ -390,16 +453,13 @@ export default {
         },
         // 更新歌曲列表 搜索过滤
         updateTracks() {
-            // console.log('step1')
             if (!this.searchQuery && this.type === 'playlist') {
                 this.filteredTracks = this.playlist.tracks.slice((this.currentPage - 1) * 1000, this.currentPage * 1000);
-                // console.log('filter Tracks from step1', this.filteredTracks, 'currentPage:', this.currentPage);
                 return;
             } else if (!this.searchQuery && this.type === 'album') {
                 this.filteredTracks = this.playlist.tracks;
                 return;
             }
-            // console.log('step2')
             const query = this.searchQuery.toLowerCase();
             // 否则返回包含搜索关键字的歌曲
             this.filteredTracks = this.playlist.tracks.filter(track => {
@@ -420,23 +480,24 @@ export default {
                 const trackAlbumTns = track.al.tns[0] ? track.al.tns[0].toLowerCase() : '';
                 return trackName.includes(query) || trackNameTns.includes(query) || trackArtistTns.includes(query) || trackArtist.includes(query) || trackAlbum.includes(query) || trackAlbumTns.includes(query);
             });
-            // console.log('log from updateTracks', this.filteredTracks);
         },
+        // 播放歌单
         async playAll() {
-            // 播放歌单
             console.log('playAll');
+            // 预处理歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playAll(playlist);
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
         },
+        // 添加到播放列表
         async addPlaylistToQueue() {
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.addPlaylist(playlist);
         },
+        // 播放歌曲
         async playSongs(track) {
-            // 播放歌曲
             console.log('playSongs');
             this.player.playTrack(track);
             this.player.playState = 'play';
@@ -444,6 +505,7 @@ export default {
                 await this.updatePlayCount();
             }
         },
+        // 替换歌单
         async sendPlaylist() {
             // 发送歌单
             let playlist = preparePlaylist(this.playlist.tracks);
@@ -453,25 +515,31 @@ export default {
                 await this.updatePlayCount();
             }
         },
+        // 播放歌曲并发送歌单
         async playSongAndPlaylist(track) {
-            // 播放歌曲并发送歌单
             console.log('playSongAndPlaylist');
+            // 准备歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playlist = playlist;
             this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {
+                // 更新歌单播放次数
                 await this.updatePlayCount();
             }
         },
+        // 更新歌单播放次数
         async updatePlayCount() {
             let result = await useApi('/playlist/update/playcount', {
                 id: this.playlistId,
+            }).catch(error => {
+                console.error('Failed to update play count:', error);
+                throw error;
             });
             console.log('updatePlayCount:', result);
         },
+        // 处理歌手点击
         handleArtistClick(artistId) {
-            // 处理歌手点击
             console.log('artistId:', artistId);
         },
     },
@@ -489,14 +557,11 @@ export default {
 /* 0 滚动容器 */
 .scrollable {
     display: flex;
-    /* padding-left: 15pt; */
     padding-right: 15pt;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
     max-height: calc(100vh - 142px);
-    /* max-width: 100vw; */
-    /* width: 100px; */
     user-select: none;
     -webkit-user-drag: none;
 }

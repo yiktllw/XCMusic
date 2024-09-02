@@ -247,6 +247,8 @@ export default {
             let result = await useApi('/likelist', {
                 uid: localStorage.getItem('login_uid'),
                 cookie: localStorage.getItem('login_cookie'),
+            }).catch(err => {
+                console.error(err);
             });
             this.updateLikelist(result.ids);
         }

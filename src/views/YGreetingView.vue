@@ -1,4 +1,5 @@
 <template>
+    <!--欢迎界面-->
     <div class="container">
         <img src="../assets/xc.svg" alt="XC Logo" class="full-width-image" />
     </div>

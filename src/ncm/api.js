@@ -18,11 +18,13 @@ export async function setLike(id, like, cookie) {
         id: id,
         like: like,
         cookie: cookie
-    })
+    }).catch(error => {
+        console.error(error);
+    });
     return result;
 }
 
-export async function toogleLikeAndGetLikelist(id,status) {
+export async function toogleLikeAndGetLikelist(id, status) {
     if (status) {
         await setLike(id, false, localStorage.getItem('login_cookie'));
     } else {
@@ -32,6 +34,8 @@ export async function toogleLikeAndGetLikelist(id,status) {
         uid: localStorage.getItem('login_uid'),
         cookie: localStorage.getItem('login_cookie'),
         timestamp: new Date().getTime()
+    }).catch(error => {
+        console.error(error);
     });
     return result.ids;
 }

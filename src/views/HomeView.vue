@@ -1,15 +1,20 @@
 <template>
+    <!-- 主容器 -->
     <div class="mainContainer">
+        <!-- 侧边栏 -->
         <div class="leftSidebar">
             <YSidebar @sidebar-resize="handleSidebarResize" :opened_playlist="opened_playlist" ref="YSidebar_ref" />
         </div>
+        <!-- 内容 -->
         <div class="mainContent">
+            <!-- 标题栏 -->
             <YTitlebar />
             <div class="content">
-                <!-- Your main content goes here -->
+                <!-- 显示区域 -->
                 <YDisplayArea class="display-area" ref="YDisplayArea" />
             </div>
         </div>
+        <!-- 播放栏 -->
         <div class="playbar">
             <YPlaybar />
         </div>
@@ -27,9 +32,7 @@ export default {
     name: 'App',
     data() {
         return {
-            // Add your data here
-            displayUrl: '',
-            newDisplayUrl: '',
+            // 打开的播放列表
             opened_playlist: 0,
         };
     },
@@ -41,18 +44,14 @@ export default {
     },
     methods: {
         ...mapActions(['updateSidebarWidth']),
+        // 处理侧边栏resize
         handleSidebarResize(newWidth) {
             const mainContent = document.querySelector('.mainContent');
             mainContent.style.marginLeft = `calc(${newWidth} + 20px)`;
             mainContent.style.maxWidth = `calc(100% - ${newWidth}px)`;
-            // this.updateSidebarWidth(newWidth);
-            // this.display_width = window.innerWidth - parseInt(newWidth, 10);
         },
     },
     mounted() {
-        // Add your mounted hook here
-        // this.displayUrl = '/greeting';
-
         const sidebar = this.$refs.YSidebar_ref;
         const sidebarWidth = sidebar.offsetWidth;
         this.display_width = `${window.innerWidth - sidebarWidth}px`;
@@ -96,7 +95,7 @@ export default {
     left: 0;
     right: 0;
     width: 0px;
-    margin-right:5px;
+    margin-right: 5px;
 }
 
 .content {

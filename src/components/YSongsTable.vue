@@ -276,6 +276,8 @@ export default {
             let result = await useApi('/likelist', {
                 uid: localStorage.getItem('login_uid'),
                 cookie: localStorage.getItem('login_cookie'),
+            }).catch((error) => {
+                console.error('Failed to get likelist:', error);
             });
             this.updateLikelist(result.ids);
         }
