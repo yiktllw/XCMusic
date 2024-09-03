@@ -1,24 +1,23 @@
-# xc-music
+<h1 align="center"> 
+    XCMusic
+</h1>
+<p align="center">
+    第三方网易云音乐客户端
+</p>
+<img src="./src/assets/logo.svg" style="width:300px; display:none;">
 
-## Project setup
+## 安装依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 编译为Electron程序
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+npm run electron:serve
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## 灵感来源
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- 网易云音乐API: [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- [YesPlayMusic](https://github.com/qier222/YesPlayMusic)
+- [网易云音乐3.0](https://music.163.com)

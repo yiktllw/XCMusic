@@ -10,25 +10,22 @@ const routes = [
             {
                 path: 'about',
                 name: 'about',
-                // route level code-splitting
-                // this generates a separate chunk (about.[hash].js) for this route
-                // which is lazy-loaded when the route is visited.
-                component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+                component: () => import('../views/AboutView.vue')
             },
             {
                 path: 'login',
                 name: 'Login',
-                component: () => import(/* webpackChunkName: "about" */ '../components/YLoginWindow.vue')
+                component: () => import('../components/YLoginWindow.vue')
             },
             {
                 path: 'greeting',
                 name: 'Greeting',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YGreetingView.vue')
+                component: () => import('../views/YGreetingView.vue')
             },
             {
                 path: 'playlist/:id',
                 name: 'Playlist',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YPlaylistView.vue'),
+                component: () => import('../views/YPlaylistView.vue'),
                 props: route => ({
                     playlistId: Number(route.params.id),
                     type: 'playlist',
@@ -37,7 +34,7 @@ const routes = [
             {
                 path: 'album/:id',
                 name: 'Album',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YPlaylistView.vue'),
+                component: () => import('../views/YPlaylistView.vue'),
                 props: route => ({
                     playlistId: Number(route.params.id),
                     type: 'album',
@@ -46,7 +43,7 @@ const routes = [
             {
                 path: 'search/:search/:position',
                 name: 'Search',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YSearchView.vue'),
+                component: () => import('../views/YSearchView.vue'),
                 props: route => ({
                     search: route.params.search,
                     position: route.params.position,
@@ -55,7 +52,7 @@ const routes = [
             {
                 path: 'user/:id',
                 name: 'UserPage',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YUserView.vue'),
+                component: () => import('../views/YUserView.vue'),
                 props: route => ({
                     userId: Number(route.params.id),
                     type: 'user',
@@ -64,7 +61,7 @@ const routes = [
             {
                 path: 'artist/:id',
                 name: 'Artist',
-                component: () => import(/* webpackChunkName: "about" */ '../views/YUserView.vue'),
+                component: () => import('../views/YUserView.vue'),
                 props: route => ({
                     userId: Number(route.params.id),
                     type: 'artist',
