@@ -66,7 +66,20 @@ const routes = [
                     userId: Number(route.params.id),
                     type: 'artist',
                 })
-            }
+            },
+            {
+                path: 'test',
+                name: 'Test',
+                component: () => import('../views/YTestView.vue')
+            },
+            {
+                path: 'user_songs_rank/:uid',
+                name: 'UserSongsRank',
+                component: () => import('../views/YUserSongsRankView.vue'),
+                props: route => ({
+                    userId: Number(route.params.uid),
+                })
+            },
         ],
     },
 ]

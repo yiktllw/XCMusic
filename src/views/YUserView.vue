@@ -229,6 +229,8 @@ export default {
                     playlistCount: response.profile.playlistCount,
                     // 等级
                     level: response.level,
+                    // 听歌数量
+                    listenSongs: response.listenSongs,
                     // 是否显示歌单大图
                     listType: false,
                     // 用户创建的歌单
@@ -322,7 +324,16 @@ export default {
                 console.log('fetch user playlist error:', err);
             });
             // 清空用户的歌单
-            this.user.userPlaylists = [];
+            this.user.userPlaylists = [{
+                name: '听歌排行',
+                id: `user-record-${this.userId}`,
+                userId: this.userId,
+                creator: response.playlist[0].creator,
+                playCount: 0,
+                trackCount: `累计听歌${this.user.listenSongs}`,
+                _picUrl: require('@/assets/songsrank.svg'),
+                _bigPicUrl: require('@/assets/songsrank.svg'),
+            }];
             this.user.userSubscribedPlaylists = [];
             // 返回处理后的歌单
             response.playlist.forEach(item => {

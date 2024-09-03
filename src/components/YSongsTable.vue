@@ -64,6 +64,12 @@
                     <span>热度</span>
                 </button>
             </div>
+            <!-- 4 听歌次数-表头 -->
+            <div class="listen-count" v-if="showListenCount">
+                <button class="header-button">
+                    <span>听歌次数</span>
+                </button>
+            </div>
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul>
@@ -137,6 +143,8 @@
                                 :style="{ width: (track.pop / 100 * 50) + 'px' }">
                             </div>
                         </div>
+                        <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ?? 0 }}次
+                        </div>
                     </div>
 
                 </div>
@@ -197,6 +205,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        showListenCount: {
+            type: Boolean,
+            default: false,
+        },
         resortable: {
             type: Boolean,
             default: true,
@@ -213,6 +225,10 @@ export default {
             type: Array,
             default: () => [],
             required: true,
+        },
+        localPlay: {
+            type: Boolean,
+            default: false,
         },
         stickyTop: {
             type: String,
@@ -300,11 +316,20 @@ export default {
         },
         playSongs(track) {
             console.log('Play Songs:', track.id);
-            this.$emit('play-songs', JSON.stringify(track));
+            if (!this.localPlay) {
+                this.$emit('play-songs', JSON.stringify(track));
+            } else {
+                this.player.playTrack(track);
+                this.player.playState = 'play';
+            }
             this.sendPlaylist();
         },
         sendPlaylist() {
-            this.$emit('send-playlist');
+            if(!this.localPlay){
+                this.$emit('send-playlist');
+            }else{
+                this.player.playlist = this.localTracks;
+            }
         },
         playSongAndPlaylist(track) {
             console.log('Play Song And Playlist:', track.id);
@@ -312,6 +337,11 @@ export default {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
             } else {
                 this.player.playTrack(track);
+            }
+            if (this.localPlay) {
+                this.player.playlist = this.localTracks;
+                this.player.playTrack(track);
+                this.player.playState = 'play';
             }
         },
         formatDuration(duration) {
@@ -570,6 +600,10 @@ export default {
 
 .popularity {
     width: 60px;
+}
+
+.listen-count {
+    width: 80px;
 }
 
 /* 4 时长-表头 */

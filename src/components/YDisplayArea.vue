@@ -1,15 +1,21 @@
 <template>
     <div>
         <div class="display-area">
-            <RouterView />
+            <YScroll style="max-height: calc(100% - 5px);">
+                <RouterView />
+            </YScroll>
         </div>
     </div>
 </template>
 
 <script>
+import YScroll from './YScroll.vue';
 
 export default {
     name: 'YDisplayarea',
+    components: {
+        YScroll
+    }
 };
 </script>
 

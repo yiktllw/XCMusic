@@ -52,8 +52,8 @@
                 <!-- 5 作者 -->
                 <div class="playlists-author"
                     @click="openUserPage(type === 'playlist' ? playlist.creator.userId : playlist.artist.id)"
-                    :title="type === 'playlist' ? playlist.creator.nickname : playlist.artist.name">
-                    <span>{{ type === 'playlist' ? playlist.creator.nickname : playlist.artist.name }}</span>
+                    :title="type === 'playlist' ? playlist.creator?.nickname : playlist.artist?.name">
+                    <span>{{ type === 'playlist' ? playlist.creator?.nickname : playlist.artist?.name }}</span>
                 </div>
                 <div class="play-count">
                     <span v-if="(type === 'playlist')">{{ formatedPlayCount(playlist.playCount) }}</span>
@@ -88,6 +88,11 @@ export default {
     },
     methods: {
         openPlaylist(id) {
+            if (id.startsWith('user-record-')) {
+                let uid = id.split('user-record-')[1];
+                this.$router.push({ path: `/user_songs_rank/${uid}` });
+                return;
+            }
             this.type === 'playlist' ?
                 this.$router.push({ path: `/playlist/${id}` }) :
                 this.$router.push({ path: `/album/${id}` });

@@ -11,7 +11,8 @@ import { startNeteaseMusicApi } from './electron/services';
 protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=1024');
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
+app.commandLine.appendSwitch('js-flags', '--max-new-space-size=256');
 
 async function createWindow() {
     // Create the browser window.

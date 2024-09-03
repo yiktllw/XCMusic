@@ -3,9 +3,9 @@
         <div class="playlist-item" v-for="(playlist) in playlists" :key="playlist.id" @click="openPlaylist(playlist.id)">
             <div class="playlist-item-cover" :title="playlist.name">
                 <img class="playlist-item-cover-img" :src="playlist._bigPicUrl">
-                <div class="gradient-overlay" v-if="type === 'playlist'"></div>
+                <div class="gradient-overlay" v-if="type === 'playlist' && playlist.playCount !== 0"></div>
                 <!-- 4 播放次数 -->
-                <div class="play-info" v-if="type === 'playlist'">
+                <div class="play-info" v-if="type === 'playlist' && playlist.playCount !== 0">
                     <img src="../assets/play.svg" class="play-icon" />
                     <span class="play-count">{{ playlist.playCount }}</span>
                 </div>
@@ -15,7 +15,7 @@
                     {{ playlist.name }}
                 </div>
                 <div class="playlist-item-count">
-                    {{ playlist.trackCount ?? playlist.size }}首
+                    {{ (playlist.trackCount ?? playlist.size) ? (playlist.trackCount ?? playlist.size )+'首' : '&nbsp;'  }}
                 </div>
             </div>
         </div>
@@ -40,6 +40,19 @@ export default {
         stickyTop: {
             type: String,
             default: '0px',
+        },
+    },
+    methods:{
+        openPlaylist(id) {
+            if (id.startsWith('user-record-')) {
+                let uid = id.split('user-record-')[1];
+                this.$router.push({ path: `/user_songs_rank/${uid}` });
+                // console.log('open user record page: ', uid);
+                return;
+            }
+            this.type === 'playlist' ?
+                this.$router.push({ path: `/playlist/${id}` }) :
+                this.$router.push({ path: `/album/${id}` });
         },
     },
 }

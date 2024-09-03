@@ -79,6 +79,7 @@
                     <div class="user-info-item">我的会员</div>
                     <div class="user-info-item">等级{{ userProfile.level }}</div>
                     <div class="user-info-item">个人信息设置</div>
+                    <div class="user-info-item" @click="this.openTestPage">测试页面</div>
                     <div class="user-info-item">退出登录</div>
                 </div>
             </YPanel>
@@ -286,7 +287,10 @@ export default {
             });
             console.log('get hot searches', result.result.hots);
             this.hotSearches = result.result.hots;
-        }
+        },
+        openTestPage() {
+            this.$router.push({ path: '/test' });
+        },
     },
     async mounted() {
         // 添加外部点击处理器
