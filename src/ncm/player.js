@@ -4,6 +4,7 @@ export class Player {
     constructor() {
         // 初始化音频为空
         this._audio = new Audio('');
+        this._audio.onerror = () => this.reloadUrl();
         // 初始化音频上下文
         this._audioContext = null;
         // 初始化增益节点
@@ -33,6 +34,22 @@ export class Player {
         // 初始化总时长为0
         this._duration = 0;
     }
+    async reloadUrl() {
+        if (!this.currentTrack) return;
+        console.log('Reloading url', this.currentTrack);
+        let result = await this.getUrl(this.currentTrack.id);
+        let url = result.url;
+        let gain = result.gain;
+        let peak = result.peak;
+        this._audio.src = url;
+        this.setGain(gain, peak);
+        this._audio.currentTime = this._currentTime;
+        try {
+            this._audio.play();
+        } catch (error) {
+            console.error(error);
+        }
+    }
     // 播放指定的歌曲
     async playTrack(track) {
         // 查询指定的歌曲是否在播放列表中
@@ -57,7 +74,11 @@ export class Player {
             this._audio.ontimeupdate = () => this.updateTime();
             this._audio.onended = () => this.next();
             this.setGain(gain, peak);
-            this._audio.play();
+            try {
+                this._audio.play();
+            } catch (error) {
+                console.error(error);
+            }
             console.log('Playing', track);
         }
     }
@@ -303,13 +324,23 @@ export class Player {
     }
     // 获取歌曲id对应的url及其他信息
     async getUrl(id) {
-        let response = await useApi('/song/url/v1', {
-            id: id,
-            level: 'hires',
-            cookie: localStorage.getItem('login_cookie'),
-        }).catch(error => {
-            console.error(error);
-        });
+        let response = null;
+        if (localStorage.getItem('login_cookie')) {
+            response = await useApi('/song/url/v1', {
+                id: id,
+                level: 'hires',
+                cookie: localStorage.getItem('login_cookie'),
+            }).catch(error => {
+                console.error(error);
+            });
+        } else {
+            response = await useApi('/song/url/v1', {
+                id: id,
+                level: 'hires',
+            }).catch(error => {
+                console.error(error);
+            });
+        }
         return response.data[0];
     }
     // 分贝转线性

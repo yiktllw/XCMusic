@@ -9,6 +9,7 @@
 import YHeader from '@/components/YHeader.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
 import { useApi } from '@/ncm/api';
+import { mapState } from 'vuex';
 
 export default {
     name: 'YUserSongsRank',
@@ -21,6 +22,9 @@ export default {
     components: {
         YHeader,
         YSongsTable,
+    },
+    computed: {
+        ...mapState(['login']),
     },
     data() {
         return {
@@ -51,7 +55,7 @@ export default {
             await useApi('/user/record', {
                 uid: this.userId,
                 type: 1,
-                cookie: localStorage.getItem('login_cookie'),
+                cookie: this.login.cookie,
             }).then((res) => {
                 this.recentTracks = res.weekData.map((item) => {
                     return {
@@ -65,7 +69,7 @@ export default {
             await useApi('/user/record', {
                 uid: this.userId,
                 type: 0,
-                cookie: localStorage.getItem('login_cookie'),
+                cookie: this.login.cookie,
             }).then((res) => {
                 this.alltimeTracks = res.allData.map((item) => {
                     return {

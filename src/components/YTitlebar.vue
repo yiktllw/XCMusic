@@ -36,15 +36,15 @@
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
-            <button class="avatar" v-if="loginStatus" @click="openUserPage">
-                <img class="avatarImg" :src="avatarSrc" v-show="avatarSrc" />
-                <div class="avatarImg avatarImgPlaceholder" v-if="!avatarSrc"></div>
+            <button class="avatar" v-if="this.login.status" @click="openUserPage">
+                <img class="avatarImg" :src="this.login.avatar" v-if="this.login.avatar" />
+                <div class="avatarImg avatarImgPlaceholder" v-else></div>
             </button>
             <button class="userInfo" @click="userInfo" ref="user_info_menu_trigger">
-                <div class="userInfoTxt" v-if="loginStatus">
+                <div class="userInfoTxt" v-if="this.login.status">
                     {{ userNickName }}
                 </div>
-                <div class="userInfoTxt" v-if="!loginStatus">
+                <div class="userInfoTxt" v-if="!this.login.status">
                     未登录
                 </div><img class="img-userInfo" src="../assets/more.svg" />
             </button>
@@ -60,7 +60,7 @@
                     <div class="user-info-item follows">
                         <div class="follows-container follows-container-left">
                             <div class="follows-number">
-                                {{ userProfile.follows }}
+                                {{ userProfile?.follows ?? 0 }}
                             </div>
                             <div class="follows-text">
                                 关注
@@ -69,7 +69,7 @@
                         <div class="follows-splitline" />
                         <div class="follows-container follows-container-right">
                             <div class="follows-number">
-                                {{ userProfile.followeds }}
+                                {{ userProfile?.followeds ?? 0 }}
                             </div>
                             <div class="follows-text">
                                 粉丝
@@ -77,10 +77,10 @@
                         </div>
                     </div>
                     <div class="user-info-item">我的会员</div>
-                    <div class="user-info-item">等级{{ userProfile.level }}</div>
+                    <div class="user-info-item">等级{{ userProfile?.level ?? 0 }}</div>
                     <div class="user-info-item">个人信息设置</div>
                     <div class="user-info-item" @click="this.openTestPage">测试页面</div>
-                    <div class="user-info-item">退出登录</div>
+                    <div class="user-info-item" @click="this.login.logout()">退出登录</div>
                 </div>
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
@@ -117,7 +117,11 @@ export default {
     },
     data() {
         return {
-            userProfile: {},    // 用于存储用户信息
+            userProfile: {
+                follows: 0,
+                followeds: 0,
+                level: 0,
+            },    // 用于存储用户信息
             showDropdown: false,    // 用于控制下拉登录菜单的显示
             base64Image: '',    // 用于存储 Base64 图片
             userNickName: '用户昵称',   // 用于存储用户昵称
@@ -130,7 +134,7 @@ export default {
     },
     computed: {
         ...mapState({
-            loginStatus: state => state.loginStatus,    // 用于存储登录状态
+            login: state => state.login,
         })
     },
     methods: {
@@ -145,30 +149,33 @@ export default {
             // console.log('forward');
         },
         async openUserPage() {
-            this.$router.push({ path: `/user/${localStorage.getItem('login_uid')}` });
-            console.log('openUserPage', localStorage.getItem('login_uid'));
+            if (this.login.status) {
+                this.$router.push({ path: `/user/${this.login.userId}` });
+            }
         },
         // 用户信息
         async userInfo(event) {
             event.stopPropagation(); // 阻止事件冒泡以免立即触发外部点击处理器
             // 如果已登录，则打开用户信息窗口
-            if (localStorage.getItem('login_cookie') && this.loginStatus) {
+            if (this.login.cookie && this.login.status) {
                 this.$refs.user_info_panel.tooglePanel();
                 console.log('open userInfo');
             } else {
                 // 如果未登录，则显示二维码登录
-                // console.log('未登录');
-                // console.log('loginStatus_:', loginStatus_.data.account);
-                // window.electron.ipcRenderer.send('open-login-window');
-                let qrKey = await useApi('/login/qr/key', { timestamp: new Date().getTime() }).catch((error) => {
+                let qrKey = await useApi('/login/qr/key', {
+                    timestamp: new Date().getTime()
+                }).catch((error) => {
                     console.error('Failed to get QR key:', error);
                 });
                 this.qrKey = qrKey.data.unikey;
-                let qrCode = await useApi('/login/qr/create', { key: this.qrKey, qrimg: true, timestamp: new Date().getTime() }).catch((error) => {
+                let qrCode = await useApi('/login/qr/create', {
+                    key: this.qrKey,
+                    qrimg: true,
+                    timestamp: new Date().getTime()
+                }).catch((error) => {
                     console.error('Failed to get QR code:', error);
                 });
                 this.base64Image = qrCode.data.qrimg;
-                this.updateLoginStatus("titlebar userInfo set login_status to false", false);
                 this.toggleDropdown(); // 切换下拉菜单显示
                 this.pollQRCodeStatus(); // 轮询二维码状态
             }
@@ -176,7 +183,10 @@ export default {
         // 轮询二维码状态
         async pollQRCodeStatus() {
             const interval = setInterval(async () => {
-                let checkResponse = await useApi('/login/qr/check', { key: this.qrKey, timestamp: new Date().getTime() }).catch((error) => {
+                let checkResponse = await useApi('/login/qr/check', {
+                    key: this.qrKey,
+                    timestamp: new Date().getTime()
+                }).catch((error) => {
                     console.error('Failed to check QR code:', error);
                 });
                 if (checkResponse.code === 803) {
@@ -186,11 +196,8 @@ export default {
                     // console.log('登录成功，cookie:', checkResponse.cookie);
                     this.$emit('user-login');
                     await this.init();
-                    localStorage.setItem('login_cookie', checkResponse.cookie);
-                    this.updateLoginStatus("titlebar pollQRCodeStatus set login_status to true", true);
+                    this.login.cookie = checkResponse.cookie;
                 }
-                // console.log('checkResponse:', checkResponse.message);
-                // console.log('qrKey:', this.qrKey);
             }, 2000); // 每2秒轮询一次
             setInterval(() => {
                 if (this.showDropdown === false) {
@@ -255,18 +262,17 @@ export default {
         },
         async init() {
             document.addEventListener('click', this.handleOutsideClick);
-            if (localStorage.getItem('login_cookie')) {
-                this.updateLoginStatus("titlebar mounted set login_status to ture", true);
-                let statusCheck = await useApi('/login/status', { timestamp: new Date().getTime(), cookie: localStorage.getItem('login_cookie') }).catch((error) => {
-                    console.error('Failed to check login status:', error);
-                });
-                this.userNickName = statusCheck.data.profile.nickname;
-                this.avatarSrc = statusCheck.data.profile.avatarUrl;
-                let uid = statusCheck.data.profile.userId;
-                localStorage.setItem('login_uid', uid);
-                // console.log(this.avatarSrc);
+            if (this.login.cookie) {
+                this.userNickName = this.login.userName;
+                this.avatarSrc = this.login.avatar;
 
-                let userProfile = await useApi('/user/detail', { uid: uid, cookie: localStorage.getItem('login_cookie') }).catch((error) => {
+                if (!this.login.userId){
+                    await this.login.updateInfo();
+                }
+                let userProfile = await useApi('/user/detail', {
+                    uid: this.login.userId,
+                    cookie: this.login.cookie,
+                }).catch((error) => {
                     console.error('Failed to get user profile:', error);
                 });
                 this.userProfile = userProfile.profile;

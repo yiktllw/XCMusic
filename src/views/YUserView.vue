@@ -119,6 +119,7 @@
 <script lang="js">
 import { useApi } from '@/ncm/api';
 import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
+import { mapState } from 'vuex';
 import YScroll from '@/components/YScroll.vue';
 import YPlaylistList from '@/components/YPlaylistList.vue';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
@@ -168,6 +169,7 @@ export default {
         }
     },
     computed: {
+        ...mapState(['login']),
         // 是否显示右侧切换视图
         showRightSwitcher() {
             return this.type === 'user' || (this.type === 'artist' && this.user.position === 'album');
@@ -209,7 +211,7 @@ export default {
                 // 如果 type 为 user，获取用户信息
                 let response = await useApi('/user/detail', {
                     uid: this.userId,
-                    cookie: localStorage.getItem('login_cookie'),
+                    cookie: this.login.cookie,
                 }).catch(err => {
                     console.log('fetch user error:', err);
                 });
@@ -257,7 +259,7 @@ export default {
                 // 如果 type 为 artist，获取歌手信息
                 let response = await useApi('/artist/detail', {
                     id: this.userId,
-                    cookie: localStorage.getItem('login_cookie'),
+                    cookie: this.login.cookie,
                 }).catch(err => {
                     console.log('fetch artist error:', err);
                 });
@@ -319,7 +321,7 @@ export default {
             // 获取用户的歌单
             let response = await useApi('/user/playlist', {
                 uid: this.userId,
-                cookie: localStorage.getItem('login_cookie'),
+                cookie: this.login.cookie,
             }).catch(err => {
                 console.log('fetch user playlist error:', err);
             });
@@ -364,7 +366,7 @@ export default {
             let response = await useApi('/artist/album', {
                 id: this.userId,
                 limit: 1900,
-                cookie: localStorage.getItem('login_cookie'),
+                cookie: this.login.cookie,
             }).catch(err => {
                 console.log('fetch artist albums error:', err);
             });
@@ -389,7 +391,7 @@ export default {
                 id: this.userId,
                 limit: SONGS_PER_PAGE + page * SONGS_PER_PAGE,
                 offset: page * SONGS_PER_PAGE,
-                cookie: localStorage.getItem('login_cookie'),
+                cookie: this.login.cookie,
             }).catch(err => {
                 console.log('fetch artist songs error:', err);
             });
@@ -404,7 +406,7 @@ export default {
                         // 如果没有找到专辑，则单独请求专辑信息
                         let album = await useApi('/album', {
                             id: song.al.id,
-                            cookie: localStorage.getItem('login_cookie'),
+                            cookie: this.login.cookie,
                         }).catch(err => {
                             console.log('fetch album error:', err);
                         });

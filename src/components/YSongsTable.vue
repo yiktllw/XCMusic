@@ -1,5 +1,5 @@
 <template>
-    <div class="table-container">
+    <div class="table-container" ref="main">
         <!-- 3 表头 -->
         <div v-if="showHeader" class="table-header" :style="{ top: stickyTop }">
             <!-- 4 歌曲序号-表头 -->
@@ -73,8 +73,9 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul>
-            <li v-for="(track, index) in localTracks" :key="track.id" class="track-item" ref="track_item_ref"
-                @dblclick="playSongAndPlaylist(track)">
+            <li v-for="(track, index) in localTracks" :id="`track-item-${track.id}`" :key="track.id" class="track-item"
+                ref="track_item_ref" @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
+                @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0">
                 <div class="align-up">
                     <!-- 4 左侧对齐 -->
                     <div class="align-left">
@@ -117,11 +118,17 @@
                     <!-- 4 右侧对齐 -->
                     <div class="align-right">
                         <!-- 5 专辑名称 -->
+                        <div class="track-menu" :id="`track-menu-${track.id}`">
+                            <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
+                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏">
+                            <img src="@/assets/comment.svg" class="track-menu-icon" title="评论">
+                            <img src="@/assets/detail.svg" class="track-menu-icon" title="更多">
+                        </div>
                         <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum">
                             <!-- 6 专辑按钮 -->
                             <button @click="handleAlbumClick(track.al.id)" class="album-button"
                                 :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
-                                {{ track.al.name + (track.al.tns ? (' (' + track.al.tns + ')') : '') }}
+                                {{ trackAlTns(track.al.name, track.al.tns) }}
                             </button>
                         </div>
                         <!-- 5 喜欢 -->
@@ -161,9 +168,8 @@
 </template>
 
 <script lang="js">
-import { useApi } from '@/ncm/api';
 import { formatDuration_mmss } from '@/ncm/time';
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import YPlaying from './YPlaying.vue';
 
 export default {
@@ -217,6 +223,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        showMenu: {
+            type: Boolean,
+            default: true,
+        },
         canSendPlaylist: {
             type: Boolean,
             default: true,
@@ -246,11 +256,14 @@ export default {
     ],
     computed: {
         ...mapState({
-            likelist: state => state.likelist,
             player: state => state.player,
+            login: state => state.login,
         }),
         nowPlaying() {
             return this.player.currentTrack?.id;
+        },
+        likelist() {
+            return this.login.likelist ?? [];
         },
     },
     data() {
@@ -287,20 +300,11 @@ export default {
     },
     async mounted() {
         this.localTracks = this.tracks;
-        console.log('update likelist from YSongsTable');
-        if (this.likelist.length === 0) {
-            let result = await useApi('/likelist', {
-                uid: localStorage.getItem('login_uid'),
-                cookie: localStorage.getItem('login_cookie'),
-            }).catch((error) => {
-                console.error('Failed to get likelist:', error);
-            });
-            this.updateLikelist(result.ids);
+        if (this.login.status) {
+            if (this.login.likelist?.length === 0) {
+                this.login.reloadLikelist();
+            }
         }
-        window.addEventListener('message', this.handleMessage);
-    },
-    beforeUnmount() {
-        window.removeEventListener('message', this.handleMessage);
     },
     watch: {
         tracks(newVal) {
@@ -308,12 +312,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateLikelist', 'updateNowPlaying']),
-        handleMessage(event) {
-            if (event.data.type === 'update-now-playing') {
-                this.updateNowPlaying(JSON.parse(event.data.track));
-            }
-        },
         playSongs(track) {
             console.log('Play Songs:', track.id);
             if (!this.localPlay) {
@@ -325,9 +323,9 @@ export default {
             this.sendPlaylist();
         },
         sendPlaylist() {
-            if(!this.localPlay){
+            if (!this.localPlay) {
                 this.$emit('send-playlist');
-            }else{
+            } else {
                 this.player.playlist = this.localTracks;
             }
         },
@@ -514,6 +512,29 @@ export default {
         formatLyric(lyric) {
             return '   ' + lyric + '   ';
         },
+        trackMouseEnter(id) {
+            // console.log('trackMouseEnter', id);
+            let dom = this.$refs.main.querySelector(`#track-menu-${id}`);
+            dom.style.display = 'flex';
+        },
+        trackMouseLeave(id) {
+            // console.log('trackMouseLeave', id);
+            let dom = this.$refs.main.querySelector(`#track-menu-${id}`);
+            dom.style.display = 'none';
+        },
+        trackAlTns(name, tns) {
+            let result = name;
+            if (tns?.length > 0) {
+                result += ' (' + tns + ')';
+            }
+            return result;
+        },
+        setFocused(id) {
+            let dom = this.$refs.main?.querySelector(`#track-item-${id}`);
+            if (dom) {
+                dom?.classList.add('focused');
+            }
+        },
     },
 }
 
@@ -691,6 +712,10 @@ li {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.track-item:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .align-up {
     display: flex;
     width: 100%;
@@ -800,6 +825,26 @@ li {
     align-items: center;
 }
 
+.track-menu {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    padding-right: 10px;
+}
+
+.track-menu-icon {
+    width: 24px;
+    height: 24px;
+    opacity: .6;
+    margin: 0px 5px;
+    cursor: pointer;
+}
+
+.track-menu-icon:hover {
+    opacity: 1;
+}
+
 /* 5 专辑名称 */
 .track-album {
     /* padding-left: 10px; */
@@ -825,6 +870,10 @@ li {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.album-button:hover {
+    color: #fff;
 }
 
 /* 5 时长 */

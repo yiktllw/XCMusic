@@ -2,6 +2,7 @@ import Color from "color";
 
 export function setBackgroundColor(color) {
     const DOM = document.querySelector('.mainContainer');
+    if (!DOM) return;
     DOM.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  #131319 500px, #131319 100%)`;
 }
 

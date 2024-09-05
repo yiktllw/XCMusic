@@ -156,7 +156,7 @@ import YLoading from '@/components/YLoading.vue';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg, setBackgroundColor } from '@/ncm/color'
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
 
 export default {
@@ -179,9 +179,12 @@ export default {
     },
     computed: {
         ...mapState({
-            likelist: state => state.likelist,
             player: state => state.player,
+            login: state => state.login,
         }),
+        likelist() {
+            return this.login.likelist;
+        }
     },
     data() {
         return {
@@ -239,7 +242,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateLikelist']),
 
         // 获取歌单
         async fetchPlaylist(id) {
@@ -274,8 +276,11 @@ export default {
                             console.error('Failed to fetch playlist:', error);
                             throw error;
                         }),
-                        localStorage.getItem('login_uid')
-                            ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                        this.login.userId
+                            ? useApi('/user/playlist', {
+                                uid: this.login.userId,
+                            }
+                            ).then(myFavoriteId => {
                                 // 如果是我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
                                     this.playlist.name = '我喜欢的音乐';
@@ -283,17 +288,6 @@ export default {
                                 return myFavoriteId;
                             }).catch(error => {
                                 console.error('Failed to fetch myFavoriteId:', error);
-                                throw error;
-                            })
-                            : null,
-                        localStorage.getItem('login_uid')
-                            ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
-                                // 更新喜欢列表
-                                this.updateLikelist(getLikelist.ids);
-                                console.log('update likelist from YPlayilst.vue');
-                                return getLikelist;
-                            }).catch(error => {
-                                console.error('Failed to fetch likelist:', error);
                                 throw error;
                             })
                             : null,
@@ -344,8 +338,11 @@ export default {
                             console.error('Failed to fetch album:', error);
                             throw error;
                         }),
-                        localStorage.getItem('login_uid')
-                            ? useApi('/user/playlist', { uid: localStorage.getItem('login_uid') }).then(myFavoriteId => {
+                        this.login.userId
+                            ? useApi('/user/playlist', {
+                                uid: this.login.userId,
+                            }
+                            ).then(myFavoriteId => {
                                 // 我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
                                     this.playlist.name = '我喜欢的音乐';
@@ -353,17 +350,6 @@ export default {
                                 return myFavoriteId;
                             }).catch(error => {
                                 console.error('Failed to fetch myFavoriteId:', error);
-                                throw error;
-                            })
-                            : null,
-                        localStorage.getItem('login_uid')
-                            ? useApi('/likelist', { uid: localStorage.getItem('login_uid'), cookie: localStorage.getItem('login_cookie') }).then(getLikelist => {
-                                // 获取喜欢列表
-                                this.updateLikelist(getLikelist.ids);
-                                console.log('update likelist from YAlbumView.vue');
-                                return getLikelist;
-                            }).catch(error => {
-                                console.error('Failed to fetch likelist:', error);
                                 throw error;
                             })
                             : null,
@@ -561,7 +547,6 @@ export default {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100vh - 142px);
     user-select: none;
     -webkit-user-drag: none;
 }

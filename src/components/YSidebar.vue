@@ -50,7 +50,7 @@ export default {
     name: 'YSidebar',
     computed: {
         ...mapState({
-            loginStatus: state => state.loginStatus
+            login: state => state.login,
         })
     },
     emits: [
@@ -99,16 +99,16 @@ export default {
             window.removeEventListener('mouseup', this.stopResize);
         },
         async fetchUserPlaylist() {
-            if (localStorage.getItem('login_cookie')) {
+            if (this.login.cookie) {
                 let userAccount = await useApi('/user/account', {
-                    cookie: localStorage.getItem('login_cookie'),
+                    cookie: this.login.cookie,
                     timestamp: new Date().getTime()
                 }).catch((error) => {
                     console.error('Failed to get user account:', error);
                 });
                 let userPlaylist = await useApi('/user/playlist', {
                     uid: userAccount.profile.userId,
-                    cookie: localStorage.getItem('login_cookie'),
+                    cookie: this.login.cookie,
                 }).catch((error) => {
                     console.error('Failed to get user playlist:', error);
                 });

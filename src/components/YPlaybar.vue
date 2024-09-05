@@ -34,7 +34,7 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="toogleLike(likelist.includes(this.player.currentTrack?.id))">
+                <button class="button like-button" @click="_toogleLike(likelist.includes(this.player.currentTrack?.id))">
                     <img class="img-like img" src="../assets/likes.svg"
                         v-if="likelist.includes(this.player.currentTrack?.id)" title="取消喜欢">
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
@@ -90,10 +90,6 @@
             </div>
             <!-- 2 进度条 -->
             <div class="progress">
-                <!-- 3 音频元素 -->
-                <!-- <audio src="" ref="audio" @timeupdate="updateProgress" @loadedmetadata="setDuration"
-                    @ended="onAudioEnded" :preload="auto"></audio> -->
-
                 <!-- 3 自定义进度条 -->
                 <div class="time">
                     {{ this.player.currentTime ? formatDuration(this.player.currentTime) : '00:00' }}
@@ -149,8 +145,8 @@
 </template>
 
 <script lang="js">
-import { useApi, toogleLikeAndGetLikelist } from '@/ncm/api';
-import { mapState, mapActions } from 'vuex';
+import { toogleLike } from '@/ncm/api';
+import { mapState } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
@@ -166,10 +162,13 @@ export default {
     },
     computed: {
         ...mapState({
-            likelist: state => state.likelist,
             nowPlaying: state => state.nowPlaying,
             player: state => state.player,
+            login: state => state.login,
         }),
+        likelist() {
+            return this.login.likelist ?? [];
+        },
         playState() {
             return this.player.playState;
         },
@@ -193,7 +192,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateLikelist', 'updateNowPlaying']),
         setAudioProgress(progress) {
             this.player.progress = progress;
         },
@@ -204,14 +202,16 @@ export default {
             return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         },
         // 切换喜欢状态
-        async toogleLike(status) {
+        async _toogleLike(status) {
             if (!this.player.currentTrack) {
                 return;
             }
             console.log('toogleLike');
             console.log('status:', status);
-            let result = await toogleLikeAndGetLikelist(this.player.currentTrack.id, status);
-            this.updateLikelist(result);
+            await toogleLike(this.player.currentTrack.id, status);
+            if (this.login.status) {
+                this.login.reloadLikelist();
+            }
         },
         // 切换播放状态
         tooglePlayState() {
@@ -243,16 +243,9 @@ export default {
         },
     },
     async mounted() {
-        if (this.likelist.length === 0) {
-            let result = await useApi('/likelist', {
-                uid: localStorage.getItem('login_uid'),
-                cookie: localStorage.getItem('login_cookie'),
-            }).catch(err => {
-                console.error(err);
-            });
-            this.updateLikelist(result.ids);
+        if (this.login.status) {
+            this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
         }
-        console.log('update likelist from YPlaybar.vue');
     },
 }
 
@@ -513,7 +506,7 @@ export default {
     /* align-items: left; */
     justify-content: flex-start;
     transform: translate3d(calc(-100%), calc(-100% - 65px), 0);
-    width: 300px;
+    width: 350px;
     height: calc(100vh - 230px);
     box-shadow: -1px -1px 10px #111;
 }
