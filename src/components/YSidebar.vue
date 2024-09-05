@@ -53,9 +53,6 @@ export default {
             login: state => state.login,
         })
     },
-    emits: [
-        'sidebar-resize'
-    ],
     data() {
         return {
             buttons: [],
@@ -76,7 +73,6 @@ export default {
         ...mapActions(['updateNowPlaying']),
         handleButtonClick(buttonId) {
             const url = `/playlist/${buttonId}`;
-            // this.$emit('update-display', url);
             this.$router.push(url);
             console.log(`Button with ID ${buttonId} clicked`);
         },
@@ -91,8 +87,6 @@ export default {
                 return;
             }
             sidebar.style.width = newWidth;
-            // Emit the new width to the parent component
-            this.$emit('sidebar-resize', newWidth);
         },
         stopResize() {
             window.removeEventListener('mousemove', this.resize);
@@ -142,12 +136,6 @@ export default {
         },
     },
     async mounted() {
-        // 获取侧边栏初始宽度并发送给父组件
-        const sidebar = document.querySelector('.sidebar.y_sidebar_component');
-        const initialWidth = sidebar.style.width || `${sidebar.offsetWidth}px`;
-
-        // Emit the initial width to the parent component
-        this.$emit('sidebar-resize', initialWidth);
         this.fetchUserPlaylist();
         window.addEventListener('message', this.handleMessage);
     },

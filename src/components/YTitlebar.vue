@@ -266,7 +266,7 @@ export default {
                 this.userNickName = this.login.userName;
                 this.avatarSrc = this.login.avatar;
 
-                if (!this.login.userId){
+                if (!this.login.userId) {
                     await this.login.updateInfo();
                 }
                 let userProfile = await useApi('/user/detail', {
@@ -359,7 +359,7 @@ export default {
     justify-content: center;
     flex-grow: 1;
     margin-right: 10px;
-    z-index: 10;
+    z-index: 1;
     margin-left: var(--sidebar-width);
 }
 
@@ -575,7 +575,7 @@ button:hover .tooltip {
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    z-index: 1;
 }
 
 .dropdown-menu img {
@@ -586,6 +586,7 @@ button:hover .tooltip {
 }
 
 .user-info-menu {
+    z-index: 1;
     position: absolute;
     width: 200px;
     height: 300px;
@@ -596,7 +597,6 @@ button:hover .tooltip {
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
     user-select: none;
 }
 

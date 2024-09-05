@@ -1,22 +1,30 @@
 <template>
     <!-- 主容器 -->
     <div class="mainContainer">
-        <!-- 侧边栏 -->
-        <div class="leftSidebar">
-            <YSidebar @sidebar-resize="handleSidebarResize" :opened_playlist="opened_playlist" ref="YSidebar_ref" />
-        </div>
-        <!-- 内容 -->
-        <div class="mainContent">
-            <!-- 标题栏 -->
-            <YTitlebar />
-            <div class="content">
-                <!-- 显示区域 -->
-                <YDisplayArea class="display-area" ref="YDisplayArea" />
+        <div class="align-up">
+            <div class="align-left">
+                <!-- 侧边栏 -->
+                <div class="leftSidebar">
+                    <YSidebar :opened_playlist="opened_playlist" ref="YSidebar_ref" />
+                </div>
+            </div>
+            <div class="align-right" id="align_right">
+                <!-- 内容 -->
+                <div class="mainContent">
+                    <!-- 标题栏 -->
+                    <YTitlebar />
+                    <!-- 显示区域 -->
+                    <div class="content">
+                        <YDisplayArea class="display-area" ref="YDisplayArea" />
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- 播放栏 -->
-        <div class="playbar">
-            <YPlaybar />
+        <div class="align-down">
+            <!-- 播放栏 -->
+            <div class="playbar">
+                <YPlaybar />
+            </div>
         </div>
     </div>
 </template>
@@ -45,19 +53,6 @@ export default {
     methods: {
         ...mapActions(['updateSidebarWidth']),
         // 处理侧边栏resize
-        handleSidebarResize(newWidth) {
-            const mainContent = document.querySelector('.mainContent');
-            mainContent.style.marginLeft = `calc(${newWidth} + 20px)`;
-            mainContent.style.maxWidth = `calc(100% - ${newWidth}px)`;
-        },
-    },
-    mounted() {
-        const sidebar = this.$refs.YSidebar_ref;
-        const sidebarWidth = sidebar.offsetWidth;
-        this.display_width = `${window.innerWidth - sidebarWidth}px`;
-
-        const titlebarHeight = 50;
-        this.display_height = window.innerHeight - titlebarHeight;
     },
 };
 </script>
@@ -65,9 +60,11 @@ export default {
 <style scoped>
 .mainContainer {
     display: flex;
+    justify-content: space-between;
+    flex-direction: column;
     position: absolute;
-    margin: 0px;
-    padding: 0%;
+    margin: 0;
+    padding: 0;
     /* background: linear-gradient(to bottom, #6a553f, #131319); */
     background-color: #131319;
     top: 0;
@@ -76,45 +73,63 @@ export default {
     bottom: 0;
 }
 
+.align-up {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    height: calc(100% - 80px);
+    width: 100%;
+}
+
+.align-left {
+    display: flex;
+}
+
+.align-right {
+    display: flex;
+    left: 0;
+    flex: 1;
+    right: 0;
+    margin-right: 5px;
+    overflow: hidden;
+}
+
+.align-down {
+    display: flex;
+}
+
 .leftSidebar {
     display: flex;
     background-color: rgba(255, 255, 255, 0.03);
-    margin-bottom: 80px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    position: relative;
 }
 
 .mainContent {
     flex: 1;
     flex-direction: column;
-    /* margin-left: 170px; */
+    width: 100%;
     /* position: absolute; */
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 0px;
-    margin-right: 5px;
 }
 
 .content {
     /* 确保内容区域占据剩余空间 */
     height: calc(100vh - 140px);
     background-color: transparent;
+    width: 100%;
     /* 设置内容区域的背景颜色 */
 }
 
 .display-area {
     background-color: transparent;
+    width: 100%;
 }
 
 .playbar {
     background-color: rgb(45, 45, 55);
-    position: fixed;
-    bottom: 0;
+    position: relative;
     height: 80px;
     width: 100vw;
+    overflow: hidden;
     padding: 0;
     margin: 0;
 }
