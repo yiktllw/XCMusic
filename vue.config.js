@@ -3,6 +3,11 @@ const { defineConfig } = require('@vue/cli-service');
 module.exports = defineConfig({
     transpileDependencies: true,
     outputDir: 'dist_electron',
+    pluginOptions: {
+        electronBuilder: {
+            preload: 'preload.js',
+        },
+    },
     configureWebpack: {
         module: {
             rules: [
@@ -31,6 +36,15 @@ module.exports = defineConfig({
         devServer: {
             port: 4321,
             host: 'localhost',
+            proxy: {
+                '/search': {
+                    target: 'http://localhost:10754',
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '^/search': '/search'
+                    }
+                }
+            },
         }
     },
 });

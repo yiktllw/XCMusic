@@ -1,5 +1,10 @@
 {
     "name": "xc-music",
+    "description": "第三方网易云音乐客户端",
+    "author": {
+        "name": "YiktLLW",
+        "email": "yiktllw@qq.com"
+    },
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -17,7 +22,6 @@
         "cli-color": "^2.0.4",
         "color": "^4.2.3",
         "core-js": "^3.8.3",
-        "howler": "^2.2.4",
         "js-cookie": "^3.0.5",
         "NeteaseCloudMusicApi": "^4.22.0",
         "vue": "^3.2.13",
