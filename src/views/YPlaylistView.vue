@@ -8,9 +8,9 @@
                 <!-- 3 歌单封面 -->
                 <div class="playlist-cover-container">
                     <!-- 4 封面图片 -->
-                    <img v-show="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
+                    <img v-if="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
                         @load="_setBackgroundColor" />
-                    <div v-show="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
+                    <div v-if="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                     <!-- 4 渐变层 -->
                     <div class="gradient-overlay" v-if="type === 'playlist'"></div>
                     <!-- 4 播放次数 -->
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <!-- 3 歌单详情 -->
-                <div class="playlist-details" v-show="playlist.name">
+                <div class="playlist-details" v-if="playlist.name">
                     <div class="align-up" :class="type === 'playlist' ? '' : 'align-up-album'">
                         <!-- 4 歌单名称 -->
                         <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name + (playlist.transName ?
@@ -28,16 +28,14 @@
                         <!-- 4 创建信息 -->
                         <div class="createrInfo" v-if="type === 'playlist'">
                             <!-- 5 创建者头像 -->
-                            <img v-show="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl"
-                                class="createrAvatar" />
-                            <div v-show="!playlist.createrAvatarUrl" class="createrAvatar" style="background-color: #333;">
+                            <img v-if="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl" class="createrAvatar" />
+                            <div v-if="!playlist.createrAvatarUrl" class="createrAvatar" style="background-color: #333;">
                             </div>
                             <!-- 5 创建者名称 -->
                             <span class="creater-name">
                                 {{ playlist.createrName }}
                             </span>
-                            <span v-show="!playlist.createrAvatarUrl" class="creater-name"
-                                style="background-color: #333;">创建者
+                            <span v-if="!playlist.createrAvatarUrl" class="creater-name" style="background-color: #333;">创建者
                             </span>
                             <!-- 5 创建时间 -->
                             <span class="create-time">
@@ -106,7 +104,7 @@
                             :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? '#fff' : '#bbb' }">歌曲</span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
-                            v-show="orient === 'songs'">
+                            v-if="orient === 'songs'">
                         </div>
                     </button>
                 </div>
@@ -125,7 +123,7 @@
                         </span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
-                            v-show="orient === 'comments'">
+                            v-if="orient === 'comments'">
                         </div>
                     </button>
                 </div>
@@ -133,17 +131,17 @@
             <!-- 2 加载中动画 -->
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
-            <YSongsTable v-if="!isLoading && type === 'playlist'" v-show="orient === 'songs'" :tracks="this.filteredTracks"
+            <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" :tracks="this.filteredTracks"
                 :likelist="likelist" :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" />
-            <YSongsTable v-if="!isLoading && type === 'album'" v-show="orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs"
-                @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
+            <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks=" this.filteredTracks "
+                :likelist=" likelist " :showTrackAlbum=" false " :showTrackCover=" false " @play-songs=" playSongs "
+                @send-playlist=" sendPlaylist " @play-song-and-playlist=" playSongAndPlaylist " />
             <!-- 2 分页 -->
-            <div v-if="totalPages > 1 && type === 'playlist'" class="pagination">
-                <button @click="changePage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
-                    <span :class="{ 'choosed-text': currentPage === page }" style="font-size: medium;">{{ page }}</span>
-                    <div class="choosed" v-show="currentPage === page"></div>
+            <div v-if=" totalPages > 1 && type === 'playlist' " class="pagination">
+                <button @click="changePage(page)" v-for=" page  in  totalPages " :key=" page " :disabled=" currentPage === page ">
+                    <span :class=" { 'choosed-text': currentPage === page } " style="font-size: medium;">{{ page }}</span>
+                    <div class="choosed" v-if=" currentPage === page "></div>
                 </button>
             </div>
         </div>

@@ -247,16 +247,28 @@ export class Player {
     // 更新歌曲播放数据
     async scrobble(id) {
         if (!localStorage.getItem('login_cookie')) return;
-        await useApi('/scrobble', {
-            id: id,
-            time: this._currentTime,
-            sourceId: this._playlistId ?? null,
-            cookie: localStorage.getItem('login_cookie'),
-        }).then(res => {
-            console.log('update song playcount: ', id, 'response: ', res);
-        }).catch(err => {
-            console.log('update song playcount error: ', err);
-        })
+        if (this._playlistId > 0) {
+            await useApi('/scrobble', {
+                id: id,
+                time: this._currentTime,
+                sourceId: this._playlistId,
+                cookie: localStorage.getItem('login_cookie'),
+            }).then(res => {
+                console.log('update song playcount: ', id, 'response: ', res);
+            }).catch(err => {
+                console.log('update song playcount error: ', err);
+            })
+        } else {
+            await useApi('/scrobble', {
+                id: id,
+                time: this._currentTime,
+                cookie: localStorage.getItem('login_cookie'),
+            }).then(res => {
+                console.log('update song playcount: ', id, 'response: ', res);
+            }).catch(err => {
+                console.log('update song playcount error: ', err);
+            })
+        }
     }
     // 获取当前播放索引
     get current() {

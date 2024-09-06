@@ -3,7 +3,7 @@
     <button class="dropdown-button" @click="toggleMenu">
       {{ selectedOption }}
     </button>
-    <div class="dropdown-content" v-show="isMenuOpen">
+    <div class="dropdown-content" v-if="isMenuOpen">
       <ul>
         <li v-for="option in options" :key="option" @click="selectOption(option)">
           {{ option }}

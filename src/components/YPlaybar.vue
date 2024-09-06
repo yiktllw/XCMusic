@@ -45,8 +45,8 @@
                 </button>
                 <!-- 3 播放/暂停按钮 -->
                 <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'">
-                    <img v-show="playState === 'pause'" class="img-play img" src="../assets/play.svg">
-                    <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
+                    <img v-if="playState === 'pause'" class="img-play img" src="../assets/play.svg">
+                    <img v-if="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
                 <!-- 3 下一首按钮 -->
                 <button class="button next-button" @click="goTo('forward')" title="下一首">
@@ -55,13 +55,13 @@
                 <!-- 3 播放模式按钮 -->
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
                     ref="play_mode_panel_trigger">
-                    <img v-show="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
-                    <img v-show="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
+                    <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
+                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
                         title="列表循环">
-                    <img v-show="playMode === 'random'" class="img-random img" src="../assets/random.svg" title="随机播放">
-                    <img v-show="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
+                    <img v-if="playMode === 'random'" class="img-random img" src="../assets/random.svg" title="随机播放">
+                    <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
                         title="列表随机" style="opacity: 1;">
-                    <img v-show="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
+                    <img v-if="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
                     :slide-direction="5">

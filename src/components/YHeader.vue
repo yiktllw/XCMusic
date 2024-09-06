@@ -6,7 +6,7 @@
                 :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? '#fff' : '#bbb' }">
                 {{ item.display }}
                 <!-- 选中效果 -->
-                <div class="choosed" style="" v-show="item.position === position">
+                <div class="choosed" style="" v-if="item.position === position">
                 </div>
             </div>
             <!-- 数字 -->

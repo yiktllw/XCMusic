@@ -7,9 +7,9 @@
             <div class="user-info">
                 <!-- 头像 -->
                 <div class="avatar">
-                    <img class="avatar-img" :src="user.picUrl" v-show="user.picUrl">
+                    <img class="avatar-img" :src="user.picUrl" v-if="user.picUrl">
                     <!-- 如果没有头像，显示默认头像 -->
-                    <div class="avatar-img" style="background-color: #333;" v-show="!user.picUrl"></div>
+                    <div class="avatar-img" style="background-color: #333;" v-if="!user.picUrl"></div>
                 </div>
                 <!-- 用户信息-文本 -->
                 <div class="user-info-text">
@@ -50,11 +50,11 @@
                     <!-- 选中效果 -->
                     <div class="choosed"
                         style="transform: translate(7px,4px); width: calc(100% - 15px); height: 4px; border-radius: 2px;"
-                        v-show="item.position === user.position">
+                        v-if="item.position === user.position">
                     </div>
                 </button>
                 <!-- 右侧切换视图 -->
-                <div v-show="showRightSwitcher" class="right-switcher"
+                <div v-if="showRightSwitcher" class="right-switcher"
                     style="display: flex;flex: 1;justify-content: flex-end; margin-right: 30px;">
                     <img src="@/assets/biglist.svg" class="list-icon" @click="user.listType = false"
                         :style="{ opacity: user.listType ? .6 : 1 }">
@@ -83,10 +83,10 @@
                     <div class="artist-works" v-if="user.position === 'song'">
                         <!-- 歌曲列表 -->
                         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
-                            :tracks="this.user.tracks" v-show="this.user.tracks" />
+                            :tracks="this.user.tracks" v-if="this.user.tracks" />
                     </div>
                     <!-- 加载中 -->
-                    <YLoading v-show="!this.user.tracks" />
+                    <YLoading v-if="!this.user.tracks" />
                     <!-- 歌单界面 -->
                     <div class="playlist-list" v-if="user.listType && user.position === 'album'">
                         <!-- 歌手专辑列表 -->

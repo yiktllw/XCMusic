@@ -9,7 +9,7 @@
                     :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? '#fff' : '#bbb' }">{{
                         item.display }}</span>
                 <div class="choosed" style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
-                    v-show="item.position === position">
+                    v-if="item.position === position">
                 </div>
             </button>
         </div>

@@ -12,7 +12,7 @@
                     style=" padding-top: 3px; " />
             </button>
             <transition name="slide-fade">
-                <div class="fade-container" v-show="showMyPlaylist">
+                <div class="fade-container" v-if="showMyPlaylist">
                     <button class="playlist-button" v-for="button in buttons" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
@@ -28,7 +28,7 @@
                     style=" padding-top: 3px; " />
             </button>
             <transition name="slide-fade">
-                <div class="fade-container" v-show="showMySubscribedPlaylist">
+                <div class="fade-container" v-if="showMySubscribedPlaylist">
                     <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">

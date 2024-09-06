@@ -78,8 +78,10 @@
                     </div>
                     <div class="user-info-item">我的会员</div>
                     <div class="user-info-item">等级{{ userProfile?.level ?? 0 }}</div>
+                    <div class="user-info-item" @click="openListenRank">我的听歌排行</div>
                     <div class="user-info-item">个人信息设置</div>
                     <div class="user-info-item" @click="this.openTestPage">测试页面</div>
+                    <div class="user-info-item">关于XCMusic</div>
                     <div class="user-info-item" @click="this.login.logout()">退出登录</div>
                 </div>
             </YPanel>
@@ -297,6 +299,9 @@ export default {
         openTestPage() {
             this.$router.push({ path: '/test' });
         },
+        openListenRank() {
+            this.$router.push({ path: `/user_songs_rank/${this.login.userId}` })
+        }
     },
     async mounted() {
         // 添加外部点击处理器

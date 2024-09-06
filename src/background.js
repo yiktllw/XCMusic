@@ -86,23 +86,5 @@ if (isDevelopment) {
         })
     }
 }
-function createLoginWindow(parentWindow) {
-    let loginWindow = new BrowserWindow({
-        width: 400,
-        height: 400,
-        parent: parentWindow,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-        },
-    });
-
-    // 假设 '/login' 是加载 YLoginWindow 组件的路由
-    loginWindow.loadURL('http://localhost:4321/login');
-
-    loginWindow.on('closed', () => {
-        loginWindow = null;
-    });
-}
 import './ncm/titlebarEvent';
 

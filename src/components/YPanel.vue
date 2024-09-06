@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-fade" v-bind:style="{ '--slide-transform': slideTransform }">
-        <div class="panel" v-show="showPanel" ref="panel">
+        <div class="panel" v-if="showPanel" ref="panel">
             <slot></slot>
         </div>
     </transition>
