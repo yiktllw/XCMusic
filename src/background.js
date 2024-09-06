@@ -16,8 +16,8 @@ app.commandLine.appendSwitch('js-flags', '--max-new-space-size=256');
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
-        width: 1100,
-        height: 700,
+        width: 1200,
+        height: 750,
         minWidth: 1100,
         minHeight: 700,
         webPreferences: {

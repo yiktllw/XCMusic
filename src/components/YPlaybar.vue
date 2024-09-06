@@ -63,7 +63,8 @@
                         title="列表随机" style="opacity: 1;">
                     <img v-show="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
-                <YPanel ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger" :slide-direction="5">
+                <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
+                    :slide-direction="5">
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
@@ -332,9 +333,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
     margin-top: 10px;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 }

@@ -60,6 +60,10 @@ export class Player {
             console.log('Track not in playlist, added to playlist and played', track);
             await this.playTrack(track);
         } else {
+            // 更新上一首歌曲的播放信息
+            if (this.currentTrack.id) {
+                await this.scrobble(this.currentTrack.id)
+            }
             // 如果在播放列表中
             // 获取歌曲播放信息
             let result = await this.getUrl(track.id);
@@ -228,6 +232,32 @@ export class Player {
             this._history = this._history.splice(this._historyIndex + 1, 0, value);
         }
     }
+    // 更新歌单播放量
+    async updatePlaycount() {
+        if (!localStorage.getItem('login_cookie')) return;
+        await useApi('/playlist/update/playcount', {
+            id: this._playlistId,
+            cookie: localStorage.getItem('login_cookie')
+        }).then((res) => {
+            console.log('update playlist playcount: ', this._playlistId, 'response', res);
+        }).catch(err => {
+            console.log('update playlist playcount error: ', err)
+        });
+    }
+    // 更新歌曲播放数据
+    async scrobble(id) {
+        if (!localStorage.getItem('login_cookie')) return;
+        await useApi('/scrobble', {
+            id: id,
+            time: this._currentTime,
+            sourceId: this._playlistId ?? null,
+            cookie: localStorage.getItem('login_cookie'),
+        }).then(res => {
+            console.log('update song playcount: ', id, 'response: ', res);
+        }).catch(err => {
+            console.log('update song playcount error: ', err);
+        })
+    }
     // 获取当前播放索引
     get current() {
         return this._current;
@@ -255,6 +285,7 @@ export class Player {
     // 设置播放歌单ID
     set playlistId(value) {
         this._playlistId = value;
+        this.updatePlaycount();
     }
     // 获取播放模式
     get mode() {

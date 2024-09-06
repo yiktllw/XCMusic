@@ -183,7 +183,7 @@ export default {
 .sidebar {
     display: flex;
     /* Optional: Add border radius */
-    width: 180px;
+    width: 200px;
     min-width: 180px;
     max-width: 260px;
     /* Adjust the width as needed */

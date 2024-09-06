@@ -77,7 +77,7 @@ export default {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    height: calc(100% - 80px);
+    height: calc(100% - 85px);
     width: 100%;
 }
 
@@ -96,6 +96,8 @@ export default {
 
 .align-down {
     display: flex;
+    z-index: 10;
+    height: 85px;
 }
 
 .leftSidebar {
@@ -108,6 +110,7 @@ export default {
     flex: 1;
     flex-direction: column;
     width: 100%;
+    z-index: 0;
     /* position: absolute; */
 }
 
@@ -127,9 +130,8 @@ export default {
 .playbar {
     background-color: rgb(45, 45, 55);
     position: relative;
-    height: 80px;
-    width: 100vw;
-    overflow: hidden;
+    height: 100%;
+    width: 100%;
     padding: 0;
     margin: 0;
 }
