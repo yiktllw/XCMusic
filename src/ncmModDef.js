@@ -653,5 +653,30 @@ module.exports = [
         identifier: 'vip_info',
         route: '/vip/info',
         module: require('NeteaseCloudMusicApi/module/vip_info'),
-    }
+    },
+    {
+        identifier: 'comment_music',
+        route: '/comment/music',
+        module: require('NeteaseCloudMusicApi/module/comment_music'),
+    },
+    {
+        identifier: 'comment_floor',
+        route: '/comment/floor',
+        module: require('NeteaseCloudMusicApi/module/comment_floor'),
+    },
+    {
+        identifier: 'comment_album',
+        route: '/comment/album',
+        module: require('NeteaseCloudMusicApi/module/comment_album'),
+    },
+    {
+        identifier: 'comment_playlist',
+        route: '/comment/playlist',
+        module: require('NeteaseCloudMusicApi/module/comment_playlist'),
+    },
+    {
+        identifier: 'comment_new',
+        route: '/comment/new',
+        module: require('NeteaseCloudMusicApi/module/comment_new'),
+    },
 ];
