@@ -4,16 +4,22 @@
 <p align="center">
     第三方网易云音乐客户端
 </p>
-<img src="./src/assets/logo.svg" style="width:300px; display:none;">
+<div align="center">
+	<img src="./src/assets/logo.svg" style="width:300px;">
+</div>
 
-## 安装依赖
+## 配置开发环境
+安装依赖
 ```
 npm install
 ```
-
-### 编译为Electron程序
+运行Electron程序
 ```
 npm run electron:serve
+```
+编译为win32程序
+```
+npm run electron:build
 ```
 
 ## 灵感来源
