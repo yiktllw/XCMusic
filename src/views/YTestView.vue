@@ -1,24 +1,30 @@
 <template>
     <div class="display">
-        <YUserSongsRankView userId="375334328"/>
+        <YPage v-model="page" />
     </div>
 </template>
 
 <script lang="js">
-import YUserSongsRankView from './YUserSongsRankView.vue';
+import YPage from '@/components/YPage.vue';
+import { YPageC } from '@/tools/YPageC';
 
 export default {
     name: 'YTestView',
     components: {
-        YUserSongsRankView,
+        YPage,
     },
     data() {
         return {
-            
+            page: new YPageC(2),
         };
     },
     methods: {
-        
+
+    },
+    mounted() {
+        this.page.onPageChange = () => {
+            console.log('page change', this.page.current);
+        };
     },
 }
 

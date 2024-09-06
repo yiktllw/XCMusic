@@ -138,12 +138,7 @@
                 :likelist=" likelist " :showTrackAlbum=" false " :showTrackCover=" false " @play-songs=" playSongs "
                 @send-playlist=" sendPlaylist " @play-song-and-playlist=" playSongAndPlaylist " />
             <!-- 2 分页 -->
-            <div v-if=" totalPages > 1 && type === 'playlist' " class="pagination">
-                <button @click="changePage(page)" v-for=" page  in  totalPages " :key=" page " :disabled=" currentPage === page ">
-                    <span :class=" { 'choosed-text': currentPage === page } " style="font-size: medium;">{{ page }}</span>
-                    <div class="choosed" v-if=" currentPage === page "></div>
-                </button>
-            </div>
+            <YPage v-if="type === 'playlist'" v-model="page" />
         </div>
     </div>
 </template>
@@ -151,6 +146,8 @@
 <script>
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
+import YPage from '@/components/YPage.vue';
+import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg, setBackgroundColor } from '@/ncm/color'
@@ -162,6 +159,7 @@ export default {
     components: {
         YSongsTable,
         YLoading,
+        YPage,
     },
     props: {
         // 传入的歌单 ID
@@ -202,9 +200,8 @@ export default {
             isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字
             filteredTracks: [], // 搜索过滤后的歌曲列表
-            currentPage: 1,     // 当前页数
-            totalPages: 1,      // 总页数
             orient: 'songs',    // 歌曲列表或评论列表
+            page: new YPageC(1),
         };
     },
     watch: {
@@ -226,13 +223,6 @@ export default {
         },
         // 监听 searchQuery 的变化，当 searchQuery 变化时重新过滤歌曲列表
         searchQuery: {
-            handler() {
-                this.updateTracks();
-                // console.log('filterTracks', this.filteredTracks);
-            }
-        },
-        // 监听 currentPage 的变化，当 currentPage 变化时重新过滤歌曲列表
-        currentPage: {
             handler() {
                 this.updateTracks();
                 // console.log('filterTracks', this.filteredTracks);
@@ -268,7 +258,10 @@ export default {
                             // 歌曲数量
                             this.playlist.trackCount = response.playlist.trackCount;
                             // 总页数
-                            this.totalPages = Math.ceil(this.playlist.trackCount / 1000);
+                            this.page = new YPageC(Math.ceil(this.playlist.trackCount / 1000));
+                            this.page.onPageChange = () => {
+                                this.updateTracks();
+                            }
                             return response;
                         }).catch(error => {
                             console.error('Failed to fetch playlist:', error);
@@ -361,10 +354,10 @@ export default {
                 });
 
                 // 处理fetchTracks获取的多个页面的track
-                if (this.totalPages > 1 && this.type === 'playlist') {
+                if (this.page.total > 1 && this.type === 'playlist') {
                     const promises = [];
 
-                    for (let i = 2; i <= this.totalPages; i++) {
+                    for (let i = 2; i <= this.page.total; i++) {
                         promises.push(this.fetchTracks(id, i));
                     }
 
@@ -403,12 +396,6 @@ export default {
                 // 设置加载完成
             }
         },
-        // 改变当前歌单的页面
-        changePage(page) {
-            this.currentPage = page;
-            console.log('changePage', page);
-            console.log(this.currentPage);
-        },
         // 设置背景颜色
         async _setBackgroundColor() {
             let color = await getColorFromImg(this.playlist.coverImgUrl, document);
@@ -438,7 +425,7 @@ export default {
         // 更新歌曲列表 搜索过滤
         updateTracks() {
             if (!this.searchQuery && this.type === 'playlist') {
-                this.filteredTracks = this.playlist.tracks.slice((this.currentPage - 1) * 1000, this.currentPage * 1000);
+                this.filteredTracks = this.playlist.tracks.slice((this.page.current - 1) * 1000, this.page.current * 1000);
                 return;
             } else if (!this.searchQuery && this.type === 'album') {
                 this.filteredTracks = this.playlist.tracks;

@@ -19,26 +19,32 @@
             <div class="songs" v-if="position === 'song'">
                 <YSongsTable :resortable="false" stickyTop="50px" :canSendPlaylist="false" :showTrackCover="true"
                     :tracks="this.switcher[0].tracks" />
+                <YPage v-model="songsPage" />
             </div>
             <!-- 专辑 -->
             <div class="albums" v-else-if="position === 'album'">
                 <YPlaylistList :playlists="switcher[1].playlists" stickyTop="50px" type="album" />
+                <YPage v-model="albumsPage" />
             </div>
             <!-- 歌单 -->
             <div class="playlists" v-else-if="position === 'playlist'">
                 <YPlaylistList :playlists="switcher[2].playlists" stickyTop="50px" />
+                <YPage v-model="playlistsPage" />
             </div>
             <!-- 歌手 -->
             <div class="artists" v-else-if="position === 'artist'">
                 <YArtistList :artists="switcher[3].artists" />
+                <YPage v-model="artistsPage" />
             </div>
             <!-- 歌词 -->
             <div class="lyrics" v-else-if="position === 'lyric'">
                 <YSearchLyrics :listWithLyrics="switcher[4].lyricsList" />
+                <YPage v-model="lyricsPage" />
             </div>
             <!-- 用户 -->
             <div class="users" v-else-if="position === 'user'">
                 <YArtistList :artists="switcher[5].users" type="user" />
+                <YPage v-model="usersPage" />
             </div>
         </div>
     </YScroll>
@@ -50,6 +56,8 @@ import YPlaylistList from '@/components/YPlaylistList.vue';
 import YArtistList from '@/components/YArtistList.vue';
 import YSearchLyrics from '@/components/YSearchLyrics.vue';
 import YScroll from '@/components/YScroll.vue';
+import YPage from '@/components/YPage.vue';
+import { YPageC } from '@/tools/YPageC';
 import { setBackgroundColor } from '@/ncm/color';
 import { useApi } from '../ncm/api';
 
@@ -70,61 +78,14 @@ export default {
     watch: {
         // 监听搜索位置变化, 切换搜索位置
         position(newPosition) {
-            switch (newPosition) {
-                case 'song':
-                    this.fetchTracks();
-                    this.lastPosition = 'song';
-                    break;
-                case 'album':
-                    this.fetchAlbums();
-                    this.lastPosition = 'album';
-                    break;
-                case 'playlist':
-                    this.fetchPlaylists();
-                    this.lastPosition = 'playlist';
-                    break;
-                case 'artist':
-                    this.fetchArtists();
-                    this.lastPosition = 'artist';
-                    break;
-                case 'lyric':
-                    this.fetchLyrics();
-                    this.lastPosition = 'lyric';
-                    break;
-                case 'user':
-                    this.fetchUsers();
-                    this.lastPosition = 'user';
-                    break;
-                case 'default':
-                    this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` });
-                    break;
+            this.fetchData(newPosition);
+            if (newPosition !== 'default') {
+                this.lastPosition = newPosition;
             }
         },
         // 监听搜索关键字变化, 重新搜索
         search() {
-            switch (this.position) {
-                case 'song':
-                    this.fetchTracks();
-                    break;
-                case 'album':
-                    this.fetchAlbums();
-                    break;
-                case 'playlist':
-                    this.fetchPlaylists();
-                    break;
-                case 'artist':
-                    this.fetchArtists();
-                    break;
-                case 'lyric':
-                    this.fetchLyrics();
-                    break;
-                case 'user':
-                    this.fetchUsers();
-                    break;
-                case 'default':
-                    this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` });
-                    break;
-            }
+            this.fetchData(this.position);
         }
     },
     components: {
@@ -133,6 +94,7 @@ export default {
         YPlaylistList,
         YArtistList,
         YSearchLyrics,
+        YPage,
     },
     data() {
         return {
@@ -171,6 +133,12 @@ export default {
             ],
             // 上次搜索位置
             lastPosition: 'song',
+            songsPage: new YPageC(1),
+            albumsPage: new YPageC(1),
+            playlistsPage: new YPageC(1),
+            artistsPage: new YPageC(1),
+            lyricsPage: new YPageC(1),
+            usersPage: new YPageC(1),
         };
     },
     methods: {
@@ -180,11 +148,12 @@ export default {
             this.$router.push({ path: `/search/${this.search}/${position}` });
         },
         // 搜索歌曲
-        async fetchTracks() {
+        async fetchTracks(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1,
                 limit: 100,
+                offset: (this.songsPage.current - 1) * 100,
             }).catch((err) => {
                 console.log('fetchTracks', err);
             });
@@ -195,14 +164,21 @@ export default {
                     _picUrl: song.al.picUrl + '?param=40y40',
                 }
             });
+            if (newPageInstance) {
+                this.songsPage = new YPageC(Math.ceil(result.result.songCount / 100));
+            }
+            this.songsPage.onPageChange = () => {
+                this.fetchTracks(false);
+            };
             // console.log('fetchTracks', result.result.songs);
         },
         // 搜索歌单
-        async fetchPlaylists() {
+        async fetchPlaylists(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1000,
                 limit: 100,
+                offset: (this.playlistsPage.current - 1) * 100,
             }).catch((err) => {
                 console.log('fetchPlaylists', err);
             });
@@ -213,14 +189,21 @@ export default {
                     _picUrl: playlist.coverImgUrl + '?param=40y40',
                 }
             });
+            if (newPageInstance) {
+                this.playlistsPage = new YPageC(Math.ceil(result.result.playlistCount / 100));
+            }
+            this.playlistsPage.onPageChange = () => {
+                this.fetchPlaylists(false);
+            };
             console.log('fetchPlaylists', result.result.playlists);
         },
         // 搜索专辑
-        async fetchAlbums() {
+        async fetchAlbums(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 10,
                 limit: 100,
+                offset: (this.albumsPage.current - 1) * 100,
             }).catch((err) => {
                 console.log('fetchAlbums', err);
             });
@@ -231,14 +214,21 @@ export default {
                     _picUrl: album.picUrl + '?param=40y40',
                 }
             });
+            if (newPageInstance) {
+                this.albumsPage = new YPageC(Math.ceil(result.result.albumCount / 100));
+            }
+            this.albumsPage.onPageChange = () => {
+                this.fetchAlbums(false);
+            };
             // console.log('fetchAlbums', result.result.albums);
         },
         // 搜索歌手
-        async fetchArtists() {
+        async fetchArtists(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 100,
                 limit: 100,
+                offset: (this.artistsPage.current - 1) * 100,
             }).catch((err) => {
                 console.log('fetchArtists', err);
             });
@@ -249,10 +239,16 @@ export default {
                     _picUrl: artist.picUrl + '?param=130y130',
                 }
             });
+            if (newPageInstance) {
+                this.artistsPage = new YPageC(Math.ceil(result.result.artistCount / 100));
+            }
+            this.artistsPage.onPageChange = () => {
+                this.fetchArtists(false);
+            };
             // console.log('fetchArtists', result.result.artists);
         },
         // 搜索歌词
-        async fetchLyrics() {
+        async fetchLyrics(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1006,
@@ -260,15 +256,27 @@ export default {
             }).catch((err) => {
                 console.log('fetchLyrics', err);
             });
-            this.switcher[4].lyricsList = result.result.songs;
+            this.switcher[4].lyricsList = result.result.songs.map((song) => {
+                return {
+                    ...song,
+                    _picUrl: song.al.picUrl + '?param=40y40',
+                }
+            });
+            if (newPageInstance) {
+                this.lyricsPage = new YPageC(Math.ceil(result.result.songCount / 100));
+            }
+            this.lyricsPage.onPageChange = () => {
+                this.fetchLyrics(false);
+            };
             console.log('fetchLyrics', result.result.songs);
         },
         // 搜索用户
-        async fetchUsers() {
+        async fetchUsers(newPageInstance = true) {
             let result = await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1002,
                 limit: 100,
+                offset: (this.usersPage.current - 1) * 100,
             }).catch((err) => {
                 console.log('fetchUsers', err);
             });
@@ -279,7 +287,38 @@ export default {
                     _picUrl: user.avatarUrl + '?param=130y130',
                 }
             });
+            if (newPageInstance) {
+                this.usersPage = new YPageC(Math.ceil(result.result.userprofileCount / 100));
+            }
+            this.usersPage.onPageChange = () => {
+                this.fetchUsers(false);
+            };
             // console.log('fetchUsers', result.result.userprofiles);
+        },
+        fetchData(position) {
+            switch (position) {
+                case 'song':
+                    this.fetchTracks();
+                    break;
+                case 'album':
+                    this.fetchAlbums();
+                    break;
+                case 'playlist':
+                    this.fetchPlaylists();
+                    break;
+                case 'artist':
+                    this.fetchArtists();
+                    break;
+                case 'lyric':
+                    this.fetchLyrics();
+                    break;
+                case 'user':
+                    this.fetchUsers();
+                    break;
+                case 'default':
+                    this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` });
+                    break;
+            }
         }
     },
     mounted() {

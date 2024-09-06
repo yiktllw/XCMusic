@@ -44,7 +44,7 @@ export default {
     },
     methods:{
         openPlaylist(id) {
-            if (id.startsWith('user-record-')) {
+            if (typeof id === 'string' && id.startsWith('user-record-')) {
                 let uid = id.split('user-record-')[1];
                 this.$router.push({ path: `/user_songs_rank/${uid}` });
                 // console.log('open user record page: ', uid);
