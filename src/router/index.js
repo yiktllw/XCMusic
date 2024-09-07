@@ -80,6 +80,33 @@ const routes = [
                     userId: Number(route.params.uid),
                 })
             },
+            {
+                path: 'comment/song/:id',
+                name: 'SongComment',
+                component: () => import('../views/YCommentView.vue'),
+                props: route => ({
+                    id: Number(route.params.id),
+                    type: 'song',
+                })
+            },
+            {
+                path: 'comment/album/:id',
+                name: 'AlbumComment',
+                component: () => import('../views/YCommentView.vue'),
+                props: route => ({
+                    id: Number(route.params.id),
+                    type: 'album',
+                })
+            },
+            {
+                path: 'comment/playlist/:id',
+                name: 'PlaylistComment',
+                component: () => import('../views/YCommentView.vue'),
+                props: route => ({
+                    id: Number(route.params.id),
+                    type: 'playlist',
+                })
+            },
         ],
     },
 ]

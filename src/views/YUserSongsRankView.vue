@@ -65,6 +65,8 @@ export default {
                     };
                 });
                 // console.log('week data:', this.recentTracks);
+            }).catch((err) => {
+                console.log(err);
             });
             await useApi('/user/record', {
                 uid: this.userId,
@@ -79,6 +81,8 @@ export default {
                     };
                 });
                 // console.log('alltime data:', this.alltimeTracks);
+            }).catch((err) => {
+                console.log(err);
             });
         },
     },

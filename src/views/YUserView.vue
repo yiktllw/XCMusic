@@ -330,7 +330,7 @@ export default {
                 name: '听歌排行',
                 id: `user-record-${this.userId}`,
                 userId: this.userId,
-                creator: response.playlist[0].creator,
+                creator: response.playlist[0]?.creator ?? null,
                 playCount: 0,
                 trackCount: `累计听歌${this.user.listenSongs}`,
                 _picUrl: require('@/assets/songsrank.svg'),

@@ -121,7 +121,8 @@
                         <div class="track-menu" :id="`track-menu-${track.id}`">
                             <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
                             <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏">
-                            <img src="@/assets/comment.svg" class="track-menu-icon" title="评论">
+                            <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
+                                @click="openSongComment(track.id)">
                             <img src="@/assets/detail.svg" class="track-menu-icon" title="更多">
                         </div>
                         <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum">
@@ -534,6 +535,9 @@ export default {
             if (dom) {
                 dom?.classList.add('focused');
             }
+        },
+        openSongComment(id) {
+            this.$router.push(`/comment/song/${id}`);
         },
     },
 }

@@ -23,8 +23,11 @@
                 <div class="playlist-details" v-if="playlist.name">
                     <div class="align-up" :class="type === 'playlist' ? '' : 'align-up-album'">
                         <!-- 4 歌单名称 -->
-                        <h1 style="margin-top:0px;margin-bottom:10px;color:#fff;">{{ playlist.name + (playlist.transName ?
-                            playlist.transName : '') }}</h1>
+                        <div class="playlist-name">
+                            {{ playlist.name + (
+                                playlist.transName ?
+                                    playlist.transName : '') }}
+                        </div>
                         <!-- 4 创建信息 -->
                         <div class="createrInfo" v-if="type === 'playlist'">
                             <!-- 5 创建者头像 -->
@@ -134,10 +137,11 @@
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" :tracks="this.filteredTracks"
                 :likelist="likelist" :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" />
-            <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks=" this.filteredTracks "
-                :likelist=" likelist " :showTrackAlbum=" false " :showTrackCover=" false " @play-songs=" playSongs "
-                @send-playlist=" sendPlaylist " @play-song-and-playlist=" playSongAndPlaylist " />
+            <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
+                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs"
+                @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
             <!-- 2 分页 -->
+            <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <YPage v-if="type === 'playlist'" v-model="page" />
         </div>
     </div>
@@ -147,6 +151,7 @@
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
+import YComment from '@/components/YComment.vue';
 import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
@@ -159,6 +164,7 @@ export default {
     components: {
         YSongsTable,
         YLoading,
+        YComment,
         YPage,
     },
     props: {
@@ -215,6 +221,7 @@ export default {
                     playlistId: newVal
                 })
                 this.isLoading = true;
+                this.orient = 'songs';
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
@@ -638,7 +645,7 @@ export default {
 .playlist-details {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: calc(100% - 180px);
     height: 160px;
     flex-direction: column;
 }
@@ -647,6 +654,9 @@ export default {
     display: inherit;
     flex-direction: inherit;
     margin-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .align-up-album {
@@ -683,10 +693,16 @@ export default {
 }
 
 /* 4 歌单名称 */
-h1 {
+.playlist-name {
     text-align: left;
     font-size: 24px;
+    font-weight: bold;
+    margin-top: 0px;
     margin-bottom: 10px;
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* 4 创建者信息 */

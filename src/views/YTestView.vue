@@ -1,30 +1,27 @@
 <template>
     <div class="display">
-        <YPage v-model="page" />
+        <YComment :type="type" :id="id" />
     </div>
 </template>
 
 <script lang="js">
-import YPage from '@/components/YPage.vue';
-import { YPageC } from '@/tools/YPageC';
+import YComment from '@/components/YComment.vue';
 
 export default {
     name: 'YTestView',
     components: {
-        YPage,
+        YComment,
     },
     data() {
         return {
-            page: new YPageC(2),
+            type: 'album',
+            id: 166936,
         };
     },
     methods: {
 
     },
     mounted() {
-        this.page.onPageChange = () => {
-            console.log('page change', this.page.current);
-        };
     },
 }
 
