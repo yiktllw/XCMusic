@@ -25,7 +25,7 @@
             <!-- 4 resize控件 -->
             <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum">
+            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum" :style="{'width': `${this.alWidth}px`}">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
                     <span>专辑</span>
@@ -125,7 +125,7 @@
                                 @click="openSongComment(track.id)">
                             <img src="@/assets/detail.svg" class="track-menu-icon" title="更多">
                         </div>
-                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum">
+                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum" :style="{'width': `${this.alWidth}px`}">
                             <!-- 6 专辑按钮 -->
                             <button @click="handleAlbumClick(track.al.id)" class="album-button"
                                 :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
@@ -259,6 +259,7 @@ export default {
         ...mapState({
             player: state => state.player,
             login: state => state.login,
+            setting: state => state.setting,
         }),
         nowPlaying() {
             return this.player.currentTrack?.id;
@@ -297,6 +298,7 @@ export default {
             currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引
             currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
             localTracks: [],
+            alWidth: 230,
         }
     },
     async mounted() {
@@ -306,10 +308,14 @@ export default {
                 this.login.reloadLikelist();
             }
         }
+        // this.setAlbumWidth(this.setting.display.albumWidth);
+        this.alWidth = this.setting.display.albumWidth;
     },
     watch: {
         tracks(newVal) {
             this.localTracks = newVal;
+            // this.setAlbumWidth(this.setting.display.albumWidth);
+            this.alWidth = this.setting.display.albumWidth;
         },
     },
     methods: {
@@ -358,6 +364,10 @@ export default {
             window.addEventListener('mouseup', () => {
                 // 根据新的专辑宽度调整歌曲名称和专辑的宽度
                 this.resizeByNewWidth(this.newWidth);
+                this.setting.display = {
+                    ...this.setting.display,
+                    albumWidth: this.newWidth,
+                };
                 // 移除鼠标移动和松开监听
                 window.removeEventListener('mousemove', this.resize);
                 window.removeEventListener('mouseup', this.stopResize);
@@ -368,14 +378,20 @@ export default {
             // 计算鼠标移动距离
             this.deltaX = event.clientX - this.initialMouseX;
             // 计算新的专辑宽度
-            if (this.initialAlbumWidth - this.deltaX > 200) {
+            if (this.initialAlbumWidth - this.deltaX > 200 && this.initialAlbumWidth - this.deltaX < 400) {
                 this.newWidth = this.initialAlbumWidth - this.deltaX;
             }
             // 设置专辑宽度
-            if (this.$refs.songs_album_ref && this.newWidth > 200) {
+            if (this.$refs.songs_album_ref && this.newWidth > 200 && this.newWidth < 400) {
                 this.$refs.songs_album_ref.style.width = `${this.newWidth}px`;
             }
 
+        },
+        setAlbumWidth(width) {
+            if (this.$refs.songs_album_ref) {
+                this.$refs.songs_album_ref.style.width = `${width}px`;
+            }
+            this.resizeByNewWidth(width);
         },
         // 根据新的专辑宽度调整歌曲名称和专辑的宽度
         resizeByNewWidth(newWidth) {
@@ -607,7 +623,7 @@ export default {
     /* padding-left: 10px; */
     padding-right: 10px;
     text-align: left;
-    width: 230px;
+    /* width: 230px; */
     color: #ccc;
 }
 
@@ -854,7 +870,7 @@ li {
     /* padding-left: 10px; */
     padding-right: 10px;
     text-align: left;
-    width: 230px;
+    /* width: 230px; */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

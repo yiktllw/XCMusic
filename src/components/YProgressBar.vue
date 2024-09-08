@@ -5,7 +5,7 @@ const progress = defineModel();
 
 <template>
     <div class="progress-bigframe">
-        <div class="progress-bar" @click="updateProgressEvent" ref="progress_bar">
+        <div class="progress-bar" @click="onClick" ref="progress_bar">
             <div class="progress-fill" />
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
@@ -22,7 +22,8 @@ const progress = defineModel();
 export default {
     name: 'YProgressBar',
     emits: [
-        'update:modelValue'
+        'update:modelValue',
+        'set-progress-end',
     ],
     methods: {
         updateProgress(x){
@@ -39,12 +40,17 @@ export default {
         updateProgressEvent(e) {
             this.updateProgress(e.clientX);
         },
+        onClick(e){
+            this.updateProgress(e.clientX);
+            this.$emit('set-progress-end');
+        },
         startSetProgress() {
             window.addEventListener('mousemove', this.updateProgressEvent);
             window.addEventListener('mouseup', this.endSetProgress);
         },
         endSetProgress() {
             window.removeEventListener('mousemove', this.updateProgressEvent);
+            this.$emit('set-progress-end');
         }
     }
 };
