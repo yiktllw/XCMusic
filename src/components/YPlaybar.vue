@@ -56,11 +56,10 @@
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
                     ref="play_mode_panel_trigger">
                     <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
-                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
-                        title="列表循环">
+                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg" title="列表循环">
                     <img v-if="playMode === 'random'" class="img-random img" src="../assets/random.svg" title="随机播放">
-                    <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
-                        title="列表随机" style="opacity: 1;">
+                    <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg" title="列表随机"
+                        style="opacity: 1;">
                     <img v-if="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
@@ -104,13 +103,36 @@
         <!-- 1 右侧 -->
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
+                <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()" title="选择音质">
+                    {{ this.player.qualityDisplay }}
+                </div>
+                <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
+                    :default-show="false">
+                    <div class="quality-panel">
+                        <div class="quality-title">
+                            歌曲音质
+                        </div>
+                        <div class="quality-switcher">
+                            <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
+                                @click="setQuality(quality.name)">
+                                <div class="quality-item-title">
+                                    {{ quality.display }}
+                                </div>
+                                <div class="quality-item-desc">
+                                    {{ quality.desc }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </YPanel>
                 <img class="img" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
                     <div class="volume-container">
                         <YProgressBarV v-model="this.player.volume"
-                            style="height: 120px;width: 20px;position: absolute; bottom: 30px;" />
+                            style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
+                            @set-progress-end="this.updateVolumeInSetting" />
                         <div class="volume-text">
                             {{ Math.round(this.player.volume * 100) + '%' }}
                         </div>
@@ -161,11 +183,60 @@ export default {
         YProgressBar,
         YProgressBarV,
     },
+    data() {
+        return {
+            qualityGroup: [
+                {
+                    name: 'jymaster',
+                    display: '超清母带(Master)',
+                    id: 0,
+                    desc: '还原音频细节，192kHz/24bit',
+                },
+                {
+                    name: 'sky',
+                    display: '沉浸环绕声(Surround Audio)',
+                    id: 1,
+                    desc: '沉浸式体验，最高5.1声道',
+                },
+                {
+                    name: 'jyeffect',
+                    display: '高清环绕声(Spatial Audio)',
+                    id: 2,
+                    desc: '环绕声体验，声音听感增强，96kHz/24bit',
+                },
+                {
+                    name: 'hires',
+                    display: '高解析度无损(Hi-Res)',
+                    id: 3,
+                    desc: '更饱满清晰的高解析度音质，最高192kHz/24bit',
+                },
+                {
+                    name: 'loseless',
+                    display: '无损(SQ)',
+                    id: 4,
+                    desc: '高保真无损音质，最高48kHz/16bit',
+                },
+                {
+                    name: 'exhigh',
+                    display: '极高(HQ)',
+                    id: 5,
+                    desc: '近CD品质的细节体验，最高320kbps',
+                },
+                {
+                    name: 'standard',
+                    display: '标准',
+                    id: 7,
+                    desc: '128kbps',
+                }
+            ],
+        }
+    },
     computed: {
         ...mapState({
             nowPlaying: state => state.nowPlaying,
             player: state => state.player,
             login: state => state.login,
+            setting: state => state.setting,
         }),
         likelist() {
             return this.login.likelist ?? [];
@@ -225,7 +296,13 @@ export default {
             forward ? this.player.next() : this.player.previous();
         },
         tooglePlayMode(mode) {
-            this.player.mode = mode;
+            if (mode === 'order' || mode === 'listloop' || mode === 'random' || mode === 'listrandom' || mode === 'loop') {
+                this.player.mode = mode;
+                this.setting.play = {
+                    ...this.setting.play,
+                    mode: mode,
+                }
+            }
         },
         playSongs(track) {
             console.log('playSongs', track);
@@ -242,11 +319,29 @@ export default {
             console.log('Artist ID:', artistId);
             this.$router.push({ path: '/artist/' + artistId });
         },
+        updateVolumeInSetting() {
+            this.setting.play = {
+                ...this.setting.play,
+                volume: this.player.volume,
+            }
+        },
+        setQuality(quality) {
+            console.log('setQuality:', quality);
+            this.player.quality = quality;
+            this.setting.play = {
+                ...this.setting.play,
+                quality: quality,
+            }
+            this.$refs.quality_panel.tooglePanel();
+        }
     },
-    async mounted() {
+    mounted() {
         if (this.login.status) {
             this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
         }
+        this.player.volume = this.setting.play.volume;
+        this.player.quality = this.setting.play.quality;
+        this.tooglePlayMode(this.setting.play.mode);
     },
 }
 
@@ -349,6 +444,76 @@ export default {
     cursor: pointer;
     background-color: transparent;
     border: none;
+}
+
+.quality-button {
+    position: relative;
+    cursor: pointer;
+    color: #bbb;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 20px;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    padding: 3px 6px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.quality-panel {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    /* height: 390px; */
+    background-color: rgb(55, 55, 65);
+    border-radius: 5px;
+    transform: translate(calc(-100% - 20px), calc(-100% - 25px));
+    text-align: left;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.quality-title {
+    color: #eee;
+    font-size: 17px;
+    text-align: left;
+    font-weight: bold;
+    padding: 0px 0px 10px 15px;
+}
+
+.quality-switcher {
+    display: flex;
+    flex-direction: column;
+}
+
+.quality-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    height: 50px;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    padding-left: 15px;
+}
+
+.quality-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.quality-item-title {
+    color: #eee;
+    font-size: 15px;
+    width: 100%;
+    text-align: left;
+}
+
+.quality-item-desc {
+    color: #bbb;
+    font-size: 13px;
+    width: 100%;
+    text-align: left;
 }
 
 .volume-container {

@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar y_sidebar_component" ref="sidebar_component">
+    <div class="sidebar y_sidebar_component" ref="sidebar_component" :style="{ 'width': `${sidebarWidth}px` }">
         <div class="title">
             <img src="@/assets/logo.svg" alt="Logo"
                 style="height: 28px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
@@ -51,6 +51,7 @@ export default {
     computed: {
         ...mapState({
             login: state => state.login,
+            setting: state => state.setting,
         })
     },
     data() {
@@ -61,6 +62,8 @@ export default {
             activeButtonId: null,
             showMyPlaylist: true,
             showMySubscribedPlaylist: true,
+            sidebarWidth: 200,
+            newWidth: 0,
         };
     },
     props: {
@@ -82,13 +85,17 @@ export default {
         },
         resize(e) {
             const sidebar = this.$refs.sidebar_component
-            const newWidth = e.clientX + 'px';
-            if (parseInt(newWidth) < 180 || parseInt(newWidth) > 260) {
-                return;
+            let newWidth = e.clientX;
+            if (newWidth > 180 && newWidth < 260) {
+                this.newWidth = newWidth;
+                sidebar.style.width = `${this.newWidth}px`;
             }
-            sidebar.style.width = newWidth;
         },
         stopResize() {
+            this.setting.display = {
+                ...this.setting.display,
+                sidebarWidth: this.newWidth,
+            };
             window.removeEventListener('mousemove', this.resize);
             window.removeEventListener('mouseup', this.stopResize);
         },
@@ -138,6 +145,7 @@ export default {
     async mounted() {
         this.fetchUserPlaylist();
         window.addEventListener('message', this.handleMessage);
+        this.sidebarWidth = this.setting.display.sidebarWidth;
     },
     beforeUnmount() {
         window.removeEventListener('message', this.handleMessage);

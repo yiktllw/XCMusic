@@ -33,6 +33,8 @@ export class Player {
         this._progress = 0;
         // 初始化总时长为0
         this._duration = 0;
+        // 初始化音质为极高
+        this._quality = 'exhigh';
     }
     async reloadUrl() {
         if (!this.currentTrack) return;
@@ -371,7 +373,7 @@ export class Player {
         if (localStorage.getItem('login_cookie')) {
             response = await useApi('/song/url/v1', {
                 id: id,
-                level: 'hires',
+                level: this.quality,
                 cookie: localStorage.getItem('login_cookie'),
             }).catch(error => {
                 console.error(error);
@@ -441,5 +443,37 @@ export class Player {
     // 获取总时长
     get duration() {
         return this._duration;
+    }
+    get quality() {
+        return this._quality;
+    }
+    set quality(value) {
+        if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'loseless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
+            this._quality = value;
+        } else {
+            console.log('Quality not supported: ', value);
+        }
+    }
+    get qualityDisplay() {
+        switch (this._quality) {
+            case 'standard':
+                return '标准';
+            case 'higher':
+                return '较高';
+            case 'exhigh':
+                return '极高';
+            case 'loseless':
+                return '无损';
+            case 'hires':
+                return 'Hi-Res';
+            case 'jyeffect':
+                return '高清环绕声';
+            case 'sky':
+                return '沉浸环绕声';
+            case 'jymaster':
+                return '超清母带';
+            default:
+                return '未知';
+        }
     }
 }
