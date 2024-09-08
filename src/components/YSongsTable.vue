@@ -250,7 +250,6 @@ export default {
         YPlaying,
     },
     emits: [
-        'play-songs',
         'send-playlist',
         'update-display',
         'play-song-and-playlist',
@@ -319,16 +318,16 @@ export default {
         },
     },
     methods: {
-        playSongs(track) {
-            console.log('Play Songs:', track.id);
-            if (!this.localPlay) {
-                this.$emit('play-songs', JSON.stringify(track));
-            } else {
-                this.player.playTrack(track);
-                this.player.playState = 'play';
-            }
-            this.sendPlaylist();
-        },
+        // playSongs(track) {
+        //     console.log('Play Songs:', track.id);
+        //     if (!this.localPlay) {
+        //         this.$emit('play-songs', JSON.stringify(track));
+        //     } else {
+        //         this.player.playTrack(track);
+        //         this.player.playState = 'play';
+        //     }
+        //     this.sendPlaylist();
+        // },
         sendPlaylist() {
             if (!this.localPlay) {
                 this.$emit('send-playlist');
@@ -336,16 +335,16 @@ export default {
                 this.player.playlist = this.localTracks;
             }
         },
-        playSongAndPlaylist(track) {
+        async playSongAndPlaylist(track) {
             console.log('Play Song And Playlist:', track.id);
             if (this.canSendPlaylist) {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
             } else {
-                this.player.playTrack(track);
+                await this.player.playTrack(track);
             }
             if (this.localPlay) {
                 this.player.playlist = this.localTracks;
-                this.player.playTrack(track);
+                await this.player.playTrack(track);
                 this.player.playState = 'play';
             }
         },

@@ -103,7 +103,8 @@
         <!-- 1 右侧 -->
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
-                <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()" title="选择音质">
+                <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
+                    title="选择音质">
                     {{ this.player.qualityDisplay }}
                 </div>
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
@@ -114,12 +115,12 @@
                         </div>
                         <div class="quality-switcher">
                             <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
-                                @click="setQuality(quality.name)">
+                                @click="setQuality(quality.name)" :style="{ 'opacity': quality.available ? 1 : .4 }">
                                 <div class="quality-item-title">
                                     {{ quality.display }}
                                 </div>
                                 <div class="quality-item-desc">
-                                    {{ quality.desc }}
+                                    {{ quality.size + '  ' + quality.desc }}
                                 </div>
                             </div>
                         </div>
@@ -158,7 +159,7 @@
                         <div class="scrollable">
                             <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
-                                :showHeader="false" :resortable="false" :canSendPlaylist="false" @play-songs="playSongs" />
+                                :showHeader="false" :resortable="false" :canSendPlaylist="false" />
                         </div>
                     </div>
                 </YPanel>
@@ -191,42 +192,56 @@ export default {
                     display: '超清母带(Master)',
                     id: 0,
                     desc: '还原音频细节，192kHz/24bit',
+                    available: false,
+                    size: '',
                 },
                 {
                     name: 'sky',
                     display: '沉浸环绕声(Surround Audio)',
                     id: 1,
                     desc: '沉浸式体验，最高5.1声道',
+                    available: false,
+                    size: '',
                 },
                 {
                     name: 'jyeffect',
                     display: '高清环绕声(Spatial Audio)',
                     id: 2,
                     desc: '环绕声体验，声音听感增强，96kHz/24bit',
+                    available: false,
+                    size: '',
                 },
                 {
                     name: 'hires',
                     display: '高解析度无损(Hi-Res)',
                     id: 3,
                     desc: '更饱满清晰的高解析度音质，最高192kHz/24bit',
+                    available: false,
+                    size: '',
                 },
                 {
-                    name: 'loseless',
+                    name: 'lossless',
                     display: '无损(SQ)',
                     id: 4,
                     desc: '高保真无损音质，最高48kHz/16bit',
+                    available: false,
+                    size: '',
                 },
                 {
                     name: 'exhigh',
                     display: '极高(HQ)',
                     id: 5,
                     desc: '近CD品质的细节体验，最高320kbps',
+                    available: false,
+                    size: '',
                 },
                 {
                     name: 'standard',
                     display: '标准',
                     id: 7,
                     desc: '128kbps',
+                    available: false,
+                    size: '',
                 }
             ],
         }
@@ -304,11 +319,6 @@ export default {
                 }
             }
         },
-        playSongs(track) {
-            console.log('playSongs', track);
-            track = JSON.parse(track);
-            this.playTrack(track);
-        },
         async playTrack(track) {
             await this.player.playTrack(track);
         },
@@ -333,7 +343,7 @@ export default {
                 quality: quality,
             }
             this.$refs.quality_panel.tooglePanel();
-        }
+        },
     },
     mounted() {
         if (this.login.status) {
@@ -342,6 +352,20 @@ export default {
         this.player.volume = this.setting.play.volume;
         this.player.quality = this.setting.play.quality;
         this.tooglePlayMode(this.setting.play.mode);
+        this.player.onTrackReady = () => {
+            let avQuality = this.player.availableQuality;
+            this.qualityGroup.forEach((quality) => {
+                // 清空可用数据
+                quality.available = false;
+                quality.size = '';
+                avQuality.forEach((avItem) => {
+                    if (quality.name === avItem.name) {
+                        quality.available = true;
+                        quality.size = avItem.size;
+                    }
+                });
+            });
+        }
     },
 }
 
@@ -464,7 +488,7 @@ export default {
     position: absolute;
     display: flex;
     flex-direction: column;
-    width: 320px;
+    width: 321px;
     /* height: 390px; */
     background-color: rgb(55, 55, 65);
     border-radius: 5px;

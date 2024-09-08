@@ -135,11 +135,11 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackPopularity="false" @play-songs="playSongs" @send-playlist="sendPlaylist"
+                :likelist="likelist" :showTrackPopularity="false" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @play-songs="playSongs"
-                @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" />
+                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @send-playlist="sendPlaylist"
+                @play-song-and-playlist="playSongAndPlaylist" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <YPage v-if="type === 'playlist'" v-model="page" />
@@ -477,7 +477,7 @@ export default {
         // 播放歌曲
         async playSongs(track) {
             console.log('playSongs');
-            this.player.playTrack(track);
+            await this.player.playTrack(track);
             this.player.playState = 'play';
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
@@ -499,7 +499,7 @@ export default {
             // 准备歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playlist = playlist;
-            this.player.playTrack(JSON.parse(track));
+            await this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {
                 // 更新歌单播放次数

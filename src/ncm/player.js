@@ -4,7 +4,9 @@ export class Player {
     constructor() {
         // 初始化音频为空
         this._audio = new Audio('');
-        this._audio.onerror = () => this.reloadUrl();
+        this._audio.onerror = async () => {
+            await this.reloadUrl();
+        };
         // 初始化音频上下文
         this._audioContext = null;
         // 初始化增益节点
@@ -35,6 +37,8 @@ export class Player {
         this._duration = 0;
         // 初始化音质为极高
         this._quality = 'exhigh';
+        // 初始化准备就绪的回调函数为空
+        this._onTrackReady = [];
     }
     async reloadUrl() {
         if (!this.currentTrack) return;
@@ -44,10 +48,15 @@ export class Player {
         let gain = result.gain;
         let peak = result.peak;
         this._audio.src = url;
-        this.setGain(gain, peak);
+        try {
+            this.setGain(gain, peak);
+        } catch (error) {
+            console.error(error);
+        }
         this._audio.currentTime = this._currentTime;
         try {
             this._audio.play();
+            console.log('Reloaded url', url);
         } catch (error) {
             console.error(error);
         }
@@ -63,7 +72,7 @@ export class Player {
             await this.playTrack(track);
         } else {
             // 更新上一首歌曲的播放信息
-            if (this.currentTrack.id) {
+            if (this.currentTrack?.id) {
                 await this.scrobble(this.currentTrack.id)
             }
             // 如果在播放列表中
@@ -86,6 +95,58 @@ export class Player {
                 console.error(error);
             }
             console.log('Playing', track);
+            await this.setAllQuality(track.id);
+            this.exec_OnTrackReady();
+        }
+    }
+    async setAllQuality(id) {
+        let requests = [
+            this.getQuality(id, 'jyeffect').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    jyeffect: res,
+                }
+            }),
+            this.getQuality(id, 'sky').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    sky: res,
+                }
+            }),
+            this.getQuality(id, 'jymaster').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    jymaster: res,
+                }
+            }),
+        ];
+        await Promise.all(requests);
+    }
+    async getQuality(id, quality) {
+        let response = null;
+        if (localStorage.getItem('login_cookie')) {
+            response = await useApi('/song/url/v1', {
+                id: id,
+                level: quality,
+                cookie: localStorage.getItem('login_cookie'),
+            }).catch(error => {
+                console.error(error);
+            });
+        } else {
+            response = await useApi('/song/url/v1', {
+                id: id,
+                level: quality,
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+        if (response.data[0].level === quality) {
+            return {
+                name: quality,
+                size: response.data[0].size,
+            }
+        } else {
+            return null;
         }
     }
     // 初始化音量均衡控件
@@ -119,7 +180,7 @@ export class Player {
         this._progress = this._currentTime / this._duration;
     }
     // 随机播放
-    randomPlay(direction) {
+    async randomPlay(direction) {
         if (this._history[this._historyIndex + direction]) {
             // 如果历史记录中有上一首/下一首歌曲
             this._current = this._playlist.findIndex(track => track.id === this._history[this._historyIndex + direction].id);
@@ -135,34 +196,34 @@ export class Player {
             this._current = Math.floor(Math.random() * this.playlistCount)
             this.insertToHistory(this.currentTrack);
         }
-        this.playTrack(this.currentTrack);
+        await this.playTrack(this.currentTrack);
     }
     // 播放下一首
-    next() {
+    async next() {
         // 如果播放列表为空则返回
         if (this.playlistCount === 0) return;
         // 如果播放模式为随机播放
         if (this._mode === 'random') {
             // 随机播放下一首
-            this.randomPlay(1);
+            await this.randomPlay(1);
         } else {
             // 顺序播放下一首
             this._current = (this._current + 1) % this.playlistCount;
-            this.playTrack(this.currentTrack);
+            await this.playTrack(this.currentTrack);
         }
     }
     // 播放上一首
-    previous() {
+    async previous() {
         // 如果播放列表为空则返回
         if (this.playlistCount === 0) return;
         // 如果播放模式为随机播放
         if (this._mode === 'random') {
             // 随机播放上一首
-            this.randomPlay(-1);
+            await this.randomPlay(-1);
         } else {
             // 顺序播放上一首
             this._current = (this._current - 1 + this.playlistCount) % this.playlistCount;
-            this.playTrack(this.currentTrack);
+            await this.playTrack(this.currentTrack);
         }
     }
     // 获取播放列表
@@ -202,7 +263,7 @@ export class Player {
         })
     }
     // 播放全部
-    playAll(list) {
+    async playAll(list) {
         // 设置播放列表
         this.playlist = list;
         // 设置当前播放索引为0
@@ -214,7 +275,7 @@ export class Player {
             this.randomPlay(1);
         } else {
             // 如果不为随机播放，则播放第一首
-            this.playTrack(this.currentTrack);
+            await this.playTrack(this.currentTrack);
         }
     }
     // 添加单曲到播放列表
@@ -279,6 +340,11 @@ export class Player {
     // 获取当前播放歌曲
     get currentTrack() {
         return this._playlist[this._current];
+    }
+    set currentTrack(value) {
+        if (this._playlist.length > 0 && this._playlist[this._current]) {
+            this._playlist[this._current] = value;
+        }
     }
     // 获取当前播放歌曲封面
     get currentTrackCover() {
@@ -381,7 +447,7 @@ export class Player {
         } else {
             response = await useApi('/song/url/v1', {
                 id: id,
-                level: 'hires',
+                level: this.quality,
             }).catch(error => {
                 console.error(error);
             });
@@ -412,8 +478,16 @@ export class Player {
             // 重新计算增益
             gain_linear = 1 / peak;
         }
+        if (gain_linear < 0 || gain_linear > 4 || typeof gain_linear !== 'number' || isNaN(gain_linear) || gain_linear === Infinity || peak === Infinity || peak < 0 || peak > 2 || typeof peak !== 'number' || isNaN(peak)) {
+            console.log('Gain or not supported, gain: ', gain_linear, 'peak: ', peak);
+            return;
+        }
         // 设置增益
-        this._gainNode.gain.value = gain_linear;
+        try {
+            this._gainNode.gain.value = gain_linear;
+        } catch (error) {
+            console.error(error);
+        }
         console.log('Gain set to', gain_linear, 'Peak', peak * gain_linear);
     }
     // 获取当前播放时间
@@ -448,8 +522,9 @@ export class Player {
         return this._quality;
     }
     set quality(value) {
-        if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'loseless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
+        if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'lossless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
             this._quality = value;
+            this.reloadUrl();
         } else {
             console.log('Quality not supported: ', value);
         }
@@ -462,7 +537,7 @@ export class Player {
                 return '较高';
             case 'exhigh':
                 return '极高';
-            case 'loseless':
+            case 'lossless':
                 return '无损';
             case 'hires':
                 return 'Hi-Res';
@@ -475,5 +550,82 @@ export class Player {
             default:
                 return '未知';
         }
+    }
+    // 格式化文件大小
+    formatSize(size) {
+        if (size < 1024) {
+            return size + 'B';
+        } else if (size < 1024 * 1024) {
+            return (size / 1024).toFixed(1) + 'KB';
+        } else if (size < 1024 * 1024 * 1024) {
+            return (size / 1024 / 1024).toFixed(1) + 'MB';
+        }
+    }
+    get availableQuality() {
+        let result = [];
+        if (!this.currentTrack) return [];
+        if (this.currentTrack.h) {
+            result.push({
+                name: 'exhigh',
+                size: this.formatSize(this.currentTrack.h.size),
+            });
+        }
+        if (this.currentTrack.l) {
+            result.push({
+                name: 'standard',
+                size: this.formatSize(this.currentTrack.l.size),
+            });
+        }
+        if (this.currentTrack.sq) {
+            result.push({
+                name: 'lossless',
+                size: this.formatSize(this.currentTrack.sq.size),
+            });
+        }
+        if (this.currentTrack.hr) {
+            result.push({
+                name: 'hires',
+                size: this.formatSize(this.currentTrack.hr.size),
+            });
+        }
+        if (this.currentTrack.jyeffect) {
+            result.push({
+                name: 'jyeffect',
+                size: this.formatSize(this.currentTrack.jyeffect.size),
+            });
+        }
+        if (this.currentTrack.sky) {
+            result.push({
+                name: 'sky',
+                size: this.formatSize(this.currentTrack.sky.size),
+            });
+        }
+        if (this.currentTrack.jymaster) {
+            result.push({
+                name: 'jymaster',
+                size: this.formatSize(this.currentTrack.jymaster.size),
+            });
+        }
+        return result;
+    }
+    get onTrackReady() {
+        return this._onTrackReady;
+    }
+    set onTrackReady(fn) {
+        if (typeof fn === 'function') {
+            this._onTrackReady = [fn];
+        } else {
+            console.error('onTrackReady must be a function');
+        }
+    }
+    add_OnTrackReady(fn) {
+        if (typeof fn === 'function') {
+            this._onTrackReady.push(fn);
+        } else {
+            console.error('onTrackReady must be a function');
+        }
+    }
+    exec_OnTrackReady() {
+        this._onTrackReady.forEach(fn => fn());
     }
 }

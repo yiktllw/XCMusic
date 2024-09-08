@@ -124,7 +124,7 @@ export class Setting {
             this._setValue(this._setting[1].items[1]);
         }
         // play.quality
-        if (play.quality === 'standard' || play.quality === 'higher' || play.quality === 'exhigh' || play.quality === 'loseless' || play.quality === 'hires' || play.quality === 'jyeffect' || play.quality === 'sky' || play.quality === 'jymaster') {
+        if (play.quality === 'standard' || play.quality === 'higher' || play.quality === 'exhigh' || play.quality === 'lossless' || play.quality === 'hires' || play.quality === 'jyeffect' || play.quality === 'sky' || play.quality === 'jymaster') {
             this._setting[1].items[2].value = play.quality;
             this._setValue(this._setting[1].items[2]);
         }
