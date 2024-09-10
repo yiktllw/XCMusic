@@ -86,22 +86,25 @@ export default {
                 this.posY = data.y + 5 + 'px';
                 let menuWidth = 198;
                 let menuHeight = 282;
-                if (data.x + menuWidth > window.innerWidth) {
-                    if (data.y + menuHeight > window.innerHeight) {
-                        this.direction = 2;
-                    } else {
-                        this.direction = 3;
-                    }
-                } else {
-                    if (data.y + menuHeight > window.innerHeight) {
-                        this.direction = 1;
-                    } else {
-                        this.direction = 4;
-                        console.log('info', data.x, data.y, window.innerWidth, window.innerHeight);
-                    }
-                }
+                this.setDirection(data.x, data.y, menuWidth, menuHeight);
                 console.log(data)
             }
+        },
+        setDirection(x,y,menuWidth,menuHeight) {
+            if (x + menuWidth > window.innerWidth) {
+                if (y + menuHeight > window.innerHeight) {
+                    this.direction = 2;
+                } else {
+                    this.direction = 3;
+                }
+            } else {
+                if (y + menuHeight > window.innerHeight) {
+                    this.direction = 1;
+                } else {
+                    this.direction = 4;
+                }
+            }
+
         },
         handleMenuClick(arg) {
             switch (arg.role) {
@@ -109,7 +112,7 @@ export default {
                     this.player.playTrack(arg.target);
                     break;
                 case 'song-addtoplaylist':
-                    this.player.addTrack(arg.target);
+                    this.player.nextPlay(arg.target);
                     break;
                 case 'song-comment':
                     this.$router.push(`/comment/song/${arg.target.id}`);

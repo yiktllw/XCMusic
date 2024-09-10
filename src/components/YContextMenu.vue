@@ -59,7 +59,7 @@ export default {
         _transform() {
             const directions = [
                 'translateY(-100%)',
-                'translateXY(-100% , -100%)',
+                'translate3D(-100% , -100% , 0)',
                 'translateX(-100%)',
                 '',
             ];
@@ -71,9 +71,7 @@ export default {
             this.$emit('menu-click', {
                 role: role,
                 target: this.target
-
             })
-            console.log(role);
             this.$refs.panel.tooglePanel();
         },
         showContextMenu() {

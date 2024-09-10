@@ -53,7 +53,7 @@ export var songItems = [
         showSeparator: false,
     }),
     new YContextMenuItemC({
-        label: '添加到播放列表',
+        label: '下一首播放',
         icon: require('@/assets/addtoplaylist.svg'),
         role: 'song-addtoplaylist',
         showSeparator: false,
@@ -78,19 +78,19 @@ export var songItems = [
     }),
     new YContextMenuItemC({
         label: '复制链接',
-        icon: require('@/assets/comment.svg'),
+        icon: require('@/assets/link.svg'),
         role: 'song-copylink',
         showSeparator: false,
     }),
     new YContextMenuItemC({
         label: '查看歌曲信息',
-        icon: require('@/assets/comment.svg'),
+        icon: require('@/assets/info.svg'),
         role: 'song-infomation',
         showSeparator: true,
     }),
     new YContextMenuItemC({
         label: '从歌单中删除',
-        icon: require('@/assets/comment.svg'),
+        icon: require('@/assets/delete.svg'),
         role: 'song-delete',
         showSeparator: false,
     })

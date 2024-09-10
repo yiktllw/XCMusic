@@ -94,7 +94,7 @@
                 <div class="time">
                     {{ this.player.currentTime ? formatDuration(this.player.currentTime) : '00:00' }}
                 </div>
-                <YProgressBar v-model="progress" style="height:20px;width: 321px" @update:model-value="setAudioProgress" />
+                <YProgressBar v-model="this.player.progress" style="height:20px;width: 321px" @update:model-value="setAudioProgress" />
                 <div class="time">
                     {{ formatDuration(this.duration) }}
                 </div>
@@ -120,7 +120,7 @@
                                     {{ quality.display }}
                                 </div>
                                 <div class="quality-item-desc">
-                                    {{ quality.size + '  ' + quality.desc }}
+                                    {{ quality.size + ' ' + quality.desc }}
                                 </div>
                             </div>
                         </div>
@@ -142,15 +142,22 @@
                 <img class="img" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
                     @click="this.$refs.playlist_panel.tooglePanel" title="播放列表" ref="playlist_panel_trigger">
-                <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4">
+                <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4"
+                    :default-show="false">
                     <div class="playlist-container">
                         <div class="playlist-title">
-                            <span>播放列表</span>
-                            <div class="songs-count"
-                                style="color:#fff; margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
-                                {{ playlist.length }}
+                            <div class="title-left">
+                                <span>播放列表</span>
+                                <div class="songs-count"
+                                    style="color:#fff; margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
+                                    {{ playlist.length }}
+                                </div>
                             </div>
-
+                            <div class="title-right">
+                                <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
+                                    <img src="../assets/delete.svg" style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;" title="清空播放列表">
+                                </span>
+                            </div>
                         </div>
                         <div class="playlist-header">
                             <div class="playlist-header-item">标题</div>
@@ -270,9 +277,6 @@ export default {
         },
         playlistIndex() {
             return this.player.playlistIndex;
-        },
-        progress() {
-            return this.player.progress;
         },
         duration() {
             return this.player.duration;
@@ -739,12 +743,17 @@ export default {
 
 .playlist-title {
     display: flex;
-    flex-direction: row;
-    color: white;
-    font-size: 17px;
+    justify-content: space-between;
     margin: 10px;
     margin-bottom: 4px;
     padding-bottom: 6px;
+}
+
+.title-left {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    font-size: 17px;
     text-align: left;
     font-weight: bold;
 }

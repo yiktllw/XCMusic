@@ -403,17 +403,17 @@ export default {
                     // 查找歌曲所属的专辑
                     let index = this.user.albums.findIndex(album => album.id === song.al.id);
                     if (index === -1) {
-                        // 如果没有找到专辑，则单独请求专辑信息
-                        let album = await useApi('/album', {
-                            id: song.al.id,
-                            cookie: this.login.cookie,
-                        }).catch(err => {
-                            console.log('fetch album error:', err);
-                        });
+                        // 如果没有找到专辑，则使用默认封面
+                        // let album = await useApi('/album', {
+                        //     id: song.al.id,
+                        //     cookie: this.login.cookie,
+                        // }).catch(err => {
+                        //     console.log('fetch album error:', err);
+                        // });
                         // console.log('not found album\nsong: ', song, '\nindex: ', i);
                         return {
                             ...song,
-                            _picUrl: album?.album.picUrl + '?param=40y40',
+                            _picUrl: require('@/assets/song.svg'),
                         };
                     } else {
                         // 如果找到专辑，则直接使用专辑的封面

@@ -55,7 +55,7 @@ export class Player {
         }
         this._audio.currentTime = this._currentTime;
         try {
-            this._audio.play();
+            // await this._audio.play();
             console.log('Reloaded url', url);
         } catch (error) {
             console.error(error);
@@ -91,6 +91,7 @@ export class Player {
             this.setGain(gain, peak);
             try {
                 this._audio.play();
+                this._playState = 'play';
             } catch (error) {
                 console.error(error);
             }
@@ -248,6 +249,8 @@ export class Player {
     }
     // 添加播放列表
     addPlaylist(list) {
+        // 保存当前歌曲
+        let ori_track = this._playlist[this._current];
         list.forEach(track => {
             // 查询指定的歌曲是否在播放列表中
             let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
@@ -260,7 +263,30 @@ export class Player {
                     this._playlist.push(track);
                 }
             }
-        })
+        });
+        // 找到当前歌曲的索引
+        this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+    }
+    clearPlaylist() {
+        this._playlist = [];
+        this._current = 0;
+        this._audio.pause();
+        this._playState = 'pause';
+        this._audio.src = '';
+        this.clearHistory();
+    }
+    nextPlay(track) {
+        // 查询指定的歌曲是否在播放列表中
+        let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
+        if (trackIndex !== -1) {
+            // 如果在播放列表中，则将其移动到下一首
+            let exchange = this._playlist[this._current + 1];
+            this._playlist[this._current + 1] = this._playlist[trackIndex];
+            this._playlist[trackIndex] = exchange;
+        } else {
+            // 如果不在播放列表中，则添加到下一首
+            this._playlist.splice(this._current + 1, 0, track);
+        }
     }
     // 播放全部
     async playAll(list) {

@@ -1,14 +1,20 @@
 <template>
-    <transition name="slide-fade" v-bind:style="{ '--slide-transform': slideTransform, '--animation-time': _animationTime, '--z-indez': zIndex }" v-if="hideMode === 'if'">
-        <div class="panel" v-if="showPanel" ref="panel">
-            <slot></slot>
-        </div>
-    </transition>
-    <transition name="slide-fade" v-bind:style="{ '--slide-transform': slideTransform, '--animation-time': _animationTime, '--z-indez': zIndex }" v-if="hideMode === 'show'">
-        <div class="panel" v-show="showPanel" ref="panel">
-            <slot></slot>
-        </div>
-    </transition>
+    <div>
+        <transition name="slide-fade"
+            v-bind:style="{ '--slide-transform': slideTransform, '--animation-time': _animationTime, '--z-indez': zIndex }"
+            v-if="hideMode === 'if'">
+            <div class="panel" v-if="showPanel" ref="panel">
+                <slot></slot>
+            </div>
+        </transition>
+        <transition name="slide-fade"
+            v-bind:style="{ '--slide-transform': slideTransform, '--animation-time': _animationTime, '--z-indez': zIndex }"
+            v-if="hideMode === 'show'">
+            <div class="panel" v-show="showPanel" ref="panel">
+                <slot></slot>
+            </div>
+        </transition>
+    </div>
 </template>
 
 <script lang="js">
@@ -144,5 +150,4 @@ export default {
     padding: 0;
     background-color: transparent;
     z-index: var(--z-indez);
-}
-</style>
+}</style>
