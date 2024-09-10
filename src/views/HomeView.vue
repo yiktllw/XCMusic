@@ -26,6 +26,10 @@
                 <YPlaybar />
             </div>
         </div>
+        <div class="context-menu">
+            <YContextMenu :items="menu" :target="target" :posX="posX" :posY="posY" :direction="direction" ref="contextMenu"
+                @menu-click="handleMenuClick" />
+        </div>
     </div>
 </template>
 
@@ -33,8 +37,10 @@
 import YDisplayArea from '@/components/YDisplayArea.vue';
 import YSidebar from '../components/YSidebar.vue';
 import YTitlebar from '../components/YTitlebar.vue';
-import { mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
+import YContextMenu from '@/components/YContextMenu.vue';
+import { songItems } from '@/tools/YContextMenuItemC';
 
 export default {
     name: 'App',
@@ -42,6 +48,11 @@ export default {
         return {
             // 打开的播放列表
             opened_playlist: 0,
+            menu: songItems,
+            target: null,
+            posX: '0px',
+            posY: '0px',
+            direction: 4,
         };
     },
     components: {
@@ -49,10 +60,64 @@ export default {
         YTitlebar,
         YDisplayArea,
         YPlaybar,
+        YContextMenu,
+    },
+    computed: {
+        ...mapState({
+            // 播放列表
+            player: state => state.player,
+        }),
+    },
+    mounted() {
+        // console.log(this.$refs.YDisplayArea);
+        window.addEventListener('message', this.handleMessage);
+    },
+    beforeUnmount() {
+        window.removeEventListener('message', this.handleMessage);
     },
     methods: {
-        ...mapActions(['updateSidebarWidth']),
-        // 处理侧边栏resize
+        handleMessage(event) {
+            if (event.data.type === 'song-open-context-menu') {
+                this.$refs.contextMenu.showContextMenu();
+                let data = event.data.data;
+                this.menu = songItems;
+                this.target = JSON.parse(data.track);
+                this.posX = data.x + 5 + 'px';
+                this.posY = data.y + 5 + 'px';
+                let menuWidth = 198;
+                let menuHeight = 282;
+                if (data.x + menuWidth > window.innerWidth) {
+                    if (data.y + menuHeight > window.innerHeight) {
+                        this.direction = 2;
+                    } else {
+                        this.direction = 3;
+                    }
+                } else {
+                    if (data.y + menuHeight > window.innerHeight) {
+                        this.direction = 1;
+                    } else {
+                        this.direction = 4;
+                        console.log('info', data.x, data.y, window.innerWidth, window.innerHeight);
+                    }
+                }
+                console.log(data)
+            }
+        },
+        handleMenuClick(arg) {
+            switch (arg.role) {
+                case 'song-play':
+                    this.player.playTrack(arg.target);
+                    break;
+                case 'song-addtoplaylist':
+                    this.player.addTrack(arg.target);
+                    break;
+                case 'song-comment':
+                    this.$router.push(`/comment/song/${arg.target.id}`);
+                    break;
+                default:
+                    break;
+            }
+        },
     },
 };
 </script>

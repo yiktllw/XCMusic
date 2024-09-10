@@ -25,7 +25,7 @@
             <!-- 4 resize控件 -->
             <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum" :style="{'width': `${this.alWidth}px`}">
+            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum" :style="{ 'width': `${this.alWidth}px` }">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
                     <span>专辑</span>
@@ -75,7 +75,8 @@
         <ul>
             <li v-for="(track, index) in localTracks" :id="`track-item-${track.id}`" :key="track.id" class="track-item"
                 ref="track_item_ref" @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
-                @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0">
+                @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0"
+                @contextmenu="openContextMenu($event, track)">
                 <div class="align-up">
                     <!-- 4 左侧对齐 -->
                     <div class="align-left">
@@ -123,9 +124,11 @@
                             <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏">
                             <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
                                 @click="openSongComment(track.id)">
-                            <img src="@/assets/detail.svg" class="track-menu-icon" title="更多">
+                            <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
+                                @click="openContextMenu($event, track)">
                         </div>
-                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum" :style="{'width': `${this.alWidth}px`}">
+                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
+                            :style="{ 'width': `${this.alWidth}px` }">
                             <!-- 6 专辑按钮 -->
                             <button @click="handleAlbumClick(track.al.id)" class="album-button"
                                 :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
@@ -553,6 +556,17 @@ export default {
         },
         openSongComment(id) {
             this.$router.push(`/comment/song/${id}`);
+        },
+        openContextMenu(event, track) {
+            window.postMessage({
+                type: 'song-open-context-menu',
+                data: {
+                    x: event.clientX,
+                    y: event.clientY,
+                    track: JSON.stringify(track),
+                },
+            });
+            // 在HomeView中处理
         },
     },
 }

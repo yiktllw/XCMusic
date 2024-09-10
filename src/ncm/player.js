@@ -391,6 +391,7 @@ export class Player {
         } else if (value === 'listrandom') {
             // 保存当前歌曲
             let ori_track = this._playlist[this._current];
+            if (!ori_track) return;
             // 否则随机排序
             this._playlist = this._playlist.sort(() => Math.random() - 0.5);
             // 找到当前歌曲的索引
