@@ -183,6 +183,7 @@ export default {
         ...mapState({
             player: state => state.player,
             login: state => state.login,
+            openedPlaylist: state => state.openedPlaylist,
         }),
         likelist() {
             return this.login.likelist;
@@ -216,10 +217,7 @@ export default {
             immediate: true,
             handler(newVal) {
                 this.fetchPlaylist(newVal);
-                window.postMessage({
-                    type: 'new-playlist-id',
-                    playlistId: newVal
-                })
+                this.openedPlaylist.id = newVal;
                 this.isLoading = true;
                 this.orient = 'songs';
             }
@@ -246,6 +244,9 @@ export default {
                     // 获取歌单详情
                     requests = [
                         useApi(`/playlist/detail?id=${id}`).then(response => {
+                            if (id !== this.playlistId) {
+                                return;
+                            }
                             // 歌单名称
                             this.playlist.name = response.playlist.name;
                             // 歌单翻译名称
@@ -291,6 +292,9 @@ export default {
                             : null,
                         this.fetchTracks(id, 1).then(getTracks => {
                             // 第一页的歌曲列表
+                            if (id !== this.playlistId) {
+                                return;
+                            }
                             this.playlist.tracks = getTracks;
                             this.updateTracks();
                             this.isLoading = false;
@@ -304,6 +308,9 @@ export default {
                     requests = [
                         useApi(`/album?id=${id}`).then(response => {
                             // 专辑名称
+                            if (id !== this.playlistId) {
+                                return;
+                            }
                             this.playlist.name = response.album.name;
                             // 专辑翻译名称
                             this.playlist.transName = response.album.transNames ? (' (' + response.album.transNames + ')') : '';
@@ -369,7 +376,9 @@ export default {
                     }
 
                     const addedTracksArray = await Promise.all(promises);
-
+                    if (promises[0].id !== this.playlistId) {
+                        return;
+                    }
                     this.playlist.tracks = this.playlist.tracks.concat(...addedTracksArray);
                     // console.log('filteredTracks: ', this.filteredTracks);
                     this.updateTracks();
@@ -523,10 +532,7 @@ export default {
     },
     beforeUnmount() {
         // 组件销毁时发送消息
-        window.postMessage({
-            type: 'new-playlist-id',
-            playlistId: 0,
-        });
+        this.openedPlaylist.id = 0;
     }
 }
 </script>

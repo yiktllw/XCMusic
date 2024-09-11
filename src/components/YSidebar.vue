@@ -44,7 +44,7 @@
 
 <script lang="js">
 import { useApi } from '@/ncm/api';
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
     name: 'YSidebar',
@@ -52,6 +52,7 @@ export default {
         ...mapState({
             login: state => state.login,
             setting: state => state.setting,
+            activeButtonId: state => state.openedPlaylist.id,
         })
     },
     data() {
@@ -59,7 +60,6 @@ export default {
             buttons: [],
             subscribedButtons: [],
             buttonTextColor: '#ccc', // 统一设置按钮的文字颜色
-            activeButtonId: null,
             showMyPlaylist: true,
             showMySubscribedPlaylist: true,
             sidebarWidth: 200,
@@ -73,7 +73,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateNowPlaying']),
         handleButtonClick(buttonId) {
             const url = `/playlist/${buttonId}`;
             this.$router.push(url);
@@ -133,22 +132,12 @@ export default {
                 this.buttons[0].label = '我喜欢的音乐';
             }
         },
-        handleMessage(event) {
-            if (event.origin !== 'http://localhost:4321') {
-                return;
-            }
-            if (event.data.type === 'new-playlist-id') {
-                this.activeButtonId = event.data.playlistId;
-            }
-        },
     },
     async mounted() {
         this.fetchUserPlaylist();
-        window.addEventListener('message', this.handleMessage);
         this.sidebarWidth = this.setting.display.sidebarWidth;
     },
     beforeUnmount() {
-        window.removeEventListener('message', this.handleMessage);
     },
     watch: {
         async loginStatus(newVal) {
