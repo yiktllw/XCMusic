@@ -84,6 +84,7 @@
                         <!-- 歌曲列表 -->
                         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
                             :tracks="this.user.tracks" v-if="this.user.tracks" />
+                        <YPage v-model="page" />
                     </div>
                     <!-- 加载中 -->
                     <YLoading v-if="!this.user.tracks" />
@@ -125,6 +126,8 @@ import YPlaylistList from '@/components/YPlaylistList.vue';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
+import YPage from '@/components/YPage.vue';
+import { YPageC } from '@/tools/YPageC';
 
 export default {
     name: 'YUserView',
@@ -156,6 +159,7 @@ export default {
         YPlaylistBiglist,
         YSongsTable,
         YLoading,
+        YPage,
     },
     data() {
         return {
@@ -166,6 +170,7 @@ export default {
                 userPlaylists: [],
                 userSubscribedPlaylists: [],
             },
+            page: new YPageC(1),
         }
     },
     computed: {
@@ -188,7 +193,7 @@ export default {
                     this.fetchUserPlaylist();
                     break;
                 case 'song':
-                    this.fetchArtistWorks(0);
+                    this.fetchArtistWorks(0, true);
                     break;
                 case 'album':
                     this.fetchArtistAlbums();
@@ -309,7 +314,7 @@ export default {
                     ],
                 };
                 // 获取歌手的作品，第一页
-                await this.fetchArtistWorks(0);
+                await this.fetchArtistWorks(0, true);
             }
         },
         // 获取用户的歌单
@@ -380,7 +385,7 @@ export default {
             });
         },
         // 按页获取歌手的作品
-        async fetchArtistWorks(page) {
+        async fetchArtistWorks(page, newPage = false) {
             const SONGS_PER_PAGE = 100;
             //  如果不是歌手界面，返回
             if (this.type !== 'artist') {
@@ -389,12 +394,18 @@ export default {
             // 获取歌手的歌曲
             let response = await useApi('/artist/songs', {
                 id: this.userId,
-                limit: SONGS_PER_PAGE + page * SONGS_PER_PAGE,
+                limit: SONGS_PER_PAGE,
                 offset: page * SONGS_PER_PAGE,
                 cookie: this.login.cookie,
             }).catch(err => {
                 console.log('fetch artist songs error:', err);
             });
+            if (newPage) {
+                this.page.total = Math.ceil(response.total / SONGS_PER_PAGE);
+                this.page.onPageChange = () => {
+                    this.fetchArtistWorks(this.page.current - 1, false);
+                }
+            }
             // 由于歌曲的封面缺失，需要获取歌手的专辑
             await this.fetchArtistAlbums();
             // 为歌曲添加专辑的封面
@@ -404,13 +415,6 @@ export default {
                     let index = this.user.albums.findIndex(album => album.id === song.al.id);
                     if (index === -1) {
                         // 如果没有找到专辑，则使用默认封面
-                        // let album = await useApi('/album', {
-                        //     id: song.al.id,
-                        //     cookie: this.login.cookie,
-                        // }).catch(err => {
-                        //     console.log('fetch album error:', err);
-                        // });
-                        // console.log('not found album\nsong: ', song, '\nindex: ', i);
                         return {
                             ...song,
                             _picUrl: require('@/assets/song.svg'),

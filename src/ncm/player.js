@@ -343,7 +343,7 @@ export class Player {
                 sourceId: this._playlistId,
                 cookie: localStorage.getItem('login_cookie'),
             }).then(res => {
-                console.log('update song playcount: ', id, 'response: ', res);
+                console.log('update song playcount: ', id, 'time', this._currentTime, 'response: ', res);
             }).catch(err => {
                 console.log('update song playcount error: ', err);
             })

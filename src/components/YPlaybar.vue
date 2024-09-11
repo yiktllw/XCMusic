@@ -6,10 +6,7 @@
             <!-- 2 播放信息 -->
             <div class="play-info">
                 <!-- 3 封面 -->
-                <img class="img-cover img" :src="this.player.currentTrackCover ? this.player.currentTrackCover : ''"
-                    v-if="this.player.currentTrackCover">
-                <!-- 4 封面占位图片 -->
-                <div class="img-cover-placeholder img" v-else></div>
+                <img class="img-cover img" :src="this.player.currentTrackCover ?? require('../assets/song.svg')">
                 <!-- 4 播放信息文本 -->
                 <div class="play-info-text">
                     <!-- 5 播放信息文本:标题 -->
@@ -94,7 +91,8 @@
                 <div class="time">
                     {{ this.player.currentTime ? formatDuration(this.player.currentTime) : '00:00' }}
                 </div>
-                <YProgressBar v-model="this.player.progress" style="height:20px;width: 321px" @update:model-value="setAudioProgress" />
+                <YProgressBar v-model="this.player.progress" style="height:20px;width: 321px"
+                    @update:model-value="setAudioProgress" />
                 <div class="time">
                     {{ formatDuration(this.duration) }}
                 </div>
@@ -155,7 +153,8 @@
                             </div>
                             <div class="title-right">
                                 <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
-                                    <img src="../assets/delete.svg" style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;" title="清空播放列表">
+                                    <img src="../assets/delete.svg"
+                                        style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;" title="清空播放列表">
                                 </span>
                             </div>
                         </div>
@@ -255,7 +254,6 @@ export default {
     },
     computed: {
         ...mapState({
-            nowPlaying: state => state.nowPlaying,
             player: state => state.player,
             login: state => state.login,
             setting: state => state.setting,
@@ -416,15 +414,6 @@ export default {
     margin-right: 10px;
     margin-left: 15px;
     border-radius: 5px;
-}
-
-.img-cover-placeholder {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-    margin-left: 15px;
-    border-radius: 5px;
-    background-color: #222;
 }
 
 .play-info-text {
