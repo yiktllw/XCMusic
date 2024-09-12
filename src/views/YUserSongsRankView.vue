@@ -1,13 +1,14 @@
 <template>
     <YHeader :switcher="switcher" @new-position="handleNewPosition" />
-    <YSongsTable :show-track-album="false" :show-track-popularity="false" :show-header="false" :show-listen-count="true" :local-play="true"
-        :resortable="false" :tracks="position === 'recent' ? recentTracks : alltimeTracks"
+    <YSongsTable :show-track-album="false" :show-track-popularity="false" :show-header="false" :show-listen-count="true"
+        :local-play="true" :resortable="false" :tracks="position === 'recent' ? recentTracks : alltimeTracks"
         style="margin: 0px 20px 0px 10px;" />
 </template>
 
 <script lang="js">
 import YHeader from '@/components/YHeader.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
+import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
 
@@ -57,14 +58,10 @@ export default {
                 type: 1,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.recentTracks = res.weekData.map((item) => {
-                    return {
-                        ...item.song,
-                        playCount: item.playCount,
-                        _picUrl: item.song.al.picUrl + '?param=40y40',
-                    };
-                });
-                // console.log('week data:', this.recentTracks);
+                this.recentTracks = (new Tracks({
+                    url: '/user/record',
+                    tracks: res.weekData,
+                }))._tracks;
             }).catch((err) => {
                 console.log(err);
             });
@@ -73,14 +70,10 @@ export default {
                 type: 0,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.alltimeTracks = res.allData.map((item) => {
-                    return {
-                        ...item.song,
-                        playCount: item.playCount,
-                        _picUrl: item.song.al.picUrl + '?param=40y40',
-                    };
-                });
-                // console.log('alltime data:', this.alltimeTracks);
+                this.alltimeTracks = (new Tracks({
+                    url: '/user/record',
+                    tracks: res.allData
+                }))._tracks;
             }).catch((err) => {
                 console.log(err);
             });

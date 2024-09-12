@@ -8,8 +8,8 @@
                 <!-- 3 歌单封面 -->
                 <div class="playlist-cover-container">
                     <!-- 4 封面图片 -->
-                    <img v-if="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image" class="playlist-cover"
-                        @load="_setBackgroundColor" />
+                    <img v-if="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image"
+                        class="playlist-cover" @load="_setBackgroundColor" />
                     <div v-if="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
                     <!-- 4 渐变层 -->
                     <div class="gradient-overlay" v-if="type === 'playlist'"></div>
@@ -31,14 +31,17 @@
                         <!-- 4 创建信息 -->
                         <div class="createrInfo" v-if="type === 'playlist'">
                             <!-- 5 创建者头像 -->
-                            <img v-if="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl" class="createrAvatar" />
-                            <div v-if="!playlist.createrAvatarUrl" class="createrAvatar" style="background-color: #333;">
+                            <img v-if="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl"
+                                class="createrAvatar" />
+                            <div v-if="!playlist.createrAvatarUrl" class="createrAvatar"
+                                style="background-color: #333;">
                             </div>
                             <!-- 5 创建者名称 -->
                             <span class="creater-name">
                                 {{ playlist.createrName }}
                             </span>
-                            <span v-if="!playlist.createrAvatarUrl" class="creater-name" style="background-color: #333;">创建者
+                            <span v-if="!playlist.createrAvatarUrl" class="creater-name"
+                                style="background-color: #333;">创建者
                             </span>
                             <!-- 5 创建时间 -->
                             <span class="create-time">
@@ -81,7 +84,8 @@
                             </button>
                             <!-- 5 下载按钮 -->
                             <button class="download-button" @click="downloadPlaylist">
-                                <img src="../assets/download.svg" style="width: 15px; height: 15px; padding-right:5px;" />
+                                <img src="../assets/download.svg"
+                                    style="width: 15px; height: 15px; padding-right:5px;" />
                                 下载
                             </button>
                             <!-- 5 多选按钮 -->
@@ -91,8 +95,10 @@
                                 多选
                             </button>
                             <!-- 5 搜索框 -->
-                            <input type="text" class="search-input" @keydown.enter="handleSearch($event.target.value, true)"
-                                @input="handleSearch($event.target.value, false)" placeholder="搜索..." spellcheck="false" />
+                            <input type="text" class="search-input"
+                                @keydown.enter="handleSearch($event.target.value, true)"
+                                @input="handleSearch($event.target.value, false)" placeholder="搜索..."
+                                spellcheck="false" />
                         </div>
                     </div>
                 </div>
@@ -152,6 +158,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
 import YComment from '@/components/YComment.vue';
+import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
@@ -323,17 +330,14 @@ export default {
                             // 歌曲数量
                             this.playlist.trackCount = response.album.size;
                             // 添加专辑信息
-                            this.playlist.tracks = response.songs.map(track => {
-                                return {
-                                    ...track,
-                                    al: {
-                                        id: track.al.id,
-                                        name: track.al.name,
-                                        picUrl: response.album.picUrl,
-                                        tns: track.al.tns,
-                                    },
+                            this.playlist.tracks = (new Tracks({
+                                url: '/album',
+                                tracks: response.songs,
+                                params: {
+                                    needIndex: true,
+                                    alPicUrl: response.album.picUrl,
                                 }
-                            });
+                            })).tracks;
                             // 更新歌曲列表
                             this.updateTracks();
                             // 加载完成
@@ -376,41 +380,35 @@ export default {
                     }
 
                     const addedTracksArray = await Promise.all(promises);
-                    if (promises[0].id !== this.playlistId) {
+                    if (id !== this.playlistId) {
                         return;
                     }
                     this.playlist.tracks = this.playlist.tracks.concat(...addedTracksArray);
-                    // console.log('filteredTracks: ', this.filteredTracks);
                     this.updateTracks();
                 }
             } catch (error) {
                 console.error('Failed to fetch playlist or tracks:', error);
             }
         },
-        // 获取歌曲列表
+        // 获取当前页的歌曲列表
         async fetchTracks(id, page) {
-            try {
-                // 设置正在加载
-                // 获取当前页的歌曲列表
-                const offset = (page - 1) * 1000;
-                const limit = 1000;
-                let getTracks = await useApi('/playlist/track/all', { id: id, limit: limit, offset: offset }).catch(error => {
-                    console.error('Failed to fetch tracks:', error);
-                    throw error;
-                });
-                // 加入新的属性 originalIndex，用于排序
-                let result = getTracks.songs.map((track, index) => ({
-                    ...track,
-                    originalIndex: index,
-                    _picUrl: track.al.picUrl + '?param=40y40',
-                }));
-                return result;
-            } catch (error) {
-                console.error('Failed to fetch tracks:', error);
-                throw error; // 将错误抛出，以便在 fetchPlaylist 中捕获
-            } finally {
-                // 设置加载完成
-            }
+            let offset = (page - 1) * 1000;
+            const limit = 1000;
+            let getTracks = await useApi('/playlist/track/all', {
+                id: id,
+                limit: limit,
+                offset: offset
+            }).catch(error => {
+                console.log('Failed to fetch tracks:', error);
+            });
+            // 加入新的属性 originalIndex，用于排序
+            return (new Tracks({
+                url: '/playlist/track/all',
+                tracks: getTracks.songs,
+                params: {
+                    needIndex: true,
+                }
+            })).tracks;
         },
         // 设置背景颜色
         async _setBackgroundColor() {
@@ -480,8 +478,8 @@ export default {
         },
         // 添加到播放列表
         async addPlaylistToQueue() {
-            let playlist = preparePlaylist(this.playlist.tracks);
-            this.player.addPlaylist(playlist);
+            console.log('addPlaylistToQueue', this.playlist.tracks);
+            this.player.addPlaylist(this.playlist.tracks);
         },
         // 播放歌曲
         async playSongs(track) {

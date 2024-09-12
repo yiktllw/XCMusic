@@ -165,7 +165,8 @@
                         <div class="scrollable">
                             <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
-                                :showHeader="false" :resortable="false" :canSendPlaylist="false" />
+                                :showHeader="false" :resortable="false" :canSendPlaylist="false"
+                                :limit="500" />
                         </div>
                     </div>
                 </YPanel>
@@ -688,7 +689,7 @@ export default {
     /* align-items: left; */
     justify-content: flex-start;
     transform: translate3d(calc(-100%), calc(-100% - 65px), 0);
-    width: 350px;
+    width: calc(321px + 43px);
     height: calc(100vh - 230px);
     box-shadow: -1px -1px 10px #111;
 }

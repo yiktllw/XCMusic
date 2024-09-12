@@ -44,7 +44,8 @@
                 <!-- 导航元素 -->
                 <button class="switcher-item" v-for="(item, index) in user.switcher" :key="index"
                     @click="handleSwitcher(item.position)">
-                    <span :class="{ 'choosed-text': item.position === user.position }" style="font-size: 16px; color:#fff;"
+                    <span :class="{ 'choosed-text': item.position === user.position }"
+                        style="font-size: 16px; color:#fff;"
                         :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? '#fff' : '#bbb' }">{{
                             item.display }}</span>
                     <!-- 选中效果 -->
@@ -118,15 +119,16 @@
 </template>
 
 <script lang="js">
-import { useApi } from '@/ncm/api';
-import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
-import { mapState } from 'vuex';
 import YScroll from '@/components/YScroll.vue';
 import YPlaylistList from '@/components/YPlaylistList.vue';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
+import { Tracks } from '@/ncm/tracks';
+import { useApi } from '@/ncm/api';
+import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
+import { mapState } from 'vuex';
 import { YPageC } from '@/tools/YPageC';
 
 export default {
@@ -392,42 +394,33 @@ export default {
                 return;
             }
             // 获取歌手的歌曲
-            let response = await useApi('/artist/songs', {
+            await useApi('/artist/songs', {
                 id: this.userId,
                 limit: SONGS_PER_PAGE,
                 offset: page * SONGS_PER_PAGE,
                 cookie: this.login.cookie,
-            }).catch(err => {
-                console.log('fetch artist songs error:', err);
-            });
-            if (newPage) {
-                this.page.total = Math.ceil(response.total / SONGS_PER_PAGE);
-                this.page.onPageChange = () => {
-                    this.fetchArtistWorks(this.page.current - 1, false);
-                }
-            }
-            // 由于歌曲的封面缺失，需要获取歌手的专辑
-            await this.fetchArtistAlbums();
-            // 为歌曲添加专辑的封面
-            this.user.tracks = await Promise.all(
-                response.songs.map(async (song) => {
-                    // 查找歌曲所属的专辑
-                    let index = this.user.albums.findIndex(album => album.id === song.al.id);
-                    if (index === -1) {
-                        // 如果没有找到专辑，则使用默认封面
-                        return {
-                            ...song,
-                            _picUrl: require('@/assets/song.svg'),
-                        };
-                    } else {
-                        // 如果找到专辑，则直接使用专辑的封面
-                        return {
-                            ...song,
-                            _picUrl: this.user.albums[index]._picUrl,
-                        };
+            })
+                .then(async (response) => {
+                    if (newPage) {
+                        this.page.total = Math.ceil(response.total / SONGS_PER_PAGE);
+                        this.page.onPageChange = () => {
+                            this.fetchArtistWorks(this.page.current - 1, false);
+                        }
                     }
+                    // 由于歌曲的封面缺失，需要获取歌手的专辑
+                    await this.fetchArtistAlbums();
+                    // 为歌曲添加专辑的封面
+                    this.user.tracks = (new Tracks({
+                        url: '/artist/songs',
+                        tracks: response.songs,
+                        params: {
+                            albums: this.user.albums,
+                        }
+                    })).tracks;
                 })
-            );
+                .catch(err => {
+                    console.log('fetch artist songs error:', err);
+                });
         },
         async fetchArtistIntro() {
             //  如果不是歌手界面，返回
@@ -435,23 +428,26 @@ export default {
                 return;
             }
             // 获取歌手的描述
-            let response = await useApi('/artist/desc', {
+            await useApi('/artist/desc', {
                 id: this.userId,
-            }).catch(err => {
-                console.log('fetch artist intro error:', err);
-            });
-            // 处理歌手的描述
-            let desc = [
-                {
-                    ti: `${this.user.name} 简介`,
-                    txt: this.user.briefDesc,
-                },
-            ];
-            // 添加歌手的描述
-            this.user.intro = [
-                ...desc,
-                ...response.introduction,
-            ]
+            })
+                .then(response => {
+                    // 处理歌手的描述
+                    let desc = [
+                        {
+                            ti: `${this.user.name} 简介`,
+                            txt: this.user.briefDesc,
+                        },
+                    ];
+                    // 添加歌手的描述
+                    this.user.intro = [
+                        ...desc,
+                        ...response.introduction,
+                    ]
+                })
+                .catch(err => {
+                    console.log('fetch artist intro error:', err);
+                });
         },
     },
     async mounted() {

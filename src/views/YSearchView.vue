@@ -57,6 +57,7 @@ import YArtistList from '@/components/YArtistList.vue';
 import YSearchLyrics from '@/components/YSearchLyrics.vue';
 import YScroll from '@/components/YScroll.vue';
 import YPage from '@/components/YPage.vue';
+import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { setBackgroundColor } from '@/ncm/color';
 import { useApi } from '../ncm/api';
@@ -149,151 +150,155 @@ export default {
         },
         // 搜索歌曲
         async fetchTracks(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1,
                 limit: 100,
                 offset: (this.songsPage.current - 1) * 100,
-            }).catch((err) => {
-                console.log('fetchTracks', err);
-            });
-            // 增加_picUrl属性
-            this.switcher[0].tracks = result.result.songs?.map((song) => {
-                return {
-                    ...song,
-                    _picUrl: song.al.picUrl + '?param=40y40',
-                }
-            });
-            if (newPageInstance) {
-                this.songsPage = new YPageC(Math.ceil(result.result.songCount / 100));
-            }
-            this.songsPage.onPageChange = () => {
-                this.fetchTracks(false);
-            };
-            // console.log('fetchTracks', result.result.songs);
+            })
+                .then((result) => {
+                    this.switcher[0].tracks = (new Tracks({
+                        url: '/cloudsearch?type=1',
+                        tracks: result.result.songs,
+                    })).tracks;
+                    if (newPageInstance) {
+                        this.songsPage = new YPageC(Math.ceil(result.result.songCount / 100));
+                    }
+                    this.songsPage.onPageChange = () => {
+                        this.fetchTracks(false);
+                    };
+                })
+                .catch((err) => {
+                    console.log('fetchTracks', err);
+                });
         },
         // 搜索歌单
         async fetchPlaylists(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1000,
                 limit: 100,
                 offset: (this.playlistsPage.current - 1) * 100,
-            }).catch((err) => {
-                console.log('fetchPlaylists', err);
-            });
-            // 增加_picUrl属性
-            this.switcher[2].playlists = result.result.playlists?.map((playlist) => {
-                return {
-                    ...playlist,
-                    _picUrl: playlist.coverImgUrl + '?param=40y40',
-                }
-            });
-            if (newPageInstance) {
-                this.playlistsPage = new YPageC(Math.ceil(result.result.playlistCount / 100));
-            }
-            this.playlistsPage.onPageChange = () => {
-                this.fetchPlaylists(false);
-            };
-            console.log('fetchPlaylists', result.result.playlists);
+            })
+                .then(result => {
+                    this.switcher[2].playlists = result.result.playlists?.map((playlist) => {
+                        return {
+                            ...playlist,
+                            _picUrl: playlist.coverImgUrl + '?param=40y40',
+                        }
+                    });
+                    if (newPageInstance) {
+                        this.playlistsPage = new YPageC(Math.ceil(result.result.playlistCount / 100));
+                    }
+                    this.playlistsPage.onPageChange = () => {
+                        this.fetchPlaylists(false);
+                    };
+                    console.log('fetchPlaylists', result.result.playlists);
+                })
+                .catch((err) => {
+                    console.log('fetchPlaylists', err);
+                });
         },
         // 搜索专辑
         async fetchAlbums(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 10,
                 limit: 100,
                 offset: (this.albumsPage.current - 1) * 100,
-            }).catch((err) => {
-                console.log('fetchAlbums', err);
-            });
-            // 增加_picUrl属性
-            this.switcher[1].playlists = result.result.albums?.map((album) => {
-                return {
-                    ...album,
-                    _picUrl: album.picUrl + '?param=40y40',
-                }
-            });
-            if (newPageInstance) {
-                this.albumsPage = new YPageC(Math.ceil(result.result.albumCount / 100));
-            }
-            this.albumsPage.onPageChange = () => {
-                this.fetchAlbums(false);
-            };
-            // console.log('fetchAlbums', result.result.albums);
+            })
+                .then(result => {
+                    this.switcher[1].playlists = result.result.albums?.map((album) => {
+                        return {
+                            ...album,
+                            _picUrl: album.picUrl + '?param=40y40',
+                        }
+                    });
+                    if (newPageInstance) {
+                        this.albumsPage = new YPageC(Math.ceil(result.result.albumCount / 100));
+                    }
+                    this.albumsPage.onPageChange = () => {
+                        this.fetchAlbums(false);
+                    };
+                })
+                .catch((err) => {
+                    console.log('fetchAlbums', err);
+                });
         },
         // 搜索歌手
         async fetchArtists(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 100,
                 limit: 100,
                 offset: (this.artistsPage.current - 1) * 100,
-            }).catch((err) => {
-                console.log('fetchArtists', err);
-            });
-            // 增加_picUrl属性
-            this.switcher[3].artists = result.result.artists?.map((artist) => {
-                return {
-                    ...artist,
-                    _picUrl: artist.picUrl + '?param=130y130',
-                }
-            });
-            if (newPageInstance) {
-                this.artistsPage = new YPageC(Math.ceil(result.result.artistCount / 100));
-            }
-            this.artistsPage.onPageChange = () => {
-                this.fetchArtists(false);
-            };
-            // console.log('fetchArtists', result.result.artists);
+            })
+                .then(result => {
+                    this.switcher[3].artists = result.result.artists?.map((artist) => {
+                        return {
+                            ...artist,
+                            _picUrl: artist.picUrl + '?param=130y130',
+                        }
+                    });
+                    if (newPageInstance) {
+                        this.artistsPage = new YPageC(Math.ceil(result.result.artistCount / 100));
+                    }
+                    this.artistsPage.onPageChange = () => {
+                        this.fetchArtists(false);
+                    };
+                })
+                .catch((err) => {
+                    console.log('fetchArtists', err);
+                });
         },
         // 搜索歌词
         async fetchLyrics(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1006,
                 limit: 100,
-            }).catch((err) => {
-                console.log('fetchLyrics', err);
-            });
-            this.switcher[4].lyricsList = result.result.songs.map((song) => {
-                return {
-                    ...song,
-                    _picUrl: song.al.picUrl + '?param=40y40',
-                }
-            });
-            if (newPageInstance) {
-                this.lyricsPage = new YPageC(Math.ceil(result.result.songCount / 100));
-            }
-            this.lyricsPage.onPageChange = () => {
-                this.fetchLyrics(false);
-            };
-            console.log('fetchLyrics', result.result.songs);
+            })
+                .then(result => {
+                    this.switcher[4].lyricsList = (new Tracks({
+                        url: '/cloudsearch?type=1006',
+                        tracks: result.result.songs,
+                    })).tracks;
+                    if (newPageInstance) {
+                        this.lyricsPage = new YPageC(Math.ceil(result.result.songCount / 100));
+                    }
+                    this.lyricsPage.onPageChange = () => {
+                        this.fetchLyrics(false);
+                    };
+                })
+                .catch((err) => {
+                    console.log('fetchLyrics', err);
+                });
         },
         // 搜索用户
         async fetchUsers(newPageInstance = true) {
-            let result = await useApi('/cloudsearch', {
+            await useApi('/cloudsearch', {
                 keywords: this.search,
                 type: 1002,
                 limit: 100,
                 offset: (this.usersPage.current - 1) * 100,
-            }).catch((err) => {
-                console.log('fetchUsers', err);
-            });
-            // 增加_picUrl属性
-            this.switcher[5].users = result.result.userprofiles?.map((user) => {
-                return {
-                    ...user,
-                    _picUrl: user.avatarUrl + '?param=130y130',
-                }
-            });
-            if (newPageInstance) {
-                this.usersPage = new YPageC(Math.ceil(result.result.userprofileCount / 100));
-            }
-            this.usersPage.onPageChange = () => {
-                this.fetchUsers(false);
-            };
-            // console.log('fetchUsers', result.result.userprofiles);
+            })
+                .then(result => {
+                    this.switcher[5].users = result.result.userprofiles?.map((user) => {
+                        return {
+                            ...user,
+                            _picUrl: user.avatarUrl + '?param=130y130',
+                        }
+                    });
+                    if (newPageInstance) {
+                        this.usersPage = new YPageC(Math.ceil(result.result.userprofileCount / 100));
+                    }
+                    this.usersPage.onPageChange = () => {
+                        this.fetchUsers(false);
+                    };
+                })
+                .catch((err) => {
+                    console.log('fetchUsers', err);
+                });
         },
         fetchData(position) {
             switch (position) {
