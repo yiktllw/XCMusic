@@ -18,14 +18,15 @@
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon" />
                         <span style="font-size:13px; color: #aaa;">{{ sortingStates[currentSortingIndex].text
-                        }}</span>
+                            }}</span>
                     </div>
                 </button>
             </div>
             <!-- 4 resize控件 -->
             <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum" :style="{ 'width': `${this.alWidth}px` }">
+            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum"
+                :style="{ 'width': `${this.alWidth}px` }">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
                     <span>专辑</span>
@@ -73,8 +74,9 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul>
-            <li v-for="(track, index) in localTracks" :id="`track-item-${track.id}`" :key="track.id" class="track-item"
-                ref="track_item_ref" @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
+            <li v-for="(track, index) in localTracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
+                :id="`track-item-${track.id}`" :key="track.id" class="track-item" ref="track_item_ref"
+                @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
                 @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0"
                 @contextmenu="openContextMenu($event, track)">
                 <div class="align-up">
@@ -111,7 +113,8 @@
                                         {{ artist.name }}
                                     </span>
                                     <span v-if="index < track.ar.length - 1"
-                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> / </span>
+                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> /
+                                    </span>
                                 </span>
                             </div>
                         </div>
@@ -154,7 +157,8 @@
                                 :style="{ width: (track.pop / 100 * 50) + 'px' }">
                             </div>
                         </div>
-                        <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ?? 0 }}次
+                        <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ?? 0
+                            }}次
                         </div>
                     </div>
 
@@ -168,6 +172,7 @@
                 </div>
             </li>
         </ul>
+        <YPage v-model="page" />
     </div>
 </template>
 
@@ -175,6 +180,8 @@
 import { formatDuration_mmss } from '@/ncm/time';
 import { mapState } from 'vuex';
 import YPlaying from './YPlaying.vue';
+import YPage from './YPage.vue';
+import { YPageC } from '@/tools/YPageC';
 
 export default {
     name: 'YSongsTable',
@@ -248,9 +255,14 @@ export default {
             type: String,
             default: '0px',
         },
+        limit: {
+            type: Number,
+            default: 1000,
+        },
     },
     components: {
         YPlaying,
+        YPage,
     },
     emits: [
         'send-playlist',
@@ -301,6 +313,7 @@ export default {
             currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
             localTracks: [],
             alWidth: 230,
+            page: new YPageC(),
         }
     },
     async mounted() {
@@ -318,6 +331,9 @@ export default {
             this.localTracks = newVal;
             // this.setAlbumWidth(this.setting.display.albumWidth);
             this.alWidth = this.setting.display.albumWidth;
+        },
+        localTracks(newVal) {
+            this.page = new YPageC(Math.ceil(newVal.length / this.limit));
         },
     },
     methods: {
