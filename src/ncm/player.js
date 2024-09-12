@@ -329,22 +329,41 @@ export class Player {
     // 添加播放列表
     addPlaylist(list) {
         // 保存当前歌曲
-        let ori_track = this._playlist[this._current];
+        console.time('addPlaylist');
+        let ori_track = this._playlist[this._current] ?? null;
+        // 先构建一个 Map 用于快速查找 _playlist 中的 track
+        const playlistMap = new Map();
+        this._playlist.forEach((track, index) => {
+            playlistMap.set(track.id, index);
+        });
+
+        // 收集要添加到播放列表的歌曲
+        const tracksToAdd = [];
+
         list.forEach(track => {
-            // 查询指定的歌曲是否在播放列表中
-            let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
-            if (trackIndex === -1) {
-                // 如果在播放列表中则替换到播放列表
-                if (this._mode === 'listrandom') {
-                    this._playlist.splice(Math.floor(Math.random() * this.playlistCount), 0, track);
-                } else {
-                    // 如果不在播放列表中则添加到播放列表
-                    this._playlist.push(track);
-                }
+            // 使用 Map 进行 O(1) 查找
+            if (!playlistMap.has(track.id)) {
+                tracksToAdd.push(track);
             }
         });
+
+        // 如果有歌曲要添加
+        if (tracksToAdd.length > 0) {
+            if (this._mode === 'listrandom') {
+                // 随机插入的情况
+                tracksToAdd.forEach(track => {
+                    this._playlist.splice(Math.floor(Math.random() * this.playlistCount), 0, track);
+                });
+            } else {
+                // 顺序插入到播放列表
+                this._playlist.push(...tracksToAdd);
+            }
+        }
         // 找到当前歌曲的索引
-        this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+        if (ori_track) {
+            this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+        }
+        console.timeEnd('addPlaylist');
     }
     clearPlaylist() {
         this._playlist = [];
@@ -492,7 +511,9 @@ export class Player {
             // 按照原始索引排序
             this._playlist = this._playlist.sort((a, b) => a.originalIndex - b.originalIndex);
             // 找到当前歌曲的索引
-            this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+            if (ori_track) {
+                this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+            }
         } else if (value === 'listrandom') {
             // 保存当前歌曲
             let ori_track = this._playlist[this._current];
@@ -500,7 +521,9 @@ export class Player {
             // 否则随机排序
             this._playlist = this._playlist.sort(() => Math.random() - 0.5);
             // 找到当前歌曲的索引
-            this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+            if (ori_track) {
+                this._current = this._playlist.findIndex(track => track.id === ori_track.id);
+            }
         }
     }
     // 获取播放历史
