@@ -45,17 +45,12 @@ export class Player {
         console.log('Reloading url', this.currentTrack);
         let result = await this.getUrl(this.currentTrack.id);
         let url = result.url;
-        let gain = result.gain;
-        let peak = result.peak;
         this._audio.src = url;
-        try {
-            this.setGain(gain, peak);
-        } catch (error) {
-            console.error(error);
-        }
         this._audio.currentTime = this._currentTime;
         try {
-            // await this._audio.play();
+            if (this._playState === 'play') {
+                this._audio.play();
+            }
             console.log('Reloaded url', url);
         } catch (error) {
             console.error(error);
@@ -71,24 +66,21 @@ export class Player {
             console.log('Track not in playlist, added to playlist and played', track);
             await this.playTrack(track);
         } else {
+            // 如果在播放列表中
             // 更新上一首歌曲的播放信息
             if (this.currentTrack?.id) {
                 await this.scrobble(this.currentTrack.id)
             }
-            // 如果在播放列表中
-            // 获取歌曲播放信息
-            let result = await this.getUrl(track.id);
-            let url = result.url;
-            let gain = result.gain;
-            let peak = result.peak;
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
             // 更新播放状态
             this._playState = 'play';
+            // 获取歌曲播放信息
+            let result = await this.getUrl(track.id);
+            let url = result.url;
             this._audio.src = url;
             this._audio.ontimeupdate = () => this.updateTime();
             this._audio.onended = () => this.next();
-            this.setGain(gain, peak);
             try {
                 this._audio.play();
                 this._playState = 'play';
@@ -96,12 +88,95 @@ export class Player {
                 console.error(error);
             }
             console.log('Playing', track);
-            await this.setAllQuality(track.id);
+            await this.setAllQuality(this.currentTrack.id);
+            let gain = 1;
+            let peak = 1;
+            if (this.currentTrack.l) {
+                if (this.currentTrack.l.gain > gain) {
+                    gain = this.currentTrack.l.gain;
+                }
+                if (this.currentTrack.l.peak < peak && this.currentTrack.l.peak !== 0) {
+                    peak = this.currentTrack.l.peak;
+                }
+            }
+            if (this.currentTrack.h) {
+                if (this.currentTrack.h.gain > gain) {
+                    gain = this.currentTrack.h.gain;
+                }
+                if (this.currentTrack.h.peak < peak && this.currentTrack.h.peak !== 0) {
+                    peak = this.currentTrack.h.peak;
+                }
+            }
+            if (this.currentTrack.sq) {
+                if (this.currentTrack.sq.gain > gain) {
+                    gain = this.currentTrack.sq.gain;
+                }
+                if (this.currentTrack.sq.peak < peak && this.currentTrack.sq.peak !== 0) {
+                    peak = this.currentTrack.sq.peak;
+                }
+            }
+            if (this.currentTrack.hr) {
+                if (this.currentTrack.hr.gain > gain) {
+                    gain = this.currentTrack.hr.gain;
+                }
+                if (this.currentTrack.hr.peak < peak && this.currentTrack.hr.peak !== 0) {
+                    peak = this.currentTrack.hr.peak;
+                }
+            }
+            if (this.currentTrack.jyeffect) {
+                if (this.currentTrack.jyeffect.gain > gain) {
+                    gain = this.currentTrack.jyeffect.gain;
+                }
+                if (this.currentTrack.jyeffect.peak < peak && this.currentTrack.jyeffect.peak !== 0) {
+                    peak = this.currentTrack.jyeffect.peak;
+                }
+            }
+            if (this.currentTrack.sky) {
+                if (this.currentTrack.sky.gain > gain) {
+                    gain = this.currentTrack.sky.gain;
+                }
+                if (this.currentTrack.sky.peak < peak && this.currentTrack.sky.peak !== 0) {
+                    peak = this.currentTrack.sky.peak;
+                }
+            }
+            if (this.currentTrack.jymaster) {
+                if (this.currentTrack.jymaster.gain > gain) {
+                    gain = this.currentTrack.jymaster.gain;
+                }
+                if (this.currentTrack.jymaster.peak < peak && this.currentTrack.jymaster.peak !== 0) {
+                    peak = this.currentTrack.jymaster.peak;
+                }
+            }
+            this.setGain(gain, peak);
             this.exec_OnTrackReady();
         }
     }
     async setAllQuality(id) {
         let requests = [
+            this.getQuality(id, 'standard').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    l: res,
+                }
+            }),
+            this.getQuality(id, 'exhigh').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    h: res,
+                }
+            }),
+            this.getQuality(id, 'lossless').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    sq: res,
+                }
+            }),
+            this.getQuality(id, 'hires').then(res => {
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    hr: res,
+                }
+            }),
             this.getQuality(id, 'jyeffect').then(res => {
                 this.currentTrack = {
                     ...this.currentTrack,
@@ -142,10 +217,14 @@ export class Player {
             });
         }
         if (response.data[0].level === quality) {
-            return {
+            let result = {
                 name: quality,
                 size: response.data[0].size,
-            }
+                gain: response.data[0].gain,
+                peak: response.data[0].peak,
+            };
+            // console.log('Quality', quality, 'response', result);
+            return result;
         } else {
             return null;
         }
@@ -479,7 +558,8 @@ export class Player {
                 console.error(error);
             });
         }
-        return response.data[0];
+        let result = response.data[0];
+        return result;
     }
     // 分贝转线性
     dBToGain(dB) {
@@ -505,9 +585,12 @@ export class Player {
             // 重新计算增益
             gain_linear = 1 / peak;
         }
-        if (gain_linear < 0 || gain_linear > 4 || typeof gain_linear !== 'number' || isNaN(gain_linear) || gain_linear === Infinity || peak === Infinity || peak < 0 || peak > 2 || typeof peak !== 'number' || isNaN(peak)) {
+        if (gain_linear < 0 || typeof gain_linear !== 'number' || isNaN(gain_linear) || gain_linear === Infinity || peak === Infinity || peak < 0 || peak > 2 || typeof peak !== 'number' || isNaN(peak)) {
             console.log('Gain or not supported, gain: ', gain_linear, 'peak: ', peak);
             return;
+        }
+        if (gain_linear > 4) {
+            gain_linear = 4;
         }
         // 设置增益
         try {
