@@ -30,6 +30,7 @@ export class YCommentC {
             pageSize: 100,
             pageNo: this.page.current,
             sortType: this.sortTypeId,
+            cursor: (this._comments.length > 0 && this.page.current > 1 && this._sortType === 'time') ? this._comments[this._comments.length - 1].time : null,
         }).then(res => {
             this.comments = res.data?.comments;
             this.title = res.data?.commentsTitle;
@@ -74,7 +75,7 @@ export class YCommentC {
     set sortType(sortType) {
         if (sortType === 'recommend' || sortType === 'time' || sortType === 'hot' && this._sortType !== sortType) {
             this._sortType = sortType;
-            this.initData(false);
+            this.initData(true);
             console.log('sortType changed: ', this._sortType);
         } else {
             throw new Error('sortType error: sortType must be recommend or time, but got ' + sortType);
