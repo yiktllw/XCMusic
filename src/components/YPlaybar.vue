@@ -4,25 +4,35 @@
         <!-- 1 左侧 -->
         <div class="align-left">
             <!-- 2 播放信息 -->
-            <div class="play-info">
-                <!-- 3 封面 -->
-                <img class="img-cover img" :src="this.player.currentTrackCover ?? require('../assets/song.svg')">
-                <!-- 4 播放信息文本 -->
-                <div class="play-info-text">
-                    <!-- 5 播放信息文本:标题 -->
-                    <div class="play-info-text-title">
-                        {{ this.player.currentTrackName }}
-                    </div>
-                    <!-- 5 播放信息文本:艺术家 -->
-                    <div class="play-info-text-artist">
-                        <span v-for="(artist, index) in this.player.currentTrackArtists" :key="artist.id">
-                            <span @click="handleArtistClick(artist.id)" class="artist-button"
-                                :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
-                                {{ artist.name }}
+            <div class="play-info" @mouseover="showButton = true" @mouseleave="showButton = false">
+                <div class="play-info-left">
+                    <!-- 3 封面 -->
+                    <img class="img-cover img" :src="this.player.currentTrackCover ?? require('../assets/song.svg')">
+                    <!-- 4 播放信息文本 -->
+                    <div class="play-info-text">
+                        <!-- 5 播放信息文本:标题 -->
+                        <div class="play-info-text-title" :title="this.player.currentTrackName">
+                            <YTextBanner :text="this.player.currentTrackName" style="width: 100%; overflow: hidden;" />
+                        </div>
+                        <!-- 5 播放信息文本:艺术家 -->
+                        <div class="play-info-text-artist">
+                            <span v-for="(artist, index) in this.player.currentTrackArtists" :key="artist.id">
+                                <span @click="handleArtistClick(artist.id)" class="artist-button"
+                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                    {{ artist.name }}
+                                </span>
+                                <span v-if="index < this.player.currentTrackArtists.length - 1"> /&nbsp; </span>
                             </span>
-                            <span v-if="index < this.player.currentTrackArtists.length - 1"> /&nbsp; </span>
-                        </span>
+                        </div>
                     </div>
+                </div>
+                <div class="play-info-right">
+                    <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单"
+                        v-if="showButton">
+                    <img class="img-comment play-info-ico" src="../assets/comment.svg" title="评论" v-if="showButton"
+                        @click="this.$router.push({ path: `/comment/song/${player.currentTrack.id}` })">
+                    <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载"
+                        v-if="showButton">
                 </div>
             </div>
         </div>
@@ -31,7 +41,8 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="_toogleLike(likelist.includes(this.player.currentTrack?.id))">
+                <button class="button like-button"
+                    @click="_toogleLike(likelist.includes(this.player.currentTrack?.id))">
                     <img class="img-like img" src="../assets/likes.svg"
                         v-if="likelist.includes(this.player.currentTrack?.id)" title="取消喜欢">
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
@@ -41,7 +52,8 @@
                     <img class="img-previous img" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
-                <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'">
+                <button class="button play-button" @click="tooglePlayState"
+                    :title="playState === 'pause' ? '播放' : '暂停'">
                     <img v-if="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-if="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
@@ -53,14 +65,15 @@
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
                     ref="play_mode_panel_trigger">
                     <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
-                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg" title="列表循环">
+                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
+                        title="列表循环">
                     <img v-if="playMode === 'random'" class="img-random img" src="../assets/random.svg" title="随机播放">
-                    <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg" title="列表随机"
-                        style="opacity: 1;">
+                    <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
+                        title="列表随机" style="opacity: 1;">
                     <img v-if="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
-                    :slide-direction="5">
+                    :slide-direction="5" :hide-mode="'show'">
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
@@ -154,7 +167,8 @@
                             <div class="title-right">
                                 <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
                                     <img src="../assets/delete.svg"
-                                        style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;" title="清空播放列表">
+                                        style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;"
+                                        title="清空播放列表">
                                 </span>
                             </div>
                         </div>
@@ -165,8 +179,7 @@
                         <div class="scrollable">
                             <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
-                                :showHeader="false" :resortable="false" :canSendPlaylist="false"
-                                :limit="500" />
+                                :showHeader="false" :resortable="false" :canSendPlaylist="false" :limit="500" />
                         </div>
                     </div>
                 </YPanel>
@@ -182,6 +195,7 @@ import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
 import YProgressBarV from './YProgressBarV.vue';
+import YTextBanner from './YTextBanner.vue';
 
 export default {
     name: 'YPlaybar',
@@ -190,6 +204,7 @@ export default {
         YPanel,
         YProgressBar,
         YProgressBarV,
+        YTextBanner,
     },
     data() {
         return {
@@ -251,6 +266,7 @@ export default {
                     size: '',
                 }
             ],
+            showButton: false,
         }
     },
     computed: {
@@ -397,16 +413,52 @@ export default {
     display: flex;
     align-items: center;
     width: calc(50vw - 220px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     height: 100%;
 }
 
 .play-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-right: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.play-info-left {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.play-info-right {
+    display: flex;
+    align-items: center;
+    /* display: none; */
+}
+
+.play-info-ico {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    opacity: .6;
+}
+
+.play-info-ico:hover {
+    opacity: 1;
+}
+
+.img-subscribe {
+    margin-right: 10px;
+}
+
+.img-comment {
+    margin-right: 10px;
+}
+
+.img-download {
+    margin-right: 0px;
 }
 
 .img-cover {
@@ -418,23 +470,31 @@ export default {
 }
 
 .play-info-text {
-    display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .play-info-text-title {
-    display: flex;
     text-align: left;
     align-items: flex-start;
+    position: relative;
+    height: 20px;
+    /* overflow: hidden; */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 .play-info-text-artist {
-    display: flex;
     text-align: left;
     align-items: flex-start;
     color: #bbb;
     font-size: 14px;
     margin-top: 5px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .artist-button {
@@ -697,6 +757,7 @@ export default {
 .scrollable {
     display: block;
     width: 100%;
+    padding-right: 5px;
     overflow-y: auto;
     user-select: none;
     -webkit-user-drag: none;
