@@ -478,7 +478,6 @@ export default {
         },
         // 添加到播放列表
         async addPlaylistToQueue() {
-            console.log('addPlaylistToQueue', this.playlist.tracks);
             this.player.addPlaylist(this.playlist.tracks);
         },
         // 播放歌曲

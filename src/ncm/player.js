@@ -49,7 +49,7 @@ export class Player {
         this._audio.currentTime = this._currentTime;
         try {
             if (this._playState === 'play') {
-                this._audio.play();
+                await this._audio.play();
             }
             console.log('Reloaded url', url);
         } catch (error) {
@@ -57,7 +57,7 @@ export class Player {
         }
     }
     // 播放指定的歌曲
-    async playTrack(track) {
+    async playTrack(track, autoPlay = true) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
         if (trackIndex === -1) {
@@ -73,19 +73,21 @@ export class Player {
             }
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
-            // 更新播放状态
-            this._playState = 'play';
             // 获取歌曲播放信息
             let result = await this.getUrl(track.id);
             let url = result.url;
             this._audio.src = url;
             this._audio.ontimeupdate = () => this.updateTime();
             this._audio.onended = () => this.next();
-            try {
-                this._audio.play();
-                this._playState = 'play';
-            } catch (error) {
-                console.error(error);
+            if (autoPlay) {
+                try {
+                    // 更新播放状态
+                    this._playState = 'play';
+                    await this._audio.play();
+                    this._playState = 'play';
+                } catch (error) {
+                    console.error(error);
+                }
             }
             console.log('Playing', track);
             await this.setAllQuality(this.currentTrack.id);
@@ -329,8 +331,12 @@ export class Player {
     // 添加播放列表
     addPlaylist(list) {
         // 保存当前歌曲
-        console.time('addPlaylist');
         let ori_track = this._playlist[this._current] ?? null;
+        // 
+        let playFirst = false;
+        if (this.playlist.length === 0) {
+            playFirst = true;
+        }
         // 先构建一个 Map 用于快速查找 _playlist 中的 track
         const playlistMap = new Map();
         this._playlist.forEach((track, index) => {
@@ -363,7 +369,9 @@ export class Player {
         if (ori_track) {
             this._current = this._playlist.findIndex(track => track.id === ori_track.id);
         }
-        console.timeEnd('addPlaylist');
+        if (playFirst) {
+            this.playTrack(this.currentTrack, false);
+        }
     }
     clearPlaylist() {
         this._playlist = [];
