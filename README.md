@@ -27,3 +27,18 @@ npm run electron:build
 - 网易云音乐API: [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 - [YesPlayMusic](https://github.com/qier222/YesPlayMusic)
 - [网易云音乐3.0](https://music.163.com)
+
+## 关于
+3. 
+
+ 
+ 
+2. 
+
+
+
+1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数:
+
+<div align="center">
+	<img src="./src/assets/Hydrogen_n=3_l=2_m=1.png" style="width:400px;">
+</div>
