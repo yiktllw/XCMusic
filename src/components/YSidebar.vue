@@ -1,8 +1,7 @@
 <template>
     <div class="sidebar y_sidebar_component" ref="sidebar_component" :style="{ 'width': `${sidebarWidth}px` }">
         <div class="title">
-            <img src="@/assets/logo.svg" alt="Logo"
-                style="height: 28px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
+            <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
         </div>
         <div class="scrollable">
             <button class="switch-user-playlist" @click="showMyPlaylist = !showMyPlaylist">
@@ -268,6 +267,7 @@ export default {
     color: inherit;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     overflow: hidden;
 }

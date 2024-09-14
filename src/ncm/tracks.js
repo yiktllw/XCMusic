@@ -99,3 +99,24 @@ export class Tracks {
         return this._tracks;
     }
 }
+
+export class Track {
+    constructor({
+        url = '/playlist/tracks/all',
+        track = {},
+        params = {
+            type: 'local',
+            path: 'C:/',
+        },
+    }){
+        this._track = track;
+        this._url = url;
+        this._params = params;
+        if (params.type === 'local') {
+            // 
+        }
+    }
+    get track(){
+        return this._track;
+    }
+}

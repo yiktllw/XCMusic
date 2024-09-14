@@ -18,7 +18,8 @@ export default {
     props: {
         text: {
             type: String,
-            required: true
+            required: true,
+            default: '',
         },
     },
     computed: {
@@ -32,6 +33,7 @@ export default {
             return '-' + this.textwidth + 'px';
         },
         showAni() {
+            console.log('textwidth',this.textwidth,'mainwidth', this.mainWidth);
             return this.textwidth - 100 > this.mainWidth;
         }
     },
@@ -39,6 +41,7 @@ export default {
         text() {
             // 确保在更新 scroll 元素之后再获取 textwidth
             this.$nextTick(() => {
+                this.mainWidth = this.$refs.main_ref.offsetWidth;
                 this.textwidth = this.$refs.scroll_ref.offsetWidth;
                 this.updateStyles();
             });
@@ -71,7 +74,7 @@ export default {
                     0% {
                         transform: translateX(0);
                     }
-                    10% {
+                    ${(1 / (this.textwidth / 40) * 100).toFixed(1)}% {
                         transform: translateX(0);
                     }
                     100% {

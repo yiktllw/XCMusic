@@ -30,12 +30,10 @@ npm run electron:build
 
 ## 关于
 3. 
+<div> </div>
 
- 
- 
 2. 
-
-
+<div> </div>
 
 1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数:
 

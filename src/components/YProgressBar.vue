@@ -4,7 +4,7 @@ const progress = defineModel();
 </script>
 
 <template>
-    <div class="progress-bigframe">
+    <div class="progress-bigframe" :key="key">
         <div class="progress-bar" @click="onClick" ref="progress_bar">
             <div class="progress-fill" />
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
@@ -25,8 +25,18 @@ export default {
         'update:modelValue',
         'set-progress-end',
     ],
+    data() {
+        return {
+            key: 0,
+        };
+    },
+    watch: {
+        progress(newValue) {
+            this.key = newValue > 0.5 ? 1 : 0;
+        }
+    },
     methods: {
-        updateProgress(x){
+        updateProgress(x) {
             const rect = this.$refs.progress_bar.getBoundingClientRect();
             const dx = x - rect.left;
             let progress = dx / rect.width;
@@ -40,7 +50,7 @@ export default {
         updateProgressEvent(e) {
             this.updateProgress(e.clientX);
         },
-        onClick(e){
+        onClick(e) {
             this.updateProgress(e.clientX);
             this.$emit('set-progress-end');
         },

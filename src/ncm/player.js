@@ -13,32 +13,205 @@ export class Player {
         this._gainNode = null;
         // 初始化音量均衡控件
         this.initAudioContext();
+
         // 初始化播放列表为空
         this._playlist = [];
-        // 初始化当前播放索引为0
-        this._current = 0;
         // 初始化歌单ID为0
         this._playlistId = 0;
-        // 初始化播放状态为顺序播放
+        this._onPlaylistChange = [];
+        // 初始化当前播放索引为0
+        this._current = 0;
+        this._onTrackChange = [];
+
+        // 初始化播放模式为顺序播放
         this._mode = 'order';
+        // 播放模式改变的回调函数
+        this._onModeChange = [];
+
         // 初始化随机播放历史为空
         this._history = [];
         // 初始化历史索引为0
         this._historyIndex = 0;
+        // 历史记录改变的回调函数
+        this._onHistoryChange = [];
+
         // 初始化播放状态为暂停
         this._playState = 'pause';
+        this._onPlayStateChange = [];
+
         // 初始化音量为1
         this._volume = 1;
+        this._onVolumeChange = [];
+
         // 初始化播放时间为0
         this._currentTime = 0;
         // 初始化播放进度为0
         this._progress = 0;
         // 初始化总时长为0
         this._duration = 0;
+        this._onTimeChange = [];
+
+
         // 初始化音质为极高
         this._quality = 'exhigh';
-        // 初始化准备就绪的回调函数为空
+        this._onQualityChange = [];
+
         this._onTrackReady = [];
+        // 更新时间的计时器
+        this._updateTime = null;
+    }
+    Subscribe({ id, func, type }) {
+        if (typeof func !== 'function') return;
+        if (type === 'playState') {
+            let index = this._onPlayStateChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onPlayStateChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onPlayStateChange[index].fn = func;
+            }
+        } else if (type === 'playlist') {
+            let index = this._onPlaylistChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onPlaylistChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onPlaylistChange[index].fn = func;
+            }
+        } else if (type === 'track') {
+            let index = this._onTrackChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onTrackChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onTrackChange[index].fn = func;
+            }
+        } else if (type === 'trackReady') {
+            let index = this._onTrackReady.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onTrackReady.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onTrackReady[index].fn = func;
+            }
+        } else if (type === 'time') {
+            let index = this._onTimeChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onTimeChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onTimeChange[index].fn = func;
+            }
+        } else if (type === 'quality') {
+            let index = this._onQualityChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onQualityChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onQualityChange[index].fn = func;
+            }
+        } else if (type === 'volume') {
+            let index = this._onVolumeChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onVolumeChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onVolumeChange[index].fn = func;
+            }
+        } else if (type === 'history') {
+            let index = this._onHistoryChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onHistoryChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onHistoryChange[index].fn = func;
+            }
+        } else if (type === 'mode') {
+            let index = this._onModeChange.findIndex(item => item.id === id);
+            if (index === -1) {
+                this._onModeChange.push({
+                    id: id,
+                    fn: func,
+                });
+            } else {
+                this._onModeChange[index].fn = func;
+            }
+        }
+    }
+    Execute({ type }) {
+        if (type === 'playState') {
+            this._onPlayStateChange.forEach(item => {
+                item.fn();
+            });
+        } else if (type === 'playlist') {
+            this._onPlaylistChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'track') {
+            this._onTrackChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'trackReady') {
+            this._onTrackReady.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'time') {
+            this._onTimeChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'quality') {
+            this._onQualityChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'volume') {
+            this._onVolumeChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'history') {
+            this._onHistoryChange.forEach(item => {
+                item.fn();
+            })
+        } else if (type === 'mode') {
+            this._onModeChange.forEach(item => {
+                item.fn();
+            })
+        }
+    }
+    updateTime() {
+        if (this._updateTime) {
+            clearTimeout(this._updateTime);
+        }
+
+        const update = () => {
+            if (this._audio.readyState < 2) return;
+
+            if (this.playState === 'play' && this._currentTime !== Math.floor(this._audio.currentTime)) {
+                this._currentTime = Math.floor(this._audio.currentTime);
+                this._progress = (this._currentTime / this._duration).toFixed(3);
+                this._duration = this._audio.duration;
+                this.Execute({ type: 'time' });
+            }
+
+            this._updateTime = setTimeout(update, 800);  // 递归调用 setTimeout
+        };
+
+        this._updateTime = setTimeout(update, 800);  // 初次调用
     }
     async reloadUrl() {
         if (!this.currentTrack) return;
@@ -48,8 +221,9 @@ export class Player {
         this._audio.src = url;
         this._audio.currentTime = this._currentTime;
         try {
-            if (this._playState === 'play') {
+            if (this.playState === 'play') {
                 await this._audio.play();
+                this.updateTime();
             }
             console.log('Reloaded url', url);
         } catch (error) {
@@ -77,14 +251,13 @@ export class Player {
             let result = await this.getUrl(track.id);
             let url = result.url;
             this._audio.src = url;
-            this._audio.ontimeupdate = () => this.updateTime();
             this._audio.onended = () => this.next();
             if (autoPlay) {
                 try {
                     // 更新播放状态
-                    this._playState = 'play';
                     await this._audio.play();
-                    this._playState = 'play';
+                    this.playState = 'play';
+                    this.updateTime();
                 } catch (error) {
                     console.error(error);
                 }
@@ -150,7 +323,8 @@ export class Player {
                 }
             }
             this.setGain(gain, peak);
-            this.exec_OnTrackReady();
+            this.Execute({ type: 'trackReady' });
+            this.Execute({ type: 'track' });
         }
     }
     async setAllQuality(id) {
@@ -218,7 +392,7 @@ export class Player {
                 console.error(error);
             });
         }
-        if (response.data[0].level === quality) {
+        if (response?.data[0].level === quality) {
             let result = {
                 name: quality,
                 size: response.data[0].size,
@@ -252,21 +426,13 @@ export class Player {
             source.connect(this._gainNode);
         }
     }
-    // 更新播放时间
-    updateTime() {
-        // 如果音频未加载完成则返回
-        if (!this._audio.readyState) return;
-
-        this._currentTime = this._audio.currentTime;
-        this._duration = this._audio.duration;
-        this._progress = this._currentTime / this._duration;
-    }
     // 随机播放
     async randomPlay(direction) {
         if (this._history[this._historyIndex + direction]) {
             // 如果历史记录中有上一首/下一首歌曲
             this._current = this._playlist.findIndex(track => track.id === this._history[this._historyIndex + direction].id);
             this._historyIndex += direction;
+            this.Execute({ type: 'history' });
         } else if (direction === 1) {
             // 如果历史记录中没有下一首歌曲
             // 随机播放下一首
@@ -323,10 +489,11 @@ export class Player {
         if (this._mode === 'listrandom') {
             // 如果播放模式为随机播放
             this._playlist = list.sort(() => Math.random() - 0.5);
-        } else {
+        } else if (this._playlist !== list) {
             // 如果播放模式为其它模式
             this._playlist = list;
         }
+        this.Execute({ type: 'playlist' });
     }
     // 添加播放列表
     addPlaylist(list) {
@@ -372,14 +539,16 @@ export class Player {
         if (playFirst) {
             this.playTrack(this.currentTrack, false);
         }
+        this.Execute({ type: 'playlist' });
     }
     clearPlaylist() {
         this._playlist = [];
         this._current = 0;
         this._audio.pause();
-        this._playState = 'pause';
+        this.playState = 'play';
         this._audio.src = '';
         this.clearHistory();
+        this.Execute({ type: 'playlist' });
     }
     nextPlay(track) {
         // 查询指定的歌曲是否在播放列表中
@@ -393,6 +562,7 @@ export class Player {
             // 如果不在播放列表中，则添加到下一首
             this._playlist.splice(this._current + 1, 0, track);
         }
+        this.Execute({ type: 'playlist' });
     }
     // 播放全部
     async playAll(list) {
@@ -425,7 +595,9 @@ export class Player {
         if (this._mode === 'random') {
             // 将历史的下一首替换为当前歌曲
             this._history = this._history.splice(this._historyIndex + 1, 0, value);
+            this.Execute({ type: 'history' });
         }
+        this.Execute({ type: 'playlist' });
     }
     // 更新歌单播放量
     async updatePlaycount() {
@@ -476,6 +648,7 @@ export class Player {
     set currentTrack(value) {
         if (this._playlist.length > 0 && this._playlist[this._current]) {
             this._playlist[this._current] = value;
+            this.Execute({ type: 'track' });
         }
     }
     // 获取当前播放歌曲封面
@@ -505,12 +678,17 @@ export class Player {
     }
     // 设置播放模式
     set mode(value) {
+        if (value !== 'order' && value !== 'listloop' && value !== 'random' && value !== 'loop' && value !== 'listrandom') {
+            console.log('Mode not supported: ', value);
+            return;
+        }
         // 如果播放模式改变
         if (value !== this._mode) {
             // 清空播放历史
             this.clearHistory();
             // 设置播放模式
             this._mode = value;
+            this.Execute({ type: 'mode' });
         }
         // 如果播放模式不为列表随机
         if (value === 'order' || value === 'listloop' || value === 'random' || value === 'loop') {
@@ -542,16 +720,19 @@ export class Player {
     appendToHistory(track) {
         this._history.push(track)
         this._historyIndex = this._history.length - 1;
+        this.Execute({ type: 'history' });
     }
     // 插入到历史开头
     insertToHistory(track) {
         this._history.splice(0, 0, track);
         this._historyIndex = 0;
+        this.Execute({ type: 'history' });
     }
     // 清空历史
     clearHistory() {
         this._history = [];
         this._historyIndex = 0;
+        this.Execute({ type: 'history' });
     }
     // 向前/向后跳转
     goTo(position) {
@@ -568,7 +749,11 @@ export class Player {
         if ((value === 'play' || value === 'pause') && this._audio && this._audio.readyState) {
             this._playState = value;
             this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
+            this.Execute({ type: 'playState' });
         }
+    }
+    tooglePlayState() {
+        this.playState = this.playState === 'play' ? 'pause' : 'play';
     }
     // 获取歌曲id对应的url及其他信息
     async getUrl(id) {
@@ -605,6 +790,7 @@ export class Player {
         if (value >= 0 && value <= 1) {
             this._volume = value;
             this._audio.volume = value;
+            this.Execute({ type: 'volume' });
         }
     }
     // 设置增益
@@ -666,12 +852,13 @@ export class Player {
         if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'lossless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
             this._quality = value;
             this.reloadUrl();
+            this.Execute({ type: 'quality' });
         } else {
             console.log('Quality not supported: ', value);
         }
     }
     get qualityDisplay() {
-        switch (this._quality) {
+        switch (this.quality) {
             case 'standard':
                 return '标准';
             case 'higher':
@@ -748,25 +935,5 @@ export class Player {
             });
         }
         return result;
-    }
-    get onTrackReady() {
-        return this._onTrackReady;
-    }
-    set onTrackReady(fn) {
-        if (typeof fn === 'function') {
-            this._onTrackReady = [fn];
-        } else {
-            console.error('onTrackReady must be a function');
-        }
-    }
-    add_OnTrackReady(fn) {
-        if (typeof fn === 'function') {
-            this._onTrackReady.push(fn);
-        } else {
-            console.error('onTrackReady must be a function');
-        }
-    }
-    exec_OnTrackReady() {
-        this._onTrackReady.forEach(fn => fn());
     }
 }

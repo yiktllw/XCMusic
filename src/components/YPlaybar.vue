@@ -4,24 +4,24 @@
         <!-- 1 左侧 -->
         <div class="align-left">
             <!-- 2 播放信息 -->
-            <div class="play-info" @mouseover="showButton = true" @mouseleave="showButton = false">
+            <div class="play-info" @mouseover="setShowButton" @mouseleave="showButton = false">
                 <div class="play-info-left">
                     <!-- 3 封面 -->
-                    <img class="img-cover img" :src="this.player.currentTrackCover ?? require('../assets/song.svg')">
+                    <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')" :key="currentTrackCover">
                     <!-- 4 播放信息文本 -->
                     <div class="play-info-text">
                         <!-- 5 播放信息文本:标题 -->
-                        <div class="play-info-text-title" :title="this.player.currentTrackName">
-                            <YTextBanner :text="this.player.currentTrackName" style="width: 100%; overflow: hidden;" />
+                        <div class="play-info-text-title" :title="currentTrackName" :key="currentTrackName">
+                            <YTextBanner :text="currentTrackName" style="width: 100%; overflow: hidden;" />
                         </div>
                         <!-- 5 播放信息文本:艺术家 -->
                         <div class="play-info-text-artist">
-                            <span v-for="(artist, index) in this.player.currentTrackArtists" :key="artist.id">
+                            <span v-for="(artist, index) in this.currentTrackArtists" :key="artist.id">
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
-                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
                                     {{ artist.name }}
                                 </span>
-                                <span v-if="index < this.player.currentTrackArtists.length - 1"> /&nbsp; </span>
+                                <span v-if="index < currentTrackArtists.length - 1"> /&nbsp; </span>
                             </span>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                     <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单"
                         v-if="showButton">
                     <img class="img-comment play-info-ico" src="../assets/comment.svg" title="评论" v-if="showButton"
-                        @click="this.$router.push({ path: `/comment/song/${player.currentTrack.id}` })">
+                        @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
                     <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载"
                         v-if="showButton">
                 </div>
@@ -41,10 +41,9 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button"
-                    @click="_toogleLike(likelist.includes(this.player.currentTrack?.id))">
-                    <img class="img-like img" src="../assets/likes.svg"
-                        v-if="likelist.includes(this.player.currentTrack?.id)" title="取消喜欢">
+                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))" :key="currentTrack?.id">
+                    <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
+                        title="取消喜欢">
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
                 </button>
                 <!-- 3 上一首按钮 -->
@@ -53,7 +52,7 @@
                 </button>
                 <!-- 3 播放/暂停按钮 -->
                 <button class="button play-button" @click="tooglePlayState"
-                    :title="playState === 'pause' ? '播放' : '暂停'">
+                    :title="playState === 'pause' ? '播放' : '暂停'" :key="playState">
                     <img v-if="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-if="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
@@ -63,7 +62,7 @@
                 </button>
                 <!-- 3 播放模式按钮 -->
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
-                    ref="play_mode_panel_trigger">
+                    ref="play_mode_panel_trigger" :key="playMode">
                     <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
                     <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
                         title="列表循环">
@@ -101,12 +100,12 @@
             <!-- 2 进度条 -->
             <div class="progress">
                 <!-- 3 自定义进度条 -->
-                <div class="time">
-                    {{ this.player.currentTime ? formatDuration(this.player.currentTime) : '00:00' }}
+                <div class="time" :key="currentTime">
+                    {{ currentTime ? formatDuration(currentTime) : '00:00' }}
                 </div>
-                <YProgressBar v-model="this.player.progress" style="height:20px;width: 321px"
+                <YProgressBar v-model="progress" style="height:20px;width: 321px"
                     @update:model-value="setAudioProgress" />
-                <div class="time">
+                <div class="time" :key="this.duration">
                     {{ formatDuration(this.duration) }}
                 </div>
             </div>
@@ -115,8 +114,8 @@
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
                 <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
-                    title="选择音质">
-                    {{ this.player.qualityDisplay }}
+                    title="选择音质" :key="qualityDisplay ">
+                    {{ qualityDisplay }}
                 </div>
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
                     :default-show="false">
@@ -142,11 +141,11 @@
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
                     <div class="volume-container">
-                        <YProgressBarV v-model="this.player.volume"
+                        <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
                             @set-progress-end="this.updateVolumeInSetting" />
                         <div class="volume-text">
-                            {{ Math.round(this.player.volume * 100) + '%' }}
+                            {{ Math.round(volume * 100) + '%' }}
                         </div>
                     </div>
                 </YPanel>
@@ -267,6 +266,20 @@ export default {
                 }
             ],
             showButton: false,
+            playlist: [],
+            playState: 'pause',
+            currentTrack: null,
+            playMode: 'order',
+            duration: 0,
+            currentTime: 0,
+            progress: 0,
+            volume: 0,
+            qualityDisplay: '标准',
+        }
+    },
+    watch: {
+        volume() {
+            this.player.volume = this.volume;
         }
     },
     computed: {
@@ -278,23 +291,14 @@ export default {
         likelist() {
             return this.login.likelist ?? [];
         },
-        playState() {
-            return this.player.playState;
+        currentTrackName() {
+            return this.currentTrack?.name;
         },
-        playMode() {
-            return this.player.mode;
+        currentTrackCover() {
+            return this.currentTrack?.al.picUrl;
         },
-        playlist() {
-            return this.player.playlist;
-        },
-        playlistId() {
-            return this.player.playlistId;
-        },
-        playlistIndex() {
-            return this.player.playlistIndex;
-        },
-        duration() {
-            return this.player.duration;
+        currentTrackArtists() {
+            return this.currentTrack?.ar;
         },
     },
     methods: {
@@ -321,7 +325,7 @@ export default {
         },
         // 切换播放状态
         tooglePlayState() {
-            this.player.playState = this.player.playState === 'play' ? 'pause' : 'play';
+            this.player.tooglePlayState();
         },
         // 下一首
         async goTo(direction) {
@@ -363,6 +367,11 @@ export default {
             }
             this.$refs.quality_panel.tooglePanel();
         },
+        setShowButton() {
+            if (this.player.currentTrack) {
+                this.showButton = true;
+            }
+        }
     },
     mounted() {
         if (this.login.status) {
@@ -371,20 +380,84 @@ export default {
         this.player.volume = this.setting.play.volume;
         this.player.quality = this.setting.play.quality;
         this.tooglePlayMode(this.setting.play.mode);
-        this.player.onTrackReady = () => {
-            let avQuality = this.player.availableQuality;
-            this.qualityGroup.forEach((quality) => {
-                // 清空可用数据
-                quality.available = false;
-                quality.size = '';
-                avQuality.forEach((avItem) => {
-                    if (quality.name === avItem.name) {
-                        quality.available = true;
-                        quality.size = avItem.size;
-                    }
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                let avQuality = this.player.availableQuality;
+                this.qualityGroup.forEach((quality) => {
+                    // 清空可用数据
+                    quality.available = false;
+                    quality.size = '';
+                    avQuality.forEach((avItem) => {
+                        if (quality.name === avItem.name) {
+                            quality.available = true;
+                            quality.size = avItem.size;
+                        }
+                    });
                 });
-            });
-        }
+            },
+            type: 'trackReady',
+        })
+        this.playlist = this.player.playlist;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.playlist = this.player.playlist;
+            },
+            type: 'playlist',
+        })
+        this.playState = this.player.playState;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.playState = this.player.playState;
+            },
+            type: 'playState',
+        })
+        this.currentTrack = this.player.currentTrack;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.currentTrack = this.player.currentTrack;
+            },
+            type: 'track',
+        })
+        this.currentTime = this.player.currentTime;
+        this.duration = this.player.duration;
+        this.progress = this.player.progress;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.duration = this.player.duration;
+                this.currentTime = this.player.currentTime;
+                this.progress = this.player.progress;
+            },
+            type: 'time',
+        })
+        this.playMode = this.player.mode;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.playMode = this.player.mode;
+            },
+            type: 'mode',
+        })
+        this.volume = this.player.volume;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.volume = this.player.volume;
+            },
+            type: 'volume',
+        })
+        this.qualityDisplay = this.player.qualityDisplay;
+        this.player.Subscribe({
+            id: 'YPlaybar',
+            func: () => {
+                this.qualityDisplay = this.player.qualityDisplay;
+            },
+            type: 'quality',
+        })
     },
 }
 

@@ -1,13 +1,14 @@
 import { useApi } from "./api";
+import { ref, reactive, markRaw, shallowReactive } from 'vue'; // eslint-disable-line
 
 export class Login {
     constructor() {
-        this._cookie = localStorage.getItem('login_cookie') ?? null;
-        this._status = localStorage.getItem('login_cookie') ? true : false;
-        this._userId = localStorage.getItem('login_user_id') ?? null;
-        this._userName = localStorage.getItem('login_user_name') ?? null;
-        this._likelist = [];
-        this._avatar = localStorage.getItem('login_avatar') ?? null;
+        this._cookie = ((localStorage.getItem('login_cookie') ?? null));
+        this._status = ref(localStorage.getItem('login_cookie') ? true : false);
+        this._userId = ref(localStorage.getItem('login_user_id') ?? null);
+        this._userName = ref(localStorage.getItem('login_user_name') ?? null);
+        this._likelist = markRaw([]);
+        this._avatar = ref(localStorage.getItem('login_avatar') ?? null);
         this.init();
     }
     init() {
@@ -85,7 +86,7 @@ export class Login {
             cookie: this._cookie,
             uid: this._userId
         }).then((res) => {
-            this._likelist = res.ids;
+            this._likelist = markRaw(res.ids);
         });
     }
     get status() {
