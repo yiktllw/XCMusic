@@ -25,6 +25,11 @@ export default {
         'update:modelValue',
         'set-progress-end',
     ],
+    watch: {
+        progress(newValue) {
+            this.key = newValue > 0.5 ? 1 : 0;
+        }
+    },
     methods: {
         updateProgress(y) {
             const rect = this.$refs.progress_bar.getBoundingClientRect();

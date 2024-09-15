@@ -52,7 +52,7 @@ export class Login {
         this._userId = null;
         localStorage.removeItem('login_user_name');
         this._userName = null;
-        this._likelist = [];
+        this._likelist = markRaw([]);
         localStorage.removeItem('login_avatar');
         this._avatar = null;
     }

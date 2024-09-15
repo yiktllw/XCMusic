@@ -2,7 +2,7 @@
     <!-- 0 播放栏 -->
     <div class="playbar">
         <!-- 1 左侧 -->
-        <div class="align-left">
+        <div class="align-left" :key="currentTrack?.id">
             <!-- 2 播放信息 -->
             <div class="play-info" @mouseover="setShowButton" @mouseleave="showButton = false">
                 <div class="play-info-left">

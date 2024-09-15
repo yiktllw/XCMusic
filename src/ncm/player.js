@@ -60,16 +60,24 @@ export class Player {
         // 更新时间的计时器
         this._updateTime = null;
     }
+    // 由于vue的响应式原理，Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
+    // 同时，为了在组件中获取此对象的最新属性，需要提供回调函数接口，在使用最新属性的地方订阅属性发生变动的消息。
+    // id: 订阅者的唯一标识，例如 YPlaybar.vue
+    // func: 订阅者的回调函数，例如 () => { console.log('PlayState changed') }
+    // type: 订阅的属性，例如 'playState'
     Subscribe({ id, func, type }) {
         if (typeof func !== 'function') return;
         if (type === 'playState') {
+            // 查找id(唯一标识)是否已经存在
             let index = this._onPlayStateChange.findIndex(item => item.id === id);
             if (index === -1) {
+                // 如果不存在，则添加其回调函数
                 this._onPlayStateChange.push({
                     id: id,
                     fn: func,
                 });
             } else {
+                // 如果存在，则更新其回调函数
                 this._onPlayStateChange[index].fn = func;
             }
         } else if (type === 'playlist') {
@@ -154,6 +162,7 @@ export class Player {
             }
         }
     }
+    // 执行已经订阅的回调函数
     Execute({ type }) {
         if (type === 'playState') {
             this._onPlayStateChange.forEach(item => {
@@ -193,14 +202,17 @@ export class Player {
             })
         }
     }
+    // 更新播放时间、播放进度、总时长
     updateTime() {
         if (this._updateTime) {
             clearTimeout(this._updateTime);
         }
 
         const update = () => {
+            // 确保音频已经加载
             if (this._audio.readyState < 2) return;
 
+            // 确保触发time订阅事件时，时间发生了变化
             if (this.playState === 'play' && this._currentTime !== Math.floor(this._audio.currentTime)) {
                 this._currentTime = Math.floor(this._audio.currentTime);
                 this._progress = (this._currentTime / this._duration).toFixed(3);
@@ -208,11 +220,12 @@ export class Player {
                 this.Execute({ type: 'time' });
             }
 
-            this._updateTime = setTimeout(update, 800);  // 递归调用 setTimeout
+            this._updateTime = setTimeout(update, 200);  // 递归调用 setTimeout
         };
 
-        this._updateTime = setTimeout(update, 800);  // 初次调用
+        this._updateTime = setTimeout(update, 200);  // 初次调用
     }
+    // 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url
     async reloadUrl() {
         if (!this.currentTrack) return;
         console.log('Reloading url', this.currentTrack);
@@ -263,9 +276,12 @@ export class Player {
                 }
             }
             console.log('Playing', track);
+            // 获取当前歌曲的所有音质的数据(音量均衡数据)
             await this.setAllQuality(this.currentTrack.id);
             let gain = 1;
             let peak = 1;
+            // 因为所有音质的文件峰值是相同的，也是就说能够混用音量均衡数据
+            // 所以，在所有音质的音量均衡数据中，查找音量最大的数据。
             if (this.currentTrack.l) {
                 if (this.currentTrack.l.gain > gain) {
                     gain = this.currentTrack.l.gain;
@@ -322,12 +338,17 @@ export class Player {
                     peak = this.currentTrack.jymaster.peak;
                 }
             }
+            // 设置音量均衡
             this.setGain(gain, peak);
+            // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
+            // 触发 track 的回调函数
             this.Execute({ type: 'track' });
         }
     }
+    // 获取所有音质的信息，并添加到 currentTrack
     async setAllQuality(id) {
+        // 异步执行这些请求
         let requests = [
             this.getQuality(id, 'standard').then(res => {
                 this.currentTrack = {
@@ -372,8 +393,10 @@ export class Player {
                 }
             }),
         ];
+        // 执行所有请求
         await Promise.all(requests);
     }
+    // 获取音质信息
     async getQuality(id, quality) {
         let response = null;
         if (localStorage.getItem('login_cookie')) {
@@ -392,6 +415,13 @@ export class Player {
                 console.error(error);
             });
         }
+        // 返回对象:
+        // {
+        //     name: 音质名称，如 'standard'
+        //     size: 当前音质的文件大小
+        //     gain: 音量均衡的增益
+        //     peak: 文件的峰值
+        // }
         if (response?.data[0].level === quality) {
             let result = {
                 name: quality,
@@ -399,7 +429,6 @@ export class Player {
                 gain: response.data[0].gain,
                 peak: response.data[0].peak,
             };
-            // console.log('Quality', quality, 'response', result);
             return result;
         } else {
             return null;
@@ -889,6 +918,7 @@ export class Player {
             return (size / 1024 / 1024).toFixed(1) + 'MB';
         }
     }
+    // 获取当前歌曲的可用音质
     get availableQuality() {
         let result = [];
         if (!this.currentTrack) return [];
