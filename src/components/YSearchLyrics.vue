@@ -1,6 +1,6 @@
 <template>
     <YSongsTable :resortable="false" stickyTop="50px" :canSendPlaylist="false" :showTrackCover="true"
-        :tracks="this.listWithLyrics" :showLyrics="true" ref="songs_table" />
+        :tracks="this.listWithLyrics" :showLyrics="true" ref="songs_table" :id="'YSearchLyrics.vue'" />
 </template>
 
 <script lang="js">

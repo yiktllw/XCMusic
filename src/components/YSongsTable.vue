@@ -259,6 +259,10 @@ export default {
             type: Number,
             default: 1000,
         },
+        id: {
+            type: String,
+            required: true,
+        }
     },
     components: {
         YPlaying,
@@ -275,9 +279,6 @@ export default {
             login: state => state.login,
             setting: state => state.setting,
         }),
-        nowPlaying() {
-            return this.player.currentTrack?.id;
-        },
         likelist() {
             return this.login.likelist ?? [];
         },
@@ -314,6 +315,7 @@ export default {
             localTracks: [],
             alWidth: 230,
             page: new YPageC(),
+            nowPlaying: 0,
         }
     },
     async mounted() {
@@ -325,6 +327,20 @@ export default {
         }
         // this.setAlbumWidth(this.setting.display.albumWidth);
         this.alWidth = this.setting.display.albumWidth;
+        this.nowPlaying = this.player.currentTrack?.id ?? 0;
+        this.player.Subscribe({
+            id: this.id,
+            type: 'track',
+            func: () => {
+                this.nowPlaying = this.player.currentTrack?.id ?? 0;
+            }
+        })
+    },
+    beforeUnmount(){
+        this.player.UnSubscribe({
+            id: this.id,
+            type: 'track',
+        });
     },
     watch: {
         tracks(newVal) {

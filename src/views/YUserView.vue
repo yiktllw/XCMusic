@@ -84,7 +84,7 @@
                     <div class="artist-works" v-if="user.position === 'song'">
                         <!-- 歌曲列表 -->
                         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
-                            :tracks="this.user.tracks" v-if="this.user.tracks" />
+                            :tracks="this.user.tracks" v-if="this.user.tracks" :id="'YUserView.vue'" />
                         <YPage v-model="page" />
                     </div>
                     <!-- 加载中 -->

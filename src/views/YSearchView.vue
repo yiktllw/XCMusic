@@ -18,7 +18,7 @@
             <!-- 歌曲 -->
             <div class="songs" v-if="position === 'song'">
                 <YSongsTable :resortable="false" stickyTop="50px" :canSendPlaylist="false" :showTrackCover="true"
-                    :tracks="this.switcher[0].tracks" />
+                    :tracks="this.switcher[0].tracks" :id="'YSearchView.vue'" />
                 <YPage v-model="songsPage" />
             </div>
             <!-- 专辑 -->

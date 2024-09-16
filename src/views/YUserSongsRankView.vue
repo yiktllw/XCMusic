@@ -2,7 +2,7 @@
     <YHeader :switcher="switcher" @new-position="handleNewPosition" />
     <YSongsTable :show-track-album="false" :show-track-popularity="false" :show-header="false" :show-listen-count="true"
         :local-play="true" :resortable="false" :tracks="position === 'recent' ? recentTracks : alltimeTracks"
-        style="margin: 0px 20px 0px 10px;" />
+        style="margin: 0px 20px 0px 10px;" :id="'YUserSongRankView.vue'" />
 </template>
 
 <script lang="js">
