@@ -59,6 +59,9 @@ export class Player {
         this._onTrackReady = [];
         // 更新时间的计时器
         this._updateTime = null;
+
+        this._mediaSessionInit = false;
+        this.initMediaSession();
     }
     // 由于vue的响应式原理，Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
     // 同时，为了在组件中获取此对象的最新属性，需要提供回调函数接口，在使用最新属性的地方订阅属性发生变动的消息。
@@ -162,6 +165,64 @@ export class Player {
             }
         }
     }
+    UnSubscribe({id, type}){
+        if (type === 'playState') {
+            // 查找id(唯一标识)是否已经存在
+            let index = this._onPlayStateChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onPlayStateChange) {
+                // 如果存在，则删除
+                this._onPlayStateChange.splice(index, 1);
+            }
+        } else if (type === 'playlist') {
+            let index = this._onPlaylistChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onPlaylistChange) {
+                // 如果存在，则删除
+                this._onPlaylistChange.splice(index, 1);
+            }
+        } else if (type === 'track') {
+            let index = this._onTrackChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onTrackChange) {
+                // 如果存在，则删除
+                this._onTrackChange.splice(index, 1);
+            }
+        } else if (type === 'trackReady') {
+            let index = this._onTrackReady.findIndex(item => item.id === id);
+            if (index !== -1 && this._onTrackReady) {
+                // 如果存在，则删除
+                this._onTrackReady.splice(index, 1);
+            }
+        } else if (type === 'time') {
+            let index = this._onTimeChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onTimeChange) {
+                // 如果存在，则删除
+                this._onTimeChange.splice(index, 1);
+            }
+        } else if (type === 'quality') {
+            let index = this._onQualityChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onQualityChange) {
+                // 如果存在，则删除
+                this._onQualityChange.splice(index, 1);
+            }
+        } else if (type === 'volume') {
+            let index = this._onVolumeChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onVolumeChange) {
+                // 如果存在，则删除
+                this._onVolumeChange.splice(index, 1);
+            }
+        } else if (type === 'history') {
+            let index = this._onHistoryChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onHistoryChange) {
+                // 如果存在，则删除
+                this._onHistoryChange.splice(index, 1);
+            }
+        } else if (type === 'mode') {
+            let index = this._onModeChange.findIndex(item => item.id === id);
+            if (index !== -1 && this._onTrackChange) {
+                // 如果存在，则删除
+                this._onModeChange.splice(index, 1);
+            }
+        }
+    }
     // 执行已经订阅的回调函数
     Execute({ type }) {
         if (type === 'playState') {
@@ -201,6 +262,81 @@ export class Player {
                 item.fn();
             })
         }
+    }
+    // 初始化MediaSession(系统媒体控制)
+    initMediaSession() {
+        this.Subscribe({
+            id: 'mediaSession',
+            type: 'track',
+            func: () => {
+                let imgSrc = this.currentTrack?.al?.picUrl;
+                if (!imgSrc) imgSrc = require('@/assets/song.svg')
+                let metaData = {
+                    title: this.currentTrackName ?? '未知歌曲',
+                    artist: this.currentTrackArtists ? this.currentTrackArtists.map(artist => artist.name).join(' / ') : '未知歌手',
+                    album: this.currentTrack?.al?.name ?? '未知专辑',
+                    artwork: [
+                        { src: imgSrc ? imgSrc + '?param=96y96' : '', sizes: '96x96', type: 'image/png' },
+                        { src: imgSrc ? imgSrc + '?param=128y128' : '', sizes: '128x128', type: 'image/png' },
+                    ],
+                }
+                // console.log('MediaSession track changed');
+                navigator.mediaSession.metadata = new window.MediaMetadata(metaData);
+                navigator.mediaSession.setActionHandler('play', () => {
+                    this.playState = 'play';
+                })
+                navigator.mediaSession.setActionHandler('pause', () => {
+                    this.playState = 'pause';
+                })
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    this.previous();
+                })
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    this.next();
+                })
+                navigator.mediaSession.setActionHandler('stop', () => {
+                    this.playState = 'pause';
+                })
+                navigator.mediaSession.setActionHandler('seekto', event => {
+                    this.currentTime = Math.floor(event.seekTime);
+                });
+                navigator.mediaSession.setActionHandler('seekbackward', event => {
+                    this.currentTime = this.currentTime - event.seekOffset ?? 10;
+                });
+                navigator.mediaSession.setActionHandler('seekforward', event => {
+                    this.currentTime = this.currentTime + event.seekOffset ?? 10;
+                });
+                // console.log('mediaSession', navigator.mediaSession)
+                navigator.mediaSession.playbackState = 'playing';
+                this._mediaSessionInit = true;
+            }
+        })
+        this.Subscribe({
+            id: 'mediaSession',
+            type: 'playState',
+            func: () => {
+                if (this._mediaSessionInit) {
+                    if (this.playState === 'pause') {
+                        navigator.mediaSession.playbackState = 'paused';
+                    } else {
+                        navigator.mediaSession.playbackState = 'playing';
+                    }
+                }
+            },
+        })
+        this.Subscribe({
+            id: 'mediaSession',
+            type: 'time',
+            func: () => {
+                if (this._mediaSessionInit) {
+                    navigator.mediaSession.setPositionState({
+                        position: this.currentTime,
+                        duration: this.duration,
+                    })
+                    // console.log('state changed', this.currentTime,'\n',navigator.mediaSession)
+                }
+            }
+        })
     }
     // 更新播放时间、播放进度、总时长
     updateTime() {
@@ -677,7 +813,7 @@ export class Player {
     set currentTrack(value) {
         if (this._playlist.length > 0 && this._playlist[this._current]) {
             this._playlist[this._current] = value;
-            this.Execute({ type: 'track' });
+            // this.Execute({ type: 'track' });
         }
     }
     // 获取当前播放歌曲封面
@@ -856,6 +992,7 @@ export class Player {
             this._audio.currentTime = value;
             this._currentTime = value;
             this._progress = value / this._duration;
+            this.Execute({ type: 'time' })
         }
     }
     // 获取播放进度
