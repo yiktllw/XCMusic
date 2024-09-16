@@ -7,7 +7,8 @@
             <div class="play-info" @mouseover="setShowButton" @mouseleave="showButton = false">
                 <div class="play-info-left">
                     <!-- 3 封面 -->
-                    <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')" :key="currentTrackCover">
+                    <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
+                        :key="currentTrackCover">
                     <!-- 4 播放信息文本 -->
                     <div class="play-info-text">
                         <!-- 5 播放信息文本:标题 -->
@@ -17,6 +18,7 @@
                         <!-- 5 播放信息文本:艺术家 -->
                         <div class="play-info-text-artist">
                             <span v-for="(artist, index) in this.currentTrackArtists" :key="artist.id">
+                                <!-- 艺术家名 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
                                     {{ artist.name }}
@@ -26,13 +28,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="play-info-right">
-                    <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单"
-                        v-if="showButton">
-                    <img class="img-comment play-info-ico" src="../assets/comment.svg" title="评论" v-if="showButton"
-                        @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
-                    <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载"
-                        v-if="showButton">
+                <!-- 歌曲操作按钮 -->
+                <div class="play-info-right" v-if="showButton">
+                    <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单">
+                    <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载">
+                    <div class="song-comment">
+                        <img class="img-comment play-info-ico" src="../assets/comment.svg" title="评论"
+                            @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
+                        <div class="song-comment-num">
+                            {{ currentTrackComment }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -41,7 +47,8 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))" :key="currentTrack?.id">
+                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))"
+                    :key="currentTrack?.id">
                     <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
                         title="取消喜欢">
                     <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
@@ -51,8 +58,8 @@
                     <img class="img-previous img" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
-                <button class="button play-button" @click="tooglePlayState"
-                    :title="playState === 'pause' ? '播放' : '暂停'" :key="playState">
+                <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'"
+                    :key="playState">
                     <img v-if="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-if="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
@@ -71,6 +78,7 @@
                         title="列表随机" style="opacity: 1;">
                     <img v-if="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
                 </button>
+                <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
                     :slide-direction="5" :hide-mode="'show'">
                     <div class="playMode-switcher">
@@ -113,10 +121,12 @@
         <!-- 1 右侧 -->
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
+                <!-- 音质按钮 -->
                 <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
-                    title="选择音质" :key="qualityDisplay ">
+                    title="选择音质" :key="qualityDisplay">
                     {{ qualityDisplay }}
                 </div>
+                <!-- 选择音质面板 -->
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
                     :default-show="false">
                     <div class="quality-panel">
@@ -136,9 +146,11 @@
                         </div>
                     </div>
                 </YPanel>
+                <!-- 音量按钮 -->
                 <img class="img" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
+                <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
@@ -149,9 +161,11 @@
                         </div>
                     </div>
                 </YPanel>
+                <!-- 播放列表按钮 -->
                 <img class="img" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
                     @click="this.$refs.playlist_panel.tooglePanel" title="播放列表" ref="playlist_panel_trigger">
+                <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4"
                     :default-show="false">
                     <div class="playlist-container">
@@ -178,7 +192,8 @@
                         <div class="scrollable">
                             <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
-                                :showHeader="false" :resortable="false" :canSendPlaylist="false" :limit="500" />
+                                :showHeader="false" :resortable="false" :canSendPlaylist="false" :limit="500"
+                                :id="'YPlaybar.vue'" />
                         </div>
                     </div>
                 </YPanel>
@@ -188,7 +203,7 @@
 </template>
 
 <script lang="js">
-import { toogleLike } from '@/ncm/api';
+import { toogleLike, useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
@@ -269,6 +284,7 @@ export default {
             playlist: [],
             playState: 'pause',
             currentTrack: null,
+            currentTrackComment: '0',
             playMode: 'order',
             duration: 0,
             currentTime: 0,
@@ -371,9 +387,29 @@ export default {
             if (this.player.currentTrack) {
                 this.showButton = true;
             }
-        }
+        },
+        async setCommentCount() {
+            await useApi(`/comment/music`, {
+                id: this.currentTrack?.id ?? null,
+                limit: 0,
+            }).then(res => {
+                let count = res.total;
+                if (count < 1000) {
+                    this.currentTrackComment = `${count}`;
+                } else if (count >= 1000 && count < 10000) {
+                    let num = Math.floor(count / 1000);
+                    this.currentTrackComment = `${num}k+`;
+                } else if (count >= 10000 && count < 100000) {
+                    let num = Math.floor(count / 10000);
+                    this.currentTrackComment = `${num}w+`
+                } else if (count > 100000) {
+                    let num = Math.floor(count / 100000);
+                    this.currentTrackComment = `${num}0w+`
+                }
+            })
+        },
     },
-    mounted() {
+    async mounted() {
         if (this.login.status) {
             this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
         }
@@ -415,10 +451,12 @@ export default {
             type: 'playState',
         })
         this.currentTrack = this.player.currentTrack;
+        this.setCommentCount();
         this.player.Subscribe({
             id: 'YPlaybar',
-            func: () => {
+            func: async () => {
                 this.currentTrack = this.player.currentTrack;
+                await this.setCommentCount();
             },
             type: 'track',
         })
@@ -456,6 +494,40 @@ export default {
             func: () => {
                 this.qualityDisplay = this.player.qualityDisplay;
             },
+            type: 'quality',
+        })
+    },
+    beforeUnmount() {
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'trackReady',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'playlist',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'playState',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'track',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'time',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'mode',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
+            type: 'volume',
+        })
+        this.player.UnSubscribe({
+            id: 'YPlaybar',
             type: 'quality',
         })
     },
@@ -526,12 +598,34 @@ export default {
     margin-right: 10px;
 }
 
+.song-comment {
+    display: flex;
+    align-items: center;
+    position: relative;
+    opacity: .6;
+}
+
+.song-comment:hover {
+    opacity: 1;
+}
+
 .img-comment {
     margin-right: 10px;
+    opacity: 1;
+}
+
+.song-comment-num {
+    position: absolute;
+    left: 12px;
+    top: -5px;
+    font-size: 10px;
+    z-index: 1;
+    padding: 0px 0px 2px 2px;
+    background-color: rgb(45, 45, 55);
 }
 
 .img-download {
-    margin-right: 0px;
+    margin-right: 10px;
 }
 
 .img-cover {

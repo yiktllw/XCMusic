@@ -27,8 +27,8 @@
             </div>
         </div>
         <div class="context-menu">
-            <YContextMenu :items="menu" :target="target" :posX="posX" :posY="posY" :direction="direction" ref="contextMenu"
-                @menu-click="handleMenuClick" />
+            <YContextMenu :items="menu" :target="target" :posX="posX" :posY="posY" :direction="direction"
+                ref="contextMenu" @menu-click="handleMenuClick" />
         </div>
     </div>
 </template>
@@ -41,6 +41,7 @@ import { mapState } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
 import { songItems } from '@/tools/YContextMenuItemC';
+import { useApi } from '@/ncm/api';
 
 export default {
     name: 'App',
@@ -76,7 +77,7 @@ export default {
         window.removeEventListener('message', this.handleMessage);
     },
     methods: {
-        handleMessage(event) {
+        async handleMessage(event) {
             if (event.data.type === 'song-open-context-menu') {
                 this.$refs.contextMenu.showContextMenu();
                 let data = event.data.data;
@@ -88,9 +89,33 @@ export default {
                 let menuHeight = 282;
                 this.setDirection(data.x, data.y, menuWidth, menuHeight);
                 console.log(data)
+                let commentCount = await this.getCommentCount(this.target.id)
+                this.menu[4].label = `查看评论(${commentCount})`
             }
         },
-        setDirection(x,y,menuWidth,menuHeight) {
+        async getCommentCount(id) {
+            let result = '0';
+            await useApi(`/comment/music`, {
+                id: id ?? null,
+                limit: 0,
+            }).then(res => {
+                let count = res.total;
+                if (count < 1000) {
+                    result = `${count}`;
+                } else if (count >= 1000 && count < 10000) {
+                    let num = Math.floor(count / 1000);
+                    result = `${num}k+`;
+                } else if (count >= 10000 && count < 100000) {
+                    let num = Math.floor(count / 10000);
+                    result = `${num}w+`
+                } else if (count > 100000) {
+                    let num = Math.floor(count / 100000);
+                    result = `${num}0w+`
+                }
+            })
+            return result;
+        },
+        setDirection(x, y, menuWidth, menuHeight) {
             if (x + menuWidth > window.innerWidth) {
                 if (y + menuHeight > window.innerHeight) {
                     this.direction = 2;
