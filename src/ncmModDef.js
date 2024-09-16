@@ -1,3 +1,5 @@
+// From YesPlay Music
+
 module.exports = [
     {
         identifier: 'user_update',
