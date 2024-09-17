@@ -396,22 +396,13 @@ export class Player {
             }
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
+            // 触发 track 的回调函数
+            this.Execute({ type: 'track' });
             // 获取歌曲播放信息
             let result = await this.getUrl(track.id);
             let url = result.url;
             this._audio.src = url;
             this._audio.onended = () => this.next();
-            if (autoPlay) {
-                try {
-                    // 更新播放状态
-                    await this._audio.play();
-                    this.playState = 'play';
-                    this.updateTime();
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-            console.log('Playing', track);
             // 获取当前歌曲的所有音质的数据(音量均衡数据)
             await this.setAllQuality(this.currentTrack.id);
             let gain = 1;
@@ -476,10 +467,19 @@ export class Player {
             }
             // 设置音量均衡
             this.setGain(gain, peak);
+            if (autoPlay) {
+                try {
+                    // 更新播放状态
+                    await this._audio.play();
+                    this.playState = 'play';
+                    this.updateTime();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+            console.log('Playing', track);
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
-            // 触发 track 的回调函数
-            this.Execute({ type: 'track' });
         }
     }
     // 获取所有音质的信息，并添加到 currentTrack
