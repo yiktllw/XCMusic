@@ -1,16 +1,21 @@
 <template>
     <div class="display">
-        <YTextBanner :text="'Violin Concerto in D minor, op.47, I: Allegro'" style="width: 300px;" />
+        <YWindow>
+            <template #header>
+                Test View
+            </template>
+            <p>This is a test view.</p>
+        </YWindow>
     </div>
 </template>
 
 <script lang="js">
-import YTextBanner from '@/components/YTextBanner.vue';
+import YWindow from '@/components/YWindow.vue';
 
 export default {
     name: 'YTestView',
     components: {
-        YTextBanner,
+        YWindow,
     },
     data() {
         return {

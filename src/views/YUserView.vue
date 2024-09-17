@@ -130,6 +130,7 @@ import { useApi } from '@/ncm/api';
 import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
 import { mapState } from 'vuex';
 import { YPageC } from '@/tools/YPageC';
+import { markRaw } from 'vue';
 
 export default {
     name: 'YUserView',
@@ -410,13 +411,13 @@ export default {
                     // 由于歌曲的封面缺失，需要获取歌手的专辑
                     await this.fetchArtistAlbums();
                     // 为歌曲添加专辑的封面
-                    this.user.tracks = (new Tracks({
+                    this.user.tracks = markRaw((new Tracks({
                         url: '/artist/songs',
                         tracks: response.songs,
                         params: {
                             albums: this.user.albums,
                         }
-                    })).tracks;
+                    })).tracks);
                 })
                 .catch(err => {
                     console.log('fetch artist songs error:', err);

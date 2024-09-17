@@ -165,6 +165,7 @@ import { formatDate_yyyymmdd } from '@/ncm/time';
 import { getColorFromImg, setBackgroundColor } from '@/ncm/color'
 import { mapState } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
+import { markRaw } from 'vue';
 
 export default {
     name: 'YPlaylist',
@@ -328,14 +329,14 @@ export default {
                             // 歌曲数量
                             this.playlist.trackCount = response.album.size;
                             // 添加专辑信息
-                            this.playlist.tracks = (new Tracks({
+                            this.playlist.tracks = markRaw((new Tracks({
                                 url: '/album',
                                 tracks: response.songs,
                                 params: {
                                     needIndex: true,
                                     alPicUrl: response.album.picUrl,
                                 }
-                            })).tracks;
+                            })).tracks);
                             // 更新歌曲列表
                             this.updateTracks();
                             // 加载完成
@@ -404,13 +405,13 @@ export default {
                 console.log('Failed to fetch tracks:', error);
             });
             // 加入新的属性 originalIndex，用于排序
-            return (new Tracks({
+            return markRaw((new Tracks({
                 url: '/playlist/track/all',
                 tracks: getTracks.songs,
                 params: {
                     needIndex: true,
                 }
-            })).tracks;
+            })).tracks);
         },
         // 设置背景颜色
         async _setBackgroundColor() {

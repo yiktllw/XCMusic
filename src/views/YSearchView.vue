@@ -61,6 +61,7 @@ import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { setBackgroundColor } from '@/ncm/color';
 import { useApi } from '../ncm/api';
+import { markRaw } from 'vue';
 
 export default {
     name: 'YSearchView',
@@ -157,10 +158,10 @@ export default {
                 offset: (this.songsPage.current - 1) * 100,
             })
                 .then((result) => {
-                    this.switcher[0].tracks = (new Tracks({
+                    this.switcher[0].tracks = markRaw((new Tracks({
                         url: '/cloudsearch?type=1',
                         tracks: result.result.songs,
-                    })).tracks;
+                    })).tracks);
                     if (newPageInstance) {
                         this.songsPage = new YPageC(Math.ceil(result.result.songCount / 100));
                     }
@@ -259,10 +260,10 @@ export default {
                 limit: 100,
             })
                 .then(result => {
-                    this.switcher[4].lyricsList = (new Tracks({
+                    this.switcher[4].lyricsList = markRaw((new Tracks({
                         url: '/cloudsearch?type=1006',
                         tracks: result.result.songs,
-                    })).tracks;
+                    })).tracks);
                     if (newPageInstance) {
                         this.lyricsPage = new YPageC(Math.ceil(result.result.songCount / 100));
                     }

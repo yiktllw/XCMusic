@@ -11,6 +11,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
+import { markRaw } from 'vue';
 
 export default {
     name: 'YUserSongsRank',
@@ -58,10 +59,10 @@ export default {
                 type: 1,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.recentTracks = (new Tracks({
+                this.recentTracks = markRaw((new Tracks({
                     url: '/user/record',
                     tracks: res.weekData,
-                }))._tracks;
+                })).tracks);
             }).catch((err) => {
                 console.log(err);
             });
@@ -70,10 +71,10 @@ export default {
                 type: 0,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.alltimeTracks = (new Tracks({
+                this.alltimeTracks = markRaw((new Tracks({
                     url: '/user/record',
                     tracks: res.allData
-                }))._tracks;
+                })).tracks);
             }).catch((err) => {
                 console.log(err);
             });
