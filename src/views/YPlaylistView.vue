@@ -145,8 +145,7 @@
                 @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
                 :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @send-playlist="sendPlaylist"
-                @play-song-and-playlist="playSongAndPlaylist"
-                :id="'YPlaylist.vue-album'" />
+                @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-album'" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <YPage v-if="type === 'playlist'" v-model="page" />
@@ -286,13 +285,11 @@ export default {
                         this.login.userId
                             ? useApi('/user/playlist', {
                                 uid: this.login.userId,
-                            }
-                            ).then(myFavoriteId => {
+                            }).then(myFavoriteId => {
                                 // 如果是我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
-                                    this.playlist.name = '我喜欢的音乐';
+                                    return myFavoriteId.playlist[0].id;
                                 }
-                                return myFavoriteId;
                             }).catch(error => {
                                 console.error('Failed to fetch myFavoriteId:', error);
                                 throw error;
@@ -367,10 +364,14 @@ export default {
                 }
 
                 // 使用Promise.allSettled来处理可能出现的null值（避免报错）
-                await Promise.allSettled(requests).catch(error => {
+                let result = await Promise.allSettled(requests).catch(error => {
                     console.error('Failed to fetch playlist or tracks:', error);
                     throw error;
                 });
+                if (this.type === 'playlist' && result[1].value === id) {
+                    // 我喜欢的音乐
+                    this.playlist.name = '我喜欢的音乐';
+                }
 
                 // 处理fetchTracks获取的多个页面的track
                 if (this.page.total > 1 && this.type === 'playlist') {
