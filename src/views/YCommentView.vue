@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <YComment :type="type" :id="id" />
+        <YComment :type="type" :id="id" :key="id" />
     </div>
 </template>
 
@@ -46,6 +46,14 @@ export default {
             required: true,
         },
     },
+    watch: {
+        id(newId) {
+            this.track = this.type === 'song' ? new YTrackC(newId) : new YTrackC(null);
+            this.track.onTrackLoaded = async () => {
+                await this.trackLoaded();
+            }
+        }
+    },
     data() {
         return {
             track: this.type === 'song' ? new YTrackC(this.id) : new YTrackC(null),
@@ -59,16 +67,19 @@ export default {
         openArtist(id) {
             this.$router.push({ path: `/artist/${id}` });
         },
-    },
-    mounted() {
-        this.track.onTrackLoaded = async () => {
+        async trackLoaded() {
             this.trackKey++;
             let color = await getColorFromImg(this.track.picUrl + '?param=100y100', document);
             if (color) {
                 setBackgroundColor(color);
             } else {
-                setBackgroundColor({r: 19, g:19 , b: 25});
+                setBackgroundColor({ r: 19, g: 19, b: 25 });
             }
+        }
+    },
+    mounted() {
+        this.track.onTrackLoaded = async () => {
+            await this.trackLoaded();
         };
     },
 }
