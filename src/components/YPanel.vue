@@ -129,7 +129,7 @@ export default {
 
 <style scoped>
 .slide-fade-enter-active {
-    transition: all 0.15s ease-out;
+    transition: all var(--animation-time) ease-out;
 }
 
 .slide-fade-leave-active {
@@ -150,4 +150,5 @@ export default {
     padding: 0;
     background-color: transparent;
     z-index: var(--z-indez);
-}</style>
+}
+</style>

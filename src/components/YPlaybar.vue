@@ -60,8 +60,8 @@
                 <!-- 3 播放/暂停按钮 -->
                 <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'"
                     :key="playState">
-                    <img v-if="playState === 'pause'" class="img-play img" src="../assets/play.svg">
-                    <img v-if="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
+                    <img v-show="playState === 'pause'" class="img-play img" src="../assets/play.svg">
+                    <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
                 <!-- 3 下一首按钮 -->
                 <button class="button next-button" @click="goTo('forward')" title="下一首">
@@ -80,7 +80,7 @@
                 </button>
                 <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
-                    :slide-direction="5" :hide-mode="'show'">
+                    :slide-direction="5" :hide-mode="'show'" :slide-distance="8" :animation-time="0.1">
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
@@ -128,7 +128,7 @@
                 </div>
                 <!-- 选择音质面板 -->
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
-                    :default-show="false">
+                    :default-show="false" :animation-time="0.1" :slide-distance="15">
                     <div class="quality-panel">
                         <div class="quality-title">
                             歌曲音质
@@ -151,7 +151,8 @@
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <!-- 音量面板 -->
-                <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5">
+                <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5"
+                    :animation-time="0.1" :slide-distance="10">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
