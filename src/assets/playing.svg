@@ -1,0 +1,38 @@
+<svg viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg">
+  <rect width="2" height="15" fill="#ff4060">
+    <animate
+      attributeName="height"
+      values="15; 3; 15"
+      dur="1s"
+      repeatCount="indefinite" />
+    <animate
+      attributeName="y"
+      values="0; 12; 0"
+      dur="1s"
+      repeatCount="indefinite" />
+  </rect>
+  <rect width="2" height="15" fill="#ff4060" x="5">
+    <animate
+      attributeName="height"
+      values="9; 15; 9; 3; 9;"
+      dur="1s"
+      repeatCount="indefinite" />
+    <animate
+      attributeName="y"
+      values="6; 0; 6; 12; 6;"
+      dur="1s"
+      repeatCount="indefinite" />
+  </rect>
+  <rect width="2" height="15" fill="#ff4060" x="10">
+    <animate
+      attributeName="height"
+      values="3; 15; 3"
+      dur="1s"
+      repeatCount="indefinite" />
+    <animate
+      attributeName="y"
+      values="12; 0; 12"
+      dur="1s"
+      repeatCount="indefinite" />
+  </rect>
+</svg>
