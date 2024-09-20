@@ -6,6 +6,17 @@ module.exports = defineConfig({
     pluginOptions: {
         electronBuilder: {
             preload: 'preload.js',
+            builderOptions: {
+                win: {
+                    icon: 'src/assets/icons/icon.ico'
+                },
+                mac: {
+                    icon: 'src/assets/icons/icon.png'
+                },
+                linux: {
+                    icon: 'src/assets/icons/icon.png'
+                }
+            },
         },
     },
     configureWebpack: {

@@ -27,6 +27,7 @@ async function createWindow() {
             webviewTag: true,
         },
         frame: false,
+        icon: path.join(__dirname, '../src/assets/icons/icon.png'),
     })
     win.menuBarVisible = false;
 
