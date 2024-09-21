@@ -142,7 +142,7 @@
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" :tracks="this.filteredTracks"
                 :likelist="likelist" :showTrackPopularity="false" @send-playlist="sendPlaylist"
-                @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" />
+                @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" :from="playlistId" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
                 :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-album'" />

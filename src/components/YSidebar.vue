@@ -14,8 +14,9 @@
                 <div class="fade-container" v-if="showMyPlaylist">
                     <button class="playlist-button" v-for="button in buttons" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
-                        :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
-                        <img :src="button.img" class="button-icon" />
+                        :class="{ 'activeButton': activeButtonId === button.id }"
+                        :disabled="activeButtonId === button.id">
+                        <img :src="button.img" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
@@ -30,8 +31,9 @@
                 <div class="fade-container" v-if="showMySubscribedPlaylist">
                     <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
-                        :class="{ 'activeButton': activeButtonId === button.id }" :disabled="activeButtonId === button.id">
-                        <img :src="button.img" class="button-icon" />
+                        :class="{ 'activeButton': activeButtonId === button.id }"
+                        :disabled="activeButtonId === button.id">
+                        <img :src="button.img" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
@@ -63,6 +65,7 @@ export default {
             showMySubscribedPlaylist: true,
             sidebarWidth: 200,
             newWidth: 0,
+            timeout: null,
         };
     },
     props: {
@@ -108,6 +111,7 @@ export default {
                 let userPlaylist = await useApi('/user/playlist', {
                     uid: userAccount.profile.userId,
                     cookie: this.login.cookie,
+                    timestamp: new Date().getTime(),
                 }).catch((error) => {
                     console.error('Failed to get user playlist:', error);
                 });
@@ -135,8 +139,13 @@ export default {
     async mounted() {
         this.fetchUserPlaylist();
         this.sidebarWidth = this.setting.display.sidebarWidth;
+        this.timeout = setInterval(async () => {
+            await this.fetchUserPlaylist();
+            console.log('User playlist updated');
+        }, 60000);
     },
     beforeUnmount() {
+        clearTimeout(this.timeout);
     },
     watch: {
         async loginStatus(newVal) {

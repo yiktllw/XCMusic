@@ -3,7 +3,7 @@
         <div class="container" id="contextMenu-main"
             v-bind:style="{ '--transform': _transform, '--top': posY, '--left': posX }" ref="container">
             <div class="item" v-for="item in items" :key="item.label" @click="handleClick(item.role)">
-                <div class="item-content">
+                <div class="item-content" v-if="item.display">
                     <img class="item-icon" :src="item.icon" v-if="item.icon" />
                     <div class="item-label">
                         {{ item.label }}
@@ -70,7 +70,8 @@ export default {
         handleClick(role) {
             this.$emit('menu-click', {
                 role: role,
-                target: this.target
+                target: this.target,
+                from: this.items[this.items.length - 1].from ?? -1,
             })
             this.$refs.panel.tooglePanel();
         },

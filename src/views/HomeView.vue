@@ -74,6 +74,7 @@ export default {
         ...mapState({
             // 播放列表
             player: state => state.player,
+            login: state => state.login,
         }),
     },
     mounted() {
@@ -89,6 +90,13 @@ export default {
                 this.$refs.contextMenu.showContextMenu();
                 let data = event.data.data;
                 this.menu = songItems;
+                if (data.from && data.from !== -1) {
+                    this.menu[this.menu.length - 1].from = data.from;
+                    this.menu[this.menu.length - 1].display = true;
+                    console.log('from:', data.from, this.menu);
+                } else {
+                    this.menu[this.menu.length - 1].display = false;
+                }
                 this.target = JSON.parse(data.track);
                 this.posX = data.x + 5 + 'px';
                 this.posY = data.y + 5 + 'px';
@@ -153,9 +161,29 @@ export default {
                 case 'song-comment':
                     this.$router.push(`/comment/song/${arg.target.id}`);
                     break;
+                case 'song-delete':
+                    this.deleteFromPlaylist(arg.target.id, arg.from);
+                    break;
                 default:
                     break;
             }
+        },
+        async deleteFromPlaylist(trackId, playlistId) {
+            if (playlistId === -1) {
+                return;
+            }
+            await useApi('/playlist/tracks', {
+                op: 'del',
+                pid: playlistId,
+                tracks: trackId,
+                cookie: this.login.cookie,
+            })
+                .then((res) => {
+                    console.log('Track deleted from playlist:', res);
+                })
+                .catch((error) => {
+                    console.error('Failed to delete track from playlist:', error);
+                });
         },
         handleNewWindowState(val) {
             if (val === false) {

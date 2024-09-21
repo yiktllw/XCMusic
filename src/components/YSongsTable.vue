@@ -262,7 +262,11 @@ export default {
         id: {
             type: String,
             required: true,
-        }
+        },
+        from: {
+            type: Number,
+            default: -1,
+        },
     },
     components: {
         YPlaying,
@@ -596,6 +600,7 @@ export default {
                     x: event.clientX,
                     y: event.clientY,
                     track: JSON.stringify(track),
+                    from: this.from,
                 },
             });
             // 在HomeView中处理
