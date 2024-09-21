@@ -1,21 +1,16 @@
 <template>
     <div class="display">
-        <YWindow>
-            <template #header>
-                Test View
-            </template>
-            <p>This is a test view.</p>
-        </YWindow>
+        <YAddToPlaylist :ids="[1458660]" />
     </div>
 </template>
 
 <script lang="js">
-import YWindow from '@/components/YWindow.vue';
+import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 
 export default {
     name: 'YTestView',
     components: {
-        YWindow,
+        YAddToPlaylist,
     },
     data() {
         return {

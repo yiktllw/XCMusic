@@ -124,7 +124,7 @@
                         <!-- 5 专辑名称 -->
                         <div class="track-menu" :id="`track-menu-${track.id}`">
                             <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
-                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏">
+                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏" @click="openAddToPlaylist(track.id)">
                             <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
                                 @click="openSongComment(track.id)">
                             <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
@@ -598,6 +598,16 @@ export default {
                     track: JSON.stringify(track),
                 },
             });
+            // 在HomeView中处理
+        },
+        openAddToPlaylist(id) {
+            window.postMessage({
+                type: 'song-open-add-to-playlist',
+                data: {
+                    ids: [id],
+                },
+            });
+            console.log('Open Add To Playlist:', id);
             // 在HomeView中处理
         },
     },

@@ -30,6 +30,9 @@
             <YContextMenu :items="menu" :target="target" :posX="posX" :posY="posY" :direction="direction"
                 ref="contextMenu" @menu-click="handleMenuClick" />
         </div>
+        <div class="add-to-playlist-container" ref="add_to_playlist_container" v-if="showAddToPlaylist">
+            <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" />
+        </div>
     </div>
 </template>
 
@@ -40,6 +43,7 @@ import YTitlebar from '../components/YTitlebar.vue';
 import { mapState } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
+import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
 
@@ -54,6 +58,8 @@ export default {
             posX: '0px',
             posY: '0px',
             direction: 4,
+            showAddToPlaylist: false,
+            trackIds: [],
         };
     },
     components: {
@@ -62,6 +68,7 @@ export default {
         YDisplayArea,
         YPlaybar,
         YContextMenu,
+        YAddToPlaylist,
     },
     computed: {
         ...mapState({
@@ -91,6 +98,10 @@ export default {
                 console.log(data)
                 let commentCount = await this.getCommentCount(this.target.id)
                 this.menu[4].label = `查看评论(${commentCount})`
+            } else if (event.data.type === 'song-open-add-to-playlist') {
+                this.trackIds = event.data.data.ids;
+                console.log('ids: ', this.trackIds);
+                this.showAddToPlaylist = true;
             }
         },
         async getCommentCount(id) {
@@ -144,6 +155,11 @@ export default {
                     break;
                 default:
                     break;
+            }
+        },
+        handleNewWindowState(val) {
+            if (val === false) {
+                this.showAddToPlaylist = false;
             }
         },
     },
@@ -241,5 +257,18 @@ export default {
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.add-to-playlist-container {
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    background-color: transparent;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 </style>
