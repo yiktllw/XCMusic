@@ -681,4 +681,54 @@ module.exports = [
         route: '/comment/new',
         module: require('NeteaseCloudMusicApi/module/comment_new'),
     },
+    {
+        identifier: 'vip_timemachine',
+        route: '/vip/timemachine',
+        module: require('NeteaseCloudMusicApi/module/vip_timemachine'),
+    },
+    {
+        identifier: 'song_wiki_summary',
+        route: '/song/wiki/summary',
+        module: require('NeteaseCloudMusicApi/module/song_wiki_summary'),
+    },
+    {
+        identifier: 'sheet_list',
+        route: '/sheet/list',
+        module: require('NeteaseCloudMusicApi/module/sheet_list'),
+    },
+    {
+        identifier: 'sheet_preview',
+        route: '/sheet/preview',
+        module: require('NeteaseCloudMusicApi/module/sheet_preview'),
+    },
+    {
+        identifier: 'music_first_listen_info',
+        route: '/music/first/listen/info',
+        module: require('NeteaseCloudMusicApi/module/music_first_listen_info'),
+    },
+    {
+        identifier: 'song_music_detail',
+        route: '/song/music/detail',
+        module: require('NeteaseCloudMusicApi/module/song_music_detail'),
+    },
+    {
+        identifier: 'song_red_count',
+        route: '/song/red/count',
+        module: require('NeteaseCloudMusicApi/module/song_red_count'),
+    },
+    {
+        identifier: 'ugc_album_get',
+        route: '/ugc/album/get',
+        module: require('NeteaseCloudMusicApi/module/ugc_album_get'),
+    },
+    {
+        identifier: 'ugc_song_get',
+        route: '/ugc/song/get',
+        module: require('NeteaseCloudMusicApi/module/ugc_song_get'),
+    },
+    {
+        identifier: 'ugc_artist_get',
+        route: '/ugc/artist/get',
+        module: require('NeteaseCloudMusicApi/module/ugc_artist_get'),
+    },
 ];
