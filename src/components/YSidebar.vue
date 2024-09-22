@@ -5,35 +5,35 @@
         </div>
         <div class="scrollable">
             <button class="switch-user-playlist" @click="showMyPlaylist = !showMyPlaylist">
-                <span>创建的歌单({{ buttons.length }})</span>
+                <span>创建的歌单({{ userPlaylists.length }})</span>
                 <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
                 <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg"
                     style=" padding-top: 3px; " />
             </button>
             <transition name="slide-fade">
-                <div class="fade-container" v-if="showMyPlaylist">
-                    <button class="playlist-button" v-for="button in buttons" :key="button.id"
+                <div class="fade-container" v-if="showMyPlaylist" :key="userPlaylists.length">
+                    <button class="playlist-button" v-for="button in userPlaylists" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
-                        <img :src="button.img" class="button-icon" :id="button.img" />
+                        <img :src="button.img + '?param=30y30'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
             </transition>
             <button class="switch-user-playlist" @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
-                <span>收藏的歌单({{ subscribedButtons.length }})</span>
+                <span>收藏的歌单({{ userSubscribes.length }})</span>
                 <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
                 <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
                     style=" padding-top: 3px; " />
             </button>
             <transition name="slide-fade">
-                <div class="fade-container" v-if="showMySubscribedPlaylist">
-                    <button class="playlist-button" v-for="button in subscribedButtons" :key="button.id"
+                <div class="fade-container" v-if="showMySubscribedPlaylist" :key="userSubscribes.length">
+                    <button class="playlist-button" v-for="button in userSubscribes" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
-                        <img :src="button.img" class="button-icon" :id="button.img" />
+                        <img :src="button.img + '?param=30y30'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
@@ -44,7 +44,6 @@
 </template>
 
 <script lang="js">
-import { useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
 
 export default {
@@ -58,14 +57,14 @@ export default {
     },
     data() {
         return {
-            buttons: [],
-            subscribedButtons: [],
             buttonTextColor: '#ccc', // 统一设置按钮的文字颜色
             showMyPlaylist: true,
             showMySubscribedPlaylist: true,
             sidebarWidth: 200,
             newWidth: 0,
             timeout: null,
+            userSubscribes: [],
+            userPlaylists: [],
         };
     },
     props: {
@@ -100,59 +99,24 @@ export default {
             window.removeEventListener('mousemove', this.resize);
             window.removeEventListener('mouseup', this.stopResize);
         },
-        async fetchUserPlaylist() {
-            if (this.login.cookie) {
-                let userAccount = await useApi('/user/account', {
-                    cookie: this.login.cookie,
-                    timestamp: new Date().getTime()
-                }).catch((error) => {
-                    console.error('Failed to get user account:', error);
-                });
-                let userPlaylist = await useApi('/user/playlist', {
-                    uid: userAccount.profile.userId,
-                    cookie: this.login.cookie,
-                    timestamp: new Date().getTime(),
-                }).catch((error) => {
-                    console.error('Failed to get user playlist:', error);
-                });
-                this.buttons = [];
-                this.subscribedButtons = [];
-                userPlaylist.playlist.forEach(playlist => {
-                    if (!playlist.subscribed) {
-                        this.buttons.push({
-                            label: playlist.name,
-                            id: playlist.id,
-                            img: playlist.coverImgUrl + '?param=30y30',
-                        });
-                    } else {
-                        this.subscribedButtons.push({
-                            label: playlist.name,
-                            id: playlist.id,
-                            img: playlist.coverImgUrl + '?param=30y30',
-                        });
-                    }
-                });
-                this.buttons[0].label = '我喜欢的音乐';
-            }
-        },
     },
     async mounted() {
-        this.fetchUserPlaylist();
         this.sidebarWidth = this.setting.display.sidebarWidth;
-        this.timeout = setInterval(async () => {
-            await this.fetchUserPlaylist();
-            console.log('User playlist updated');
-        }, 60000);
+        this.login.subscribe({
+            id: 'YSidebar',
+            func: () => {
+                this.userPlaylists = this.login.userPlaylists;
+                this.userSubscribes = this.login.userSubscribes;
+            },
+            type: 'userPlaylists',
+        })
     },
     beforeUnmount() {
         clearTimeout(this.timeout);
-    },
-    watch: {
-        async loginStatus(newVal) {
-            if (newVal === true) {
-                this.fetchUserPlaylist();
-            }
-        },
+        this.login.unSubscribe({
+            id: 'YSidebar',
+            type: 'userPlaylists',
+        });
     },
 };
 </script>

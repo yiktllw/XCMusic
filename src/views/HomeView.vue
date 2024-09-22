@@ -86,8 +86,12 @@ export default {
     },
     methods: {
         async handleMessage(event) {
-            if (event.data.type === 'song-open-context-menu') {
-                this.$refs.contextMenu.showContextMenu();
+            if (event.data.type === 'song-open-context-menu' || event.data.type === 'song-toogle-context-menu') {
+                if (event.data.type === 'song-toogle-context-menu') {
+                    this.$refs.contextMenu.toogleContextMenu();
+                } else {
+                    this.$refs.contextMenu.showContextMenu();
+                }
                 let data = event.data.data;
                 this.menu = songItems;
                 if (data.from && data.from !== -1) {

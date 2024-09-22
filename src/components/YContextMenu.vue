@@ -78,6 +78,12 @@ export default {
         showContextMenu() {
             this.$refs.panel._showPanel();
         },
+        closeContextMenu() {
+            this.$refs.panel.closePanel();
+        },
+        toogleContextMenu() {
+            this.$refs.panel.tooglePanel();
+        },
     }
 }
 </script>

@@ -1,3 +1,4 @@
+import { Subscriber } from "@/tools/subscribe";
 import { useApi } from "./api";
 import { ref, reactive, markRaw, shallowReactive } from 'vue'; // eslint-disable-line
 
@@ -9,7 +10,46 @@ export class Login {
         this._userName = ref(localStorage.getItem('login_user_name') ?? null);
         this._likelist = markRaw([]);
         this._avatar = ref(localStorage.getItem('login_avatar') ?? null);
+        this._userPlaylists = reactive([]);
+        this._userSubscribes = reactive([]);
+        this.subscriber = markRaw(new Subscriber());
+        this.subscribeEvents = markRaw([
+            'userPlaylists',
+        ]);
         this.init();
+        this.interval = setInterval(() => {
+            if (this._cookie && this._userId) {
+                this.refreshUserPlaylists();
+            }
+        }, 1000 * 60);
+    }
+    subscribe({
+        id = '',
+        func = () => { },
+        type = '',
+    }){
+        if (!this.subscribeEvents.includes(type)) {
+            console.log('type is not in subscribeEvents: ', type);
+            return;
+        }
+        this.subscriber.on({
+            id: id,
+            func: func,
+            type: type
+        });
+    }
+    unSubscribe({
+        id = '',
+        type = '',
+    }){
+        if (!this.subscribeEvents.includes(type)) {
+            console.log('type is not in subscribeEvents: ', type);
+            return;
+        }
+        this.subscriber.off({
+            id: id,
+            type: type
+        });
     }
     init() {
         if (this._cookie && (!this._userId || !this._userName || this._avatar)) {
@@ -34,6 +74,7 @@ export class Login {
             console.log(error);
         });
         await this.reloadLikelist();
+        await this.refreshUserPlaylists();
     }
     async logout() {
         if (this._cookie) {
@@ -55,6 +96,9 @@ export class Login {
         this._likelist = markRaw([]);
         localStorage.removeItem('login_avatar');
         this._avatar = null;
+        this._userPlaylists = markRaw([]);
+        this._userSubscribes = markRaw([]);
+        this.subscriber = markRaw(new Subscriber());
     }
     get cookie() {
         return this._cookie;
@@ -94,5 +138,47 @@ export class Login {
     }
     get avatar() {
         return this._avatar;
+    }
+    get userPlaylists() {
+        return this._userPlaylists;
+    }
+    get userSubscribes() {
+        return this._userSubscribes;
+    }
+    async refreshUserPlaylists() {
+        if (!this._cookie) {
+            return;
+        }
+        if (!this._userId) {
+            await this.updateInfo();
+        }
+        let userPlaylist = await useApi('/user/playlist', {
+            uid: this._userId,
+            cookie: this._cookie,
+            timestamp: new Date().getTime(),
+        }).catch((error) => {
+            console.error('Failed to get user playlist:', error);
+        });
+        this._userPlaylists = [];
+        this._userSubscribes = [];
+        userPlaylist.playlist.forEach(playlist => {
+            if (!playlist.subscribed) {
+                this._userPlaylists.push({
+                    name: playlist.name,
+                    label: playlist.name,
+                    id: playlist.id,
+                    img: playlist.coverImgUrl,
+                });
+            } else {
+                this._userSubscribes.push({
+                    name: playlist.name,
+                    label: playlist.name,
+                    id: playlist.id,
+                    img: playlist.coverImgUrl,
+                });
+            }
+        });
+        this.userPlaylists[0].label = '我喜欢的音乐';
+        this.subscriber.exec('userPlaylists');
     }
 }

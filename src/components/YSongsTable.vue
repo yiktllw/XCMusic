@@ -128,7 +128,7 @@
                             <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
                                 @click="openSongComment(track.id)">
                             <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
-                                @click="openContextMenu($event, track)">
+                                @click="openContextMenu($event, track, 'toogle')">
                         </div>
                         <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
                             :style="{ 'width': `${this.alWidth}px` }">
@@ -593,9 +593,9 @@ export default {
         openSongComment(id) {
             this.$router.push(`/comment/song/${id}`);
         },
-        openContextMenu(event, track) {
+        openContextMenu(event, track, type = 'show') {
             window.postMessage({
-                type: 'song-open-context-menu',
+                type: type === 'show' ? 'song-open-context-menu' : 'song-toogle-context-menu',
                 data: {
                     x: event.clientX,
                     y: event.clientY,

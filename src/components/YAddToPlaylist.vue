@@ -8,9 +8,9 @@
             </template>
             <YScroll>
                 <div class="playlists" style="max-height: 432.1px;">
-                    <div class="playlist" v-for="playlist in userPlaylist" :key="playlist.id"
+                    <div class="playlist" v-for="playlist in login.userPlaylists" :key="playlist.id"
                         @click="addToPlaylist(playlist.id)">
-                        <img class="img" :src="playlist.img" />
+                        <img class="img" :src="playlist.img + '?param=50y50'" />
                         <div class="playlist-name">{{ playlist.name }}</div>
                     </div>
                 </div>
@@ -47,30 +47,10 @@ export default {
     },
     data() {
         return {
-            userPlaylist: [],
+            userPlaylists: [],
         };
     },
     methods: {
-        async fetchUserPlaylist() {
-            if (this.login.cookie) {
-                let userPlaylist = await useApi('/user/playlist', {
-                    uid: this.login.userId,
-                    cookie: this.login.cookie,
-                }).catch((error) => {
-                    console.error('Failed to get user playlist:', error);
-                });
-                this.userPlaylist = [];
-                userPlaylist.playlist.forEach(playlist => {
-                    if (!playlist.subscribed) {
-                        this.userPlaylist.push({
-                            name: playlist.name,
-                            id: playlist.id,
-                            img: playlist.coverImgUrl + '?param=50y50',
-                        });
-                    }
-                });
-            }
-        },
         async addToPlaylist(playlistId) {
             await useApi('/playlist/tracks', {
                 op: 'add',
@@ -85,13 +65,26 @@ export default {
                     console.error('Failed to add track to playlist:', error);
                 });
             this.$refs.window.closeWindow();
+            this.login.refreshUserPlaylists();
         },
         handleNewWindowState(val) {
             this.$emit('new-window-state', val);
         },
     },
     mounted() {
-        this.fetchUserPlaylist();
+        this.login.subscribe({
+            id: 'YAddToPlaylist',
+            func: ()=>{
+                this.userPlaylists = this.login.userPlaylists;
+            },
+            type: 'userPlaylists',
+        })
+    },
+    beforeUnmount() {
+        this.login.unSubscribe({
+            id: 'YAddToPlaylist',
+            type: 'userPlaylists',
+        });
     },
 }
 
