@@ -1,4 +1,6 @@
+import { markRaw } from "vue";
 import { useApi } from "./api";
+import { Subscriber } from "@/tools/subscribe";
 
 export class Player {
     constructor() {
@@ -18,30 +20,22 @@ export class Player {
         this._playlist = [];
         // 初始化歌单ID为0
         this._playlistId = 0;
-        this._onPlaylistChange = [];
         // 初始化当前播放索引为0
         this._current = 0;
-        this._onTrackChange = [];
 
         // 初始化播放模式为顺序播放
         this._mode = 'order';
-        // 播放模式改变的回调函数
-        this._onModeChange = [];
 
         // 初始化随机播放历史为空
         this._history = [];
         // 初始化历史索引为0
         this._historyIndex = 0;
-        // 历史记录改变的回调函数
-        this._onHistoryChange = [];
 
         // 初始化播放状态为暂停
         this._playState = 'pause';
-        this._onPlayStateChange = [];
 
         // 初始化音量为1
         this._volume = 1;
-        this._onVolumeChange = [];
 
         // 初始化播放时间为0
         this._currentTime = 0;
@@ -49,16 +43,26 @@ export class Player {
         this._progress = 0;
         // 初始化总时长为0
         this._duration = 0;
-        this._onTimeChange = [];
-
 
         // 初始化音质为极高
         this._quality = 'exhigh';
-        this._onQualityChange = [];
 
-        this._onTrackReady = [];
         // 更新时间的计时器
         this._updateTime = null;
+        
+        // 订阅事件
+        this.subscriber = markRaw(new Subscriber());
+        this.subscribeEvents = markRaw([
+            'playState',
+            'playlist',
+            'track',
+            'trackReady',
+            'time',
+            'quality',
+            'volume',
+            'history',
+            'mode',
+        ]);
 
         this._mediaSessionInit = false;
         this.initMediaSession();
@@ -69,198 +73,35 @@ export class Player {
     // func: 订阅者的回调函数，例如 () => { console.log('PlayState changed') }
     // type: 订阅的属性，例如 'playState'
     Subscribe({ id, func, type }) {
-        if (typeof func !== 'function') return;
-        if (type === 'playState') {
-            // 查找id(唯一标识)是否已经存在
-            let index = this._onPlayStateChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                // 如果不存在，则添加其回调函数
-                this._onPlayStateChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                // 如果存在，则更新其回调函数
-                this._onPlayStateChange[index].fn = func;
-            }
-        } else if (type === 'playlist') {
-            let index = this._onPlaylistChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onPlaylistChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onPlaylistChange[index].fn = func;
-            }
-        } else if (type === 'track') {
-            let index = this._onTrackChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onTrackChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onTrackChange[index].fn = func;
-            }
-        } else if (type === 'trackReady') {
-            let index = this._onTrackReady.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onTrackReady.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onTrackReady[index].fn = func;
-            }
-        } else if (type === 'time') {
-            let index = this._onTimeChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onTimeChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onTimeChange[index].fn = func;
-            }
-        } else if (type === 'quality') {
-            let index = this._onQualityChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onQualityChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onQualityChange[index].fn = func;
-            }
-        } else if (type === 'volume') {
-            let index = this._onVolumeChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onVolumeChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onVolumeChange[index].fn = func;
-            }
-        } else if (type === 'history') {
-            let index = this._onHistoryChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onHistoryChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onHistoryChange[index].fn = func;
-            }
-        } else if (type === 'mode') {
-            let index = this._onModeChange.findIndex(item => item.id === id);
-            if (index === -1) {
-                this._onModeChange.push({
-                    id: id,
-                    fn: func,
-                });
-            } else {
-                this._onModeChange[index].fn = func;
-            }
+        if (!this.subscribeEvents.includes(type)) {
+            console.log('Subscribe event not supported: ', type);
+            return;
+        } else {
+            this.subscriber.on({
+                id: id,
+                func: func,
+                type: type,
+            });
         }
     }
     UnSubscribe({id, type}){
-        if (type === 'playState') {
-            // 查找id(唯一标识)是否已经存在
-            let index = this._onPlayStateChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onPlayStateChange) {
-                // 如果存在，则删除
-                this._onPlayStateChange.splice(index, 1);
-            }
-        } else if (type === 'playlist') {
-            let index = this._onPlaylistChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onPlaylistChange) {
-                // 如果存在，则删除
-                this._onPlaylistChange.splice(index, 1);
-            }
-        } else if (type === 'track') {
-            let index = this._onTrackChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onTrackChange) {
-                // 如果存在，则删除
-                this._onTrackChange.splice(index, 1);
-            }
-        } else if (type === 'trackReady') {
-            let index = this._onTrackReady.findIndex(item => item.id === id);
-            if (index !== -1 && this._onTrackReady) {
-                // 如果存在，则删除
-                this._onTrackReady.splice(index, 1);
-            }
-        } else if (type === 'time') {
-            let index = this._onTimeChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onTimeChange) {
-                // 如果存在，则删除
-                this._onTimeChange.splice(index, 1);
-            }
-        } else if (type === 'quality') {
-            let index = this._onQualityChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onQualityChange) {
-                // 如果存在，则删除
-                this._onQualityChange.splice(index, 1);
-            }
-        } else if (type === 'volume') {
-            let index = this._onVolumeChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onVolumeChange) {
-                // 如果存在，则删除
-                this._onVolumeChange.splice(index, 1);
-            }
-        } else if (type === 'history') {
-            let index = this._onHistoryChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onHistoryChange) {
-                // 如果存在，则删除
-                this._onHistoryChange.splice(index, 1);
-            }
-        } else if (type === 'mode') {
-            let index = this._onModeChange.findIndex(item => item.id === id);
-            if (index !== -1 && this._onTrackChange) {
-                // 如果存在，则删除
-                this._onModeChange.splice(index, 1);
-            }
+        if (!this.subscribeEvents.includes(type)) {
+            console.log('Subscribe event not supported: ', type);
+            return;
+        } else {
+            this.subscriber.off({
+                id: id,
+                type: type,
+            });
         }
     }
     // 执行已经订阅的回调函数
     Execute({ type }) {
-        if (type === 'playState') {
-            this._onPlayStateChange.forEach(item => {
-                item.fn();
-            });
-        } else if (type === 'playlist') {
-            this._onPlaylistChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'track') {
-            this._onTrackChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'trackReady') {
-            this._onTrackReady.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'time') {
-            this._onTimeChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'quality') {
-            this._onQualityChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'volume') {
-            this._onVolumeChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'history') {
-            this._onHistoryChange.forEach(item => {
-                item.fn();
-            })
-        } else if (type === 'mode') {
-            this._onModeChange.forEach(item => {
-                item.fn();
-            })
+        if (!this.subscribeEvents.includes(type)) {
+            console.log('Execute event not supported: ', type);
+            return;
+        } else {
+            this.subscriber.exec(type);
         }
     }
     // 初始化MediaSession(系统媒体控制)
