@@ -48,6 +48,15 @@ export class YTrackC {
     get onTrackLoaded() {
         return this._onTrackLoaded;
     }
+    get track(){
+        return {
+            id: this._id,
+            name: this._name,
+            picUrl: this._picUrl,
+            ar: this._ar,
+            al: this._al
+        }
+    }
     set onTrackLoaded(fn) {
         if (typeof fn === 'function') {
             this._onTrackLoaded = fn;

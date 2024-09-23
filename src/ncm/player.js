@@ -1,6 +1,7 @@
 import { markRaw } from "vue";
 import { useApi } from "./api";
 import { Subscriber } from "@/tools/subscribe";
+import { SongPicker } from "@/tools/damakuSongPicker";
 
 export class Player {
     constructor() {
@@ -46,6 +47,23 @@ export class Player {
 
         // 初始化音质为极高
         this._quality = 'exhigh';
+        
+        // 点歌功能
+        this.songPicker = markRaw(new SongPicker());
+        this.songPicker.subscribe({
+            id: 'player.js',
+            func: ()=>{
+                this.playTrack(this.songPicker.track);
+            },
+            type: 'track',
+        });
+        this.songPicker.subscribe({
+            id: 'player.js',
+            func: ()=>{
+                this.nextPlay(this.songPicker.track);
+            },
+            type: 'nextTrack',
+        });
 
         // 更新时间的计时器
         this._updateTime = null;
