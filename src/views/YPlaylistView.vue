@@ -274,7 +274,7 @@ export default {
                             // 歌曲数量
                             this.playlist.trackCount = response.playlist.trackCount;
                             // 总页数
-                            this.page = new YPageC(Math.ceil(this.playlist.trackCount / 1000));
+                            this.page = new YPageC(Math.ceil(this.playlist.trackCount / 500));
                             this.page.onPageChange = () => {
                                 this.updateTracks();
                             }
@@ -395,8 +395,8 @@ export default {
         },
         // 获取当前页的歌曲列表
         async fetchTracks(id, page) {
-            let offset = (page - 1) * 1000;
-            const limit = 1000;
+            let offset = (page - 1) * 500;
+            const limit = 500;
             let getTracks = await useApi('/playlist/track/all', {
                 id: id,
                 limit: limit,
@@ -435,14 +435,14 @@ export default {
             // 更新搜索关键字
             if (fromEnter) {
                 this.searchQuery = input;
-            } else if (this.playlist.tracks.length < 1000 || input === '') {
+            } else if (this.playlist.tracks.length < 500 || input === '') {
                 this.searchQuery = input;
             }
         },
         // 更新歌曲列表 搜索过滤
         updateTracks() {
             if (!this.searchQuery && this.type === 'playlist') {
-                this.filteredTracks = this.playlist.tracks.slice((this.page.current - 1) * 1000, this.page.current * 1000);
+                this.filteredTracks = this.playlist.tracks.slice((this.page.current - 1) * 500, this.page.current * 500);
                 return;
             } else if (!this.searchQuery && this.type === 'album') {
                 this.filteredTracks = this.playlist.tracks;

@@ -257,7 +257,7 @@ export default {
         },
         limit: {
             type: Number,
-            default: 1000,
+            default: 500,
         },
         id: {
             type: String,
