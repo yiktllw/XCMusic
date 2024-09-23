@@ -102,6 +102,8 @@ export default {
     },
     async mounted() {
         this.sidebarWidth = this.setting.display.sidebarWidth;
+        this.userPlaylists = this.login.userPlaylists;
+        this.userSubscribes = this.login.userSubscribes;
         this.login.subscribe({
             id: 'YSidebar',
             func: () => {

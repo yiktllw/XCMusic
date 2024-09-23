@@ -33,6 +33,9 @@
         <div class="add-to-playlist-container" ref="add_to_playlist_container" v-if="showAddToPlaylist">
             <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" />
         </div>
+        <div class="add-to-playlist-container" ref="song-info-container" v-if="showSongInfo">
+            <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" />
+        </div>
     </div>
 </template>
 
@@ -44,6 +47,7 @@ import { mapState } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
 import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
+import YSongInfo from '@/components/YSongInfo.vue';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
 
@@ -60,6 +64,8 @@ export default {
             direction: 4,
             showAddToPlaylist: false,
             trackIds: [],
+            trackOfInfo: null,
+            showSongInfo: false,
         };
     },
     components: {
@@ -69,6 +75,7 @@ export default {
         YPlaybar,
         YContextMenu,
         YAddToPlaylist,
+        YSongInfo,
     },
     computed: {
         ...mapState({
@@ -168,6 +175,19 @@ export default {
                 case 'song-delete':
                     this.deleteFromPlaylist(arg.target.id, arg.from);
                     break;
+                case 'song-copylink':
+                    navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`).catch((error) => {
+                        console.log('Failed to copy link:', error);
+                    });
+                    break;
+                case 'song-subscribe':
+                    this.trackIds = [arg.target.id];
+                    this.showAddToPlaylist = true;
+                    break;
+                case 'song-infomation':
+                    this.trackOfInfo = arg.target;
+                    this.showSongInfo = true;
+                    break;
                 default:
                     break;
             }
@@ -192,6 +212,11 @@ export default {
         handleNewWindowState(val) {
             if (val === false) {
                 this.showAddToPlaylist = false;
+            }
+        },
+        handleNewWindowState_songInfo(val) {
+            if (val === false) {
+                this.showSongInfo = false;
             }
         },
     },
