@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'// eslint-disable-line
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -12,19 +12,22 @@ protocol.registerSchemesAsPrivileged([
 ])
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
 app.commandLine.appendSwitch('js-flags', '--max-new-space-size=256');
+let win = null;
+let tray = null;
 
 async function createWindow() {
     // Create the browser window.
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 1200,
         height: 750,
-        minWidth: 1100,
+        minWidth: 1000,
         minHeight: 700,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
             webviewTag: true,
+            backgroundThrottling: false, // 禁止后台时限制性能
         },
         frame: false,
         icon: path.join(__dirname, '../src/assets/icons/icon.png'),
@@ -69,9 +72,57 @@ app.on('ready', async () => {
             console.error('Vue Devtools failed to install:', e.toString())
         }
     }
-    createWindow()
-    startNeteaseMusicApi()
+    let requests = [
+        createWindow(),
+        startNeteaseMusicApi(),
+    ];
+    await Promise.all(requests).catch((err) => {
+        console.error(err);
+    });
+    // 创建托盘
+    tray = new Tray(path.join(__dirname, '../src/assets/icons/icon.png'));
+    // 菜单模板
+    let _menu = [
+        {
+            label: '显示主窗口',  
+            id: 'show-window',
+            click: () => {
+                win.show();
+            },
+            enabled: !win.show,
+        },
+        {
+            label: '退出',  
+            role: 'quit',
+        }
+    ];
+    let menu = Menu.buildFromTemplate(_menu);
+    tray.setContextMenu(menu);
+    tray.setToolTip('XCMusic');
+
+    // 处理窗口隐藏
+    win.on('hide', () => {
+        menu.getMenuItemById('show-window').enabled = true;
+        tray.setContextMenu(menu);
+    });
+
+    // 处理窗口显示
+    win.on('show', () => {
+        menu.getMenuItemById('show-window').enabled = false;
+        tray.setContextMenu(menu);
+    });
+    
+    // 处理托盘点击事件
+    tray.on('double-click', () => {
+        if (win.isVisible()) {
+            win.hide();
+        } else {
+            win.show();
+        }
+    });
 })
+
+
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -28,7 +28,7 @@ ipcMain.on('maximize', () => {
 ipcMain.on('close', () => {
     const win = getCurrentWindow();
     if (win) {
-        win.close();
+        win.hide();
     }
 });
 
