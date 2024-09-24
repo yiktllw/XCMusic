@@ -1,16 +1,16 @@
 <template>
     <div class="display">
-        <YAddToPlaylist :ids="[1458660]" />
+        <YMessage message="This is an info message" />
     </div>
 </template>
 
 <script lang="js">
-import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
+import YMessage from '@/components/YMessage.vue';
 
 export default {
     name: 'YTestView',
     components: {
-        YAddToPlaylist,
+        YMessage,
     },
     data() {
         return {

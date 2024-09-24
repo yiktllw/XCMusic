@@ -78,6 +78,7 @@
 <script lang="js">
 import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
+import { YMessageC,Message } from '@/tools/YMessageC';
 
 export default {
     name: 'YSongInfo',
@@ -105,6 +106,10 @@ export default {
         copy(text) {
             navigator.clipboard.writeText(text).then(() => {
                 console.log('复制成功: ', text);
+                Message.post(new YMessageC({
+                    type: 'success',
+                    message: '复制成功',
+                }));
             }, () => {
                 console.log('复制失败: ', text);
             });

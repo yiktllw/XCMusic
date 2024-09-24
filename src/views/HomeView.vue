@@ -36,6 +36,12 @@
         <div class="add-to-playlist-container" ref="song-info-container" v-if="showSongInfo">
             <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" />
         </div>
+        <div class="message-container">
+            <div></div>
+            <div class="msg">
+                <YMessage :message="msg.message" :key="msgKey" :type="msg.type" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -48,6 +54,8 @@ import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
 import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
+import YMessage from '@/components/YMessage.vue';
+import { YMessageC, Message } from '@/tools/YMessageC';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
 
@@ -66,6 +74,11 @@ export default {
             trackIds: [],
             trackOfInfo: null,
             showSongInfo: false,
+            msg: (new YMessageC({
+                type: 'info',
+                message: 'This is an info message',
+            })).data,
+            msgKey: 0,
         };
     },
     components: {
@@ -76,6 +89,7 @@ export default {
         YContextMenu,
         YAddToPlaylist,
         YSongInfo,
+        YMessage,
     },
     computed: {
         ...mapState({
@@ -121,6 +135,9 @@ export default {
                 this.trackIds = event.data.data.ids;
                 console.log('ids: ', this.trackIds);
                 this.showAddToPlaylist = true;
+            } else if (event.data.type === 'message-show') {
+                this.msg = event.data.data;
+                this.msgKey++;
             }
         },
         async getCommentCount(id) {
@@ -168,6 +185,10 @@ export default {
                     break;
                 case 'song-addtoplaylist':
                     this.player.nextPlay(arg.target);
+                    Message.post(new YMessageC({
+                        type: 'info',
+                        message: '已添加到播放列表',
+                    }));
                     break;
                 case 'song-comment':
                     this.$router.push(`/comment/song/${arg.target.id}`);
@@ -176,7 +197,18 @@ export default {
                     this.deleteFromPlaylist(arg.target.id, arg.from);
                     break;
                 case 'song-copylink':
-                    navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`).catch((error) => {
+                    navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
+                    .then(()=>{
+                        Message.post(new YMessageC({
+                            type: 'success',
+                            message: '链接已复制',
+                        }));
+                    })
+                    .catch((error) => {
+                        Message.post(new YMessageC({
+                            type: 'error',
+                            message: `复制链接失败: ${error}`,
+                        }));
                         console.log('Failed to copy link:', error);
                     });
                     break;
@@ -204,8 +236,23 @@ export default {
             })
                 .then((res) => {
                     console.log('Track deleted from playlist:', res);
+                    if (res.status === 200) {
+                        Message.post(new YMessageC({
+                            type: 'success',
+                            message: '删除成功',
+                        }));
+                    } else {
+                        Message.post(new YMessageC({
+                            type: 'error',
+                            message: `删除失败: ${res.message ?? (res.status ?? '未知原因')}`,
+                        }));
+                    }
                 })
                 .catch((error) => {
+                    Message.post(new YMessageC({
+                        type: 'error',
+                        message: `删除失败: ${error}`,
+                    }));
                     console.error('Failed to delete track from playlist:', error);
                 });
         },
@@ -231,6 +278,7 @@ export default {
     position: absolute;
     margin: 0;
     padding: 0;
+    overflow: hidden;
     /* background: linear-gradient(to bottom, #6a553f, #131319); */
     background-color: #131319;
     top: 0;
@@ -327,5 +375,22 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+}
+
+.message-container {
+    top: 80px;
+    width: calc(100vw - 20px);
+    height: 0px;
+    position: absolute;
+    display: flex;
+    background-color: transparent;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.msg{
+    position: relative;
+    align-items: end;
+    justify-content: end;
 }
 </style>

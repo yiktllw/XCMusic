@@ -22,6 +22,7 @@
 <script>
 import YWindow from '@/components/YWindow.vue';
 import YScroll from '@/components/YScroll.vue';
+import { YMessageC, Message } from '@/tools/YMessageC';
 import { useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
 
@@ -60,8 +61,31 @@ export default {
             })
                 .then((res) => {
                     console.log('Track added to playlist:', res);
+                    console.log('status:', res.status);
+                    if (res.status !== 200) {
+                        Message.post(new YMessageC({
+                            type: 'error',
+                            message: '添加歌曲失败',
+                        }));
+                    } else {
+                        if (res.body.message) {
+                            Message.post(new YMessageC({
+                                type: 'warning',
+                                message: res.body.message,
+                            }));
+                        } else {
+                            Message.post(new YMessageC({
+                                type: 'success',
+                                message: '添加歌曲成功',
+                            }));
+                        }
+                    }
                 })
                 .catch((error) => {
+                    Message.post(new YMessageC({
+                        type: 'error',
+                        message: `添加歌曲失败: ${error}`,
+                    }));
                     console.error('Failed to add track to playlist:', error);
                 });
             this.$refs.window.closeWindow();
@@ -74,7 +98,7 @@ export default {
     mounted() {
         this.login.subscribe({
             id: 'YAddToPlaylist',
-            func: ()=>{
+            func: () => {
                 this.userPlaylists = this.login.userPlaylists;
             },
             type: 'userPlaylists',
