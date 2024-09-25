@@ -455,7 +455,7 @@ export default {
         // 获取用户信息
         await this.fetchUser();
         // 获取用户头像的主题色
-        let color = await getColorFromImg(this.user.picUrl, document);
+        let color = await getColorFromImg(this.user.picUrl + '?param=30y30', document);
         if (color) {
             // 设置背景颜色
             setBackgroundColor(color);

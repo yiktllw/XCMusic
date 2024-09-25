@@ -46,10 +46,6 @@ export default {
                 return value >= 1 && value <= 10
             }
         },
-        zIndex: {
-            type: Number,
-            default: 200
-        }
     },
     computed: {
         _color() {
@@ -85,6 +81,9 @@ export default {
             ];
             return directions[this.slideDirection - 1];
         },
+        zIndex() {
+            return 200;
+        }
     },
     data() {
         return {

@@ -69,7 +69,7 @@ export default {
         },
         async trackLoaded() {
             this.trackKey++;
-            let color = await getColorFromImg(this.track.picUrl + '?param=100y100', document);
+            let color = await getColorFromImg(this.track.picUrl + '?param=30y30', document);
             if (color) {
                 setBackgroundColor(color);
             } else {

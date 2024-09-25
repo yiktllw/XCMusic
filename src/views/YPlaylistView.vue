@@ -158,6 +158,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
 import YComment from '@/components/YComment.vue';
+import { YMessageC,Message } from '@/tools/YMessageC';
 import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
@@ -415,7 +416,7 @@ export default {
         },
         // 设置背景颜色
         async _setBackgroundColor() {
-            let color = await getColorFromImg(this.playlist.coverImgUrl, document);
+            let color = await getColorFromImg(this.playlist.coverImgUrl + '?param=30y30', document);
             // 设置背景颜色
             if (color) {
                 setBackgroundColor(color);
@@ -475,6 +476,10 @@ export default {
             // 预处理歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playAll(playlist);
+            Message.post(new YMessageC({
+                type: 'success',
+                message: '已添加到播放列表',
+            }));
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
@@ -482,6 +487,10 @@ export default {
         // 添加到播放列表
         async addPlaylistToQueue() {
             this.player.addPlaylist(this.playlist.tracks);
+            Message.post(new YMessageC({
+                type: 'success',
+                message: '已添加到播放列表',
+            }));
         },
         // 播放歌曲
         async playSongs(track) {
@@ -498,6 +507,10 @@ export default {
             let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
             this.player.playlist = playlist;
+            Message.post(new YMessageC({
+                type: 'success',
+                message: '已添加到播放列表',
+            }));
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
@@ -508,6 +521,10 @@ export default {
             // 准备歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playlist = playlist;
+            Message.post(new YMessageC({
+                type: 'success',
+                message: '已添加到播放列表',
+            }));
             await this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {

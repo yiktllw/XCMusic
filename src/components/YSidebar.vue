@@ -92,10 +92,7 @@ export default {
             }
         },
         stopResize() {
-            this.setting.display = {
-                ...this.setting.display,
-                sidebarWidth: this.newWidth,
-            };
+            this.setting.display.sidebarWidth = this.newWidth;
             window.removeEventListener('mousemove', this.resize);
             window.removeEventListener('mouseup', this.stopResize);
         },

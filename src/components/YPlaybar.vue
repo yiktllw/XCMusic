@@ -69,7 +69,7 @@
                 </button>
                 <!-- 3 播放模式按钮 -->
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
-                    ref="play_mode_panel_trigger" :key="playMode">
+                    ref="play_mode_panel_trigger" >
                     <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
                     <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
                         title="列表循环">
@@ -351,13 +351,8 @@ export default {
             forward ? this.player.next() : this.player.previous();
         },
         tooglePlayMode(mode) {
-            if (mode === 'order' || mode === 'listloop' || mode === 'random' || mode === 'listrandom' || mode === 'loop') {
-                this.player.mode = mode;
-                this.setting.play = {
-                    ...this.setting.play,
-                    mode: mode,
-                }
-            }
+            this.player.mode = mode;
+            this.setting.play.mode = mode;
         },
         async playTrack(track) {
             await this.player.playTrack(track);
@@ -370,18 +365,12 @@ export default {
             this.$router.push({ path: '/artist/' + artistId });
         },
         updateVolumeInSetting() {
-            this.setting.play = {
-                ...this.setting.play,
-                volume: this.player.volume,
-            }
+            this.setting.play.volume = this.volume;
         },
         setQuality(quality) {
             console.log('setQuality:', quality);
             this.player.quality = quality;
-            this.setting.play = {
-                ...this.setting.play,
-                quality: quality,
-            }
+            this.setting.play.quality = quality;
             this.$refs.quality_panel.tooglePanel();
         },
         setShowButton() {

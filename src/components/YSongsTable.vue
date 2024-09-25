@@ -329,8 +329,8 @@ export default {
                 this.login.reloadLikelist();
             }
         }
-        // this.setAlbumWidth(this.setting.display.albumWidth);
         this.alWidth = this.setting.display.albumWidth;
+        console.log('alWidth', this.alWidth);
         this.nowPlaying = this.player.currentTrack?.id ?? 0;
         this.player.Subscribe({
             id: this.id,
@@ -349,7 +349,6 @@ export default {
     watch: {
         tracks(newVal) {
             this.localTracks = newVal;
-            // this.setAlbumWidth(this.setting.display.albumWidth);
             this.alWidth = this.setting.display.albumWidth;
         },
         localTracks(newVal) {
@@ -402,10 +401,7 @@ export default {
             window.addEventListener('mouseup', () => {
                 // 根据新的专辑宽度调整歌曲名称和专辑的宽度
                 this.resizeByNewWidth(this.newWidth);
-                this.setting.display = {
-                    ...this.setting.display,
-                    albumWidth: this.newWidth,
-                };
+                this.setting.display.albumWidth = this.newWidth;
                 // 移除鼠标移动和松开监听
                 window.removeEventListener('mousemove', this.resize);
                 window.removeEventListener('mouseup', this.stopResize);

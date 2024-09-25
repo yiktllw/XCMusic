@@ -35,7 +35,6 @@ export class Message{
                 type: 'message-show',
                 data: message.data,
             });
-            console.log('Message posted: ', message.data);
         } else {
             console.error('Invalid message: ', message);
         }
