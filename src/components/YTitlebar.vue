@@ -11,9 +11,12 @@
         </div>
         <!-- 搜索栏 -->
         <div class="searchbar" ref="search_panel_trigger">
-            <input type="text" class="search-input" @keydown.enter="handleSearch" v-model="searchInput"
-                @input="getSearchSuggestions" placeholder="搜索..." @click="this.$refs.search_panel._showPanel()"
-                spellcheck="false" ref="search_input" />
+            <div class="input-wrapper">
+                <input type="text" class="search-input" @keydown.enter="handleSearch" v-model="searchInput"
+                    @input="getSearchSuggestions" placeholder="搜索..." @click="this.$refs.search_panel._showPanel()"
+                    spellcheck="false" ref="search_input" />
+                <img class="img-search" src="../assets/search.svg" />
+            </div>
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
                 <div class="search-panel">
@@ -444,14 +447,21 @@ export default {
     background-color: rgba(255, 255, 255, .1);
 }
 
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .search-input {
-    background-image: url('../assets/search.svg');
+    /* background-image: url('../assets/search.svg'); */
     filter: opacity(0.5);
     /* 将背景图像和内容的透明度都设为 50% */
-    background-repeat: no-repeat;
-    background-position: left 10px center;
+    /* background-repeat: no-repeat; */
+    /* background-position: left 10px center; */
     /* 图片位置 */
-    background-size: 17px 17px;
+    /* background-size: 17px 17px; */
     /* 图片大小 */
     padding: 8px 15px 8px 35px;
     /* 为了确保文字不会覆盖图片 */
@@ -468,6 +478,17 @@ export default {
     margin-left: 7px;
     background-color: transparent;
     -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
+}
+
+.img-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 17px;
+    height: 17px;
+    opacity: 0.5;
     -webkit-user-drag: none;
 }
 

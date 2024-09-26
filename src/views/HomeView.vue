@@ -39,7 +39,7 @@
         <div class="message-container">
             <div></div>
             <div class="msg">
-                <YMessage :message="msg.message" :key="msgKey" :type="msg.type" />
+                <YMessage :message="msg.message" :key="msgKey" :type="msg.type" v-if="msg.type !== 'none'" />
             </div>
         </div>
     </div>
@@ -74,10 +74,10 @@ export default {
             trackIds: [],
             trackOfInfo: null,
             showSongInfo: false,
-            msg: (new YMessageC({
-                type: 'info',
-                message: 'This is an info message',
-            })).data,
+            msg: {
+                type: 'none',
+                message: '',
+            },
             msgKey: 0,
         };
     },

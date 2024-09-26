@@ -95,10 +95,13 @@
                                 多选
                             </button>
                             <!-- 5 搜索框 -->
-                            <input type="text" class="search-input"
+                            <div class="input-wrapper">
+                                <input type="text" class="search-input"
                                 @keydown.enter="handleSearch($event.target.value, true)"
                                 @input="handleSearch($event.target.value, false)" placeholder="搜索..."
                                 spellcheck="false" />
+                                <img src="../assets/search.svg" class="img-search" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +161,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
 import YComment from '@/components/YComment.vue';
-import { YMessageC,Message } from '@/tools/YMessageC';
+import { YMessageC, Message } from '@/tools/YMessageC';
 import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
@@ -816,14 +819,22 @@ export default {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+.input-wrapper {
+    position: relative;
+    display: flex;
+    /* align-items: center;
+    justify-content: center; */
+    margin-left: auto;
+}
+
 /* 5 搜索框 */
 .search-input {
     filter: opacity(0.5);
-    background-image: url('../assets/search.svg');
-    background-repeat: no-repeat;
-    background-position: left 10px center;
+    /* background-image: url('../assets/search.svg'); */
+    /* background-repeat: no-repeat; */
+    /* background-position: left 10px center; */
     /* 图片位置 */
-    background-size: 15px 15px;
+    /* background-size: 15px 15px; */
     /* 图片大小 */
     padding: 8px 15px 8px 30px;
     /* 为了确保文字不会覆盖图片 */
@@ -833,7 +844,17 @@ export default {
     border-radius: 100px;
     width: 50px;
     transition-duration: 0.3s;
-    margin-left: auto;
+}
+
+.img-search {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    opacity: 0.5;
+    -webkit-user-drag: none;
 }
 
 /* 5 搜索框默认文字 */

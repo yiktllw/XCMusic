@@ -1,6 +1,5 @@
 <script setup lang="js">
-import { defineModel } from 'vue';
-const progress = defineModel();    
+const progress = defineModel();    // eslint-disable-line
 </script>
 
 <template>

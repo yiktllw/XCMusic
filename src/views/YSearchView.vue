@@ -328,7 +328,7 @@ export default {
         }
     },
     mounted() {
-        this.fetchTracks();
+        this.fetchData(this.position);
         // 设置背景颜色
         setBackgroundColor({ r: 19, g: 19, b: 25 });
         // 当前位置为默认位置时, 跳转到上次搜索位置

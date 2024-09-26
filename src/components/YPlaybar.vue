@@ -123,7 +123,7 @@
             <div class="buttons" style="margin-right: 10px;">
                 <!-- 音质按钮 -->
                 <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
-                    title="选择音质" :key="qualityDisplay">
+                    title="选择音质" >
                     {{ qualityDisplay }}
                 </div>
                 <!-- 选择音质面板 -->

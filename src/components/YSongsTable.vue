@@ -330,7 +330,6 @@ export default {
             }
         }
         this.alWidth = this.setting.display.albumWidth;
-        console.log('alWidth', this.alWidth);
         this.nowPlaying = this.player.currentTrack?.id ?? 0;
         this.player.Subscribe({
             id: this.id,
@@ -565,13 +564,17 @@ export default {
         },
         trackMouseEnter(id) {
             // console.log('trackMouseEnter', id);
-            let dom = this.$refs.main.querySelector(`#track-menu-${id}`);
-            dom.style.display = 'flex';
+            let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
+            if (dom){
+                dom.style.display = 'flex';
+            }
         },
         trackMouseLeave(id) {
             // console.log('trackMouseLeave', id);
-            let dom = this.$refs.main.querySelector(`#track-menu-${id}`);
-            dom.style.display = 'none';
+            let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
+            if (dom){
+                dom.style.display = 'none';
+            }
         },
         trackAlTns(name, tns) {
             let result = name;

@@ -1,8 +1,5 @@
 <script setup lang="js">
-
-import { defineModel } from 'vue';
-let page = defineModel();
-
+let page = defineModel(); // eslint-disable-line
 </script>
 
 <template>
