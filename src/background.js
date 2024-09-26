@@ -80,7 +80,11 @@ app.on('ready', async () => {
         console.error(err);
     });
     // 创建托盘
-    tray = new Tray(path.join(__dirname, '../src/assets/icons/icon.ico'));
+    if (process.env.NODE_ENV === 'development') {
+        tray = new Tray(path.join(__dirname, '../src/assets/icons/icon.ico'));
+    } else {
+        tray = new Tray(path.join(__dirname, 'icons/icon.ico'));
+    }
     // 菜单模板
     let _menu = [
         {

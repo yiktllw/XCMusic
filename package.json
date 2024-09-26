@@ -22,7 +22,6 @@
         "cli-color": "^2.0.4",
         "color": "^4.2.3",
         "core-js": "^3.8.3",
-        "js-cookie": "^3.0.5",
         "NeteaseCloudMusicApi": "^4.22.0",
         "vue": "^3.2.13",
         "vue-router": "^4.0.3",
