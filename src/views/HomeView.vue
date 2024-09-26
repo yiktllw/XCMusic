@@ -357,7 +357,7 @@ export default {
     justify-content: center;
     height: 100vh;
     font-size: 2rem;
-    color: #000000;
+    color: var(--font-color-main);
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;

@@ -1,6 +1,6 @@
 <template>
     <!-- 0 播放栏 -->
-    <div class="playbar">
+    <div class="playbar font-color-main">
         <!-- 1 左侧 -->
         <div class="align-left" :key="currentTrack?.id">
             <!-- 2 播放信息 -->
@@ -16,7 +16,7 @@
                             <YTextBanner :text="currentTrackName" style="width: 100%; overflow: hidden;" />
                         </div>
                         <!-- 5 播放信息文本:艺术家 -->
-                        <div class="play-info-text-artist">
+                        <div class="play-info-text-artist font-color-standard">
                             <span v-for="(artist, index) in this.currentTrackArtists" :key="artist.id">
                                 <!-- 艺术家名 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
@@ -108,12 +108,12 @@
             <!-- 2 进度条 -->
             <div class="progress">
                 <!-- 3 自定义进度条 -->
-                <div class="time" :key="currentTime">
+                <div class="time font-color-main" :key="currentTime">
                     {{ currentTime ? formatDuration(currentTime) : '00:00' }}
                 </div>
                 <YProgressBar v-model="progress" style="height:20px;width: 321px"
                     @update:model-value="setAudioProgress" />
-                <div class="time" :key="this.duration">
+                <div class="time font-color-main" :key="this.duration">
                     {{ formatDuration(this.duration) }}
                 </div>
             </div>
@@ -122,7 +122,7 @@
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
                 <!-- 音质按钮 -->
-                <div class="quality-button" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
+                <div class="quality-button font-color-standard" ref="quality_panel_trigger" @click="this.$refs.quality_panel.tooglePanel()"
                     title="选择音质" >
                     {{ qualityDisplay }}
                 </div>
@@ -130,16 +130,16 @@
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
                     :default-show="false" :animation-time="0.1" :slide-distance="15">
                     <div class="quality-panel">
-                        <div class="quality-title">
+                        <div class="quality-title font-color-main">
                             歌曲音质
                         </div>
                         <div class="quality-switcher">
                             <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
                                 @click="setQuality(quality.name)" :style="{ 'opacity': quality.available ? 1 : .4 }">
-                                <div class="quality-item-title">
+                                <div class="quality-item-title font-color-high">
                                     {{ quality.display }}
                                 </div>
-                                <div class="quality-item-desc">
+                                <div class="quality-item-desc font-color-standard">
                                     {{ quality.size + ' ' + quality.desc }}
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
                     :default-show="false">
                     <div class="playlist-container">
                         <div class="playlist-title">
-                            <div class="title-left">
+                            <div class="title-left font-color-main">
                                 <span>播放列表</span>
                                 <div class="songs-count"
                                     style="color:#fff; margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
@@ -186,7 +186,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="playlist-header">
+                        <div class="playlist-header font-color-standard">
                             <div class="playlist-header-item">标题</div>
                             <div class="playlist-header-item">喜欢</div>
                         </div>
@@ -528,7 +528,6 @@ export default {
 <style scoped>
 .playbar {
     display: flex;
-    color: white;
     height: 100%;
     width: 100%;
     display: flex;
@@ -645,7 +644,6 @@ export default {
 .play-info-text-artist {
     text-align: left;
     align-items: flex-start;
-    color: #bbb;
     font-size: 14px;
     margin-top: 5px;
     width: 100%;
@@ -684,7 +682,6 @@ export default {
 .quality-button {
     position: relative;
     cursor: pointer;
-    color: #bbb;
     font-size: 14px;
     font-weight: bold;
     margin-right: 20px;
@@ -710,7 +707,6 @@ export default {
 }
 
 .quality-title {
-    color: #eee;
     font-size: 17px;
     text-align: left;
     font-weight: bold;
@@ -738,14 +734,12 @@ export default {
 }
 
 .quality-item-title {
-    color: #eee;
     font-size: 15px;
     width: 100%;
     text-align: left;
 }
 
 .quality-item-desc {
-    color: #bbb;
     font-size: 13px;
     width: 100%;
     text-align: left;
@@ -859,7 +853,7 @@ export default {
     width: 100%;
     height: 30px;
     cursor: pointer;
-    color: #eee;
+    color: var(--font-color-high);
     font-size: 15px;
     padding: 10px 0px;
     margin: 0px;
@@ -882,9 +876,9 @@ export default {
 }
 
 .time {
-    color: #888;
     font-size: 12px;
     margin: 0 8px;
+    opacity: .4;
 }
 
 .align-right {
@@ -960,7 +954,6 @@ export default {
 .title-left {
     display: flex;
     flex-direction: row;
-    color: white;
     font-size: 17px;
     text-align: left;
     font-weight: bold;
@@ -968,7 +961,6 @@ export default {
 
 .playlist-header {
     display: flex;
-    color: #bbb;
     font-size: 14px;
     flex-direction: row;
     padding: 0px 25px 10px 0px;

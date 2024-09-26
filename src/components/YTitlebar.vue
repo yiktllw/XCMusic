@@ -1,5 +1,5 @@
 <template>
-    <div class="titlebar">
+    <div class="titlebar font-color-main">
         <!-- 后退和前进按钮 -->
         <div class="buttons arrows">
             <button class="back" @click="back" title="后退">
@@ -43,7 +43,7 @@
                 <img class="avatarImg" :src="this.login.avatar" v-if="this.login.avatar" />
                 <div class="avatarImg avatarImgPlaceholder" v-else></div>
             </button>
-            <button class="userInfo" @click="userInfo" ref="user_info_menu_trigger">
+            <button class="userInfo font-color-main" @click="userInfo" ref="user_info_menu_trigger">
                 <div class="userInfoTxt" v-if="this.login.status">
                     {{ userNickName }}
                 </div>
@@ -62,19 +62,19 @@
                 <div class="user-info-menu">
                     <div class="user-info-item follows">
                         <div class="follows-container follows-container-left">
-                            <div class="follows-number">
+                            <div class="follows-number font-color-main">
                                 {{ userProfile?.follows ?? 0 }}
                             </div>
-                            <div class="follows-text">
+                            <div class="follows-text font-color-low">
                                 关注
                             </div>
                         </div>
                         <div class="follows-splitline" />
                         <div class="follows-container follows-container-right">
-                            <div class="follows-number">
+                            <div class="follows-number font-color-main">
                                 {{ userProfile?.followeds ?? 0 }}
                             </div>
-                            <div class="follows-text">
+                            <div class="follows-text font-color-low">
                                 粉丝
                             </div>
                         </div>
@@ -318,7 +318,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.5s ease;
@@ -336,7 +336,6 @@ export default {
     align-items: center;
     padding: 15px 10px 10px 10px;
     background-color: transparent;
-    color: #fff;
     -webkit-app-region: drag;
     -webkit-user-drag: none;
 }
@@ -423,7 +422,6 @@ export default {
 }
 
 .search-suggestions-title {
-    color: #aaa;
     font-size: 16px;
     width: 100%;
     text-align: left;
@@ -435,7 +433,6 @@ export default {
     padding: 6px 10px;
     border-radius: 5px;
     text-align: left;
-    color: #eee;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
@@ -455,18 +452,9 @@ export default {
 }
 
 .search-input {
-    /* background-image: url('../assets/search.svg'); */
     filter: opacity(0.5);
-    /* 将背景图像和内容的透明度都设为 50% */
-    /* background-repeat: no-repeat; */
-    /* background-position: left 10px center; */
-    /* 图片位置 */
-    /* background-size: 17px 17px; */
-    /* 图片大小 */
     padding: 8px 15px 8px 35px;
-    /* 为了确保文字不会覆盖图片 */
     font-size: medium;
-    color: #fff;
     padding-right: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -494,7 +482,7 @@ export default {
 
 .search-input::placeholder {
     user-select: none;
-    color: rgba(255, 255, 255, 1);
+    color: var(--font-color-main);
 }
 
 .search-input:focus {
@@ -515,28 +503,10 @@ export default {
     align-items: center;
     background: none;
     border: none;
-    color: #fff;
     font-size: 18px;
     cursor: pointer;
     position: relative;
     user-select: none;
-}
-
-button .tooltip {
-    visibility: hidden;
-    transform: opacity 0.3s;
-    padding: 5px;
-    background-color: #333;
-    color: #fff;
-    font-size: 12px;
-    border-radius: 5px;
-    z-index: 1;
-    opacity: 0;
-}
-
-button:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
 }
 
 .avatar {
@@ -559,28 +529,26 @@ button:hover .tooltip {
     display: flex;
     align-items: center;
     flex-direction: row;
-    color: #bbb;
     transition: all 0.3s ease;
     margin: 0;
+    opacity: .5;
 }
 
 .userInfoTxt {
-    color: #bbb;
     font-size: 15px;
     margin-right: 6px;
-    transition: all 0.3s ease;
-}
-
-.userInfoTxt:hover {
-    color: #eee;
 }
 
 .img-userInfo {
     width: 14px;
     height: 14px;
-    opacity: 0.7;
     margin-right: 10px;
     -webkit-user-drag: none;
+}
+
+.userInfo:hover {
+    cursor: pointer;
+    opacity: 1;
 }
 
 .userInfo:hover .img-userInfo {
@@ -630,13 +598,15 @@ button:hover .tooltip {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    color: #bbb;
+    color: var(--font-color-standard);
     font-weight: 600;
     font-size: medium;
     padding: 5px;
     margin: 0;
     cursor: pointer;
-    transition: all 0.3s ease;
+    &:hover{
+        color: var(--font-color-main);
+    }
 }
 
 .follows {
@@ -663,14 +633,12 @@ button:hover .tooltip {
 
 .follows-number {
     font-size: 30px;
-    color: #fff;
     cursor: pointer;
 }
 
 .follows-text {
     font-size: 14px;
     font-weight: bolder;
-    color: #999;
     cursor: default;
 }
 

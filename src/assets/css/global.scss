@@ -1,0 +1,82 @@
+html {
+    font-size: 16px;
+}
+
+// 使用 CSS 变量
+:root {
+    --font-color-main: #fff;
+    --font-color-high: #ccc;
+    --font-color-standard: #999;
+    --font-color-low: #666;
+    --font-size-standard: 1rem;
+    --font-size-small: 0.8rem;
+    --font-size-large: 1.2rem;
+    --font-size-smaller: 0.6rem;
+    --font-size-larger: 1.4rem;
+    --font-size-smallest: 0.4rem;
+    --font-size-largest: 1.6rem;
+}
+
+// 定义亮色主题颜色
+.theme-dark {
+    --font-color-main: #000;
+    --font-color-high: #333;
+    --font-color-standard: #666;
+    --font-color-low: #999;
+}
+
+// 定义暗色主题颜色
+.theme-light {
+    --font-color-main: #fff;
+    --font-color-high: #ccc;
+    --font-color-standard: #999;
+    --font-color-low: #666;
+}
+
+.font-color-main {
+    color: var(--font-color-main);
+}
+
+.font-color-high {
+    color: var(--font-color-high);
+}
+
+.font-color-standard {
+    color: var(--font-color-standard);
+}
+
+.font-color-low {
+    color: var(--font-color-low);
+}
+
+.font-size-standard {
+    font-size: var(--font-size-standard);
+}
+
+.font-size-small {
+    font-size: var(--font-size-small);
+}
+
+.font-size-large {
+    font-size: var(--font-size-large);
+}
+
+.font-size-smaller {
+    font-size: var(--font-size-smaller);
+}
+
+.font-size-larger {
+    font-size: var(--font-size-larger);
+}
+
+.font-size-smallest {
+    font-size: var(--font-size-smallest);
+}
+
+.font-size-largest {
+    font-size: var(--font-size-largest);
+}
+
+.font-bold {
+    font-weight: bold;
+}

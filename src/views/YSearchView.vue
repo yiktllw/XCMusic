@@ -342,7 +342,6 @@ export default {
 <style scoped>
 .switcher {
     display: flex;
-    color: #bbb;
     font-size: 16px;
     align-items: center;
     padding-top: 10px;

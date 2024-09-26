@@ -1,5 +1,5 @@
 <template>
-    <div class="switcher">
+    <div class="switcher font-color-standard">
         <!-- 导航元素 -->
         <button class="switcher-item" v-for="(item, index) in switcher" :key="index" @click="handleSwitcher(item.position)">
             <div :class="{ 'choosed-text': item.position === position }" style="font-size: 16px; color:#fff;"
@@ -10,7 +10,7 @@
                 </div>
             </div>
             <!-- 数字 -->
-            <div class="number" v-if="item.showNum" :style="{ 'color': item.position === position ? '#fff' : '#bbb' }">{{
+            <div class="number font-color-main" v-if="item.showNum" :style="{ 'color': item.position === position ? '#fff' : '#bbb' }">{{
                 item.num }}</div>
         </button>
     </div>
@@ -59,7 +59,6 @@ export default {
 <style scoped>
 .switcher {
     display: flex;
-    color: #bbb;
     font-size: 16px;
     align-items: center;
     padding-top: 10px;
@@ -99,7 +98,6 @@ export default {
 
 .number {
     /* position: absolute; */
-    color: #fff;
     margin: 0;
     padding: 0px 0px 0px 3px;
     font-size: 13px;

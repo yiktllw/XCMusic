@@ -36,14 +36,14 @@
                         <div class="comment-user" @click="openUserPage(comment.user.userId)">
                             {{ comment.user.nickname }}
                         </div>
-                        <div class="comment-text">
+                        <div class="comment-text font-color-main">
                             {{ comment.content }}
                         </div>
                         <div class="bottom">
-                            <div class="comment-time">
+                            <div class="comment-time font-color-low">
                                 {{ _formatDate_yyyymmdd(comment.time) }}
                             </div>
-                            <div class="comment-like">
+                            <div class="comment-like font-color-standard">
                                 {{ comment.likedCount }}
                                 <img src="@/assets/thumb.svg" class="like-img" />
                             </div>
@@ -114,7 +114,6 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
-    color: #eee;
 }
 
 .header {
@@ -210,7 +209,6 @@ export default {
 
 .comment-text {
     font-size: 1rem;
-    color: #eee;
     margin: 5px 0px;
     width: 100%;
 }
@@ -226,7 +224,6 @@ export default {
     margin-top: 5px;
     font-size: 0.9rem;
     font-weight: bold;
-    color: #777;
 }
 
 .comment-like {
@@ -235,7 +232,6 @@ export default {
     align-items: center;
     font-size: 1.1rem;
     font-weight: bold;
-    color: #ccc;
 }
 
 .like-img {

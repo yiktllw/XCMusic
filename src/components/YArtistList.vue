@@ -1,6 +1,6 @@
 <template>
     <!-- 歌手列表 -->
-    <div class="artists-list">
+    <div class="artists-list ">
         <div class="artists-item" v-for="(artist) in artists" :key="type === 'artist' ? artist.id : artist.userId">
             <!-- 歌手信息 -->
             <div class="artists-info" @click="openUserPage(type === 'artist' ? artist.id : artist.userId, type)"
@@ -8,10 +8,10 @@
                 <!-- 头像 -->
                 <img :src="artist._picUrl" class="artists-avatar">
                 <!-- 歌手名 -->
-                <div class="artists-name-text">{{ type === 'artist' ? artist.name : artist.nickname }}</div>
+                <div class="artists-name-text font-color-high">{{ type === 'artist' ? artist.name : artist.nickname }}</div>
             </div>
             <!-- 专辑数/粉丝数 -->
-            <div class="artists-track-count" :title="type === 'artist' ? artist.albumSize : artist.followeds">
+            <div class="artists-track-count font-color-standard" :title="type === 'artist' ? artist.albumSize : artist.followeds">
                 <span>{{ type === 'artist' ? ('专辑: ' + artist.albumSize) : ('粉丝: ' + artist.followeds) }}</span>
             </div>
         </div>
@@ -52,8 +52,6 @@ export default {
 .artists-list {
     display: flex;
     flex-wrap: wrap;
-    /* justify-content: ; */
-    color: #fff;
 }
 
 .artists-item {
@@ -84,7 +82,6 @@ export default {
 
 .artists-name-text {
     font-size: 17px;
-    color: #eee;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -92,7 +89,6 @@ export default {
 
 .artists-track-count {
     font-size: 14px;
-    color: #bbb;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

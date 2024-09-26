@@ -17,8 +17,9 @@
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon" />
-                        <span style="font-size:13px; color: #aaa;">{{ sortingStates[currentSortingIndex].text
-                            }}</span>
+                        <span style="font-size:13px; color: var(--font-color-standard);">{{
+                            sortingStates[currentSortingIndex].text
+                        }}</span>
                     </div>
                 </button>
             </div>
@@ -33,7 +34,7 @@
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates_Album[currentSortingIndex_Album].icon" class="sort-icon" />
-                        <span style="font-size:13px; color: #aaa;">{{
+                        <span style="font-size:13px; color: var(--font-color-standard)">{{
                             sortingStates_Album[currentSortingIndex_Album].text
                         }}</span>
                     </div>
@@ -53,7 +54,7 @@
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon" class="sort-icon" />
-                        <span style="font-size:13px; color: #aaa;">{{
+                        <span style="font-size:13px;color: var(--font-color-standard)">{{
                             sortingStates_Duration[currentSortingIndex_Duration].text
                         }}</span>
                     </div>
@@ -83,7 +84,7 @@
                     <!-- 4 左侧对齐 -->
                     <div class="align-left">
                         <!-- 5 歌曲序号 -->
-                        <div class="track-count" v-if="showTrackCounter">
+                        <div class="track-count font-color-standard" v-if="showTrackCounter">
                             <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
                             <YPlaying v-else />
                         </div>
@@ -95,7 +96,7 @@
                         <div class="track-info" ref="trackInfo">
                             <!-- 6 歌曲名称 -->
                             <div class="track-name" ref="track_name_ref"
-                                :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#fff' }"
+                                :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-main)' }"
                                 :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">{{
                                     track.name +
                                     (track.tns ?
@@ -103,17 +104,18 @@
                                         '')
                                 }}</div>
                             <!-- 6 歌手名称 -->
-                            <div class="track-artist" v-if="showTrackArtist">
+                            <div class="track-artist font-color-standard" v-if="showTrackArtist">
                                 <span v-for="(artist, index) in track.ar" :key="artist.id">
                                     <!-- 7 歌手按钮 -->
                                     <span @click="handleArtistClick(artist.id)"
-                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"
+                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }"
                                         class="artist-button"
                                         :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                         {{ artist.name }}
                                     </span>
                                     <span v-if="index < track.ar.length - 1"
-                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : '#aaa' }"> /
+                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }">
+                                        /
                                     </span>
                                 </span>
                             </div>
@@ -124,7 +126,8 @@
                         <!-- 5 专辑名称 -->
                         <div class="track-menu" :id="`track-menu-${track.id}`">
                             <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
-                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏" @click="openAddToPlaylist(track.id)">
+                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏"
+                                @click="openAddToPlaylist(track.id)">
                             <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
                                 @click="openSongComment(track.id)">
                             <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
@@ -133,7 +136,7 @@
                         <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
                             :style="{ 'width': `${this.alWidth}px` }">
                             <!-- 6 专辑按钮 -->
-                            <button @click="handleAlbumClick(track.al.id)" class="album-button"
+                            <button @click="handleAlbumClick(track.al.id)" class="album-button font-color-standard"
                                 :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
                                 {{ trackAlTns(track.al.name, track.al.tns) }}
                             </button>
@@ -146,7 +149,8 @@
                                 style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
                         </div>
                         <!-- 5 时长 -->
-                        <div class="track-duration" v-if="showTrackDuration">{{ formatDuration(track.dt) }}</div>
+                        <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
+                            formatDuration(track.dt) }}</div>
                         <!-- 5 热度 -->
                         <div class="popularity" v-if="showTrackPopularity">
                             <div class="popularity-bar"
@@ -339,7 +343,7 @@ export default {
             }
         })
     },
-    beforeUnmount(){
+    beforeUnmount() {
         this.player.UnSubscribe({
             id: this.id,
             type: 'track',
@@ -565,14 +569,14 @@ export default {
         trackMouseEnter(id) {
             // console.log('trackMouseEnter', id);
             let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
-            if (dom){
+            if (dom) {
                 dom.style.display = 'flex';
             }
         },
         trackMouseLeave(id) {
             // console.log('trackMouseLeave', id);
             let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
-            if (dom){
+            if (dom) {
                 dom.style.display = 'none';
             }
         },
@@ -646,7 +650,6 @@ export default {
 /* 4 歌曲序号-表头 */
 .songsCounter {
     width: 50px;
-    color: #aaa;
 }
 
 /* 4 歌曲序号-表头悬停样式 */
@@ -659,7 +662,6 @@ export default {
 .songsName {
     flex: 1;
     text-align: left;
-    color: #fff;
 }
 
 /* 4 resize 控件 */
@@ -683,7 +685,6 @@ export default {
     padding-right: 10px;
     text-align: left;
     /* width: 230px; */
-    color: #ccc;
 }
 
 /* 4 喜欢-表头 */
@@ -710,7 +711,6 @@ export default {
 .songsDuration {
     width: 80px;
     text-align: left;
-    color: #aaa;
 }
 
 /* 5 排序按钮 */
@@ -720,7 +720,7 @@ export default {
     background: none;
     border: none;
     cursor: pointer;
-    color: #ccc;
+    color: var(--font-color-standard);
     text-align: left;
     width: 100%;
     border-radius: 5px;
@@ -834,7 +834,6 @@ li {
 .track-count {
     flex: 0 0 auto;
     width: 50px;
-    color: #aaa;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -861,7 +860,6 @@ li {
 /* 6 歌曲名称 */
 .track-name {
     text-align: left;
-    color: #fff;
     margin-bottom: 3px;
     white-space: nowrap;
     overflow: hidden;
@@ -871,7 +869,6 @@ li {
 
 /* 6 歌手名称 */
 .track-artist {
-    color: #aaa;
     white-space: nowrap;
     overflow: hidden;
     /* max-width: 90%; */
@@ -886,16 +883,10 @@ li {
     font-size: 13px;
     padding: 0%;
     margin: 0%;
-    color: #aaa;
     cursor: pointer;
     background-color: transparent;
     border: none;
     transition: all 0.3s;
-}
-
-/* 7 歌手按钮悬停样式 */
-.artist-button:hover {
-    color: #ccc;
 }
 
 /* 4 右侧对齐 */
@@ -940,7 +931,6 @@ li {
     max-width: 80%;
     padding: 0%;
     margin: 0%;
-    color: #ccc;
     font-size: 14px;
     cursor: pointer;
     background-color: transparent;
@@ -952,14 +942,13 @@ li {
 }
 
 .album-button:hover {
-    color: #fff;
+    color: var(--font-color-main);
 }
 
 /* 5 时长 */
 .track-duration {
     width: 80px;
     text-align: left;
-    color: #aaa;
     font-size: 14px;
 }
 </style>

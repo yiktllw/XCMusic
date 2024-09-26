@@ -1,5 +1,5 @@
 <template>
-    <div class="main">
+    <div class="main font-color-main">
         <div class="track" v-if="type === 'song'" :key="trackKey">
             <div class="cover" v-if="track.picUrl">
                 <img :src="track.picUrl + '?param=100y100'" />
@@ -85,14 +85,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .main {
     display: flex;
     flex-direction: column;
     text-align: left;
     overflow: hidden;
     padding: 20px;
-    color: #fff;
 }
 
 .track {
@@ -139,9 +138,12 @@ export default {
 .track-artist {
     font-size: 14px;
     margin-bottom: 5px;
-    color: #bbb;
+    color: var(--font-color-standard);
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
+    &:hover{
+        color: var(--font-color-main);
+    }
 }
 </style>

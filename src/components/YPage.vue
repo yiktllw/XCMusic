@@ -3,7 +3,7 @@ let page = defineModel(); // eslint-disable-line
 </script>
 
 <template>
-    <div class="page-main" v-if="page.total > 1">
+    <div class="page-main font-color-main" v-if="page.total > 1">
         <div class="previous" @click="page.previous">
             <img src="@/assets/backarrow.svg" class="arrow-img">
         </div>
@@ -60,7 +60,6 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    color: #fff;
     font-weight: bold;
     background-color: transparent;
 }

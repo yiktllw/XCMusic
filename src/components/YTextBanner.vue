@@ -119,7 +119,6 @@ export default {
 <style scoped>
 .main {
     display: flex;
-    color: #fff;
     height: 100%;
     white-space: nowrap;
     overflow: hidden;

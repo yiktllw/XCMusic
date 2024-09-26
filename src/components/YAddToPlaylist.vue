@@ -11,7 +11,7 @@
                     <div class="playlist" v-for="playlist in login.userPlaylists" :key="playlist.id"
                         @click="addToPlaylist(playlist.id)">
                         <img class="img" :src="playlist.img + '?param=50y50'" />
-                        <div class="playlist-name">{{ playlist.name }}</div>
+                        <div class="playlist-name font-color-high">{{ playlist.name }}</div>
                     </div>
                 </div>
             </YScroll>
@@ -151,7 +151,6 @@ export default {
 .playlist-name {
     margin-left: 10px;
     font-size: 16px;
-    color: #ddd;
     font-weight: bold;
 }
 </style>

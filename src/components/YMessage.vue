@@ -7,7 +7,7 @@
                 <img class="img error-img" src="@/assets/error.svg" v-else-if="type === 'error'" />
                 <img class="img warning-img" src="@/assets/warning.svg" v-else-if="type === 'warning'" />
                 <img class="img success-img" src="@/assets/success.svg" v-else-if="type === 'success'" />
-                <div class="message" :title="message">
+                <div class="message font-color-main" :title="message">
                     {{ message }}
                 </div>
                 <img class="img close-img" src="@/assets/close.svg" @click="showMsg = false" />
@@ -132,7 +132,6 @@ export default {
 .message {
     max-width: 432.1px;
     text-overflow: ellipsis;
-    color: #fff;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     line-clamp: 2;

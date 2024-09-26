@@ -2,7 +2,7 @@
     <YPanel :slide-direction="0" :default-show="false" :animation-time="0.1" :hideMode="'show'" ref="panel">
         <div class="container" id="contextMenu-main"
             v-bind:style="{ '--transform': _transform, '--top': posY, '--left': posX }" ref="container">
-            <div class="item" v-for="item in items" :key="item.label" @click="handleClick(item.role)">
+            <div class="item font-color-main" v-for="item in items" :key="item.label" @click="handleClick(item.role)">
                 <div class="item-content" v-if="item.display">
                     <img class="item-icon" :src="item.icon" v-if="item.icon" />
                     <div class="item-label">
@@ -108,7 +108,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #fff;
 }
 
 .item-content {

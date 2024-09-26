@@ -4,7 +4,7 @@
             <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
         </div>
         <div class="scrollable">
-            <button class="switch-user-playlist" @click="showMyPlaylist = !showMyPlaylist">
+            <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
                 <span>创建的歌单({{ userPlaylists.length }})</span>
                 <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
                 <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg"
@@ -12,7 +12,7 @@
             </button>
             <transition name="slide-fade">
                 <div class="fade-container" v-if="showMyPlaylist" :key="userPlaylists.length">
-                    <button class="playlist-button" v-for="button in userPlaylists" :key="button.id"
+                    <button class="playlist-button font-color-main" v-for="button in userPlaylists" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
@@ -21,7 +21,7 @@
                     </button>
                 </div>
             </transition>
-            <button class="switch-user-playlist" @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
+            <button class="switch-user-playlist font-color-main" @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
                 <span>收藏的歌单({{ userSubscribes.length }})</span>
                 <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
                 <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
@@ -29,7 +29,7 @@
             </button>
             <transition name="slide-fade">
                 <div class="fade-container" v-if="showMySubscribedPlaylist" :key="userSubscribes.length">
-                    <button class="playlist-button" v-for="button in userSubscribes" :key="button.id"
+                    <button class="playlist-button font-color-main" v-for="button in userSubscribes" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
@@ -137,33 +137,24 @@ export default {
 
 
 .title {
-    font-size: 18px;
-    color: #fff;
     user-select: none;
     padding: 10px;
     text-align: left;
-    /* Optional: Add background color */
     margin-bottom: 10px;
-    /* Optional: Add margin */
     -webkit-app-region: drag;
 }
 
 .sidebar {
     display: flex;
-    /* Optional: Add border radius */
     width: 200px;
     min-width: 180px;
     max-width: 260px;
-    /* Adjust the width as needed */
-    /* Add vertical scroll bar */
     padding: 0px;
-    /* Optional: Add padding */
     height: 100%;
     flex-direction: column;
 }
 
 .switch-user-playlist {
-    color: #bbb;
     display: inline-flex;
     align-items: center;
     background-color: transparent;
@@ -179,17 +170,17 @@ export default {
     vertical-align: middle;
     overflow: hidden;
     min-height: 40px;
+    opacity: 0.6;
 }
 
 .switch-user-playlist:hover {
-    color: #fff;
+    opacity: 1;
 }
 
 .switch-user-playlist-icon {
     width: 16px;
     height: 16px;
     transition: all 0.3s ease;
-    opacity: 0.6;
     padding-left: 5px;
 }
 
@@ -204,7 +195,6 @@ export default {
 }
 
 .playlist-button {
-    color: #eee;
     font-size: 12px;
     display: flex;
     text-align: left;
@@ -236,7 +226,6 @@ export default {
 }
 
 .playlist-button-text {
-    color: inherit;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     line-clamp: 2;

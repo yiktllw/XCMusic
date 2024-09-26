@@ -1,8 +1,8 @@
 <template>
     <!-- 0 滚动容器 -->
-    <div class="scrollable y-playlist-view" ref="scrollable">
+    <div class="scrollable y-playlist-view  font-color-main" ref="scrollable">
         <!-- 1 歌单视图 -->
-        <div class="playlist-view" ref="playlist_view">
+        <div class="playlist-view " ref="playlist_view">
             <!-- 2 歌单信息 -->
             <div class="playlist-info">
                 <!-- 3 歌单封面 -->
@@ -16,7 +16,7 @@
                     <!-- 4 播放次数 -->
                     <div class="play-info" v-if="type === 'playlist'">
                         <img src="../assets/play.svg" class="play-icon" />
-                        <span class="play-count">{{ playlist.playCount }}</span>
+                        <span class="play-count font-color-main">{{ playlist.playCount }}</span>
                     </div>
                 </div>
                 <!-- 3 歌单详情 -->
@@ -44,12 +44,12 @@
                                 style="background-color: #333;">创建者
                             </span>
                             <!-- 5 创建时间 -->
-                            <span class="create-time">
+                            <span class="create-time font-color-standard">
                                 {{ playlist.createTime }}创建
                             </span>
                         </div>
                         <!-- 4 创建信息 -->
-                        <div class="album-artist" v-else>
+                        <div class="album-artist font-color-high" v-else>
                             <span v-for="(artist, index) in playlist.artists" :key="artist.id">
                                 <!-- 5 歌手按钮 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
@@ -61,7 +61,7 @@
                         </div>
                         <div class="createrInfo" v-if="type === 'album'">
                             <!-- 5 创建时间 -->
-                            <span class="create-time-album">
+                            <span class="create-time-album font-color-standard">
                                 {{ playlist.createTime }}&nbsp;发布
                             </span>
                         </div>
@@ -70,7 +70,7 @@
                         <!-- 4 歌单按钮 -->
                         <div class="play-buttons">
                             <!-- 5 播放按钮 -->
-                            <button class="play-button" @click="playAll">
+                            <button class="play-button font-color-main" @click="playAll">
                                 <img src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
                                 <span style="padding-bottom: 2px;">
                                     播放
@@ -96,10 +96,10 @@
                             </button>
                             <!-- 5 搜索框 -->
                             <div class="input-wrapper">
-                                <input type="text" class="search-input"
-                                @keydown.enter="handleSearch($event.target.value, true)"
-                                @input="handleSearch($event.target.value, false)" placeholder="搜索..."
-                                spellcheck="false" />
+                                <input type="text" class="search-input font-color-main"
+                                    @keydown.enter="handleSearch($event.target.value, true)"
+                                    @input="handleSearch($event.target.value, false)" placeholder="搜索..."
+                                    spellcheck="false" />
                                 <img src="../assets/search.svg" class="img-search" />
                             </div>
                         </div>
@@ -112,7 +112,8 @@
                 <div class="orient-songs">
                     <!-- 4 歌曲按钮 -->
                     <button class="orient-button" @click="orient = 'songs'">
-                        <span :class="{ 'choosed-text': orient === 'songs' }" style="font-size: 16px; color:#fff;"
+                        <span :class="{ 'choosed-text': orient === 'songs' }"
+                            style="font-size: 16px; color:var(--font-color-main);"
                             :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? '#fff' : '#bbb' }">歌曲</span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
@@ -557,7 +558,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* 0 滚动容器 */
 .scrollable {
     display: flex;
@@ -663,7 +664,6 @@ export default {
 
 /* 4 播放次数 */
 .play-count {
-    color: #fff;
     font-size: 14px;
 }
 
@@ -695,7 +695,6 @@ export default {
 
 .album-artist {
     display: flex;
-    color: #eee;
     align-items: center;
     justify-content: flex-start;
     margin-bottom: 10px;
@@ -725,7 +724,6 @@ export default {
     font-weight: bold;
     margin-top: 0px;
     margin-bottom: 10px;
-    color: #fff;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -738,7 +736,6 @@ export default {
 }
 
 .create-time-album {
-    color: #bbb;
     font-size: 14px;
 }
 
@@ -752,12 +749,11 @@ export default {
 
 /* 5 创建者名称 */
 .creater-name {
-    color: #eee;
+    color: var(--font-color-high);
 }
 
 /* 5 创建时间 */
 .create-time {
-    color: #ccc;
     padding-bottom: 3px;
     padding-left: 10px;
 }
@@ -771,7 +767,6 @@ export default {
 
 /* 5 播放按钮 */
 .play-button {
-    color: #eee;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -794,7 +789,7 @@ export default {
 .download-button,
 /* 5 多选按钮 */
 .multichoice-button {
-    color: #eee;
+    color: var(--font-color-main);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -822,28 +817,28 @@ export default {
 .input-wrapper {
     position: relative;
     display: flex;
-    /* align-items: center;
-    justify-content: center; */
     margin-left: auto;
+    opacity: .5;
 }
 
 /* 5 搜索框 */
 .search-input {
-    filter: opacity(0.5);
-    /* background-image: url('../assets/search.svg'); */
-    /* background-repeat: no-repeat; */
-    /* background-position: left 10px center; */
-    /* 图片位置 */
-    /* background-size: 15px 15px; */
-    /* 图片大小 */
     padding: 8px 15px 8px 30px;
-    /* 为了确保文字不会覆盖图片 */
     background-color: rgba(255, 255, 255, 0.05);
-    color: #eee;
     border-style: none;
     border-radius: 100px;
     width: 50px;
     transition-duration: 0.3s;
+
+    &::placeholder {
+        user-select: none;
+        color: inherit;
+    }
+
+    &:focus {
+        width: 150px;
+        outline: none;
+    }
 }
 
 .img-search {
@@ -853,20 +848,7 @@ export default {
     transform: translateY(-50%);
     width: 15px;
     height: 15px;
-    opacity: 0.5;
     -webkit-user-drag: none;
-}
-
-/* 5 搜索框默认文字 */
-.search-input::placeholder {
-    user-select: none;
-    color: #fff;
-}
-
-/* 5 搜索框激活样式 */
-.search-input:focus {
-    width: 150px;
-    outline: none;
 }
 
 /* 2 切换歌曲或评论 */
@@ -877,7 +859,6 @@ export default {
 }
 
 .orient-button {
-    color: #eee;
     cursor: pointer;
     background-color: transparent;
     border-style: none;
@@ -892,26 +873,6 @@ export default {
 /* 3 评论 */
 .orient-comments {
     background-color: transparent;
-}
-
-/* 2 分页 */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-/* 2 分页按钮 */
-.pagination button {
-    color: #fff;
-    margin: 0 5px;
-    padding: 5px 10px;
-    border: none;
-    background-color: transparent;
-}
-
-.pagination button:hover {
-    cursor: pointer;
 }
 
 /* 2 分页按钮选中样式 */

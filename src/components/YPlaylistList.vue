@@ -3,7 +3,7 @@
         <!-- 3 表头 -->
         <div class="table-header" :style="{ top: stickyTop }" v-if="showHeader">
             <!-- 4 歌单序号-表头 -->
-            <div class="playlists-counter">
+            <div class="playlists-counter font-color-standard">
                 <div class="header-button header-counter">
                     <span>#</span>
                 </div>
@@ -15,18 +15,18 @@
                 </div>
             </div>
             <!-- 4 歌曲数量-表头 -->
-            <div class="playlists-track-count">
+            <div class="playlists-track-count font-color-standard ">
                 <div class="header-button">
                     <span>歌曲数</span>
                 </div>
             </div>
             <!-- 4 作者-表头 -->
-            <div class="playlists-author">
+            <div class="playlists-author font-color-standard">
                 <div class="header-button">
                     <span>{{ type === 'playlist' ? '创建者' : '作者' }}</span>
                 </div>
             </div>
-            <div class="play-count">
+            <div class="play-count font-color-standard">
                 <div class="header-button">
                     <span v-if="type === 'playlist'">播放量</span>
                     <span v-else>时间</span>
@@ -37,7 +37,7 @@
             <div class="playlists-item" v-for="(playlist, index) in playlists" :key="playlist.id"
                 @click="openPlaylist(playlist.id)">
                 <!-- 5 歌单序号 -->
-                <div class="playlists-counter">
+                <div class="playlists-counter font-color-standard">
                     <span>{{ index + 1 }}</span>
                 </div>
                 <!-- 5 歌单标题 -->
@@ -46,16 +46,16 @@
                     <span class="playlists-name-text">{{ playlist.name }}</span>
                 </div>
                 <!-- 5 歌曲数 -->
-                <div class="playlists-track-count" :title="playlist.trackCount">
+                <div class="playlists-track-count font-color-standard" :title="playlist.trackCount + '首'">
                     <span>{{ type === 'playlist' ? playlist.trackCount : playlist.size }}首</span>
                 </div>
                 <!-- 5 作者 -->
-                <div class="playlists-author"
+                <div class="playlists-author font-color-standard"
                     @click="openUserPage(type === 'playlist' ? playlist.creator.userId : playlist.artist.id)"
                     :title="type === 'playlist' ? playlist.creator?.nickname : playlist.artist?.name">
                     <span>{{ type === 'playlist' ? playlist.creator?.nickname : playlist.artist?.name }}</span>
                 </div>
-                <div class="play-count">
+                <div class="play-count font-color-standard">
                     <span v-if="(type === 'playlist')">{{ formatedPlayCount(playlist.playCount) }}</span>
                     <span v-else>{{ formatedTime(playlist.publishTime) }}</span>
                 </div>
@@ -136,7 +136,6 @@ export default {
 /* 4 歌曲序号-表头 */
 .playlists-counter {
     width: 50px;
-    color: #aaa;
 }
 
 /* 4 歌曲标题-表头 */
@@ -145,7 +144,6 @@ export default {
     flex: 1;
     text-align: left;
     align-items: center;
-    color: #fff;
     cursor: pointer;
     overflow: hidden;
     white-space: nowrap;
@@ -165,7 +163,6 @@ export default {
     padding-right: 10px;
     text-align: left;
     width: 160px;
-    color: #ccc;
     cursor: pointer;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -174,14 +171,12 @@ export default {
 .play-count {
     width: 100px;
     text-align: left;
-    color: #aaa;
 }
 
 /* 4 时长-表头 */
 .playlists-track-count {
     width: 100px;
     text-align: left;
-    color: #aaa;
 }
 
 /* 5 排序按钮 */
@@ -193,7 +188,7 @@ export default {
     padding-left: 6px;
     background: none;
     border: none;
-    color: #ccc;
+    color: var(--font-color-standard);
     text-align: left;
     width: 100%;
     border-radius: 5px;

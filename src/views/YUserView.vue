@@ -2,7 +2,7 @@
     <!-- 滚动容器 -->
     <YScroll style="max-height: 100%;">
         <!-- 用户/歌手界面 -->
-        <div class="container">
+        <div class="container font-color-main">
             <!-- 用户信息 -->
             <div class="user-info">
                 <!-- 头像 -->
@@ -18,19 +18,19 @@
                         {{ user.name }}
                     </div>
                     <!-- 用户等级 -->
-                    <div class="user-level" v-if="type === 'user'">
+                    <div class="user-level font-color-high" v-if="type === 'user'">
                         LV.{{ user.level }}
                     </div>
                     <!-- 歌手翻译名 -->
-                    <div class="trans-name" v-if="type === 'artist' && user.transName">
+                    <div class="trans-name font-color-high" v-if="type === 'artist' && user.transName">
                         {{ user.transName }}
                     </div>
                     <!-- 歌手身份 -->
-                    <div class="artist-identity" v-if="type === 'artist' && user.identity">
+                    <div class="artist-identity font-color-high" v-if="type === 'artist' && user.identity">
                         {{ user.identity }}
                     </div>
                     <!-- 关注/粉丝 -->
-                    <div class="user-follow" v-if="type === 'user'">
+                    <div class="user-follow font-color-high" v-if="type === 'user'">
                         <div>关注: {{ user.follows }}</div>
                         <div
                             style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
@@ -40,13 +40,13 @@
                 </div>
             </div>
             <!-- 导航 -->
-            <div class="switcher">
+            <div class="switcher font-color-standard">
                 <!-- 导航元素 -->
-                <button class="switcher-item" v-for="(item, index) in user.switcher" :key="index"
+                <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher" :key="index"
                     @click="handleSwitcher(item.position)">
                     <span :class="{ 'choosed-text': item.position === user.position }"
-                        style="font-size: 16px; color:#fff;"
-                        :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? '#fff' : '#bbb' }">{{
+                        style="font-size: 16px; color:var(--font-color-main);"
+                        :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">{{
                             item.display }}</span>
                     <!-- 选中效果 -->
                     <div class="choosed"
@@ -99,11 +99,11 @@
                         <YPlaylistBiglist type="album" :playlists="user.albums" />
                     </div>
                     <!-- 歌手简介 -->
-                    <div class="artist-intro" v-if="user.intro && user.position === 'detail'">
+                    <div class="artist-intro font-color-high" v-if="user.intro && user.position === 'detail'">
                         <div v-for="(item, index) in user.intro" :key="index">
                             <!-- 标题 -->
                             <div v-if="item.ti"
-                                style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: #ddd;">
+                                style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: var(--font-color-main);">
                                 {{ item.ti }}
                             </div>
                             <!-- 文本 -->
@@ -476,7 +476,6 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
-    color: #fff;
     /* align-items: center; */
     padding: 20px;
 }
@@ -502,7 +501,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    color: #fff;
     /* padding-top: 10px; */
     justify-content: center;
 }
@@ -516,7 +514,6 @@ export default {
 .user-level {
     font-size: 11px;
     font-weight: bold;
-    color: rgba(255, 255, 255, .8);
     border-radius: 10px;
     border: 1px solid #555;
     background-color: rgba(255, 255, 255, .05);
@@ -526,13 +523,11 @@ export default {
 
 .trans-name {
     font-size: 16px;
-    color: #bbb;
     font-weight: bold;
     margin: 6px 0px 6px 0px;
 }
 
 .artist-identity {
-    color: #bbb;
     margin: 6px 0px 20px 0px;
 }
 
@@ -540,14 +535,12 @@ export default {
     display: flex;
     flex-direction: row;
     margin: 6px 0px 30px 0px;
-    color: #eee;
     font-size: 16px;
     font-weight: bold;
 }
 
 .switcher {
     display: flex;
-    color: #bbb;
     font-size: 16px;
     align-items: center;
     padding-top: 10px;
@@ -605,7 +598,6 @@ export default {
 
 .artist-intro {
     margin: 0px 20px;
-    color: #bbb;
     text-align: left;
     line-height: 1.8em;
 }
