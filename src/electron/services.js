@@ -3,6 +3,8 @@
 import clc from 'cli-color';
 import server from 'NeteaseCloudMusicApi/server';
 import net from 'net';
+import fs from 'fs';
+import path from 'path';
 
 async function isPortInUse(port) {
     return new Promise((resolve, reject) => {
@@ -14,6 +16,10 @@ async function isPortInUse(port) {
 }
 
 export async function startNeteaseMusicApi() {
+    const tmpPath = require('os').tmpdir()
+    if (!fs.existsSync(path.resolve(tmpPath, 'anonymous_token'))) {
+        fs.writeFileSync(path.resolve(tmpPath, 'anonymous_token'), '', 'utf-8')
+    }
     // Let user know that the service is starting
     console.log(`${clc.redBright('[NetEase API]')} initiating NCM API`);
 
@@ -40,5 +46,7 @@ export async function startNeteaseMusicApi() {
             port: 10754,
             moduleDefs: require('../ncmModDef'),
         });
+    } else {
+        console.log(`${clc.redBright('[NetEase API]')} NCM API is already running on port 10754`);
     }
 }
