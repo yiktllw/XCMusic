@@ -66,70 +66,70 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .progress-bigframe {
     display: flex;
     width: 100%;
     height: 100%;
     align-items: center;
     position: relative;
-}
 
-.progress-bar {
-    width: 100%;
-    height: 5px;
-    position: relative;
-    cursor: pointer;
-}
+    .progress-bar {
+        width: 100%;
+        height: 5px;
+        position: relative;
+        cursor: pointer;
 
-.progress-fill {
-    width: 100%;
-    height: 100%;
-    background-color: rgb(254, 60, 90);
-    border-radius: 10px;
-}
+        .progress-fill {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(254, 60, 90);
+            border-radius: 10px;
+        }
 
-.progress-fill-corner {
-    width: 5px;
-    height: 5px;
-    background-color: rgb(254, 60, 90);
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    z-index: 2;
-}
+        .progress-pointer {
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: -3.0px;
+            z-index: 3;
+            opacity: 0;
+        }
 
-.progress-pointer {
-    width: 10px;
-    height: 10px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: -3.0px;
-    z-index: 3;
-    opacity: 0;
+        .overflow-hidden {
+            position: relative;
+            width: 100%;
+            top: -5px;
+            height: 5px;
+            border-radius: 5px;
+            overflow: hidden;
+
+            .progress-fill-corner {
+                width: 5px;
+                height: 5px;
+                background-color: rgb(254, 60, 90);
+                border-radius: 50%;
+                position: absolute;
+                top: 0;
+                z-index: 2;
+            }
+
+            .progress-track {
+                position: absolute;
+                top: 0;
+                width: 120%;
+                height: 5px;
+                background-color: #555;
+                border-radius: 10px;
+                z-index: 1;
+            }
+        }
+    }
 }
 
 .progress-bigframe:hover .progress-pointer {
     opacity: 1;
-}
-
-.overflow-hidden {
-    position: relative;
-    width: 100%;
-    top: -5px;
-    height: 5px;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-track {
-    position: absolute;
-    top: 0;
-    width: 120%;
-    height: 5px;
-    background-color: #555;
-    border-radius: 10px;
-    z-index: 1;
 }
 </style>

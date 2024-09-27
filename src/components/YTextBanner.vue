@@ -116,7 +116,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .main {
     display: flex;
     height: 100%;

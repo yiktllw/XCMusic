@@ -92,58 +92,59 @@ export default {
     text-align: left;
     overflow: hidden;
     padding: 20px;
-}
 
-.track {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .track {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 20px;
 
-.cover {
-    width: 100px;
-    height: 100px;
-    margin-right: 10px;
-}
+        .cover {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
 
-.cover img {
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-}
+            img {
+                width: 100px;
+                height: 100px;
+                border-radius: 10px;
+            }
+        }
 
-.placeholder {
-    background-color: #333;
-    border-radius: 10px;
-}
+        .placeholder {
+            background-color: #333;
+            border-radius: 10px;
+        }
 
-.info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
+        .info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
 
-.track-name {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+            .track-name {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
 
-.track-album,
-.track-artist {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: var(--font-color-standard);
-    cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    &:hover{
-        color: var(--font-color-main);
+            .track-album,
+            .track-artist {
+                font-size: 14px;
+                margin-bottom: 5px;
+                color: var(--font-color-standard);
+                cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                &:hover {
+                    color: var(--font-color-main);
+                }
+            }
+        }
     }
 }
 </style>

@@ -472,133 +472,130 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     padding: 20px;
-}
 
-.user-info {
-    display: flex;
-    /* padding: 10px; */
-    margin-bottom: 10px;
-}
+    .user-info {
+        display: flex;
+        margin-bottom: 10px;
 
-.avatar {
-    margin-right: 20px;
-}
+        .avatar {
+            margin-right: 20px;
 
-.avatar-img {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
+            .avatar-img {
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
 
-}
+            }
+        }
 
-.user-info-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    /* padding-top: 10px; */
-    justify-content: center;
-}
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
 
-.user-name {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 6px 0px;
-}
+        .user-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 6px 0px;
+        }
 
-.user-level {
-    font-size: 11px;
-    font-weight: bold;
-    border-radius: 10px;
-    border: 1px solid #555;
-    background-color: rgba(255, 255, 255, .05);
-    padding: 2px 6px;
-    margin: 6px 0px;
-}
+        .user-level {
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 10px;
+            border: 1px solid #555;
+            background-color: rgba(255, 255, 255, .05);
+            padding: 2px 6px;
+            margin: 6px 0px;
+        }
 
-.trans-name {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 6px 0px 6px 0px;
-}
+        .trans-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 6px 0px 6px 0px;
+        }
 
-.artist-identity {
-    margin: 6px 0px 20px 0px;
-}
+        .artist-identity {
+            margin: 6px 0px 20px 0px;
+        }
 
-.user-follow {
-    display: flex;
-    flex-direction: row;
-    margin: 6px 0px 30px 0px;
-    font-size: 16px;
-    font-weight: bold;
-}
+        .user-follow {
+            display: flex;
+            flex-direction: row;
+            margin: 6px 0px 30px 0px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    }
 
-.switcher {
-    display: flex;
-    font-size: 16px;
-    align-items: center;
-    padding-top: 10px;
-    margin-left: 10px;
-    padding-bottom: 20px;
-    /* position: sticky; */
-    top: 0px;
-    z-index: 1;
-    width: 100%;
-    backdrop-filter: blur(10px);
-    /* mix-blend-mode: multiply; */
-}
+    .switcher {
+        display: flex;
+        font-size: 16px;
+        align-items: center;
+        padding-top: 10px;
+        margin-left: 10px;
+        padding-bottom: 20px;
+        top: 0px;
+        z-index: 1;
+        width: 100%;
+        backdrop-filter: blur(10px);
 
-.switcher-item {
-    height: 20px;
-    margin: 0 7px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
+        .switcher-item {
+            height: 20px;
+            margin: 0 7px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
 
-.choosed-text {
-    color: rgb(254, 80, 110);
-}
+            .choosed-text {
+                color: rgb(254, 80, 110);
+            }
 
-.choosed {
-    height: 2px;
-    background-color: rgb(254, 60, 90);
-    transform: translateY(1px);
-    transform: translateX(1px);
-}
+            .choosed {
+                height: 2px;
+                background-color: rgb(254, 60, 90);
+                transform: translateY(1px);
+                transform: translateX(1px);
+            }
+        }
 
-.list-icon {
-    width: 20px;
-    height: 20px;
-    margin: 0px 10px;
-    cursor: pointer;
-}
+        .right-switcher {
+            .list-icon {
+                width: 20px;
+                height: 20px;
+                margin: 0px 10px;
+                cursor: pointer;
+            }
+        }
+    }
 
-.content {
-    display: flex;
-}
+    .content {
+        display: flex;
 
-.content-user {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
+        .content-user {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
 
-.content-artist {
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 20px);
-}
+        .content-artist {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 20px);
 
-.artist-intro {
-    margin: 0px 20px;
-    text-align: left;
-    line-height: 1.8em;
+            .artist-intro {
+                margin: 0px 20px;
+                text-align: left;
+                line-height: 1.8em;
+            }
+        }
+    }
 }
 </style>

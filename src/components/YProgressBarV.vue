@@ -44,7 +44,7 @@ export default {
         updateProgressEvent(e) {
             this.updateProgress(e.clientY);
         },
-        onClick(e){
+        onClick(e) {
             this.updateProgress(e.clientY);
             this.$emit('set-progress-end');
         },
@@ -61,7 +61,7 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .progress-bigframe {
     display: flex;
     width: 100%;
@@ -69,57 +69,56 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
-}
 
-.progress-bar {
-    width: 5px;
-    height: 100%;
-    position: relative;
-    cursor: pointer;
-}
+    .progress-bar {
+        width: 5px;
+        height: 100%;
+        position: relative;
+        cursor: pointer;
 
-.progress-fill {
-    width: 100%;
-    height: 100%;
-    background-color: rgb(254, 60, 90);
-    border-radius: 10px;
-}
+        .progress-fill {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(254, 60, 90);
+            border-radius: 10px;
+        }
 
-.progress-fill-corner {
-    width: 5px;
-    height: 5px;
-    background-color: rgb(254, 60, 90);
-    border-radius: 50%;
-    position: absolute;
-    z-index: 2;
-}
+        .progress-pointer {
+            width: 13px;
+            height: 13px;
+            left: -4px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 3;
+        }
 
-.progress-pointer {
-    width: 13px;
-    height: 13px;
-    left: -4px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    z-index: 3;
-}
+        .overflow-hidden {
+            position: relative;
+            width: 5px;
+            bottom: 100%;
+            height: 100%;
+            border-radius: 5px;
+            overflow: hidden;
 
-.overflow-hidden {
-    position: relative;
-    width: 5px;
-    bottom:100%;
-    height: 100%;
-    border-radius: 5px;
-    overflow: hidden;
-    /* transform: translateY(-200%); */
-}
+            .progress-fill-corner {
+                width: 5px;
+                height: 5px;
+                background-color: rgb(254, 60, 90);
+                border-radius: 50%;
+                position: absolute;
+                z-index: 2;
+            }
 
-.progress-track {
-    position: absolute;
-    width: 5px;
-    height: 120%;
-    background-color: #555;
-    border-radius: 10px;
-    z-index: 1;
+            .progress-track {
+                position: absolute;
+                width: 5px;
+                height: 120%;
+                background-color: #555;
+                border-radius: 10px;
+                z-index: 1;
+            }
+        }
+    }
 }
 </style>

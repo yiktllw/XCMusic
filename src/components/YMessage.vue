@@ -98,7 +98,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .slide-fade-enter-active {
     transition: all var(--animation-time) ease-out;
 }
@@ -127,35 +127,35 @@ export default {
     align-items: center;
     display: flex;
     flex-direction: row;
-}
 
-.message {
-    max-width: 432.1px;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-}
+    .img {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        margin-right: 5px;
+    }
 
-.img {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    margin-right: 5px;
-}
+    .warning-img {
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+    }
 
-.warning-img {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-}
+    .message {
+        max-width: 432.1px;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
 
-.close-img {
-    width: 14px;
-    height: 14px;
-    margin: 0px 5px 0px 10px;
-    cursor: pointer;
+    .close-img {
+        width: 14px;
+        height: 14px;
+        margin: 0px 5px 0px 10px;
+        cursor: pointer;
+    }
 }
 </style>

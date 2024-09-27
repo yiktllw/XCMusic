@@ -1,4 +1,3 @@
-
 <template>
     <div class="comment-main" :key="key">
         <div class="header">
@@ -107,142 +106,139 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .comment-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     height: 100%;
-}
 
-.header {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-}
+    .header {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
 
-.header-left {
-    display: flex;
-    flex-direction: row;
-}
+        .header-left {
+            display: flex;
+            font-weight: bold;
 
-.comment-count {
-    font-size: .8rem;
-    font-weight: bold;
-}
+            .comment-title {
+                font-size: 1.2rem;
+            }
 
-.comment-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
+            .comment-count {
+                font-size: .8rem;
+            }
+        }
 
-.header-right {
-    display: flex;
-    flex-direction: row;
-}
+        .header-right {
+            display: flex;
 
-.sort-now {
-    color: rgb(106, 110, 213);
-}
+            .sort-now {
+                color: rgb(106, 110, 213);
+            }
 
-.sort-item {
-    cursor: pointer;
-    padding: 5px;
-    margin: 5px;
-    font-size: .9rem;
-}
+            .sort-item {
+                cursor: pointer;
+                padding: 5px;
+                margin: 5px;
+                font-size: .9rem;
+            }
+        }
+    }
 
-.comment-content {
-    margin: 20px 0px;
-    width: 100%;
-}
+    .comment-content {
+        margin: 20px 0px;
+        width: 100%;
+    }
 
-.comment-item {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    text-align: left;
-}
+    .comment-item {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        text-align: left;
 
-.content {
-    display: flex;
-    flex-direction: row;
-    width: calc(100% - 20px);
-    text-align: left;
-}
+        .content {
+            display: flex;
+            flex-direction: row;
+            width: calc(100% - 20px);
+            text-align: left;
 
-.comment-line {
-    width: calc(100% - 80px);
-    height: 1px;
-    background-color: rgba(255, 255, 255, 0.1);
-    margin: 15px 30px 15px 50px;
-}
+            .comment-avatar {
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
+                cursor: pointer;
 
-.after-avatar {
-    width: calc(100% - 80px);
-    display: flex;
-    flex-direction: column;
-}
+                .avatar-img {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                }
+            }
 
-.comment-avatar {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-    cursor: pointer;
-}
+            .after-avatar {
+                width: calc(100% - 80px);
+                display: flex;
+                flex-direction: column;
 
-.avatar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
+                .comment-user {
+                    font-size: 1rem;
+                    color: rgb(106, 110, 213);
+                    cursor: pointer;
+                    width: 100%;
+                }
 
-.comment-user {
-    font-size: 1rem;
-    color: rgb(106, 110, 213);
-    cursor: pointer;
-    width: 100%;
-}
+                .comment-text {
+                    font-size: 1rem;
+                    margin: 5px 0px;
+                    width: 100%;
+                }
 
-.comment-text {
-    font-size: 1rem;
-    margin: 5px 0px;
-    width: 100%;
-}
+                .bottom {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    width: 100%;
 
-.bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-}
+                    .comment-time {
+                        margin-top: 5px;
+                        font-size: 0.9rem;
+                        font-weight: bold;
+                    }
 
-.comment-time {
-    margin-top: 5px;
-    font-size: 0.9rem;
-    font-weight: bold;
-}
+                    .comment-like {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        font-size: 1.1rem;
+                        font-weight: bold;
 
-.comment-like {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-}
+                        .like-img {
+                            width: 20px;
+                            height: 20px;
+                            margin-left: 5px;
+                            margin-bottom: 3px;
+                            opacity: .8;
+                        }
+                    }
+                }
+            }
+        }
 
-.like-img {
-    width: 20px;
-    height: 20px;
-    margin-left: 5px;
-    margin-bottom: 3px;
-    opacity: .8;
-}
+        .comment-line {
+            width: calc(100% - 80px);
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 15px 30px 15px 50px;
+        }
+    }
 
-.ypage {
-    margin-bottom: 20px;
+    .ypage {
+        margin-bottom: 20px;
+    }
 }
 </style>

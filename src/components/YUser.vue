@@ -26,7 +26,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .user-avatar {
     width: 40px;

@@ -88,7 +88,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
     position: fixed;
     display: flex;
@@ -102,38 +102,38 @@ export default {
     top: var(--top);
     left: var(--left);
     z-index: 100;
-}
 
-.item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-.item-content {
-    display: flex;
-    width: calc(100% - 20px);
-    align-items: center;
-    flex-direction: row;
-    cursor: pointer;
-    height: 25px;
-    padding: 5px 10px;
-    opacity: .8;
-}
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
-.item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+        .item-content {
+            display: flex;
+            width: calc(100% - 20px);
+            align-items: center;
+            flex-direction: row;
+            cursor: pointer;
+            height: 25px;
+            padding: 5px 10px;
+            opacity: .8;
 
-.item-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 7px;
-}
+            .item-icon {
+                width: 16px;
+                height: 16px;
+                margin-right: 7px;
+            }
+        }
 
-.separator {
-    width: calc(100% - 20px);
-    height: 1px;
-    background-color: rgba(255, 255, 255, 0.1);
+        .separator {
+            width: calc(100% - 20px);
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
 }
 </style>

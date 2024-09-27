@@ -21,7 +21,8 @@
                     </button>
                 </div>
             </transition>
-            <button class="switch-user-playlist font-color-main" @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
+            <button class="switch-user-playlist font-color-main"
+                @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
                 <span>收藏的歌单({{ userSubscribes.length }})</span>
                 <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
                 <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
@@ -120,7 +121,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .slide-fade-enter-active {
     transition: all 0.15s ease-out;
 }
@@ -135,15 +136,6 @@ export default {
     opacity: 0;
 }
 
-
-.title {
-    user-select: none;
-    padding: 10px;
-    text-align: left;
-    margin-bottom: 10px;
-    -webkit-app-region: drag;
-}
-
 .sidebar {
     display: flex;
     width: 200px;
@@ -152,135 +144,124 @@ export default {
     padding: 0px;
     height: 100%;
     flex-direction: column;
-}
 
-.switch-user-playlist {
-    display: inline-flex;
-    align-items: center;
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    padding-left: 5px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    transition: all 0.3s ease;
-    user-select: none;
-    white-space: nowrap;
-    vertical-align: middle;
-    overflow: hidden;
-    min-height: 40px;
-    opacity: 0.6;
-}
+    .title {
+        user-select: none;
+        padding: 10px;
+        text-align: left;
+        margin-bottom: 10px;
+        -webkit-app-region: drag;
+    }
 
-.switch-user-playlist:hover {
-    opacity: 1;
-}
+    .scrollable {
+        display: flex;
+        padding-left: 15pt;
+        padding-right: 15pt;
+        flex-direction: column;
+        overflow-y: auto;
+        max-height: 100%;
 
-.switch-user-playlist-icon {
-    width: 16px;
-    height: 16px;
-    transition: all 0.3s ease;
-    padding-left: 5px;
-}
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
 
-.switch-user-playlist:hover .switch-user-playlist-icon {
-    opacity: 1;
-}
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-.fade-container {
-    display: inherit;
-    /* position: absolute; */
-    flex-direction: inherit;
-}
+        &::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 6px;
+        }
 
-.playlist-button {
-    font-size: 12px;
-    display: flex;
-    text-align: left;
-    align-items: center;
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    padding: 6px 7px 6px 5px;
-    margin: 3px 0px 3px 0px;
-    transition: all 0.3s ease;
-    -webkit-app-region: no-drag;
-    user-select: none;
-    white-space: normal;
-    /* overflow: hidden; */
-    height: 40px;
-    width: 100%;
-    /* -webkit-box-orient: vertical; */
-    /* -webkit-line-clamp: 2; */
-    /* text-overflow: ellipsis; */
-}
+        &:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
-.activeButton {
-    background-color: rgb(254, 60, 90);
-}
+        &:hover::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
-.playlist-button:hover:not(.activeButton) {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+        &>* {
+            margin-bottom: 5px;
+        }
 
-.playlist-button-text {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-}
+        .switch-user-playlist {
+            display: inline-flex;
+            align-items: center;
+            background-color: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            padding-left: 5px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            transition: all 0.3s ease;
+            user-select: none;
+            white-space: nowrap;
+            vertical-align: middle;
+            overflow: hidden;
+            min-height: 40px;
+            opacity: 0.6;
 
-.button-icon {
-    margin-right: 8px;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-}
+            &:hover {
+                opacity: 1;
+            }
 
-.scrollable {
-    display: flex;
-    padding-left: 15pt;
-    padding-right: 15pt;
-    flex-direction: column;
-    overflow-y: auto;
-    max-height: 100%;
-}
+            .switch-user-playlist-icon {
+                width: 16px;
+                height: 16px;
+                padding-left: 5px;
+            }
+        }
 
-/* 默认情况下滚动条透明 */
-.scrollable::-webkit-scrollbar {
-    width: 6px;
-    /* 滚动条宽度 */
-}
+        .fade-container {
+            display: inherit;
+            flex-direction: inherit;
 
-.scrollable::-webkit-scrollbar-track {
-    background: transparent;
-    /* 滚动条轨道背景 */
-}
+            .playlist-button {
+                font-size: 12px;
+                display: flex;
+                text-align: left;
+                align-items: center;
+                background-color: transparent;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                padding: 6px 7px 6px 5px;
+                margin: 3px 0px 3px 0px;
+                transition: all 0.3s ease;
+                -webkit-app-region: no-drag;
+                user-select: none;
+                white-space: normal;
+                height: 40px;
+                width: 100%;
 
-.scrollable::-webkit-scrollbar-thumb {
-    background: transparent;
-    /* 滚动条滑块背景 */
-    border-radius: 6px;
-    /* 滚动条滑块圆角 */
-}
+                &:hover:not(.activeButton) {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
 
-/* 鼠标悬停时显示滚动条 */
-.scrollable:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.1);
-    /* 滚动条滑块背景 */
-}
+                .button-icon {
+                    margin-right: 8px;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 5px;
+                }
 
-.scrollable:hover::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    /* 滚动条滑块悬停背景 */
-}
+                .playlist-button-text {
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    line-clamp: 2;
+                    -webkit-line-clamp: 2;
+                    overflow: hidden;
+                }
+            }
 
-.scrollable>* {
-    margin-bottom: 5px;
-    /* Optional: Add space between buttons */
+            .activeButton {
+                background-color: rgb(254, 60, 90);
+            }
+        }
+    }
 }
 
 .resizer {

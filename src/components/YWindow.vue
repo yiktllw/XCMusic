@@ -40,43 +40,42 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .window {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgb(45, 45, 55);
-    /* border: 1px solid #000; */
     width: 100%;
     border-radius: 5px;
     padding: 10px 0px;
     margin: 10px;
-}
 
-.window-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: calc(100% - 30px);
-    padding: 0px 15px 10px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
-}
+    .window-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: calc(100% - 30px);
+        padding: 0px 15px 10px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, .1);
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.close-icon {
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-    opacity: .7;
-}
+        .close-icon {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            opacity: .7;
 
-.close-icon:hover {
-    opacity: 1;
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
 }
 </style>

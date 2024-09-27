@@ -127,7 +127,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .slide-fade-enter-active {
     transition: all var(--animation-time) ease-out;
 }

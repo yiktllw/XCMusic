@@ -19,18 +19,18 @@ html {
 
 // 定义亮色主题颜色
 .theme-dark {
-    --font-color-main: #000;
-    --font-color-high: #333;
-    --font-color-standard: #666;
-    --font-color-low: #999;
-}
-
-// 定义暗色主题颜色
-.theme-light {
     --font-color-main: #fff;
     --font-color-high: #ccc;
     --font-color-standard: #999;
     --font-color-low: #666;
+}
+
+// 定义暗色主题颜色
+.theme-light {
+    --font-color-main: #000;
+    --font-color-high: #333;
+    --font-color-standard: #666;
+    --font-color-low: #999;
 }
 
 .font-color-main {

@@ -11,26 +11,26 @@ export default {
     name: 'YGreetingView',
     mounted() {
         setBackgroundColor({
-            r:19,
-            g:19,
-            b:25,
+            r: 19,
+            g: 19,
+            b: 25,
         });
     }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-}
 
-.full-width-image {
-    width: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    .full-width-image {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
 }
 </style>

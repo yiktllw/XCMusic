@@ -114,12 +114,12 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .add-to-playlist {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 400px;
+    width: 432.1px;
 }
 
 .playlists {
@@ -127,30 +127,30 @@ export default {
     flex-direction: column;
     width: calc(100% - 20px);
     padding: 10px 10px;
-}
 
-.playlist {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 11px 15px 11px 15px;
-    border-radius: 10px;
-    background-color: rgb(45, 45, 55);
-}
+    .playlist {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 11px 15px 11px 15px;
+        border-radius: 10px;
+        background-color: rgb(45, 45, 55);
 
-.playlist:hover {
-    background-color: rgba(255, 255, 255, .1);
-}
+        .img {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+        }
 
-.img {
-    width: 50px;
-    height: 50px;
-    border-radius: 6px;
-}
+        .playlist-name {
+            margin-left: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
-.playlist-name {
-    margin-left: 10px;
-    font-size: 16px;
-    font-weight: bold;
+        &:hover {
+            background-color: rgba(255, 255, 255, .1);
+        }
+    }
 }
 </style>

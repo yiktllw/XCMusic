@@ -624,79 +624,74 @@ export default {
 
 </script>
 
-<style scoped>
-/* 2 歌曲列表 */
+<style lang="scss" scoped>
 .table-container {
     display: flex;
     max-width: 100vw;
     flex-direction: column;
+
+    .table-header {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        justify-content: space-between;
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        .header-button {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--font-color-standard);
+            text-align: left;
+            width: 100%;
+            border-radius: 5px;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .songsCounter {
+            width: 50px;
+
+            .header-button:hover {
+                cursor: initial;
+                background-color: transparent;
+            }
+        }
+
+        .songsName {
+            flex: 1;
+            text-align: left;
+        }
+    }
 }
 
-/* 3 表头 */
-.table-header {
-    display: flex;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    justify-content: space-between;
-    /* background-color: rgba(255, 255, 255, 0.8); */
-    /* 设置一个半透明的背景 */
-    backdrop-filter: blur(8px);
-    /* 给背景增加模糊效果 */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    /* 增加边框以视觉分离 */
-}
-
-/* 4 歌曲序号-表头 */
-.songsCounter {
-    width: 50px;
-}
-
-/* 4 歌曲序号-表头悬停样式 */
-.songsCounter .header-button:hover {
-    cursor: initial;
-    background-color: transparent;
-}
-
-/* 4 歌曲标题-表头 */
-.songsName {
-    flex: 1;
-    text-align: left;
-}
-
-/* 4 resize 控件 */
 .resizer {
     width: 5px;
-    /* 调整宽度，增加点击区域 */
     cursor: ew-resize;
-    /* 鼠标悬停时显示列调整光标 */
     background-color: transparent;
-    /* 默认情况下透明 */
     top: 0;
     right: 0;
     bottom: 0;
-    /* z-index: 10; */
-    /* 确保它位于其他内容之上 */
 }
 
-/* 4 专辑-表头 */
 .songsAlbum {
-    /* padding-left: 10px; */
     padding-right: 10px;
     text-align: left;
-    /* width: 230px; */
 }
 
-/* 4 喜欢-表头 */
-/* 4 喜欢 */
 .likes {
     width: 60px;
-}
 
-/* 4 喜欢-表头悬停样式 */
-.likes .header-button:hover {
-    cursor: initial;
-    background-color: transparent;
+    .header-button:hover {
+        cursor: initial;
+        background-color: transparent;
+    }
 }
 
 .popularity {
@@ -707,37 +702,16 @@ export default {
     width: 80px;
 }
 
-/* 4 时长-表头 */
 .songsDuration {
     width: 80px;
     text-align: left;
 }
 
-/* 5 排序按钮 */
-.header-button {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--font-color-standard);
-    text-align: left;
-    width: 100%;
-    border-radius: 5px;
-    /* transition: all 0.3s; */
-}
 
-/* 5 排序按钮悬停样式 */
-.header-button:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* 5 歌曲序号-表头按钮 */
 .header-counter {
-    text-align: center;
+    text-align: center !important;
 }
 
-/* 6 排序内容 */
 .sort-content {
     position: relative;
     display: inline-block;
@@ -745,35 +719,29 @@ export default {
     background-color: transparent;
     border: none;
     opacity: 0;
-    /* transition: all 0.3s; */
+
+    .header-button:hover & {
+        opacity: 1;
+    }
+
+    .sort-icon {
+        opacity: 0.6;
+        width: 10px;
+        height: 10px;
+        margin-left: 5px;
+    }
 }
 
-/* 6 排序内容悬停样式 */
-.header-button:hover .sort-content {
-    opacity: 1;
-}
-
-/* 7 排序图标 */
-.sort-icon {
-    opacity: 0.6;
-    width: 10px;
-    height: 10px;
-    margin-left: 5px;
-}
-
-/* 3 歌曲列表内容 */
 ul {
     list-style-type: none;
     padding: 0;
     margin: 5px 0 0 0;
+
+    li {
+        margin-bottom: 5px;
+    }
 }
 
-/* 3 歌曲列表内容 */
-li {
-    margin-bottom: 5px;
-}
-
-/* 3 歌曲列表内容 */
 .track-item {
     display: flex;
     flex-direction: column;
@@ -783,172 +751,155 @@ li {
     margin: 0px;
     padding: 7px 0px 7px 0px;
     border-radius: 10px;
-    /* transition: all 0.3s; */
-}
 
-/* 3 歌曲列表内容悬停样式 */
-.track-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 
-.track-item:focus {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+    &:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 
-.align-up {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
-}
+    .align-up {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
 
-.align-down {
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /* align-items: ; */
-    justify-content: space-between;
-}
+        .align-left {
+            display: flex;
+            margin-right: 10px;
+            flex: 1;
+            align-items: center;
+            overflow: hidden;
 
-.lyrics {
-    width: 100%;
-    text-align: left;
-    max-height: 5em;
-    white-space: pre-wrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+            .track-count {
+                flex: 0 0 auto;
+                width: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
-/* 4 左侧对齐 */
-.align-left {
-    display: flex;
-    margin-right: 10px;
-    flex: 1;
-    align-items: center;
-    /* 使歌曲信息不会溢出 */
-    overflow: hidden;
-}
+            .track-cover {
+                width: 40px;
+                height: 40px;
+                border-radius: 5px;
+                user-select: none;
+                -webkit-user-drag: none;
+            }
 
-/* 5 歌曲序号 */
-.track-count {
-    flex: 0 0 auto;
-    width: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+            .track-info {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+                min-width: 0;
+                text-align: left;
 
-/* 5 封面图片 */
-.track-cover {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    user-select: none;
-    -webkit-user-drag: none;
-}
+                .track-name {
+                    text-align: left;
+                    margin-bottom: 3px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: 15px;
+                }
 
-/* 5 歌曲信息 */
-.track-info {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    min-width: 0;
-    text-align: left;
-}
+                .track-artist {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-align: left;
 
-/* 6 歌曲名称 */
-.track-name {
-    text-align: left;
-    margin-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 15px;
-}
+                    .artist-button {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-size: 13px;
+                        padding: 0%;
+                        margin: 0%;
+                        cursor: pointer;
+                        background-color: transparent;
+                        border: none;
+                        transition: all 0.3s;
+                    }
+                }
+            }
+        }
 
-/* 6 歌手名称 */
-.track-artist {
-    white-space: nowrap;
-    overflow: hidden;
-    /* max-width: 90%; */
-    text-overflow: ellipsis;
-    text-align: left;
-}
+        .align-right {
+            display: flex;
+            align-items: center;
 
-/* 7 歌手按钮 */
-.artist-button {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 13px;
-    padding: 0%;
-    margin: 0%;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    transition: all 0.3s;
-}
+            .track-menu {
+                display: none;
+                align-items: center;
+                justify-content: center;
+                width: 130px;
+                padding-right: 10px;
 
-/* 4 右侧对齐 */
-.align-right {
-    display: flex;
-    align-items: center;
-}
+                .track-menu-icon {
+                    width: 24px;
+                    height: 24px;
+                    opacity: .6;
+                    margin: 0px 5px;
+                    cursor: pointer;
 
-.track-menu {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 130px;
-    padding-right: 10px;
-}
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
 
-.track-menu-icon {
-    width: 24px;
-    height: 24px;
-    opacity: .6;
-    margin: 0px 5px;
-    cursor: pointer;
-}
+            .track-album {
+                padding-right: 10px;
+                text-align: left;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
 
-.track-menu-icon:hover {
-    opacity: 1;
-}
+                .album-button {
+                    max-width: 80%;
+                    padding: 0%;
+                    margin: 0%;
+                    font-size: 14px;
+                    cursor: pointer;
+                    background-color: transparent;
+                    border: none;
+                    max-width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
 
-/* 5 专辑名称 */
-.track-album {
-    /* padding-left: 10px; */
-    padding-right: 10px;
-    text-align: left;
-    /* width: 230px; */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+                    &:hover {
+                        color: var(--font-color-main);
+                    }
+                }
+            }
 
-/* 6 专辑按钮 */
-.album-button {
-    max-width: 80%;
-    padding: 0%;
-    margin: 0%;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+            .track-duration {
+                width: 80px;
+                text-align: left;
+                font-size: 14px;
+            }
+        }
 
-.album-button:hover {
-    color: var(--font-color-main);
-}
+    }
 
-/* 5 时长 */
-.track-duration {
-    width: 80px;
-    text-align: left;
-    font-size: 14px;
+    .align-down {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        justify-content: space-between;
+
+        .lyrics {
+            width: 100%;
+            text-align: left;
+            max-height: 5em;
+            white-space: pre-wrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
 }
 </style>

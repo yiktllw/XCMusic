@@ -1,6 +1,6 @@
 <template>
     <!-- 主容器 -->
-    <div class="mainContainer">
+    <div class="mainContainer ">
         <div class="align-up">
             <div class="align-left">
                 <!-- 侧边栏 -->
@@ -198,19 +198,19 @@ export default {
                     break;
                 case 'song-copylink':
                     navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
-                    .then(()=>{
-                        Message.post(new YMessageC({
-                            type: 'success',
-                            message: '链接已复制',
-                        }));
-                    })
-                    .catch((error) => {
-                        Message.post(new YMessageC({
-                            type: 'error',
-                            message: `复制链接失败: ${error}`,
-                        }));
-                        console.log('Failed to copy link:', error);
-                    });
+                        .then(() => {
+                            Message.post(new YMessageC({
+                                type: 'success',
+                                message: '链接已复制',
+                            }));
+                        })
+                        .catch((error) => {
+                            Message.post(new YMessageC({
+                                type: 'error',
+                                message: `复制链接失败: ${error}`,
+                            }));
+                            console.log('Failed to copy link:', error);
+                        });
                     break;
                 case 'song-subscribe':
                     this.trackIds = [arg.target.id];
@@ -270,7 +270,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .mainContainer {
     display: flex;
     justify-content: space-between;
@@ -279,75 +279,101 @@ export default {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* background: linear-gradient(to bottom, #6a553f, #131319); */
     background-color: #131319;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-}
 
-.align-up {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    height: calc(100% - 85px);
-    width: 100%;
-}
+    .align-up {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        height: calc(100% - 85px);
+        width: 100%;
 
-.align-left {
-    display: flex;
-}
+        .align-left {
+            display: flex;
 
-.align-right {
-    display: flex;
-    left: 0;
-    flex: 1;
-    right: 0;
-    margin-right: 5px;
-    overflow: hidden;
-}
+            .leftSidebar {
+                display: flex;
+                background-color: rgba(255, 255, 255, 0.03);
+                position: relative;
+            }
+        }
 
-.align-down {
-    display: flex;
-    z-index: 10;
-    height: 85px;
-}
+        .align-right {
+            display: flex;
+            left: 0;
+            flex: 1;
+            right: 0;
+            margin-right: 5px;
+            overflow: hidden;
 
-.leftSidebar {
-    display: flex;
-    background-color: rgba(255, 255, 255, 0.03);
-    position: relative;
-}
+            .mainContent {
+                flex: 1;
+                flex-direction: column;
+                width: 100%;
+                z-index: 0;
 
-.mainContent {
-    flex: 1;
-    flex-direction: column;
-    width: 100%;
-    z-index: 0;
-    /* position: absolute; */
-}
+                .content {
+                    height: calc(100vh - 140px);
+                    background-color: transparent;
+                    width: 100%;
 
-.content {
-    /* 确保内容区域占据剩余空间 */
-    height: calc(100vh - 140px);
-    background-color: transparent;
-    width: 100%;
-    /* 设置内容区域的背景颜色 */
-}
+                    .display-area {
+                        background-color: transparent;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
 
-.display-area {
-    background-color: transparent;
-    width: 100%;
-}
+    .align-down {
+        display: flex;
+        z-index: 10;
+        height: 85px;
 
-.playbar {
-    background-color: rgb(45, 45, 55);
-    position: relative;
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
+        .playbar {
+            background-color: rgb(45, 45, 55);
+            position: relative;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    .add-to-playlist-container {
+        top: 0;
+        left: 0;
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        background-color: transparent;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .message-container {
+        top: 80px;
+        width: calc(100vw - 20px);
+        height: 0px;
+        position: absolute;
+        display: flex;
+        background-color: transparent;
+        justify-content: space-between;
+        z-index: 1000;
+
+        .msg {
+            position: relative;
+            align-items: end;
+            justify-content: end;
+        }
+    }
 }
 
 #app {
@@ -362,35 +388,5 @@ export default {
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.add-to-playlist-container {
-    top: 0;
-    left: 0;
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    background-color: transparent;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.message-container {
-    top: 80px;
-    width: calc(100vw - 20px);
-    height: 0px;
-    position: absolute;
-    display: flex;
-    background-color: transparent;
-    justify-content: space-between;
-    z-index: 1000;
-}
-
-.msg{
-    position: relative;
-    align-items: end;
-    justify-content: end;
 }
 </style>

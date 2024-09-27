@@ -34,7 +34,7 @@ export async function startNeteaseMusicApi() {
         let message = args.map(arg => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg))).join(' ');
 
         // 如果字符串中包含 "cookie="，则将其后面的内容替换为 "INVISIBLECOOKIE"
-        message = message.replace(/cookie=[^&]+/g, 'cookie=INVISIBLECOOKIE');
+        message = message.replace(/cookie=[^&]+/g, 'cookie=PROTECTEDCOOKIE');
 
         // 调用原始的 console.log 方法输出处理后的消息
         originalConsoleLog(message);

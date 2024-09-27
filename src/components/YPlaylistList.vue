@@ -42,7 +42,8 @@
                 </div>
                 <!-- 5 歌单标题 -->
                 <div class="playlists-name" :title="playlist.name">
-                    <img :src="playlist._picUrl" style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
+                    <img :src="playlist._picUrl"
+                        style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
                     <span class="playlists-name-text">{{ playlist.name }}</span>
                 </div>
                 <!-- 5 歌曲数 -->
@@ -111,29 +112,45 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .table-container {
     display: flex;
     max-width: 100vw;
     flex-direction: column;
+
+    .table-header {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        justify-content: space-between;
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .playlists-list {
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        .playlists-item {
+            display: flex;
+            justify-content: space-between;
+            height: 40px;
+            align-items: center;
+            padding: 7px 0px;
+            border-radius: 10px;
+            font-size: 15px;
+            overflow: hidden;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+    }
 }
 
-/* 3 表头 */
-.table-header {
-    display: flex;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    justify-content: space-between;
-    /* background-color: rgba(255, 255, 255, 0.8); */
-    /* 设置一个半透明的背景 */
-    backdrop-filter: blur(8px);
-    /* 给背景增加模糊效果 */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    /* 增加边框以视觉分离 */
-}
-
-/* 4 歌曲序号-表头 */
 .playlists-counter {
     width: 50px;
 }
@@ -199,32 +216,5 @@ export default {
 .header-counter {
     width: 40px;
     text-align: center;
-}
-
-.playlists-list {
-    display: flex;
-    flex-direction: column;
-    /* background-color: rgba(255, 255, 255, 0.8); */
-    /* 设置一个半透明的背景 */
-    backdrop-filter: blur(8px);
-    /* 给背景增加模糊效果 */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    /* 增加边框以视觉分离 */
-}
-
-.playlists-item {
-    display: flex;
-    justify-content: space-between;
-    height: 40px;
-    align-items: center;
-    padding: 7px 0px;
-    border-radius: 10px;
-    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
-    font-size: 15px;
-    overflow: hidden;
-}
-
-.playlists-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

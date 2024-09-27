@@ -339,7 +339,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .switcher {
     display: flex;
     font-size: 16px;
@@ -353,27 +353,26 @@ export default {
     width: 100%;
     background-color: #131319;
     backdrop-filter: blur(10px);
-    /* mix-blend-mode: multiply; */
-}
 
-.switcher-item {
-    height: 20px;
-    margin: 0 7px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
+    .switcher-item {
+        height: 20px;
+        margin: 0 7px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
 
-.choosed-text {
-    color: rgb(254, 80, 110);
-}
+        .choosed-text {
+            color: rgb(254, 80, 110);
+        }
 
-.choosed {
-    width: 90%;
-    height: 2px;
-    background-color: rgb(254, 60, 90);
-    transform: translateY(1px);
-    transform: translateX(1px);
+        .choosed {
+            width: 90%;
+            height: 2px;
+            background-color: rgb(254, 60, 90);
+            transform: translateY(1px);
+            transform: translateX(1px);
+        }
+    }
 }
 
 .content {

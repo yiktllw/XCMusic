@@ -22,10 +22,11 @@
                         </div>
                         <img class="img-copy" @click="copy(track.tns[0])" src="@/assets/copy.svg" title="点击复制">
                     </div>
-                    <div class="song-info-item" style="justify-content: start;" >
+                    <div class="song-info-item" style="justify-content: start;">
                         <span class="song-info-item-title">歌手：</span>
                         <div class="song-info-item-content" style="width: 100%;">
-                            <div class="song-info-artist" v-for="artist in track.ar" :key="artist.id" style="width: 100%;">
+                            <div class="song-info-artist" v-for="artist in track.ar" :key="artist.id"
+                                style="width: 100%;">
                                 <div class="left">
                                     <span @click="openArtist(artist.id)">
                                         {{ artist.name }}
@@ -78,7 +79,7 @@
 <script lang="js">
 import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
-import { YMessageC,Message } from '@/tools/YMessageC';
+import { YMessageC, Message } from '@/tools/YMessageC';
 
 export default {
     name: 'YSongInfo',
@@ -126,66 +127,66 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .song-info {
     display: flex;
-}
 
-.song-info-content {
-    padding: 10px;
-    width: 432.1px;
-    max-height: 432.1px;
-}
+    .song-info-content {
+        padding: 10px;
+        width: 432.1px;
+        max-height: 432.1px;
 
-.song-info-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 15px 10px;
-    text-align: left;
-}
+        .song-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 10px;
+            text-align: left;
 
-.left {
-    display: flex;
-    align-items: first baseline;
-}
+            .left {
+                display: flex;
+                align-items: first baseline;
+            }
 
-.song-info-item-title {
-    width: 75px;
-    min-width: 75px;
-    white-space: nowrap;
-    font-size: 16px;
-    font-weight: bold;
-}
+            .song-info-item-title {
+                width: 75px;
+                min-width: 75px;
+                white-space: nowrap;
+                font-size: 16px;
+                font-weight: bold;
+            }
 
-.song-info-item-content {
-    font-size: 16px;
-    margin-left: 10px;
-    display: flex;
-    flex-direction: column;
-}
+            .song-info-item-content {
+                font-size: 16px;
+                margin-left: 10px;
+                display: flex;
+                flex-direction: column;
+            }
 
-.song-info-artist {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    margin-right: 10px;
-    font-size: 16px;
-    margin-bottom: 8px;
-}
+            .img-copy {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                opacity: .8;
 
-.album {
-    cursor: pointer;
-}
+                &:hover {
+                    opacity: 1;
+                }
+            }
 
-.img-copy {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    opacity: .8;
-}
+            .song-info-artist {
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                flex-direction: row;
+                margin-right: 10px;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
 
-.img-copy:hover {
-    opacity: 1;
+            .album {
+                cursor: pointer;
+            }
+        }
+    }
 }
 </style>
