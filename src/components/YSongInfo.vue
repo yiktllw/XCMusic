@@ -160,6 +160,7 @@ export default {
                 margin-left: 10px;
                 display: flex;
                 flex-direction: column;
+                user-select: text;
             }
 
             .img-copy {
@@ -167,6 +168,7 @@ export default {
                 height: 20px;
                 cursor: pointer;
                 opacity: .8;
+                user-select: none;
 
                 &:hover {
                     opacity: 1;

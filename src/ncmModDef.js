@@ -731,4 +731,14 @@ module.exports = [
         route: '/ugc/artist/get',
         module: require('NeteaseCloudMusicApi/module/ugc_artist_get'),
     },
+    {
+        identifier: 'api_album_v3_detail',
+        route: '/api/album/v3/detail',
+        module: require('NeteaseCloudMusicApi/module/api_album_v3_detail'),
+    },
+    {
+        identifier: 'api_v2_artist_songs',
+        route: '/api/v2/artist/songs',
+        module: require('NeteaseCloudMusicApi/module/api_v2_artist_songs'),
+    },
 ];

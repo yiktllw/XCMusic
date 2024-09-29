@@ -56,6 +56,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        user-select: none;
         width: calc(100% - 30px);
         padding: 0px 15px 10px 15px;
         border-bottom: 1px solid rgba(255, 255, 255, .1);

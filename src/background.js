@@ -97,7 +97,9 @@ app.on('ready', async () => {
         },
         {
             label: '退出',  
-            role: 'quit',
+            click: () => {
+                app.quit();
+            }
         }
     ];
     let menu = Menu.buildFromTemplate(_menu);
