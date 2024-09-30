@@ -41,7 +41,7 @@
                     <span>{{ index + 1 }}</span>
                 </div>
                 <!-- 5 歌单标题 -->
-                <div class="playlists-name" :title="playlist.name">
+                <div class="playlists-name font-color-main" :title="playlist.name">
                     <img :src="playlist._picUrl"
                         style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
                     <span class="playlists-name-text">{{ playlist.name }}</span>

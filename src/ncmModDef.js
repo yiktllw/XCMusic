@@ -732,7 +732,7 @@ module.exports = [
         module: require('NeteaseCloudMusicApi/module/ugc_artist_get'),
     },
     {
-        identifier: 'api_album_v3_detail',
+        identifier: 'album_v3_detail',
         route: '/api/album/v3/detail',
         module: require('NeteaseCloudMusicApi/module/api_album_v3_detail'),
     },

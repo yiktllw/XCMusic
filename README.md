@@ -57,6 +57,8 @@ npm run electron:serve
 ```
 npm run electron:build
 ```
+请注意，本项目使用的NeteaseCloudMusicApi是修改过的[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)，所以需要在安装依赖后手动替换`/node_modules/NeteaseCloudMusicApi`
+~~为什么不直接发布一个新包呢，因为我懒~~
 
 ## 灵感来源
 

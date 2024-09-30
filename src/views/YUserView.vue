@@ -395,11 +395,10 @@ export default {
                 return;
             }
             // 获取歌手的歌曲
-            await useApi('/artist/songs', {
+            await useApi('/api/v2/artist/songs', {
                 id: this.userId,
                 limit: SONGS_PER_PAGE,
                 offset: page * SONGS_PER_PAGE,
-                cookie: this.login.cookie,
             })
                 .then(async (response) => {
                     if (newPage) {
@@ -409,14 +408,11 @@ export default {
                         }
                     }
                     // 由于歌曲的封面缺失，需要获取歌手的专辑
-                    await this.fetchArtistAlbums();
+                    // await this.fetchArtistAlbums();
                     // 为歌曲添加专辑的封面
                     this.user.tracks = markRaw((new Tracks({
-                        url: '/artist/songs',
+                        url: '/api/v2/artist/songs',
                         tracks: response.songs,
-                        params: {
-                            albums: this.user.albums,
-                        }
                     })).tracks);
                 })
                 .catch(err => {
