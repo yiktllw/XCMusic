@@ -24,6 +24,10 @@ export class Tracks {
                     },
                 ],
                 _picUrl: '',
+                cd: 1,
+                no: 1,
+                reelIndex: 0,
+                songInReelIndex: 0,
                 dt: 0,
                 pop: 0,
                 playCount: 0,
@@ -52,6 +56,44 @@ export class Tracks {
                     } else {
                         track.al.picUrl = params.albums[index].picUrl;
                     }
+                } else if (url === '/api/v2/artist/songs') {
+                    track = item;
+                    track.tns = track.transNames;
+                    track.al = {
+                        id: track.album.id,
+                        name: track.album.name,
+                        picUrl: track.album.picUrl,
+                        tns: '',
+                    }
+                    track.ar = track.artists.map((ar) => {
+                        return {
+                            id: ar.id,
+                            name: ar.name,
+                            tns: '',
+                        }
+                    });
+                    track.pop = track.popularity;
+                    track.dt = track.duration;
+                } else if (url === '/api/album/v3/detail') {
+                    track = item;
+                    track.cd = parseInt(track.cd);
+                    if (params.needIndex) {
+                        resultTrack = {
+                            ...resultTrack,
+                            originalIndex: index,
+                        }
+                    }
+                    if (params.reels) {
+                        params.reels.forEach((reel, reelIndex) => {
+                            reel.songList.forEach((song, songIndex) => {
+                                if (song.songId == track.id) {
+                                    track.name = song.songName;
+                                    resultTrack.reelIndex = reelIndex;
+                                    resultTrack.songInReelIndex = songIndex;
+                                }
+                            });
+                        });
+                    }
                 } else if (url === '/playlist/track/all' || url === '/album') {
                     track = item;
                     if (params.needIndex) {
@@ -72,6 +114,8 @@ export class Tracks {
                 resultTrack.al.picUrl = track.al.picUrl;
                 resultTrack.al.tns = track.al.tns ?? '';
                 resultTrack._picUrl = track.al.picUrl + '?param=40y40';
+                resultTrack.cd = track.cd ?? 1;
+                resultTrack.no = track.no ?? 1;
                 resultTrack.ar = track.ar.map((ar) => {
                     return {
                         id: ar.id,
@@ -108,7 +152,7 @@ export class Track {
             type: 'local',
             path: 'C:/',
         },
-    }){
+    }) {
         this._track = track;
         this._url = url;
         this._params = params;
@@ -116,7 +160,7 @@ export class Track {
             // 
         }
     }
-    get track(){
+    get track() {
         return this._track;
     }
 }

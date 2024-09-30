@@ -148,8 +148,8 @@
                 :likelist="likelist" :showTrackPopularity="false" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" :from="playlistId" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" @send-playlist="sendPlaylist"
-                @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-album'" />
+                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" @send-playlist="sendPlaylist"
+                @play-song-and-playlist="playSongAndPlaylist"  :id="'YPlaylist.vue-album'" :type="'album'" :show-header="false" :resortable="false" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <YPage v-if="type === 'playlist'" v-model="page" />
@@ -215,6 +215,7 @@ export default {
                 createrName: '',    // 创建者名称
                 createrAvatarUrl: '', // 创建者头像 URL
                 trackCount: 0,      // 歌曲数量
+                alReels: [],        // 专辑信息
                 tracks: [], // 歌曲列表
             },
             isLoading: true,   // 是否正在加载
@@ -317,7 +318,7 @@ export default {
                     ];
                 } else {
                     requests = [
-                        useApi(`/album?id=${id}`).then(response => {
+                        useApi(`/api/album/v3/detail?id=${id}`).then(response => {
                             // 专辑名称
                             if (id !== this.playlistId) {
                                 return;
@@ -335,13 +336,14 @@ export default {
                             this.playlist.trackCount = response.album.size;
                             // 添加专辑信息
                             this.playlist.tracks = markRaw((new Tracks({
-                                url: '/album',
+                                url: '/api/album/v3/detail',
                                 tracks: response.songs,
                                 params: {
                                     needIndex: true,
-                                    alPicUrl: response.album.picUrl,
+                                    reels: response.showreels,
                                 }
                             })).tracks);
+                            this.playlist.alReels = response.showreels;
                             // 更新歌曲列表
                             this.updateTracks();
                             // 加载完成

@@ -75,106 +75,127 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul>
-            <li v-for="(track, index) in localTracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
-                :id="`track-item-${track.id}`" :key="track.id" class="track-item" ref="track_item_ref"
-                @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
-                @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0"
-                @contextmenu="openContextMenu($event, track)">
-                <div class="align-up">
-                    <!-- 4 左侧对齐 -->
-                    <div class="align-left">
-                        <!-- 5 歌曲序号 -->
-                        <div class="track-count font-color-standard" v-if="showTrackCounter">
-                            <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
-                            <YPlaying v-else />
-                        </div>
-                        <!-- 5 封面图片 -->
-                        <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter"></div>
-                        <img v-if="showTrackCover" class="track-cover"
-                            :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
-                        <!-- 5 歌曲信息 -->
-                        <div class="track-info" ref="trackInfo">
-                            <!-- 6 歌曲名称 -->
-                            <div class="track-name" ref="track_name_ref"
-                                :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-main)' }"
-                                :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">{{
-                                    track.name +
-                                    (track.tns ?
-                                        (' (' + track.tns + ')') :
-                                        '')
-                                }}</div>
-                            <!-- 6 歌手名称 -->
-                            <div class="track-artist font-color-standard" v-if="showTrackArtist">
-                                <span v-for="(artist, index) in track.ar" :key="artist.id">
-                                    <!-- 7 歌手按钮 -->
-                                    <span @click="handleArtistClick(artist.id)"
-                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }"
-                                        class="artist-button"
-                                        :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
-                                        {{ artist.name }}
-                                    </span>
-                                    <span v-if="index < track.ar.length - 1"
-                                        :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }">
-                                        /
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
+            <template
+                v-for="(track, index) in localTracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
+                :key="track.id">
+                <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
+                    <div class="reels-title font-color-main">
+                        {{ alReels[track.reelIndex]?.showreelName ?? '未知名称' }}
                     </div>
-                    <!-- 4 右侧对齐 -->
-                    <div class="align-right">
-                        <!-- 5 专辑名称 -->
-                        <div class="track-menu" :id="`track-menu-${track.id}`">
-                            <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
-                            <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏"
-                                @click="openAddToPlaylist(track.id)">
-                            <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
-                                @click="openSongComment(track.id)">
-                            <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
-                                @click="openContextMenu($event, track, 'toogle')">
-                        </div>
-                        <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
-                            :style="{ 'width': `${this.alWidth}px` }">
-                            <!-- 6 专辑按钮 -->
-                            <button @click="handleAlbumClick(track.al.id)" class="album-button font-color-standard"
-                                :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
-                                {{ trackAlTns(track.al.name, track.al.tns) }}
-                            </button>
-                        </div>
-                        <!-- 5 喜欢 -->
-                        <div class="likes" style="text-align: left;" v-if="showTrackLikes">
-                            <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
-                                style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
-                            <img v-else src="../assets/unlikes.svg"
-                                style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
-                        </div>
-                        <!-- 5 时长 -->
-                        <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
-                            formatDuration(track.dt) }}</div>
-                        <!-- 5 热度 -->
-                        <div class="popularity" v-if="showTrackPopularity">
-                            <div class="popularity-bar"
-                                style="margin-left: 5px;width: 50px; height: 4px; background-color: #444; border-radius: 2px;">
-                            </div>
-                            <div class="popularity-bar"
-                                style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
-                                :style="{ width: (track.pop / 100 * 50) + 'px' }">
-                            </div>
-                        </div>
-                        <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ?? 0
-                            }}次
-                        </div>
+                    <div class="reels-other font-color-standard" v-if="alReels[track.reelIndex]?.composerName">
+                        {{ alReels[track.reelIndex]?.composerName ?? '未知作曲家' }}
                     </div>
-
-                </div>
-                <div class="align-down" v-if="showLyrics">
-                    <div class="lyrics" style="color: #aaa; font-size: 14px; margin-top: 5px; margin-left: 50px;">
-                        歌词:
-                        <span v-for="(lyric, index) in track.lyrics" :key="index" v-html="formatLyric(lyric)">
+                    <div class="reels-other font-color-standard"
+                        v-for="artist in alReels[track.reelIndex]?.otherArtists" :key="artist">
+                        <span>
+                            {{ artist }}
                         </span>
                     </div>
                 </div>
-            </li>
+                <li :id="`track-item-${track.id}`" class="track-item" ref="track_item_ref"
+                    @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
+                    @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0"
+                    @contextmenu="openContextMenu($event, track)">
+                    <div class="align-up">
+                        <!-- 4 左侧对齐 -->
+                        <div class="align-left">
+                            <!-- 5 歌曲序号 -->
+                            <div class="track-count font-color-standard" v-if="showTrackCounter">
+                                <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
+                                <YPlaying v-else />
+                            </div>
+                            <!-- 5 封面图片 -->
+                            <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter">
+                            </div>
+                            <img v-if="showTrackCover" class="track-cover"
+                                :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
+                            <!-- 5 歌曲信息 -->
+                            <div class="track-info" ref="trackInfo">
+                                <!-- 6 歌曲名称 -->
+                                <div class="track-name" ref="track_name_ref"
+                                    :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-main)' }"
+                                    :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">
+                                    {{ track.name }}
+                                    <span class="font-color-standard">
+                                        {{ (track.tns ?
+                                            (' (' + track.tns + ')') :
+                                            '') }}
+                                    </span>
+                                </div>
+                                <!-- 6 歌手名称 -->
+                                <div class="track-artist font-color-standard" v-if="showTrackArtist">
+                                    <span v-for="(artist, index) in track.ar" :key="artist.id">
+                                        <!-- 7 歌手按钮 -->
+                                        <span @click="handleArtistClick(artist.id)"
+                                            :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }"
+                                            class="artist-button"
+                                            :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
+                                            {{ artist.name }}
+                                        </span>
+                                        <span v-if="index < track.ar.length - 1"
+                                            :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }">
+                                            /
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 4 右侧对齐 -->
+                        <div class="align-right">
+                            <!-- 5 专辑名称 -->
+                            <div class="track-menu" :id="`track-menu-${track.id}`">
+                                <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
+                                <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏"
+                                    @click="openAddToPlaylist(track.id)">
+                                <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
+                                    @click="openSongComment(track.id)">
+                                <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
+                                    @click="openContextMenu($event, track, 'toogle')">
+                            </div>
+                            <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
+                                :style="{ 'width': `${this.alWidth}px` }">
+                                <!-- 6 专辑按钮 -->
+                                <button @click="handleAlbumClick(track.al.id)" class="album-button font-color-standard"
+                                    :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
+                                    {{ trackAlTns(track.al.name, track.al.tns) }}
+                                </button>
+                            </div>
+                            <!-- 5 喜欢 -->
+                            <div class="likes" style="text-align: left;" v-if="showTrackLikes">
+                                <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
+                                    style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
+                                <img v-else src="../assets/unlikes.svg"
+                                    style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
+                            </div>
+                            <!-- 5 时长 -->
+                            <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
+                                formatDuration(track.dt) }}</div>
+                            <!-- 5 热度 -->
+                            <div class="popularity" v-if="showTrackPopularity">
+                                <div class="popularity-bar"
+                                    style="margin-left: 5px;width: 50px; height: 4px; background-color: #444; border-radius: 2px;">
+                                </div>
+                                <div class="popularity-bar"
+                                    style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
+                                    :style="{ width: (track.pop / 100 * 50) + 'px' }">
+                                </div>
+                            </div>
+                            <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ??
+                                0
+                                }}次
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="align-down" v-if="showLyrics">
+                        <div class="lyrics" style="color: #aaa; font-size: 14px; margin-top: 5px; margin-left: 50px;">
+                            歌词:
+                            <span v-for="(lyric, index) in track.lyrics" :key="index" v-html="formatLyric(lyric)">
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </template>
         </ul>
         <YPage v-model="page" />
     </div>
@@ -190,6 +211,10 @@ import { YPageC } from '@/tools/YPageC';
 export default {
     name: 'YSongsTable',
     props: {
+        type: {
+            type: String,
+            default: 'playlist',
+        },
         showTrackCounter: {
             type: Boolean,
             default: true,
@@ -270,6 +295,10 @@ export default {
         from: {
             type: Number,
             default: -1,
+        },
+        alReels: {
+            type: Array,
+            default: () => [],
         },
     },
     components: {
@@ -739,6 +768,27 @@ ul {
 
     li {
         margin-bottom: 5px;
+    }
+}
+
+.reels {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 100%;
+    padding: 00px 0px 05px 20px;
+    &:not(:first-child) {
+        padding-top: 20px;
+    }
+
+    .reels-title {
+        font-size: 17px;
+        padding: 0px 0px 5px 0px;
+    }
+
+    .reels-other {
+        font-size: 15px;
+        padding: 0px 0px 5px 0px;
     }
 }
 
