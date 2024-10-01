@@ -19,8 +19,17 @@
                 <img v-if="searchInput !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchInput = ''" />
             </div>
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
-                :default-show="false" :slide-direction="1">
+                :default-show="true" :slide-direction="1">
                 <div class="search-panel">
+                    <div class="search-history" v-if="this.searchHistory.length > 0">
+                        <div class="search-history-title">搜索历史</div>
+                        <div class="search-history-items">
+                            <div v-for="item in searchHistory" :key="item" @click="search(item)"
+                                class="search-history-item font-color-standard">
+                                {{ item }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
                         <div class="search-suggestions-title">猜你想搜</div>
                         <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
@@ -31,7 +40,7 @@
                     <div class="search-suggestions" v-else>
                         <div class="search-suggestions-title">热搜榜
                         </div>
-                        <div class="search-suggestion" v-for="(hotSearch) in hotSearches" :key="hotSearch"
+                        <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches" :key="hotSearch"
                             :title="hotSearch.first" @click="search(hotSearch.first)"
                             v-html="highlightMatching(hotSearch.first)" />
                     </div>
@@ -130,6 +139,7 @@ export default {
                 level: 0,
             },    // 用于存储用户信息
             showDropdown: false,    // 用于控制下拉登录菜单的显示
+            searchHistory: [],    // 用于存储搜索历史
             base64Image: '',    // 用于存储 Base64 图片
             userNickName: '用户昵称',   // 用于存储用户昵称
             avatarSrc: '',      // 用于存储头像地址
@@ -139,9 +149,15 @@ export default {
             selectedSuggestion: 0,  // 用于存储选中的搜索建议
         };
     },
+    watch: {
+        searchHistory(newHistory) {
+            this.setting.searchHistory = newHistory;
+        }
+    },
     computed: {
         ...mapState({
             login: state => state.login,
+            setting: state => state.setting,
         })
     },
     methods: {
@@ -249,6 +265,36 @@ export default {
             console.log('search:', text);
             this.$router.push({ path: `/search/${text}/default` });
             this.$refs.search_panel.closePanel();
+            const SEARCH_LENGTH = 10;
+            if (this.searchHistory.length > 0 && this.searchHistory.length < SEARCH_LENGTH) {
+                if (!this.searchHistory.includes(text)) {
+                    this.searchHistory = [
+                        text,
+                        ...this.searchHistory,
+                    ];
+                } else {
+                    this.searchHistory = [
+                        text,
+                        ...this.searchHistory.filter((item) => item !== text),
+                    ];
+                }
+            } else if (this.searchHistory.length === 0) {
+                this.searchHistory = [
+                    text,
+                ];
+            } else if (this.searchHistory.length >= SEARCH_LENGTH) {
+                if (!this.searchHistory.includes(text)) {
+                    this.searchHistory = [
+                        text,
+                        ...this.searchHistory.slice(0, SEARCH_LENGTH - 1),
+                    ];
+                } else {
+                    this.searchHistory = [
+                        text,
+                        ...this.searchHistory.filter((item) => item !== text).slice(0, SEARCH_LENGTH - 1),
+                    ];
+                }
+            }
         },
         async getSearchSuggestions(event) {
             const searchText = event.target.value;
@@ -312,6 +358,7 @@ export default {
         // 添加外部点击处理器
         await this.init();
         await this.getHotSearches();
+        this.searchHistory = this.setting.searchHistory;
     },
     beforeUnmount() {
         // 移除外部点击处理器
@@ -361,7 +408,6 @@ export default {
         flex-grow: 1;
         margin-right: 10px;
         z-index: 1;
-        margin-left: var(--sidebar-width);
 
         .input-wrapper {
             position: relative;
@@ -376,6 +422,7 @@ export default {
                 border-radius: 7px;
                 border-style: solid;
                 border-width: 1.5px;
+                width: 250px;
                 border-color: rgba(255, 255, 255, 0.1);
                 margin-top: 0px;
                 margin-left: 7px;
@@ -404,7 +451,7 @@ export default {
                 -webkit-user-drag: none;
             }
 
-            .img-clear{
+            .img-clear {
                 position: absolute;
                 right: 15px;
                 top: 50%;
@@ -422,11 +469,11 @@ export default {
             display: flex;
             flex-direction: column;
             padding: 10px;
-            width: 250px;
-            height: 300px;
-            max-height: 300px;
+            width: 300px;
+            height: 400px;
+            max-height: 400px;
             overflow-y: auto;
-            transform: translateX(calc(-100% + 15px));
+            transform: translateX(calc(-100% + 0px));
             background-color: rgb(44, 44, 55);
             border-radius: 5px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -451,6 +498,39 @@ export default {
 
             &:hover::-webkit-scrollbar-thumb:hover {
                 background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            .search-history {
+                display: flex;
+                flex-direction: column;
+                padding: 5px;
+
+                .search-history-title {
+                    font-size: 16px;
+                    width: 100%;
+                    text-align: left;
+                    margin-bottom: 5px;
+                }
+
+                .search-history-items {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-items: baseline;
+
+                    .search-history-item {
+                        border-radius: 5px;
+                        text-align: left;
+                        cursor: pointer;
+                        padding: 6px;
+                        white-space: nowrap;
+
+                        &:hover {
+                            background-color: rgba(255, 255, 255, .1);
+                            color: var(--font-color-main);
+                        }
+                    }
+                }
             }
 
             .search-suggestions {

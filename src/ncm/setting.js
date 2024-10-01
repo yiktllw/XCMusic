@@ -88,6 +88,17 @@ export class Setting {
                 },
             },
         }
+        this.searchHistory = {
+            value: JSON.parse(localStorage.getItem('setting.searchHistory')) ?? [],
+            default: [],
+            validation: (value) => {
+                let valid = Array.isArray(value);
+                if (valid) {
+                    localStorage.setItem('setting.searchHistory', JSON.stringify(value));
+                }
+                return valid;
+            }
+        }
         // this._initSettings(true);
         return Setting.createProxy(this);
     }
