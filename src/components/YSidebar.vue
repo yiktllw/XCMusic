@@ -5,10 +5,15 @@
         </div>
         <div class="scrollable">
             <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
-                <span>创建的歌单({{ userPlaylists.length }})</span>
-                <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
-                <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg"
-                    style=" padding-top: 3px; " />
+                <span style="margin-right: 5px;">创建的歌单({{ userPlaylists.length }})</span>
+                <div class="switch-user-playlist-icon-container">
+                    <transition name="rotate">
+                        <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
+                    </transition>
+                    <transition name="rotate2">
+                        <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg" />
+                    </transition>
+                </div>
             </button>
             <transition name="slide-fade">
                 <div class="fade-container" v-if="showMyPlaylist" :key="userPlaylists.length">
@@ -23,10 +28,15 @@
             </transition>
             <button class="switch-user-playlist font-color-main"
                 @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
-                <span>收藏的歌单({{ userSubscribes.length }})</span>
-                <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
-                <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg"
-                    style=" padding-top: 3px; " />
+                <span style="margin-right: 5px;">收藏的歌单({{ userSubscribes.length }})</span>
+                <div class="switch-user-playlist-icon-container">
+                    <transition name="rotate">
+                        <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
+                    </transition>
+                    <transition name="rotate2">
+                        <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg" />
+                    </transition>
+                </div>
             </button>
             <transition name="slide-fade">
                 <div class="fade-container" v-if="showMySubscribedPlaylist" :key="userSubscribes.length">
@@ -193,13 +203,10 @@ export default {
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            padding-left: 5px;
-            padding-top: 6px;
-            padding-bottom: 6px;
+            padding: 6px 0px 6px 5px;
             transition: all 0.3s ease;
             user-select: none;
             white-space: nowrap;
-            vertical-align: middle;
             overflow: hidden;
             min-height: 40px;
             opacity: 0.6;
@@ -208,10 +215,15 @@ export default {
                 opacity: 1;
             }
 
-            .switch-user-playlist-icon {
+            .switch-user-playlist-icon-container {
                 width: 16px;
                 height: 16px;
-                padding-left: 5px;
+                overflow: hidden;
+
+                .switch-user-playlist-icon {
+                    width: 16px;
+                    height: 16px;
+                }
             }
         }
 

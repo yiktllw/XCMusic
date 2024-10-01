@@ -16,6 +16,7 @@
                     v-model="searchInput" @input="getSearchSuggestions" placeholder="搜索..."
                     @click="this.$refs.search_panel._showPanel()" spellcheck="false" ref="search_input" />
                 <img class="img-search" src="../assets/search.svg" />
+                <img v-if="searchInput !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchInput = ''" />
             </div>
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
@@ -370,11 +371,8 @@ export default {
 
             .search-input {
                 filter: opacity(0.5);
-                padding: 8px 15px 8px 35px;
+                padding: 5px 35px 5px 30px;
                 font-size: medium;
-                padding-right: 10px;
-                padding-top: 5px;
-                padding-bottom: 5px;
                 border-radius: 7px;
                 border-style: solid;
                 border-width: 1.5px;
@@ -404,6 +402,18 @@ export default {
                 height: 17px;
                 opacity: 0.5;
                 -webkit-user-drag: none;
+            }
+
+            .img-clear{
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 17px;
+                height: 17px;
+                opacity: 0.5;
+                -webkit-user-drag: none;
+                cursor: pointer;
             }
         }
 

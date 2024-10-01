@@ -80,3 +80,21 @@ html {
 .font-bold {
     font-weight: bold;
 }
+
+.rotate-enter-active,
+.rotate2-enter-active {
+    transition: all .3s ease;
+}
+
+.rotate-enter-from {
+    transform: rotate(180deg);
+}
+
+.rotate2-enter-from {
+    transform: rotate(-180deg);
+}
+
+.rotate-enter-to,
+.rotate2-enter-to {
+    transform: rotate(0deg);
+}

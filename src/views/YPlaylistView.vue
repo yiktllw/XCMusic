@@ -99,8 +99,9 @@
                                 <input type="text" class="search-input font-color-main"
                                     @keydown.enter="handleSearch($event.target.value, true)"
                                     @input="handleSearch($event.target.value, false)" placeholder="搜索..."
-                                    spellcheck="false" />
+                                    spellcheck="false" v-model="searchQuery" />
                                 <img src="../assets/search.svg" class="img-search" />
+                                <img v-if="searchQuery !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchQuery = ''" />
                             </div>
                         </div>
                     </div>
@@ -752,7 +753,7 @@ export default {
                         opacity: .5;
 
                         .search-input {
-                            padding: 8px 15px 8px 30px;
+                            padding: 8px 30px 8px 30px;
                             background-color: rgba(255, 255, 255, 0.05);
                             border-style: none;
                             border-radius: 100px;
@@ -778,6 +779,17 @@ export default {
                             width: 15px;
                             height: 15px;
                             -webkit-user-drag: none;
+                        }
+                        
+                        .img-clear {
+                            position: absolute;
+                            right: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 15px;
+                            height: 15px;
+                            -webkit-user-drag: none;
+                            cursor: pointer;
                         }
                     }
                 }
