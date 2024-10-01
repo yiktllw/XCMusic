@@ -73,12 +73,15 @@ export default {
         }
 
         .artists-info {
+            max-width: 100%;
+
             .artists-avatar {
                 width: 130px;
                 height: 130px;
                 object-fit: cover;
                 border-radius: 50%;
                 margin-bottom: 10px;
+                overflow: hidden;
             }
 
             .artists-name-text {
