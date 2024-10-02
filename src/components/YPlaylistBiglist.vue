@@ -11,7 +11,7 @@
                     <span class="play-count">{{ playlist.playCount }}</span>
                 </div>
             </div>
-            <div class="playilst-item-info">
+            <div class="playlist-item-info">
                 <div class="playlist-item-name font-color-high" :title="playlist.name">
                     {{ playlist.name }}
                 </div>
@@ -67,6 +67,7 @@ export default {
 
     .playlist-item {
         display: flex;
+        flex-wrap: wrap;
         flex-grow: 1;
         align-items: center;
         justify-content: center;
