@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 export async function useApi(relativePath, params) {
-    const localHost = "http://localhost:10754"; // 确保包含协议
+    let localHost = "http://localhost:10754"; // 确保包含协议
+    if (!window.electron?.isElectron){
+        localHost = "/api";
+    }
     try {
         const response = await axios.get(localHost + relativePath, {
             params: params // 正确传递查询参数
