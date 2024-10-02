@@ -267,6 +267,7 @@ export default {
             this.$router.push({ path: `/search/${text}/default` });
             this.$refs.search_panel.closePanel();
             const SEARCH_HISTORY_LENGTH = 10;
+            this.searchInput = text;
             if (this.searchHistory.length > 0 && this.searchHistory.length <= SEARCH_HISTORY_LENGTH) {
                 console.log('search0');
                 if (!this.searchHistory.includes(text)) {

@@ -551,7 +551,9 @@ export default {
         },
         // 处理歌手点击
         handleArtistClick(artistId) {
-            console.log('artistId:', artistId);
+            this.$router.push({
+                path: '/artist/' + artistId,
+            })
         },
     },
     beforeUnmount() {
