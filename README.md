@@ -8,6 +8,8 @@
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
 
+访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app)
+
 ## 特性
 - 使用Vue3+Electron开发
 - 出于安全考虑，只支持手机扫码登录
@@ -46,6 +48,31 @@
 - 选择不同主题
 - 部署到vercel
 - 多语言
+
+## 部署到vercel
+1. fork此项目
+2. 部署[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
+3. 新建vercel.json文件，写入:
+```json
+{
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist_electron" 
+            }
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/:match*",
+            "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*" //请替换成上一步部署的api的路径
+        }
+    ]
+}
+```
+4. 导入到vercel
 
 ## 配置开发环境
 安装依赖
