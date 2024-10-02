@@ -10,6 +10,15 @@
 
 访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app/)
 
+![image](https://github.com/user-attachments/assets/ab8c65c3-9ba6-4187-b3c0-1d7ee229171f)
+
+![image](https://github.com/user-attachments/assets/c73aadfa-7106-4057-b1f2-d3de46843c9c)
+
+![image](https://github.com/user-attachments/assets/b5830b60-7e2e-41b7-908b-422bfa9507d0)
+
+
+
+
 ## 特性
 - 使用Vue3+Electron开发
 - 出于安全考虑，只支持手机扫码登录
