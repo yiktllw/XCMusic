@@ -65,8 +65,9 @@
     ],
     "rewrites": [
         {
-            "source": "/:match*",
-            "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*" //请替换成上一步部署的api的路径
+            "source": "/api/:match*",
+            //请替换成上一步部署的api的路径并删除此注释
+            "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*" 
         }
     ]
 }

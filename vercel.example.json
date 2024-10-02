@@ -10,7 +10,7 @@
     ],
     "rewrites": [
         {
-            "source": "/:match*",
+            "source": "/api/:match*",
             "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*"
         }
     ]
