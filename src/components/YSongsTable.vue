@@ -127,8 +127,7 @@
                                     <span v-for="(artist, index) in track.ar" :key="artist.id">
                                         <!-- 7 歌手按钮 -->
                                         <span @click="handleArtistClick(artist.id)"
-                                            :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-standard)' }"
-                                            class="artist-button"
+                                            :class="track.id === nowPlaying ? 'artist-button-active' : 'artist-button'"
                                             :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                             {{ artist.name }}
                                         </span>
@@ -777,6 +776,7 @@ ul {
     text-align: left;
     width: 100%;
     padding: 00px 0px 05px 20px;
+
     &:not(:first-child) {
         padding-top: 20px;
     }
@@ -871,6 +871,25 @@ ul {
                         background-color: transparent;
                         border: none;
                         transition: all 0.3s;
+                        
+                        &:hover {
+                            color: var(--font-color-main);
+                        }
+                    }
+                    .artist-button-active {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-size: 13px;
+                        padding: 0%;
+                        margin: 0%;
+                        cursor: pointer;
+                        background-color: transparent;
+                        border: none;
+                        color: rgb(234, 78, 68);
+                        
+                        &:hover {
+                            color: rgb(255, 100, 90)
+                        }
                     }
                 }
             }
