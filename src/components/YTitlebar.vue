@@ -244,20 +244,32 @@ export default {
         },
         // 设置、最小化、最大化和关闭
         settings() {
-            window.electron.ipcRenderer.send('open-settings');
-            // console.log('settings');
+            if (window.electron?.isElectron) {
+                window.electron.ipcRenderer.send('open-settings');
+            } else {
+                console.log('not in electron, cannot open settings');
+            }
         },
         minimize() {
-            window.electron.ipcRenderer.send('minimize');
-            // console.log('minimize');
+            if (window.electron?.isElectron) {
+                window.electron.ipcRenderer.send('minimize');
+            } else {
+                console.log('not in electron, cannot minimize');
+            }
         },
         maximize() {
-            window.electron.ipcRenderer.send('maximize');
-            // console.log('maximize');
+            if (window.electron?.isElectron) {
+                window.electron.ipcRenderer.send('maximize');
+            } else {
+                console.log('not in electron, cannot maximize');
+            }
         },
         close() {
-            window.electron.ipcRenderer.send('close');
-            // console.log('close');
+            if (window.electron?.isElectron) {
+                window.electron.ipcRenderer.send('close');
+            } else {
+                console.log('not in electron, cannot close');
+            }
         },
         // 搜索
         handleSearch(event) {

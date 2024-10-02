@@ -15,12 +15,13 @@ contextBridge.exposeInMainWorld('api', {
     homeDir: () => os.homedir(), // 获取用户主目录
 });
 contextBridge.exposeInMainWorld(
-  'electron',
-  {
-    ipcRenderer: {
-      send: (channel, data) => ipcRenderer.send(channel, data),
-      on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
-      once: (channel, func) => ipcRenderer.once(channel, (event, ...args) => func(...args))
+    'electron',
+    {
+        ipcRenderer: {
+            send: (channel, data) => ipcRenderer.send(channel, data),
+            on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
+            once: (channel, func) => ipcRenderer.once(channel, (event, ...args) => func(...args))
+        },
+        isElectron: true,
     }
-  }
 );

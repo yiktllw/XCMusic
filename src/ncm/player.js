@@ -47,27 +47,29 @@ export class Player {
 
         // 初始化音质为极高
         this._quality = 'exhigh';
-        
+
         // 点歌功能
-        this.songPicker = markRaw(new SongPicker());
-        this.songPicker.subscribe({
-            id: 'player.js',
-            func: ()=>{
-                this.playTrack(this.songPicker.track);
-            },
-            type: 'track',
-        });
-        this.songPicker.subscribe({
-            id: 'player.js',
-            func: ()=>{
-                this.nextPlay(this.songPicker.track);
-            },
-            type: 'nextTrack',
-        });
+        if (window.electron?.isElectron) {
+            this.songPicker = markRaw(new SongPicker());
+            this.songPicker.subscribe({
+                id: 'player.js',
+                func: () => {
+                    this.playTrack(this.songPicker.track);
+                },
+                type: 'track',
+            });
+            this.songPicker.subscribe({
+                id: 'player.js',
+                func: () => {
+                    this.nextPlay(this.songPicker.track);
+                },
+                type: 'nextTrack',
+            });
+        }
 
         // 更新时间的计时器
         this._updateTime = null;
-        
+
         // 订阅事件
         this.subscriber = markRaw(new Subscriber());
         this.subscribeEvents = markRaw([
@@ -102,7 +104,7 @@ export class Player {
             });
         }
     }
-    UnSubscribe({id, type}){
+    UnSubscribe({ id, type }) {
         if (!this.subscribeEvents.includes(type)) {
             console.log('Subscribe event not supported: ', type);
             return;
