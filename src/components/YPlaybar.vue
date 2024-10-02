@@ -396,7 +396,9 @@ export default {
                     let num = Math.floor(count / 100000);
                     this.currentTrackComment = `${num}0w+`
                 }
-            })
+            }).catch(err => {
+                console.log(err);
+            });
         },
     },
     async mounted() {
