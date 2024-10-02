@@ -8,7 +8,7 @@
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
 
-访问DEMO: [xc-music.vercel.app](https://xc-music-j9mrt6kv6-yiktllws-projects.vercel.app/)
+访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app/)
 
 ## 特性
 - 使用Vue3+Electron开发
