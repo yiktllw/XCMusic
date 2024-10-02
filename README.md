@@ -8,7 +8,7 @@
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
 
-访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app)
+访问DEMO: [xc-music.vercel.app](https://xc-music-j9mrt6kv6-yiktllws-projects.vercel.app/)
 
 ## 特性
 - 使用Vue3+Electron开发
@@ -46,7 +46,6 @@
 - 记忆窗口大小,保存关闭时的播放列表，保存播放的歌曲和播放进度
 - 音乐云盘
 - 选择不同主题
-- 部署到vercel
 - 多语言
 
 ## 部署到vercel
