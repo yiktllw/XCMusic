@@ -1,17 +1,30 @@
 <template>
     <div class="display">
-        <YPlayUI />
+        <YMultiSelect v-model="tracks">
+            <template #item="{ item, index }"><!--eslint-disable-line-->
+                <div class="item font-color-main">
+                    <div class="align-up">
+                        <div class="align-left">
+                            <div class="track-count">
+                                {{ index + 1 }}
+                            </div>
+                        </div>
+                        {{ item.name }}
+                    </div>
+                </div>
+            </template>
+        </YMultiSelect>
     </div>
 </template>
 
 <script lang="js">
-import YPlayUI from '@/components/YPlayUI.vue';
+import YMultiSelect from '@/components/YMultiSelect.vue';
 import { mapState } from 'vuex';
 
 export default {
     name: 'YTestView',
     components: {
-        YPlayUI,
+        YMultiSelect,
     },
     computed: {
         ...mapState({
