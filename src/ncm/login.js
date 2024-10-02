@@ -27,7 +27,7 @@ export class Login {
         id = '',
         func = () => { },
         type = '',
-    }){
+    }) {
         if (!this.subscribeEvents.includes(type)) {
             console.log('type is not in subscribeEvents: ', type);
             return;
@@ -41,7 +41,7 @@ export class Login {
     unSubscribe({
         id = '',
         type = '',
-    }){
+    }) {
         if (!this.subscribeEvents.includes(type)) {
             console.log('type is not in subscribeEvents: ', type);
             return;
@@ -152,31 +152,32 @@ export class Login {
         if (!this._userId) {
             await this.updateInfo();
         }
-        let userPlaylist = await useApi('/user/playlist', {
+        await useApi('/user/playlist', {
             uid: this._userId,
             cookie: this._cookie,
             timestamp: new Date().getTime(),
+        }).then(res => {
+            this._userPlaylists = [];
+            this._userSubscribes = [];
+            res.playlist.forEach(playlist => {
+                if (!playlist.subscribed) {
+                    this._userPlaylists.push({
+                        name: playlist.name,
+                        label: playlist.name,
+                        id: playlist.id,
+                        img: playlist.coverImgUrl,
+                    });
+                } else {
+                    this._userSubscribes.push({
+                        name: playlist.name,
+                        label: playlist.name,
+                        id: playlist.id,
+                        img: playlist.coverImgUrl,
+                    });
+                }
+            });
         }).catch((error) => {
             console.error('Failed to get user playlist:', error);
-        });
-        this._userPlaylists = [];
-        this._userSubscribes = [];
-        userPlaylist.playlist.forEach(playlist => {
-            if (!playlist.subscribed) {
-                this._userPlaylists.push({
-                    name: playlist.name,
-                    label: playlist.name,
-                    id: playlist.id,
-                    img: playlist.coverImgUrl,
-                });
-            } else {
-                this._userSubscribes.push({
-                    name: playlist.name,
-                    label: playlist.name,
-                    id: playlist.id,
-                    img: playlist.coverImgUrl,
-                });
-            }
         });
         this.userPlaylists[0].label = '我喜欢的音乐';
         this.subscriber.exec('userPlaylists');
