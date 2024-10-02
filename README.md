@@ -10,14 +10,6 @@
 
 访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app/)
 
-![image](https://github.com/user-attachments/assets/ab8c65c3-9ba6-4187-b3c0-1d7ee229171f)
-
-![image](https://github.com/user-attachments/assets/c73aadfa-7106-4057-b1f2-d3de46843c9c)
-
-![image](https://github.com/user-attachments/assets/b5830b60-7e2e-41b7-908b-422bfa9507d0)
-
-
-
 
 ## 特性
 - 使用Vue3+Electron开发
@@ -116,3 +108,16 @@ npm run electron:build
 <div align="center">
 	<img src="./src/assets/Hydrogen_n=3_l=2_m=1.png" style="width:400px;">
 </div>
+
+## 截图
+
+![image](https://github.com/user-attachments/assets/ab8c65c3-9ba6-4187-b3c0-1d7ee229171f)
+
+![image](https://github.com/user-attachments/assets/c73aadfa-7106-4057-b1f2-d3de46843c9c)
+
+![image](https://github.com/user-attachments/assets/b5830b60-7e2e-41b7-908b-422bfa9507d0)
+
+![image](https://github.com/user-attachments/assets/018da082-53fe-4ee4-af47-0df249664481)
+
+![image](https://github.com/user-attachments/assets/6deab329-c083-41e2-b913-735247fbe66d)
+
