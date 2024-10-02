@@ -1,7 +1,11 @@
 <template>
-    <div>
+    <transition name="playui-slide">
+        <div class="container" v-if="show">
+            <div class="ui">
 
-    </div>
+            </div>
+        </div>
+    </transition>
 </template>
 
 <script lang="js">
@@ -9,6 +13,10 @@
 export default {
     name: 'YPlayUI',
     props: {
+        show: {
+            type: Boolean,
+            default: true,
+        },
     },
     computed: {
     },
@@ -18,3 +26,11 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+.container{
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+</style>

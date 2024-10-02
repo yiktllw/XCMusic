@@ -357,11 +357,13 @@ export default {
         },
         async getHotSearches() {
             // 获取热搜榜
-            let result = await useApi('/search/hot/detail', {}).catch((error) => {
-                console.error('Failed to get hot searches:', error);
-            });
-            console.log('get hot searches', result.result.hots);
-            this.hotSearches = result.result.hots;
+            await useApi('/search/hot/detail', {})
+                .then(result => {
+                    this.hotSearches = result.result.hots;
+                })
+                .catch((error) => {
+                    console.error('Failed to get hot searches:', error);
+                });
         },
         openTestPage() {
             this.$router.push({ path: '/test' });
