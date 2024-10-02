@@ -19,9 +19,9 @@
                 <img v-if="searchInput !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchInput = ''" />
             </div>
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
-                :default-show="true" :slide-direction="1">
+                :default-show="false" :slide-direction="1">
                 <div class="search-panel">
-                    <div class="search-history" v-if="this.searchHistory.length > 0">
+                    <div class="search-history" v-if="searchHistory.length > 0">
                         <div class="search-history-title">搜索历史</div>
                         <div class="search-history-items">
                             <div v-for="item in searchHistory" :key="item" @click="search(item)"
@@ -40,8 +40,8 @@
                     <div class="search-suggestions" v-else>
                         <div class="search-suggestions-title">热搜榜
                         </div>
-                        <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches" :key="hotSearch"
-                            :title="hotSearch.first" @click="search(hotSearch.first)"
+                        <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches"
+                            :key="hotSearch" :title="hotSearch.first" @click="search(hotSearch.first)"
                             v-html="highlightMatching(hotSearch.first)" />
                     </div>
                 </div>
@@ -151,8 +151,10 @@ export default {
     },
     watch: {
         searchHistory(newHistory) {
-            this.setting.searchHistory = newHistory;
-        }
+            if (newHistory.length > 0) {
+                this.setting.titleBar.searchHistory = newHistory;
+            }
+        },
     },
     computed: {
         ...mapState({
@@ -262,11 +264,11 @@ export default {
             this.search(event.target.value);
         },
         search(text) {
-            console.log('search:', text);
             this.$router.push({ path: `/search/${text}/default` });
             this.$refs.search_panel.closePanel();
-            const SEARCH_LENGTH = 10;
-            if (this.searchHistory.length > 0 && this.searchHistory.length < SEARCH_LENGTH) {
+            const SEARCH_HISTORY_LENGTH = 10;
+            if (this.searchHistory.length > 0 && this.searchHistory.length <= SEARCH_HISTORY_LENGTH) {
+                console.log('search0');
                 if (!this.searchHistory.includes(text)) {
                     this.searchHistory = [
                         text,
@@ -282,19 +284,20 @@ export default {
                 this.searchHistory = [
                     text,
                 ];
-            } else if (this.searchHistory.length >= SEARCH_LENGTH) {
+            } else if (this.searchHistory.length >= SEARCH_HISTORY_LENGTH) {
                 if (!this.searchHistory.includes(text)) {
                     this.searchHistory = [
                         text,
-                        ...this.searchHistory.slice(0, SEARCH_LENGTH - 1),
+                        ...this.searchHistory.slice(0, SEARCH_HISTORY_LENGTH - 1),
                     ];
                 } else {
                     this.searchHistory = [
                         text,
-                        ...this.searchHistory.filter((item) => item !== text).slice(0, SEARCH_LENGTH - 1),
+                        ...this.searchHistory.filter((item) => item !== text).slice(0, SEARCH_HISTORY_LENGTH - 1),
                     ];
                 }
             }
+            console.log('search:', text);
         },
         async getSearchSuggestions(event) {
             const searchText = event.target.value;
@@ -349,6 +352,7 @@ export default {
         },
         openTestPage() {
             this.$router.push({ path: '/test' });
+            console.log('searchHistory:', this.setting.searchHistory);
         },
         openListenRank() {
             this.$router.push({ path: `/user_songs_rank/${this.login.userId}` })
@@ -358,7 +362,7 @@ export default {
         // 添加外部点击处理器
         await this.init();
         await this.getHotSearches();
-        this.searchHistory = this.setting.searchHistory;
+        this.searchHistory = this.setting.titleBar.searchHistory;
     },
     beforeUnmount() {
         // 移除外部点击处理器
