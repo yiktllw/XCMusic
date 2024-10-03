@@ -5,7 +5,7 @@
         <div class="align-left" :key="currentTrack?.id">
             <!-- 2 播放信息 -->
             <div class="play-info" @mouseover="setShowButton" @mouseleave="showButton = false">
-                <div class="play-info-left">
+                <div class="play-info-left" v-if="type === 'default'">
                     <!-- 3 封面 -->
                     <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
                         :key="currentTrackCover">
@@ -29,7 +29,10 @@
                     </div>
                 </div>
                 <!-- 歌曲操作按钮 -->
-                <div class="play-info-right" v-if="showButton">
+                <div class="play-info-right" v-if="showButton || type === 'play-ui'">
+                    <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')" >
+                        <img class="img-close-panel" src="../assets/more.svg"/>
+                    </div>
                     <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单">
                     <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载">
                     <div class="song-comment">
@@ -221,6 +224,15 @@ export default {
         YProgressBarV,
         YTextBanner,
     },
+    props: {
+        type: {
+            type: String,
+            default: 'default',
+        },
+    },
+    emits: [
+        'close-panel',
+    ],
     data() {
         return {
             qualityGroup: [
@@ -406,10 +418,9 @@ export default {
             this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
         }
         this.player.volume = this.setting.play.volume;
-        this.player.quality = this.setting.play.quality;
         this.tooglePlayMode(this.setting.play.mode);
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 let avQuality = this.player.availableQuality;
                 this.qualityGroup.forEach((quality) => {
@@ -428,7 +439,7 @@ export default {
         })
         this.playlist = this.player.playlist;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playlist = this.player.playlist;
             },
@@ -436,7 +447,7 @@ export default {
         })
         this.playState = this.player.playState;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playState = this.player.playState;
             },
@@ -445,7 +456,7 @@ export default {
         this.currentTrack = this.player.currentTrack;
         this.setCommentCount();
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: async () => {
                 this.currentTrack = this.player.currentTrack;
                 await this.setCommentCount();
@@ -456,7 +467,7 @@ export default {
         this.duration = this.player.duration;
         this.progress = this.player.progress;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.duration = this.player.duration;
                 this.currentTime = this.player.currentTime;
@@ -466,7 +477,7 @@ export default {
         })
         this.playMode = this.player.mode;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playMode = this.player.mode;
             },
@@ -474,7 +485,7 @@ export default {
         })
         this.volume = this.player.volume;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.volume = this.player.volume;
             },
@@ -482,7 +493,7 @@ export default {
         })
         this.qualityDisplay = this.player.qualityDisplay;
         this.player.Subscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.qualityDisplay = this.player.qualityDisplay;
             },
@@ -491,35 +502,35 @@ export default {
     },
     beforeUnmount() {
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'trackReady',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'playlist',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'playState',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'track',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'time',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'mode',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'volume',
         })
         this.player.UnSubscribe({
-            id: 'YPlaybar',
+            id: 'YPlaybar' + `${this.type}`,
             type: 'quality',
         })
     },
@@ -529,6 +540,7 @@ export default {
 
 <style lang="scss" scoped>
 .playbar {
+    position: relative;
     display: flex;
     height: 100%;
     width: 100%;
@@ -607,6 +619,21 @@ export default {
             .play-info-right {
                 display: flex;
                 align-items: center;
+
+
+                .close-button {
+                    padding: 10px 10px 5px 10px;
+                    background-color: rgba(255, 255, 255, .05);
+                    border-radius: 10px;
+                    border: 1px solid rgba(255, 255, 255, .1);
+                    cursor: pointer;
+                    margin-right: 20px;
+
+                    .img-close-panel {
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
 
                 .play-info-ico {
                     width: 22px;

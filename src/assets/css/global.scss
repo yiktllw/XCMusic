@@ -101,15 +101,10 @@ html {
 
 .playui-slide-enter-active,
 .playui-slide-leave-active {
-    transition: all .3s ease;
+    transition: all .25s ease;
 }
 
 .playui-slide-enter-from,
 .playui-slide-leave-to {
     transform: translateY(100%);
-}
-
-.playui-slide-enter-to,
-.playui-slide-leave-from {
-    transform: translateY(0);
 }

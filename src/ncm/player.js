@@ -215,6 +215,7 @@ export class Player {
                 this._progress = (this._currentTime / this._duration).toFixed(3);
                 this._duration = this._audio.duration;
                 this.Execute({ type: 'time' });
+                this.Execute({ type: 'trackReady' });
             }
 
             this._updateTime = setTimeout(update, 200);  // 递归调用 setTimeout

@@ -2,15 +2,18 @@
     <div class="titlebar font-color-main">
         <!-- 后退和前进按钮 -->
         <div class="buttons arrows">
-            <button class="back" @click="back" title="后退">
+            <button class="back" @click="back" title="后退" v-if="type === 'default'">
                 <img class="img arrow" src="../assets/backarrow.svg" />
             </button>
-            <button class="forward" @click="forward" title="前进">
+            <button class="forward" @click="forward" title="前进" v-if="type === 'default'">
                 <img class="img arrow" src="../assets/forwardarrow.svg" />
             </button>
+            <div v-else-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
+                <img class="img-close-panel" src="../assets/more.svg" />
+            </div>
         </div>
         <!-- 搜索栏 -->
-        <div class="searchbar" ref="search_panel_trigger">
+        <div class="searchbar" ref="search_panel_trigger" v-if="type === 'default'">
             <div class="input-wrapper">
                 <input type="text" class="search-input font-color-main" @keydown.enter="handleSearch"
                     v-model="searchInput" @input="getSearchSuggestions" placeholder="搜索..."
@@ -49,11 +52,12 @@
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
-            <button class="avatar" v-if="this.login.status" @click="openUserPage">
+            <button class="avatar" v-if="this.login.status && type === 'default'" @click="openUserPage">
                 <img class="avatarImg" :src="this.login.avatar" v-if="this.login.avatar" />
                 <div class="avatarImg avatarImgPlaceholder" v-else></div>
             </button>
-            <button class="userInfo font-color-main" @click="userInfo" ref="user_info_menu_trigger">
+            <button class="userInfo font-color-main" @click="userInfo" ref="user_info_menu_trigger"
+                v-if="type === 'default'">
                 <div class="userInfoTxt" v-if="this.login.status">
                     {{ userNickName }}
                 </div>
@@ -100,7 +104,7 @@
                 </div>
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
-            <button class="settings" @click="settings" title="设置">
+            <button class="settings" @click="settings" title="设置" v-if="type === 'default'">
                 <img class="img settings" src="../assets/settings.svg" alt="Settings" />
             </button>
             <button class="minimize" @click="minimize" title="最小化">
@@ -126,8 +130,15 @@ export default {
     emits: [
         'navigate-back',
         'navigate-forward',
-        'user-login'
+        'user-login',
+        'close-panel',
     ],
+    props: {
+        type: {
+            type: String,
+            default: 'default',
+        },
+    },
     components: {
         YPanel,
     },
@@ -376,7 +387,9 @@ export default {
     async mounted() {
         // 添加外部点击处理器
         await this.init();
-        await this.getHotSearches();
+        if (this.type === 'default') {
+            await this.getHotSearches();
+        }
         this.searchHistory = this.setting.titleBar.searchHistory;
     },
     beforeUnmount() {
@@ -417,6 +430,19 @@ export default {
             padding: 8px 1px 7px 1px;
             border-radius: 7px;
             border: 1px solid rgba(255, 255, 255, .1);
+        }
+    }
+
+    .close-button {
+        padding: 10px 10px 5px 10px;
+        background-color: rgba(255, 255, 255, .05);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, .1);
+        cursor: pointer;
+
+        .img-close-panel {
+            width: 16px;
+            height: 16px;
         }
     }
 

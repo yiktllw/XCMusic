@@ -95,12 +95,14 @@ export default {
         ...mapState({
             // 播放列表
             player: state => state.player,
+            setting: state => state.setting,
             login: state => state.login,
         }),
     },
     mounted() {
         // console.log(this.$refs.YDisplayArea);
         window.addEventListener('message', this.handleMessage);
+        this.player.quality = this.setting.play.quality;
     },
     beforeUnmount() {
         window.removeEventListener('message', this.handleMessage);

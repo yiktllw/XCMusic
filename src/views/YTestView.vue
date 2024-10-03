@@ -1,6 +1,9 @@
 <template>
     <div class="display">
-        <YPlayUI />
+        <button @click="$refs.playUI.tooglePanel">
+            切换
+        </button>
+        <YPlayUI ref="playUI" />
     </div>
 </template>
 
