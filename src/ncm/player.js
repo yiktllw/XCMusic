@@ -333,11 +333,12 @@ export class Player {
                     // 更新播放状态
                     await this._audio.play();
                     this.playState = 'play';
-                    this.updateTime();
+                    console.log('auto play');
                 } catch (error) {
                     console.error(error);
                 }
             }
+            this.updateTime();
             console.log('Playing', track);
             console.log('track url: ', url);
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
@@ -773,10 +774,16 @@ export class Player {
     }
     // 设置播放状态 'play' : 'pause'
     set playState(value) {
-        if ((value === 'play' || value === 'pause') && this._audio && this._audio.readyState) {
-            this._playState = value;
-            this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
-            this.Execute({ type: 'playState' });
+        if ((value === 'play' || value === 'pause')) {
+            if (this._audio && this._audio.readyState) {
+                this._playState = value;
+                this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
+                this.Execute({ type: 'playState' });
+            } else {
+                console.log('Audio not ready');
+            }
+        } else {
+            console.error('PlayState not supported: ', value);
         }
     }
     tooglePlayState() {
