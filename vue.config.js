@@ -54,7 +54,14 @@ module.exports = defineConfig({
                     pathRewrite: {
                         '^/search': '/search'
                     }
-                }
+                },
+                '/api': {
+                    target: process.env.VUE_APP_API, 
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '^/api': '' 
+                    }
+                },
             },
         }
     },

@@ -4,14 +4,8 @@
             "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "dist_electron" 
+                "distDir": "dist_electron"
             }
-        }
-    ],
-    "rewrites": [
-        {
-            "source": "/api/:match*",
-            "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*"
         }
     ]
 }

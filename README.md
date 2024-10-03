@@ -63,17 +63,10 @@
                 "distDir": "dist_electron" 
             }
         }
-    ],
-    "rewrites": [
-        {
-            "source": "/api/:match*",
-            //请替换成上一步部署的api的路径并删除此注释
-            "destination": "https://your.NeteaseCloudMusicApi.deployment/:match*" 
-        }
     ]
 }
 ```
-4. 导入到vercel
+4. 导入到vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的api地址。
 
 ## 配置开发环境
 安装依赖
@@ -89,6 +82,7 @@ npm run electron:serve
 npm run electron:build
 ```
 请注意，本项目使用的NeteaseCloudMusicApi是修改过的[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)，所以需要在安装依赖后手动替换`/node_modules/NeteaseCloudMusicApi`
+
 ~~为什么不直接发布一个新包呢，因为我懒~~
 
 ## 灵感来源
