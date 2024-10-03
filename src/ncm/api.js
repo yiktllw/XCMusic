@@ -4,7 +4,7 @@ export async function useApi(relativePath, params) {
     let apiHost = "http://localhost:10754";
     if (!window.electron?.isElectron) {
         if (process.env.VUE_APP_API) {
-            apiHost = process.env.VUE_APP_API;
+            apiHost = '/api';
         } else {
             console.error('请设置环境变量 VUE_APP_API');
         }
@@ -16,7 +16,6 @@ export async function useApi(relativePath, params) {
         return response.data;
     } catch (error) {
         console.error(error);
-        throw error;
     }
 }
 
