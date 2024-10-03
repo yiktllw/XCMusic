@@ -207,7 +207,7 @@ export class Player {
 
         const update = () => {
             // 确保音频已经加载
-            if (this._audio.readyState < 2) return;
+            if (this._audio.readyState === 0) return;
 
             // 确保触发time订阅事件时，时间发生了变化
             if (this.playState === 'play' && this._currentTime !== Math.floor(this._audio.currentTime)) {
