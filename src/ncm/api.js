@@ -1,18 +1,36 @@
 import axios from 'axios';
 
-export async function useApi(relativePath, params) {
-    let apiHost = "http://localhost:10754";
-    if (!window.electron?.isElectron) {
-        if (process.env.VUE_APP_API) {
-            apiHost = '/api';
+// 创建 Axios 实例
+const apiClient = axios.create({
+    baseURL: process.env.VUE_APP_API || 'http://localhost:10754', // 设置基本请求地址
+    timeout: 10000, // 设置请求超时时间
+});
+
+// 添加请求拦截器
+apiClient.interceptors.request.use(
+    (config) => {
+        if (window.electron?.isElectron) {
+            // 在 Electron 中直接使用 localhost 地址
+            config.baseURL = 'http://localhost:10754';
         } else {
-            console.error('请设置环境变量 VUE_APP_API');
+            // 在非 Electron 环境中，使用 /api 作为前缀
+            if (process.env.VUE_APP_API) {
+                config.baseURL = process.env.VUE_APP_API; // 使用环境变量中的 API 地址
+            } else {
+                console.error('请设置环境变量 VUE_APP_API');
+            }
         }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
+);
+
+// 自定义 API 请求函数
+export async function useApi(relativePath, params) {
     try {
-        const response = await axios.get(apiHost + relativePath, {
-            params: params
-        });
+        const response = await apiClient.get(relativePath, { params });
         return response.data;
     } catch (error) {
         console.error(error);
