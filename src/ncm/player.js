@@ -339,6 +339,7 @@ export class Player {
                 }
             }
             console.log('Playing', track);
+            console.log('track url: ', url);
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
         }
