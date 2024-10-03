@@ -3,10 +3,10 @@ import axios from 'axios';
 export async function useApi(relativePath, params) {
     let apiHost = "http://localhost:10754";
     if (!window.electron?.isElectron) {
-        if (process.env.NCM_API_URL) {
-            apiHost = process.env.NCM_API_URL ?? 'http://localhost:10754';
+        if (process.env.VUE_APP_API) {
+            apiHost = process.env.VUE_APP_API;
         } else {
-            console.error('请设置环境变量 NCM_API_URL');
+            console.error('请设置环境变量 VUE_APP_API');
         }
     }
     try {
