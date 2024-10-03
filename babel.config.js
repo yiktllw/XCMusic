@@ -6,7 +6,7 @@ module.exports = {
     plugins: [
         '@babel/plugin-transform-runtime',
         '@babel/plugin-proposal-class-properties',
-        '@babel/plugin-proposal-nullish-coalescing-operator',  // 添加这个插件
+        '@babel/plugin-proposal-nullish-coalescing-operator',  
         '@babel/plugin-proposal-optional-chaining',
     ],
 }

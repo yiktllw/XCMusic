@@ -1,18 +1,22 @@
 import axios from 'axios';
 
 export async function useApi(relativePath, params) {
-    let localHost = "http://localhost:10754"; // 确保包含协议
-    if (!window.electron?.isElectron){
-        localHost = "/api";
+    let apiHost = "http://localhost:10754";
+    if (!window.electron?.isElectron) {
+        if (process.env.NCM_API_URL) {
+            apiHost = process.env.NCM_API_URL ?? 'http://localhost:10754';
+        } else {
+            console.error('请设置环境变量 NCM_API_URL');
+        }
     }
     try {
-        const response = await axios.get(localHost + relativePath, {
-            params: params // 正确传递查询参数
+        const response = await axios.get(apiHost + relativePath, {
+            params: params
         });
-        return response.data; // 返回响应数据
+        return response.data;
     } catch (error) {
         console.error(error);
-        throw error; // 如果需要，可以抛出错误
+        throw error;
     }
 }
 
