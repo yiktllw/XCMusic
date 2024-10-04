@@ -23,7 +23,7 @@
         <div class="align-down">
             <!-- 播放栏 -->
             <div class="playbar">
-                <YPlaybar />
+                <YPlaybar @open-panel="$refs.playUI?.showPanel()" />
             </div>
         </div>
         <div class="context-menu">
@@ -43,6 +43,9 @@
             </div>
         </div>
     </div>
+    <div class="play-ui" :class="showPlayUI ? 'top' : 'bottom'">
+        <YPlayUI ref="playUI" @close-panel="showPlayUI = false" @show-panel="showPlayUI = true" />
+    </div>
 </template>
 
 <script lang="js">
@@ -55,6 +58,7 @@ import YContextMenu from '@/components/YContextMenu.vue';
 import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
+import YPlayUI from '@/components/YPlayUI.vue';
 import { YMessageC, Message } from '@/tools/YMessageC';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
@@ -79,6 +83,7 @@ export default {
                 message: '',
             },
             msgKey: 0,
+            showPlayUI: false,
         };
     },
     components: {
@@ -90,6 +95,7 @@ export default {
         YAddToPlaylist,
         YSongInfo,
         YMessage,
+        YPlayUI,
     },
     computed: {
         ...mapState({
@@ -376,6 +382,23 @@ export default {
             justify-content: end;
         }
     }
+}
+
+.play-ui {
+    position: absolute;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.top{
+    z-index: 1000;
+}
+
+.bottom{
+    z-index: -1;
 }
 
 #app {

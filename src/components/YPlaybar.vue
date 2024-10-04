@@ -9,6 +9,11 @@
                     <!-- 3 封面 -->
                     <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
                         :key="currentTrackCover">
+                    <div class="open-panel" @click="$emit('open-panel')" >
+                        <div class="open-panel-overlay">
+                        </div>
+                        <img class="img-cover img img-open-panel" src="../assets/less.svg" />
+                    </div>
                     <!-- 4 播放信息文本 -->
                     <div class="play-info-text">
                         <!-- 5 播放信息文本:标题 -->
@@ -30,13 +35,13 @@
                 </div>
                 <!-- 歌曲操作按钮 -->
                 <div class="play-info-right" v-if="showButton || type === 'play-ui'">
-                    <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')" >
-                        <img class="img-close-panel" src="../assets/more.svg"/>
+                    <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
+                        <img class="img-close-panel" src="../assets/more.svg" />
                     </div>
                     <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单">
                     <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载">
                     <div class="song-comment">
-                        <img class="img-comment play-info-ico" src="../assets/comment.svg" title="评论"
+                        <img class="img-comment play-info-ico" src="../assets/comment2.svg" title="评论"
                             @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
@@ -232,6 +237,7 @@ export default {
     },
     emits: [
         'close-panel',
+        'open-panel',
     ],
     data() {
         return {
@@ -575,6 +581,7 @@ export default {
                 align-items: center;
                 margin-right: 10px;
                 overflow: hidden;
+                position: relative;
 
                 .img-cover {
                     width: 50px;
@@ -582,6 +589,36 @@ export default {
                     margin-right: 10px;
                     margin-left: 15px;
                     border-radius: 5px;
+                }
+
+                .open-panel {
+                    position: absolute;
+                    width: 50px;
+                    height: 50px;
+                    opacity: 0;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+
+                    .open-panel-overlay {
+                        position: absolute;
+                        width: 50px;
+                        height: 50px;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        border-radius: 5px;
+                        left: 15px;
+                    }
+
+                    .img-open-panel {
+                        position: absolute;
+                        width: 30px;
+                        height: 30px;
+                        left: 10px;
+                        top: 10px;
+                        cursor: pointer;
+                    }
                 }
 
                 .play-info-text {
@@ -627,7 +664,7 @@ export default {
                     border-radius: 10px;
                     border: 1px solid rgba(255, 255, 255, .1);
                     cursor: pointer;
-                    margin-right: 20px;
+                    margin: 0 20px 0 20px;
 
                     .img-close-panel {
                         width: 16px;
@@ -676,7 +713,7 @@ export default {
                         font-size: 10px;
                         z-index: 1;
                         padding: 0px 0px 2px 2px;
-                        background-color: rgb(45, 45, 55);
+                        // background-color: rgb(45, 45, 55);
                     }
                 }
             }

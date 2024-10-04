@@ -389,8 +389,8 @@ export default {
         await this.init();
         if (this.type === 'default') {
             await this.getHotSearches();
+            this.searchHistory = this.setting.titleBar.searchHistory;
         }
-        this.searchHistory = this.setting.titleBar.searchHistory;
     },
     beforeUnmount() {
         // 移除外部点击处理器
@@ -434,6 +434,7 @@ export default {
     }
 
     .close-button {
+        margin-left: 10px;
         padding: 10px 10px 5px 10px;
         background-color: rgba(255, 255, 255, .05);
         border-radius: 10px;
