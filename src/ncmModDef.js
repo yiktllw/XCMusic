@@ -402,6 +402,11 @@ module.exports = [
         module: require('NeteaseCloudMusicApi/module/mv_all'),
     },
     {
+        identifier: 'lyric_new',
+        route: '/lyric/new',
+        module: require('NeteaseCloudMusicApi/module/lyric_new'),
+    },
+    {
         identifier: 'lyric',
         route: '/lyric',
         module: require('NeteaseCloudMusicApi/module/lyric'),

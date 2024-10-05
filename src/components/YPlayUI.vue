@@ -43,18 +43,25 @@
                             曲谱
                         </div>
                     </div>
-                    <YScroll style="height: 50vh; margin-left: 5px; scroll-behavior: smooth;" ref="lyricContainer">
+                    <YScroll style="height: 50vh; margin-left: 5px; " ref="lyricContainer">
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
-                            <div class="lyric-lrc" v-if="lyrics[0]?.content">
+                            <div class="lyric-lrc">
                                 <div class="before-lyric" />
                                 <div class="lyric-lrc-line" v-for="(line, index) in lyrics" :key="line"
-                                    :class="lineClass(index)">
-                                    {{ line.content }}
+                                    :class="lineClass(index)"
+                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all ${line.content ? 0.5 : ((currentTime < (line.startTime + (line.duration ?? 0))) ? 0.5 : 0.2)}s ease` }">
+                                    <span v-if="line.content">
+                                        {{ line.content }}
+                                    </span>
+                                    <span v-if="line.words">
+                                        <span v-for="(word, windex) in line.words" :key="windex"
+                                            :style="{ 'color': word.startTime <= currentTime && index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `color ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s ease` }"
+                                            style="position: relative;">
+                                            {{ word.text }}
+                                        </span>
+                                    </span>
                                 </div>
                                 <div class="after-lyric" />
-                            </div>
-                            <div class="lyric-yrc" v-else-if="lyrics[0]?.words">
-
                             </div>
                         </div>
                     </YScroll>
@@ -113,6 +120,7 @@ export default {
             currentTime: 0,
             currentLine: 0,
             timeInterval: null,
+            scrollAnimationFrame: null,
         };
     },
     emits: [
@@ -123,6 +131,9 @@ export default {
         show(newVal) {
             if (newVal) {
                 this.$emit('show-panel');
+                this.$nextTick(() => {
+                    this.scrollToCurrentLine();
+                });
             } else {
                 setTimeout(() => {
                     this.$emit('close-panel');
@@ -130,6 +141,11 @@ export default {
             }
         },
         currentLine() {
+            this.$nextTick(() => {
+                this.scrollToCurrentLine();
+            });
+        },
+        position() {
             this.$nextTick(() => {
                 this.scrollToCurrentLine();
             });
@@ -154,6 +170,7 @@ export default {
                         type: 'yrc',
                         data: res.yrc.lyric,
                     })).lyrics;
+                    console.log('yrc', this.lyrics);
                 } else if (res.lrc) {
                     this.lyrics = (new Lyrics({
                         type: 'lrc',
@@ -193,15 +210,51 @@ export default {
                     const lineTopOffset = currentLineElement.offsetTop;
 
                     // 设置滚动条位置，使当前行居中显示
-                    container.scrollTop = lineTopOffset - (containerHeight) + (lineHeight / 2);
+                    let scrollTop = lineTopOffset - (containerHeight) + (lineHeight / 2);
+                    let scrollTopNow = container.scrollTop;
+
+                    // 如果已有动画在进行，取消当前动画
+                    if (this.scrollAnimationFrame) {
+                        cancelAnimationFrame(this.scrollAnimationFrame);
+                    }
+
+                    // 动画参数
+                    const duration = 600; // 动画持续时间
+                    const startTime = performance.now(); // 动画开始时间
+
+                    // 缓动函数 (三次缓动)
+                    const easeInOutCubic = (t) => {
+                        return t < 0.5
+                            ? 4 * t * t * t
+                            : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    };
+
+                    // 动画循环
+                    const animateScroll = (currentTime) => {
+                        // 计算已经过的时间
+                        const elapsed = currentTime - startTime;
+                        const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
+                        const easeT = easeInOutCubic(t); // 应用缓动
+
+                        // 计算当前的 scrollTop 值
+                        const currentScrollTop = scrollTopNow + (scrollTop - scrollTopNow) * easeT;
+                        container.scrollTop = currentScrollTop;
+
+                        // 如果动画尚未结束，继续请求下一个动画帧
+                        if (t < 1) {
+                            this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
+                        } else {
+                            this.scrollAnimationFrame = null; // 动画完成后重置动画 ID
+                        }
+                    };
+
+                    // 启动动画
+                    this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
                 }
             }
         }
     },
     async mounted() {
-        setTimeout(() => {
-            this.scrollToCurrentLine();
-        }, 500);
         if (this.player.currentTrack) {
             this.track = this.player.currentTrack;
         }
@@ -209,6 +262,7 @@ export default {
             id: 'YPlayUI',
             func: async () => {
                 this.track = this.player.currentTrack;
+                this.scrollToCurrentLine();
                 await this.getLyrics(this.player.currentTrack.id);
             },
             type: 'track',
@@ -241,9 +295,6 @@ export default {
             },
             type: 'allTime',
         });
-        this.timeInterval = setInterval(() => {
-            this.scrollToCurrentLine();
-        }, 1000);
     },
     beforeUnmount() {
         clearInterval(this.timeInterval);
@@ -404,11 +455,10 @@ export default {
                         padding: 5px 0;
                         width: 100%;
                         text-align: left;
+                        transform-origin: left;
                     }
 
                     .current-line {
-                        color: var(--font-color-main);
-                        font-size: 22px;
                         padding: 10px 0;
                     }
 

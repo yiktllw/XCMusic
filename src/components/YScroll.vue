@@ -16,6 +16,7 @@ export default {
     overflow-x: hidden;
     user-select: none;
     -webkit-user-drag: none;
+    // scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
         width: 6px;

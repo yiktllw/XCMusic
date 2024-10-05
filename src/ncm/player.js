@@ -490,6 +490,9 @@ export class Player {
         if (this._mode === 'random') {
             // 随机播放下一首
             await this.randomPlay(1);
+        } else if (this._mode === 'loop') {
+            // 循环播放
+            await this.playTrack(this.currentTrack);
         } else {
             // 顺序播放下一首
             this._current = (this._current + 1) % this.playlistCount;
