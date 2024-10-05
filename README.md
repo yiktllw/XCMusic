@@ -105,6 +105,8 @@ npm run electron:build
 
 ## 截图
 
+![image](https://github.com/user-attachments/assets/97cfc4f3-3dfa-4305-8476-076cf2b75b3a)
+
 ![image](https://github.com/user-attachments/assets/ab8c65c3-9ba6-4187-b3c0-1d7ee229171f)
 
 ![image](https://github.com/user-attachments/assets/c73aadfa-7106-4057-b1f2-d3de46843c9c)
