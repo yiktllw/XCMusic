@@ -277,7 +277,7 @@ export default {
                 if (this.$refs.playuiContainer) {
                     this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .4}, ${color.g * .4}, ${color.b * .4}) 100%)`;
                 }
-                let progressDOM = this.$refs.playBar.$refs.progressBarNoTrack.$refs.progressDOM;
+                let progressDOM = this.$refs?.playBar?.$refs?.progressBarNoTrack?.$refs?.progressDOM;
                 if (progressDOM) {
                     progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .1), rgb(${color.r}, ${color.g}, ${color.b} ))`;
                     console.log('set color');
