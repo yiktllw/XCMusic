@@ -3,7 +3,7 @@
         <button @click="$refs.playUI.tooglePanel">
             切换
         </button>
-        <YPlayUI ref="playUI" />
+        <YMultiSelect ref="playUI" :tracks="tracks" />
     </div>
 </template>
 
