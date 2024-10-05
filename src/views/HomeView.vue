@@ -353,6 +353,10 @@ export default {
         }
     }
 
+    .context-menu {
+        z-index: 1000;
+    }
+
     .add-to-playlist-container {
         top: 0;
         left: 0;
@@ -393,11 +397,11 @@ export default {
     left: 0;
 }
 
-.top{
-    z-index: 1000;
+.top {
+    z-index: 500;
 }
 
-.bottom{
+.bottom {
     z-index: -1;
 }
 

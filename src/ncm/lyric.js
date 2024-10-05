@@ -74,14 +74,19 @@ export class Lyrics {
 
         // 遍历每一行LRC文件内容
         lines.forEach(line => {
-            if (line.startsWith('{') && line.endsWith('}')) {
+            // 尝试将当前行解析为 JSON 格式
+            try {
                 const jsonData = JSON.parse(line);
-                // 将自定义标签解析为相同结构
-                lyrics.push({
-                    startTime: jsonData.t,
-                    content: jsonData.c
-                });
-                return;
+                // 如果成功解析为 JSON 格式，则将其添加到结果数组
+                if (jsonData && typeof jsonData === 'object') {
+                    lyrics.push({
+                        startTime: jsonData.t,
+                        content: jsonData.c
+                    });
+                    return; // 继续处理下一行
+                }
+            } catch (e) {
+                // 解析失败则继续按 LRC 格式处理
             }
 
             // 匹配 LRC 时间戳（例如 [00:24.000]）
@@ -111,6 +116,7 @@ export class Lyrics {
             }
         });
 
+        console.log('Parsed LRC:', lyrics);
         return lyrics;
     }
 }

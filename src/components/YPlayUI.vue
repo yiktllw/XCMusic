@@ -1,6 +1,6 @@
 <template>
     <transition name="playui-slide">
-        <div class="container" v-if="show">
+        <div class="container" v-if="show" ref="playuiContainer">
             <div class="title-bar">
                 <YTitlebar :type="'play-ui'" @close-panel="show = false" />
             </div>
@@ -51,9 +51,18 @@
                                     :class="lineClass(index)"
                                     :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all ${line.content ? 0.5 : ((currentTime < (line.startTime + (line.duration ?? 0))) ? 0.5 : 0.2)}s ease` }">
                                     <span v-if="line.content">
-                                        {{ line.content }}
+                                        <span v-if="typeof line.content !== 'string'" >
+                                            <span v-for="(content, cindex) in line.content" :key="cindex">
+                                                <img v-if="content.li" :src="content.li + '?param=22y22'"
+                                                    style="border-radius: 10px;">
+                                                {{ content.tx }}
+                                            </span>
+                                        </span>
+                                        <span v-else>
+                                            {{ line.content }}
+                                        </span>
                                     </span>
-                                    <span v-if="line.words">
+                                    <span v-else-if="line.words">
                                         <span v-for="(word, windex) in line.words" :key="windex"
                                             :style="{ 'color': word.startTime <= currentTime && index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `color ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s ease` }"
                                             style="position: relative;">
@@ -81,6 +90,7 @@ import YScroll from './YScroll.vue';
 import { Lyrics } from '@/ncm/lyric';
 import { mapState } from 'vuex';
 import { useApi } from '@/ncm/api';
+import { getColorFromImg } from '@/ncm/color';
 
 export default {
     name: 'YPlayUI',
@@ -133,6 +143,7 @@ export default {
                 this.$emit('show-panel');
                 this.$nextTick(() => {
                     this.scrollToCurrentLine();
+                    this.setBackgroundColor();
                 });
             } else {
                 setTimeout(() => {
@@ -170,7 +181,6 @@ export default {
                         type: 'yrc',
                         data: res.yrc.lyric,
                     })).lyrics;
-                    console.log('yrc', this.lyrics);
                 } else if (res.lrc) {
                     this.lyrics = (new Lyrics({
                         type: 'lrc',
@@ -252,6 +262,21 @@ export default {
                     this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
                 }
             }
+        },
+        async setBackgroundColor() {
+            if (this.track?.al?.picUrl) {
+                await getColorFromImg(this.track.al.picUrl + '?param=50y50', document).then((color) => {
+                    if (!color) {
+                        if (this.$refs.playuiContainer) {
+                            this.$refs.playuiContainer.style.background = '#131319';
+                        }
+                        return;
+                    }
+                    if (this.$refs.playuiContainer) {
+                        this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .4}, ${color.g * .4}, ${color.b * .4}) 100%)`;
+                    }
+                })
+            }
         }
     },
     async mounted() {
@@ -263,7 +288,11 @@ export default {
             func: async () => {
                 this.track = this.player.currentTrack;
                 this.scrollToCurrentLine();
-                await this.getLyrics(this.player.currentTrack.id);
+                let requests = [
+                    this.setBackgroundColor(),
+                    this.getLyrics(this.player.currentTrack.id),
+                ]
+                await Promise.all(requests);
             },
             type: 'track',
         })
