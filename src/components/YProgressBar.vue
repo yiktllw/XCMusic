@@ -1,5 +1,6 @@
 <script setup lang="js">
 const progress = defineModel();   // eslint-disable-line
+const emits = defineEmits(['update:modelValue', 'set-progress-end']); //eslint-disable-line
 </script>
 
 <template>
@@ -20,10 +21,6 @@ const progress = defineModel();   // eslint-disable-line
 
 export default {
     name: 'YProgressBar',
-    emits: [
-        'update:modelValue',
-        'set-progress-end',
-    ],
     data() {
         return {
             key: 0,
