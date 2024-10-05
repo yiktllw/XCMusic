@@ -116,7 +116,6 @@ export class Lyrics {
             }
         });
 
-        console.log('Parsed LRC:', lyrics);
         return lyrics;
     }
 }

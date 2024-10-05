@@ -51,7 +51,7 @@
                                     :class="lineClass(index)"
                                     :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all ${line.content ? 0.5 : ((currentTime < (line.startTime + (line.duration ?? 0))) ? 0.5 : 0.2)}s ease` }">
                                     <span v-if="line.content">
-                                        <span v-if="typeof line.content !== 'string'" >
+                                        <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
                                                 <img v-if="content.li" :src="content.li + '?param=22y22'"
                                                     style="border-radius: 10px;">
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="play-bar">
-                <YPlaybar :type="'play-ui'" @close-panel="show = false" />
+                <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" />
             </div>
         </div>
     </transition>
@@ -264,19 +264,25 @@ export default {
             }
         },
         async setBackgroundColor() {
-            if (this.track?.al?.picUrl) {
-                await getColorFromImg(this.track.al.picUrl + '?param=50y50', document).then((color) => {
-                    if (!color) {
-                        if (this.$refs.playuiContainer) {
-                            this.$refs.playuiContainer.style.background = '#131319';
-                        }
-                        return;
-                    }
-                    if (this.$refs.playuiContainer) {
-                        this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .4}, ${color.g * .4}, ${color.b * .4}) 100%)`;
-                    }
-                })
+            if (!this.track?.al?.picUrl) {
+                return;
             }
+            await getColorFromImg(this.track.al.picUrl + '?param=50y50', document).then((color) => {
+                if (!color) {
+                    if (this.$refs.playuiContainer) {
+                        this.$refs.playuiContainer.style.background = '#131319';
+                    }
+                    return;
+                }
+                if (this.$refs.playuiContainer) {
+                    this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .4}, ${color.g * .4}, ${color.b * .4}) 100%)`;
+                }
+                let progressDOM = this.$refs.playBar.$refs.progressBarNoTrack.$refs.progressDOM;
+                if (progressDOM) {
+                    progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .1), rgb(${color.r}, ${color.g}, ${color.b} ))`;
+                    console.log('set color');
+                }
+            });
         }
     },
     async mounted() {
@@ -518,6 +524,7 @@ export default {
     .play-bar {
         width: 100%;
         height: 85px;
+        background-color: rgba(255, 255, 255, .03);
     }
 }
 </style>

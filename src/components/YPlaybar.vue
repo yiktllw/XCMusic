@@ -1,5 +1,9 @@
 <template>
     <!-- 0 播放栏 -->
+    <div class="big-progress" v-if="type === 'play-ui'">
+        <YProgressBar v-model="progress" style="height: 20px; width: 100%;" @update:model-value="setAudioProgress"
+            :show-track="false" ref="progressBarNoTrack" />
+    </div>
     <div class="playbar font-color-main">
         <!-- 1 左侧 -->
         <div class="align-left" :key="currentTrack?.id">
@@ -9,7 +13,7 @@
                     <!-- 3 封面 -->
                     <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
                         :key="currentTrackCover">
-                    <div class="open-panel" @click="$emit('open-panel')" >
+                    <div class="open-panel" @click="$emit('open-panel')">
                         <div class="open-panel-overlay">
                         </div>
                         <img class="img-cover img img-open-panel" src="../assets/less.svg" />
@@ -46,6 +50,9 @@
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
                         </div>
+                    </div>
+                    <div class="play-info-time font-color-standard" v-if="type === 'play-ui'">
+                        {{ currentTime ? formatDuration(currentTime) : '00:00' }} / {{ formatDuration(this.duration) }}
                     </div>
                 </div>
             </div>
@@ -114,7 +121,7 @@
                 </YPanel>
             </div>
             <!-- 2 进度条 -->
-            <div class="progress">
+            <div class="progress" v-if="type === 'default'">
                 <!-- 3 自定义进度条 -->
                 <div class="time font-color-main" :key="currentTime">
                     {{ currentTime ? formatDuration(currentTime) : '00:00' }}
@@ -308,6 +315,7 @@ export default {
             duration: 0,
             currentTime: 0,
             progress: 0,
+            progressInterval: null,
             volume: 0,
             qualityDisplay: '标准',
         }
@@ -545,6 +553,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.big-progress {
+    position: absolute;
+    width: 100%;
+    bottom: 75px;
+}
+
 .playbar {
     position: relative;
     display: flex;
@@ -689,6 +703,11 @@ export default {
 
                 .img-download {
                     margin-right: 10px;
+                }
+
+                .play-info-time {
+                    margin-left: 15px;
+                    font-size: 13px;
                 }
 
                 .song-comment {
@@ -1017,30 +1036,24 @@ export default {
     -webkit-user-drag: none;
 
     &::-webkit-scrollbar {
-        /* 滚动条宽度 */
         width: 6px;
     }
 
     &::-webkit-scrollbar-track {
-        /* 滚动条轨道背景 */
         background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-        /* 滚动条滑块背景 */
         background: transparent;
-        /* 滚动条滑块圆角 */
         border-radius: 6px;
     }
 
     &:hover::-webkit-scrollbar-thumb {
-        /* 滚动条滑块背景 */
         background-color: rgba(255, 255, 255, 0.1);
     }
 
     &:hover::-webkit-scrollbar-thumb:hover {
         background-color: rgba(255, 255, 255, 0.2);
-        /* 滚动条滑块悬停背景 */
     }
 }
 </style>
