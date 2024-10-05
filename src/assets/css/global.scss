@@ -98,3 +98,13 @@ html {
 .rotate2-enter-to {
     transform: rotate(0deg);
 }
+
+.playui-slide-enter-active,
+.playui-slide-leave-active {
+    transition: all .25s ease;
+}
+
+.playui-slide-enter-from,
+.playui-slide-leave-to {
+    transform: translateY(100%);
+}

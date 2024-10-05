@@ -78,6 +78,7 @@ export class Player {
             'track',
             'trackReady',
             'time',
+            'allTime',
             'quality',
             'volume',
             'history',
@@ -210,17 +211,24 @@ export class Player {
             if (this._audio.readyState === 0) return;
 
             // 确保触发time订阅事件时，时间发生了变化
-            if (this.playState === 'play' && this._currentTime !== Math.floor(this._audio.currentTime)) {
+            if (this.playState === 'play' && Math.floor(this._currentTime) !== Math.floor(this._audio.currentTime)) {
+                // 如果秒数发生了变化
                 this._currentTime = Math.floor(this._audio.currentTime);
                 this._progress = (this._currentTime / this._duration).toFixed(3);
                 this._duration = this._audio.duration;
                 this.Execute({ type: 'time' });
+                this.Execute({ type: 'trackReady' });
+            } else if (this.playState === 'play' && this._currentTime !== this._audio.currentTime) {
+                // 如果毫秒数发生了变化
+                this._currentTime = this._audio.currentTime;
+                this._progress = (this._currentTime / this._duration).toFixed(3);
+                this.Execute({ type: 'allTime'});
             }
 
-            this._updateTime = setTimeout(update, 200);  // 递归调用 setTimeout
+            this._updateTime = setTimeout(update, 50);  // 递归调用 setTimeout
         };
 
-        this._updateTime = setTimeout(update, 200);  // 初次调用
+        this._updateTime = setTimeout(update, 50);  // 初次调用
     }
     // 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url
     async reloadUrl() {
@@ -482,6 +490,9 @@ export class Player {
         if (this._mode === 'random') {
             // 随机播放下一首
             await this.randomPlay(1);
+        } else if (this._mode === 'loop') {
+            // 循环播放
+            await this.playTrack(this.currentTrack);
         } else {
             // 顺序播放下一首
             this._current = (this._current + 1) % this.playlistCount;

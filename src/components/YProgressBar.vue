@@ -1,10 +1,6 @@
-<script setup lang="js">
-const progress = defineModel();   // eslint-disable-line
-</script>
-
 <template>
     <div class="progress-bigframe" :key="key">
-        <div class="progress-bar" @click="onClick" ref="progress_bar">
+        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack">
             <div class="progress-fill" />
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
@@ -13,21 +9,51 @@ const progress = defineModel();   // eslint-disable-line
                 <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
             </div>
         </div>
+        <div v-else class="progress-bar no-track" @click="onClick" ref="progress_bar_no_track">
+            <div class="progress-no-track" :style="{ 'width': progress * 100 + '%' }" ref="progressDOM" />
+            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
+                @mousedown="startSetProgress" @mouseup="endSetProgress" />
+        </div>
     </div>
 </template>
 
 <script lang="js">
+import { ref, watch } from 'vue';
 
 export default {
     name: 'YProgressBar',
-    emits: [
-        'update:modelValue',
-        'set-progress-end',
-    ],
     data() {
         return {
             key: 0,
         };
+    },
+    emits: [
+        'update:modelValue',
+        'set-progress-end'
+    ],
+    setup(props) { // eslint-disable-line
+        // progress 的本地状态
+        const progress = ref(props.modelValue);
+
+        // 监听 modelValue 的变化
+        watch(() => props.modelValue, (newValue) => {
+            progress.value = newValue;
+        });
+        return {
+            progress
+        };
+    },
+    props: {
+        modelValue: {
+            default: 0,
+            validator: (value) => {
+                return value >= 0 && value <= 1;
+            }
+        },
+        showTrack: {
+            type: Boolean,
+            default: true,
+        },
     },
     watch: {
         progress(newValue) {
@@ -36,7 +62,12 @@ export default {
     },
     methods: {
         updateProgress(x) {
-            const rect = this.$refs.progress_bar.getBoundingClientRect();
+            let rect = null;
+            if (this.showTrack) {
+                rect = this.$refs.progress_bar.getBoundingClientRect();
+            } else {
+                rect = this.$refs.progress_bar_no_track.getBoundingClientRect();
+            }
             const dx = x - rect.left;
             let progress = dx / rect.width;
             if (progress < 0) {
@@ -88,12 +119,12 @@ export default {
         }
 
         .progress-pointer {
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             background-color: #fff;
             border-radius: 50%;
             position: absolute;
-            top: -3.0px;
+            top: -5.0px;
             z-index: 3;
             opacity: 0;
         }
@@ -125,6 +156,15 @@ export default {
                 border-radius: 10px;
                 z-index: 1;
             }
+        }
+    }
+
+    .no-track {
+        .progress-no-track {
+            height: 75%;
+            background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
+            border-radius: 10px;
+            transition: all 1s linear;
         }
     }
 }

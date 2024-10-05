@@ -33,7 +33,6 @@ export default {
             return '-' + this.textwidth + 'px';
         },
         showAni() {
-            console.log('textwidth',this.textwidth,'mainwidth', this.mainWidth);
             return this.textwidth - 100 > this.mainWidth;
         }
     },

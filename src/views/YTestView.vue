@@ -1,19 +1,9 @@
 <template>
     <div class="display">
-        <YMultiSelect v-model="tracks">
-            <template #item="{ item, index }"><!--eslint-disable-line-->
-                <div class="item font-color-main">
-                    <div class="align-up">
-                        <div class="align-left">
-                            <div class="track-count">
-                                {{ index + 1 }}
-                            </div>
-                        </div>
-                        {{ item.name }}
-                    </div>
-                </div>
-            </template>
-        </YMultiSelect>
+        <button @click="$refs.playUI.tooglePanel">
+            切换
+        </button>
+        <YPlayUI ref="playUI" />
     </div>
 </template>
 

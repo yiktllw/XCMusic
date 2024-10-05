@@ -1,6 +1,33 @@
 <template>
     <!-- 滚动容器 -->
     <YScroll style="max-height:100%;">
+        <div class="search-info">
+            <div class="search-info-title font-color-main">
+                「&nbsp;{{ search }}&nbsp;」
+                <span class="font-color-high" style="font-size: 16px;">的搜索结果如下, 共找到
+                    <span v-if="position === 'song'">
+                        {{ switcher[0].total }}首歌曲
+                    </span>
+                    <span v-else-if="position === 'album'">
+                        {{ switcher[1].total }}张专辑
+                    </span>
+                    <span v-else-if="position === 'playlist'">
+                        {{ switcher[2].total }}个歌单
+                    </span>
+                    <span v-else-if="position === 'artist'">
+                        {{ switcher[3].total }}位歌手
+                    </span>
+                    <span v-else-if="position === 'lyric'">
+                        {{ switcher[4].total }}首歌曲
+                    </span>
+                    <span v-else-if="position === 'user'">
+                        {{ switcher[5].total }}位用户
+                    </span>
+                </span>
+            </div>
+            <div class="search-info-detail font-color-main">
+            </div>
+        </div>
         <!-- 导航 -->
         <div class="switcher">
             <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
@@ -106,31 +133,37 @@ export default {
                     display: '歌曲',
                     position: 'song',
                     tracks: [],
+                    total: 0,
                 },
                 {
                     display: '专辑',
                     position: 'album',
                     playlists: [],
+                    total: 0,
                 },
                 {
                     display: '歌单',
                     position: 'playlist',
                     playlists: [],
+                    total: 0,
                 },
                 {
                     display: '歌手',
                     position: 'artist',
                     artists: [],
+                    total: 0,
                 },
                 {
                     display: '歌词',
                     position: 'lyric',
                     lyricsList: [],
+                    total: 0,
                 },
                 {
                     display: '用户',
                     position: 'user',
                     users: [],
+                    total: 0,
                 },
             ],
             // 上次搜索位置
@@ -162,6 +195,7 @@ export default {
                         url: '/cloudsearch?type=1',
                         tracks: result.result.songs,
                     })).tracks);
+                    this.switcher[0].total = result.result.songCount;
                     if (newPageInstance) {
                         this.songsPage = new YPageC(Math.ceil(result.result.songCount / 100));
                     }
@@ -188,6 +222,7 @@ export default {
                             _picUrl: playlist.coverImgUrl + '?param=40y40',
                         }
                     });
+                    this.switcher[2].total = result.result.playlistCount;
                     if (newPageInstance) {
                         this.playlistsPage = new YPageC(Math.ceil(result.result.playlistCount / 100));
                     }
@@ -215,6 +250,7 @@ export default {
                             _picUrl: album.picUrl + '?param=40y40',
                         }
                     });
+                    this.switcher[1].total = result.result.albumCount;
                     if (newPageInstance) {
                         this.albumsPage = new YPageC(Math.ceil(result.result.albumCount / 100));
                     }
@@ -241,6 +277,7 @@ export default {
                             _picUrl: artist.picUrl + '?param=130y130',
                         }
                     });
+                    this.switcher[3].total = result.result.artistCount;
                     if (newPageInstance) {
                         this.artistsPage = new YPageC(Math.ceil(result.result.artistCount / 100));
                     }
@@ -264,6 +301,7 @@ export default {
                         url: '/cloudsearch?type=1006',
                         tracks: result.result.songs,
                     })).tracks);
+                    this.switcher[4].total = result.result.songCount;
                     if (newPageInstance) {
                         this.lyricsPage = new YPageC(Math.ceil(result.result.songCount / 100));
                     }
@@ -290,6 +328,7 @@ export default {
                             _picUrl: user.avatarUrl + '?param=130y130',
                         }
                     });
+                    this.switcher[5].total = result.result.userprofileCount;
                     if (newPageInstance) {
                         this.usersPage = new YPageC(Math.ceil(result.result.userprofileCount / 100));
                     }
@@ -340,6 +379,20 @@ export default {
 
 
 <style lang="scss" scoped>
+.search-info {
+    padding: 0 12px;
+    display: flex;
+    width: 100%;
+    align-items: start;
+    flex-direction: column;
+
+    .search-info-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+}
+
 .switcher {
     display: flex;
     font-size: 16px;
