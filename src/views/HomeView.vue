@@ -146,6 +146,11 @@ export default {
             } else if (event.data.type === 'message-show') {
                 this.msg = event.data.data;
                 this.msgKey++;
+            } else if (event.data.type === 'open-info-panel') {
+                if (event.data.data) {
+                    this.trackOfInfo = event.data.data;
+                    this.showSongInfo = true;
+                }
             }
         },
         async getCommentCount(id) {

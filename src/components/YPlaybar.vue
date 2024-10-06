@@ -42,6 +42,7 @@
                     <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
                         <img class="img-close-panel" src="../assets/more.svg" />
                     </div>
+                    <img class="img-info play-info-ico" src="../assets/info.svg" title="歌曲信息" @click="openInfoPanel" />
                     <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单">
                     <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载">
                     <div class="song-comment">
@@ -426,6 +427,12 @@ export default {
                 console.log(err);
             });
         },
+        openInfoPanel() {
+            window.postMessage({
+                type: 'open-info-panel',
+                data: this.player.currentTrack,
+            });
+        }
     },
     async mounted() {
         if (this.login.status) {
@@ -695,6 +702,10 @@ export default {
                     &:hover {
                         opacity: 1;
                     }
+                }
+                
+                .img-info{
+                    margin-right: 10px;
                 }
 
                 .img-subscribe {
