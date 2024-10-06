@@ -25,7 +25,7 @@ export class Lyrics {
         for (const line of lines) {
             // 解析时间轴和逐字歌词
             const timestampMatch = line.match(/^\[([0-9]+),([0-9]+)\]/);
-            const textMatch = line.match(/\((\d+),(\d+),\d+\)(.+?)/g);
+            const textMatch = line.match(/\((\d+),(\d+),\d+\)([^(]+)/g);
 
             if (timestampMatch) {
                 // 提取起始时间和持续时间
