@@ -1,6 +1,6 @@
 <template>
-    <div class="progress-bigframe" :key="key">
-        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack">
+    <div class="progress-bigframe">
+        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack" :key="key">
             <div class="progress-fill" />
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
