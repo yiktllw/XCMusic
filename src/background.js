@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'// eslint-disable-line
+import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'// eslint-disable-line
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -79,6 +79,12 @@ app.on('ready', async () => {
     await Promise.all(requests).catch((err) => {
         console.error(err);
     });
+    
+    // 监听缩放比例消息
+    ipcMain.on('zoom', (event, zoomLevel) => {
+        win.webContents.setZoomFactor(zoomLevel);
+    });
+
     // 创建托盘
     if (process.env.NODE_ENV === 'development') {
         tray = new Tray(path.join(__dirname, '../src/assets/icons/icon.ico'));
@@ -88,7 +94,7 @@ app.on('ready', async () => {
     // 菜单模板
     let _menu = [
         {
-            label: '显示主窗口',  
+            label: '显示主窗口',
             id: 'show-window',
             click: () => {
                 win.show();
@@ -96,7 +102,7 @@ app.on('ready', async () => {
             enabled: !win.show,
         },
         {
-            label: '退出',  
+            label: '退出',
             click: () => {
                 app.quit();
             }
@@ -117,7 +123,7 @@ app.on('ready', async () => {
         menu.getMenuItemById('show-window').enabled = false;
         tray.setContextMenu(menu);
     });
-    
+
     // 处理托盘点击事件
     tray.on('double-click', () => {
         if (win.isVisible()) {

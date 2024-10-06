@@ -19,6 +19,7 @@ export default {
     computed: {
         ...mapState({
             player: state => state.player,
+            setting: state => state.setting,
         }),
     },
     data() {
