@@ -6,12 +6,12 @@
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
             <div class="overflow-hidden">
                 <div class="progress-fill-corner" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
-                <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
+                <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" />
             </div>
         </div>
         <div v-else class="progress-bar no-track" @click="onClick" ref="progress_bar_no_track">
             <div class="progress-no-track" :style="{ 'width': progress * 100 + '%' }" ref="progressDOM" />
-            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
+            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
         </div>
     </div>

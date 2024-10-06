@@ -608,7 +608,7 @@ export default {
             }
 
             .lyric {
-                width: 32.1vw;
+                width: 43.21vw;
 
                 .lyric-lrc {
                     transition: all 0.3s;
