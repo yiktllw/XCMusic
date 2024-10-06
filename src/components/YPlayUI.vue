@@ -43,7 +43,7 @@
                             曲谱
                         </div>
                     </div>
-                    <YScroll style="height: 50vh; margin-left: 5px; " ref="lyricContainer">
+                    <YScroll style="height: calc(100vh - 350px); margin-left: 5px; " ref="lyricContainer">
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
                             <div class="lyric-lrc">
                                 <div class="before-lyric" />
@@ -71,6 +71,58 @@
                                     </span>
                                 </div>
                                 <div class="after-lyric" />
+                            </div>
+                        </div>
+                        <div class="wiki font-color-main" v-else-if="position === 'wiki'">
+                            <div class="wiki-content">
+                                <div class="wiki-first-listen" v-if="firstListen">
+                                    <div class="first-listen-main-title">
+                                        {{ firstListen.uiElement.mainTitle.title }}
+                                    </div>
+                                    <div class="first-listen-content">
+                                        <div class="content-first-listen">
+                                            <div class="first-listen-title font-color-main">
+                                                {{ firstListenTitle }}
+                                            </div>
+                                            <div class="first-listen-period font-color-main">
+                                                {{ firstListenPeriod }}
+                                            </div>
+                                            <div class="first-listen-time font-color-main">
+                                                {{ firstListenTime }}
+                                            </div>
+                                        </div>
+                                        <div class="listen-count">
+                                            <div class="listen-count-title font-color-main">
+                                                {{ listenCountTitle }}
+                                            </div>
+                                            <div class="listen-count-content font-color-main">
+                                                {{ listenCountContent }}
+                                            </div>
+                                            <div class="listen-count-info">
+                                                {{ listenCountInfo }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wiki-song">
+                                    <div class="wiki-song-title">
+                                        {{ songWiki?.uiElement.mainTitle.title }}
+                                    </div>
+                                    <div class="wiki-song-content">
+                                        <div class="wiki-song-content-item" v-for="(creative, index) in creatives"
+                                            :key="index">
+                                            <div class="item-title">
+                                                {{ creative.title }}
+                                            </div>
+                                            <div class="item-content">
+                                                <span v-for="(content, cindex) in creative.content" :key="cindex">
+                                                    {{ content }}
+                                                    <span v-if="cindex < creative.content.length - 1"> 、 </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </YScroll>
@@ -102,7 +154,72 @@ export default {
     computed: {
         ...mapState({
             player: state => state.player,
+            login: state => state.login,
         }),
+        firstListenPeriod() {
+            if (this.firstListen) {
+                return this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.season + '的' + this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.period;
+            }
+            return '';
+        },
+        firstListenTime() {
+            if (this.firstListen) {
+                return this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.date;
+            }
+            return '';
+        },
+        firstListenTitle() {
+            if (this.firstListen) {
+                return this.firstListen.creatives[0].resources[0].uiElement.mainTitle.title;
+            }
+            return '';
+        },
+        listenCount() {
+            if (this.firstListen) {
+                return this.firstListen.creatives[0].resources[1];
+            }
+            return null;
+        },
+        listenCountTitle() {
+            if (this.firstListen) {
+                return this.listenCount?.uiElement.mainTitle.title;
+            }
+            return '';
+        },
+        listenCountContent() {
+            if (this.firstListen) {
+                return this.listenCount?.resourceExt.musicTotalPlayDto.playCount + '次·' + this.formatDuration(this.listenCount?.resourceExt.musicTotalPlayDto.duration);
+            }
+            return '';
+        },
+        listenCountInfo() {
+            if (this.firstListen) {
+                return this.listenCount?.resourceExt.musicTotalPlayDto.text;
+            }
+            return '';
+        },
+        creatives() {
+            let res = [];
+            if (this.songWiki) {
+                this.songWiki.creatives.forEach((element) => {
+                    let contentRes = [];
+                    if (element.uiElement.textLinks) {
+                        element.uiElement.textLinks.forEach((textLink) => {
+                            contentRes.push(textLink.text);
+                        });
+                    } else if (element.resources) {
+                        element.resources.forEach((resource) => {
+                            contentRes.push(resource.uiElement.mainTitle.title);
+                        });
+                    }
+                    res.push({
+                        title: element.uiElement.mainTitle.title,
+                        content: contentRes,
+                    });
+                });
+            }
+            return res;
+        },
     },
     data() {
         return {
@@ -127,6 +244,8 @@ export default {
             },
             position: 'lyric',
             lyrics: null,
+            firstListen: null,
+            songWiki: null,
             currentTime: 0,
             currentLine: 0,
             timeInterval: null,
@@ -283,6 +402,23 @@ export default {
                     console.log('set color');
                 }
             });
+        },
+        async getWiki() {
+            await useApi('/song/wiki/summary', {
+                id: this.track.id,
+                cookie: this.login.cookie,
+            }).then((res) => {
+                this.firstListen = res.data.blocks[0];
+                this.songWiki = res.data.blocks[1];
+                console.log(this.creatives);
+            });
+        },
+        formatDuration(duration) {
+            if (duration < 600) {
+                return duration + '分钟';
+            } else {
+                return (duration / 60).toFixed(0) + '小时';
+            }
         }
     },
     async mounted() {
@@ -297,6 +433,7 @@ export default {
                 let requests = [
                     this.setBackgroundColor(),
                     this.getLyrics(this.player.currentTrack.id),
+                    this.getWiki(),
                 ]
                 await Promise.all(requests);
             },
@@ -304,6 +441,7 @@ export default {
         })
         if (this.player.currentTrack?.id) {
             await this.getLyrics(this.player.currentTrack.id);
+            await this.getWiki();
         }
         if (this.player.currentTrack) {
             this.currentTime = parseInt(this.player.currentTime * 1000);
@@ -515,6 +653,121 @@ export default {
 
                     .far-line {
                         opacity: .2;
+                    }
+                }
+            }
+
+            .wiki {
+                width: 43.21vw;
+
+                .wiki-content {
+                    width: 100%;
+
+                    .wiki-first-listen {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: start;
+
+                        .first-listen-main-title {
+                            font-size: 20px;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                            padding: 10px 0 0 5px;
+                        }
+
+                        .first-listen-content {
+                            display: flex;
+                            flex-direction: row;
+                            width: calc(100% - 20px);
+
+                            .content-first-listen {
+                                background-color: rgba(255, 255, 255, .1);
+                                border-radius: 10px;
+                                padding: 10px;
+                                text-align: left;
+                                width: calc(50% - 10px);
+
+                                .first-listen-title {
+                                    padding: 3px 0;
+                                    opacity: .5;
+                                }
+
+                                .first-listen-period {
+                                    padding: 5px 0;
+                                    font-weight: bold;
+                                    font-size: 20px;
+                                }
+
+                                .first-listen-time {
+                                    padding: 3px 0;
+                                    opacity: .8;
+                                }
+                            }
+
+                            .listen-count {
+                                background-color: rgba(255, 255, 255, .1);
+                                border-radius: 10px;
+                                padding: 10px;
+                                margin-left: 10px;
+                                text-align: left;
+                                width: calc(50% - 10px);
+
+                                .listen-count-title {
+                                    padding: 3px 0;
+                                    opacity: .5;
+                                }
+
+                                .listen-count-content {
+                                    padding: 5px 0;
+                                    font-weight: bold;
+                                    font-size: 20px;
+                                }
+
+                                .listen-count-info {
+                                    padding: 3px 0;
+                                    opacity: .8;
+                                }
+                            }
+                        }
+                    }
+
+                    .wiki-song {
+                        display: flex;
+                        flex-direction: column;
+                        width: calc(100% - 20px);
+                        align-items: start;
+
+                        .wiki-song-title {
+                            font-size: 20px;
+                            font-weight: bold;
+                            margin: 8px 0 10px 0;
+                            padding: 10px 0 0 5px;
+                        }
+
+                        .wiki-song-content {
+                            display: flex;
+                            flex-direction: column;
+                            background-color: rgba(255, 255, 255, .1);
+                            padding: 10px;
+                            border-radius: 10px;
+                            width: inherit;
+
+                            .wiki-song-content-item {
+                                display: flex;
+                                flex-direction: row;
+                                padding: 4px 0;
+
+                                .item-title {
+                                    opacity: .5;
+                                    width: 80px;
+                                    text-align: left;
+                                }
+
+                                .item-content {
+                                    font-size: 16px;
+                                }
+                            }
+                        }
                     }
                 }
             }
