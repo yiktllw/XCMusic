@@ -179,7 +179,9 @@ export class Login {
         }).catch((error) => {
             console.error('Failed to get user playlist:', error);
         });
-        this.userPlaylists[0].label = '我喜欢的音乐';
+        if (this.userPlaylists.length > 0) {
+            this.userPlaylists[0].label = '我喜欢的音乐';
+        }
         this.subscriber.exec('userPlaylists');
     }
 }

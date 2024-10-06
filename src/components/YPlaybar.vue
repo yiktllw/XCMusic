@@ -13,7 +13,7 @@
                     <!-- 3 封面 -->
                     <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
                         :key="currentTrackCover">
-                    <div class="open-panel" @click="$emit('open-panel')">
+                    <div v-if="this.currentTrack" class="open-panel" @click="$emit('open-panel')">
                         <div class="open-panel-overlay">
                         </div>
                         <img class="img-cover img img-open-panel" src="../assets/less.svg" />

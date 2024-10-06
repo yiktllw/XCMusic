@@ -65,6 +65,20 @@ export class Setting {
             },
         }
         this.display = {
+            zoom: {
+                value: localStorage.getItem('setting.display.zoom') ?? 1,
+                default: 1,
+                validation: (value) => {
+                    let valid = typeof value === 'number' && value >= 0.5 && value <= 2;
+                    if (valid) {
+                        localStorage.setItem('setting.display.zoom', value);
+                        if (window.electron.isElectron) {
+                            window.electron.ipcRenderer.send('zoom', value);
+                        }
+                    }
+                    return valid;
+                },
+            },
             sidebarWidth: {
                 value: localStorage.getItem('setting.display.sidebarWidth') ?? 200,
                 default: 200,

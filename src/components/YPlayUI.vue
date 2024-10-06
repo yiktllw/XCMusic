@@ -75,7 +75,7 @@
                         </div>
                         <div class="wiki font-color-main" v-else-if="position === 'wiki'">
                             <div class="wiki-content">
-                                <div class="wiki-first-listen" v-if="firstListen">
+                                <div class="wiki-first-listen" v-if="firstListen?.creatives?.length > 0">
                                     <div class="first-listen-main-title">
                                         {{ firstListen.uiElement.mainTitle.title }}
                                     </div>
@@ -157,43 +157,43 @@ export default {
             login: state => state.login,
         }),
         firstListenPeriod() {
-            if (this.firstListen) {
+            if (this.firstListen && this.firstListen.creatives.length > 0) {
                 return this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.season + '的' + this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.period;
             }
             return '';
         },
         firstListenTime() {
-            if (this.firstListen) {
+            if (this.firstListen && this.firstListen.creatives.length > 0) {
                 return this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.date;
             }
             return '';
         },
         firstListenTitle() {
-            if (this.firstListen) {
+            if (this.firstListen && this.firstListen.creatives.length > 0) {
                 return this.firstListen.creatives[0].resources[0].uiElement.mainTitle.title;
             }
             return '';
         },
         listenCount() {
-            if (this.firstListen) {
+            if (this.firstListen && this.firstListen.creatives.length > 0) {
                 return this.firstListen.creatives[0].resources[1];
             }
             return null;
         },
         listenCountTitle() {
-            if (this.firstListen) {
+            if (this.listenCount) {
                 return this.listenCount?.uiElement.mainTitle.title;
             }
             return '';
         },
         listenCountContent() {
-            if (this.firstListen) {
+            if (this.listenCount) {
                 return this.listenCount?.resourceExt.musicTotalPlayDto.playCount + '次·' + this.formatDuration(this.listenCount?.resourceExt.musicTotalPlayDto.duration);
             }
             return '';
         },
         listenCountInfo() {
-            if (this.firstListen) {
+            if (this.listenCount) {
                 return this.listenCount?.resourceExt.musicTotalPlayDto.text;
             }
             return '';
@@ -209,7 +209,9 @@ export default {
                         });
                     } else if (element.resources) {
                         element.resources.forEach((resource) => {
-                            contentRes.push(resource.uiElement.mainTitle.title);
+                            if (resource.uiElement.mainTitle) {
+                                contentRes.push(resource.uiElement.mainTitle.title);
+                            }
                         });
                     }
                     res.push({

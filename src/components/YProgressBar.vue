@@ -2,10 +2,10 @@
     <div class="progress-bigframe">
         <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack" :key="key">
             <div class="progress-fill" />
-            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }"
+            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
             <div class="overflow-hidden">
-                <div class="progress-fill-corner" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
+                <div class="progress-fill-corner" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" />
                 <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" />
             </div>
         </div>
