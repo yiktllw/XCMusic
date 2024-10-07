@@ -1,12 +1,51 @@
 import Color from "color";
 
+const darkThemeColors = [ // eslint-disable-line
+    '#1d2932',
+    '#3c4871',
+    '#405772',
+    '#425d72',
+    '#486f63',
+    '#4b3c71',
+    '#4d6e45',
+    '#576f46',
+    '#583d71',
+    '#5c6f45',
+    '#5d3d71',
+    '#5e6f45',
+    '#673e71',
+    '#693c4b',
+    '#6a3d60',
+    '#6a423f',
+    '#6d5a42',
+    '#6e6544',
+    '#6f6845',
+    '#707046',
+]
+
+export function setColorFromImg(imgSrc, document) {
+    getColorFromImg(imgSrc, document).then((color) => {
+        if (color) {
+            setBackgroundColor(color);
+        } else {
+            setBackgroundColor({ r: 19, g: 19, b: 25 });
+        }
+    });
+}
+
 export function setBackgroundColor(color) {
     const DOM = document.querySelector('.mainContainer');
     if (!DOM) return;
     DOM.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  #131319 500px, #131319 100%)`;
 }
 
-function increaseSaturation(r, g, b,) {
+export function setBackgroundColorHex(hex) {
+    const DOM = document.querySelector('.mainContainer');
+    if (!DOM) return;
+    DOM.style.background = `linear-gradient(180deg, ${hex} 0%,  #131319 500px, #131319 100%)`;
+}
+
+function increaseSaturation(r, g, b,) { // eslint-disable-line
     // 创建一个 Color 对象
     const color = Color.rgb(r, g, b);
 
@@ -84,10 +123,22 @@ export async function getColorFromImg(imgSrc, document) {
                 g = increasedData.g * 0.5;
                 b = increasedData.b * 0.5;
 
-                // console.log('step5');
-                // console.log('rgb', r, g, b);
+                const avgColor = { r, g, b };
+                let closestColor = darkThemeColors[0];
+                let minDistance = colorDistance(avgColor, hexToRgb(closestColor));
 
-                resolve({ r, g, b }); // 通过 resolve 返回计算结果
+                for (const color of darkThemeColors) {
+                    const colorRgb = hexToRgb(color);
+                    const distance = colorDistance(avgColor, colorRgb);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestColor = color;
+                    }
+                }
+                console.log('color of img', avgColor, '\nclosestColor', closestColor);
+
+                resolve(hexToRgb(closestColor)); // 通过 resolve 返回计算结果
             } catch (error) {
                 reject(error); // 如果有错误，通过 reject 传递错误
             }
@@ -97,9 +148,26 @@ export async function getColorFromImg(imgSrc, document) {
             reject(error); // 处理图片加载错误
         };
     }).catch((error) => {
-        console.error('get color from image error: ',error); // 捕获错误
+        console.error('get color from image error: ', error); // 捕获错误
     });
 
     // console.log('color of img', color);
     return color; // 返回结果
+}
+
+export function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+}
+
+function colorDistance(color1, color2) {
+    // 计算两个颜色之间的欧几里得距离
+    return Math.sqrt(
+        Math.pow(color1.r - color2.r, 2) +
+        Math.pow(color1.g - color2.g, 2) +
+        Math.pow(color1.b - color2.b, 2)
+    );
 }
