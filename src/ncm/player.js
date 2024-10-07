@@ -717,6 +717,7 @@ export class Player {
     }
     // 设置播放模式
     set mode(value) {
+        if (value === this._mode) return;
         if (value !== 'order' && value !== 'listloop' && value !== 'random' && value !== 'loop' && value !== 'listrandom') {
             console.log('Mode not supported: ', value);
             return;

@@ -148,7 +148,7 @@ export default {
                 this.msgKey++;
             } else if (event.data.type === 'open-info-panel') {
                 if (event.data.data) {
-                    this.trackOfInfo = event.data.data;
+                    this.trackOfInfo = JSON.parse(event.data.data);
                     this.showSongInfo = true;
                 }
             }

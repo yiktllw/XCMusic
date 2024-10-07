@@ -430,7 +430,7 @@ export default {
         openInfoPanel() {
             window.postMessage({
                 type: 'open-info-panel',
-                data: this.player.currentTrack,
+                data: JSON.stringify(this.currentTrack),
             });
         }
     },
@@ -703,8 +703,8 @@ export default {
                         opacity: 1;
                     }
                 }
-                
-                .img-info{
+
+                .img-info {
                     margin-right: 10px;
                 }
 

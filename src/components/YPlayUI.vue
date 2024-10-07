@@ -62,11 +62,21 @@
                                             {{ line.content }}
                                         </span>
                                     </span>
-                                    <span v-else-if="line.words">
-                                        <span v-for="(word, windex) in line.words" :key="windex"
-                                            :style="{ 'color': word.startTime <= currentTime && index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `color ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s ease` }"
-                                            style="position: relative;">
-                                            {{ word.text }}
+                                    <span v-else-if="line.words" class="yrc-line">
+                                        <span v-for="(word, windex) in line.words" :key="windex" :style="{
+                                        }" class="yrc-line-item">
+                                            <span class="item-ori">
+                                                {{ word.text }}
+                                            </span>
+                                            <span class="item-standard font-color-standard">
+                                                {{ word.text }}
+                                            </span>
+                                            <span class="item-white font-color-main" :style="{
+                                                'transition': `clip-path ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s linear`,
+                                                clipPath: (word.startTime <= currentTime && index === currentLine) ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)'
+                                            }">
+                                                {{ word.text }}
+                                            </span>
                                         </span>
                                     </span>
                                 </div>
@@ -401,7 +411,6 @@ export default {
                 let progressDOM = this.$refs?.playBar?.$refs?.progressBarNoTrack?.$refs?.progressDOM;
                 if (progressDOM) {
                     progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .1), rgb(${color.r}, ${color.g}, ${color.b} ))`;
-                    console.log('set color');
                 }
             });
         },
@@ -412,7 +421,6 @@ export default {
             }).then((res) => {
                 this.firstListen = res.data.blocks[0];
                 this.songWiki = res.data.blocks[1];
-                console.log(this.creatives);
             });
         },
         formatDuration(duration) {
@@ -631,6 +639,32 @@ export default {
                         width: 100%;
                         text-align: left;
                         transform-origin: left;
+                        line-height: 1.5;
+
+                        .yrc-line {
+                            .yrc-line-item {
+                                position: relative;
+                                overflow: hidden;
+
+                                .item-ori {
+                                    opacity: 0;
+                                }
+                                
+                                .item-standard {
+                                    top: 0;
+                                    left: 0;
+                                    position: absolute;
+                                }
+
+                                .item-white {
+                                    top: 0;
+                                    left: 0;
+                                    position: absolute;
+                                    color: var(--font-color-main);
+                                    clip-path: inset(0 100% 0 0);
+                                }
+                            }
+                        }
                     }
 
                     .current-line {
