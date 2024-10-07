@@ -1,7 +1,7 @@
 // From YesPlayMusic
 
 import clc from 'cli-color';
-import server from 'NeteaseCloudMusicApi/server';
+import server from '@yiktllw/ncm-api/server';
 import net from 'net';
 import fs from 'fs';
 import path from 'path';
