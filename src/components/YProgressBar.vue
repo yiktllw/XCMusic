@@ -1,15 +1,11 @@
 <template>
     <div class="progress-bigframe">
-        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack" :key="key">
-            <div class="progress-fill" :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"></div>
+        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="true" :key="key">
+            <div :class="showTrack ? 'progress-fill' : 'progress-no-track'"
+                :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }" :ref="showTrack ? 'noSelect' : 'progressDOM'"></div>
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress"></div>
-            <div class="progress-track"></div>
-        </div>
-        <div v-else class="progress-bar no-track" @click="onClick" ref="progress_bar_no_track">
-            <div class="progress-no-track" :style="{ 'width': progress * 100 + '%' }" ref="progressDOM" />
-            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
-                @mousedown="startSetProgress" @mouseup="endSetProgress" />
+            <div class="progress-track" v-if="showTrack"></div>
         </div>
     </div>
 </template>
@@ -113,6 +109,14 @@ export default {
             height: 100%;
             background-color: rgb(254, 60, 90);
             border-radius: 10px;
+            transition: all 1s linear;
+        }
+
+        .progress-no-track {
+            height: 75%;
+            background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
+            border-radius: 10px;
+            transition: all 1s linear;
         }
 
         .progress-pointer {
@@ -136,15 +140,7 @@ export default {
             border-radius: 10px;
             z-index: -1;
         }
-    }
 
-    .no-track {
-        .progress-no-track {
-            height: 75%;
-            background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
-            border-radius: 10px;
-            transition: all 1s linear;
-        }
     }
 }
 
