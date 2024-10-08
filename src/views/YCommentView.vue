@@ -29,7 +29,8 @@
 <script lang="js">
 import YComment from '@/components/YComment.vue';
 import { YTrackC } from '@/tools/YTrackC';
-import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
+import { YColor } from '@/ncm/color';
+import { mapState } from 'vuex';
 
 export default {
     name: 'YCommentView',
@@ -45,6 +46,11 @@ export default {
             type: Number,
             required: true,
         },
+    },
+    computed:{
+        ...mapState({
+            setting: state => state.setting,
+        }),
     },
     watch: {
         id(newId) {
@@ -69,12 +75,8 @@ export default {
         },
         async trackLoaded() {
             this.trackKey++;
-            let color = await getColorFromImg(this.track.picUrl + '?param=30y30', document);
-            if (color) {
-                setBackgroundColor(color);
-            } else {
-                setBackgroundColor({ r: 19, g: 19, b: 25 });
-            }
+            let theme = YColor.findTheme(this.setting.display.theme);
+            YColor.setBkColorFromImg(this.track.picUrl, document, theme.type, theme.background);
         }
     },
     mounted() {

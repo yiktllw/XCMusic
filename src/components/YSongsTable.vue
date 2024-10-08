@@ -661,7 +661,7 @@ export default {
 
     .table-header {
         display: flex;
-        position: sticky;
+        // position: sticky;
         top: 0;
         z-index: 1;
         justify-content: space-between;

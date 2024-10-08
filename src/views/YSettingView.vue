@@ -15,10 +15,12 @@
                     <div class="content-item item-theme ">
                         <div class="content-item-title item-theme-title ">主题</div>
 
-                        <div v-for="item in themes" :key="item.value" class="item-theme-content">
-                            <input type="radio" :id="item.value" name="theme" :value="item.value" v-model="theme"
-                                @change="handleTheme">
-                            <label :for="item.value" @click="switchToTheme(item.value)">{{ item.display }}</label>
+                        <div class="theme-item">
+                            <div v-for="item in themes" :key="item.value" class="item-theme-content">
+                                <input type="radio" :id="item.value" name="theme" :value="item.value" v-model="theme"
+                                    @change="handleTheme">
+                                <label :for="item.value" @click="switchToTheme(item.value)">{{ item.display }}</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -129,7 +131,9 @@ export default {
 
         .item {
             display: flex;
+            align-items: first baseline;
             flex-direction: row;
+            white-space: nowrap;
 
             .item-title {
                 font-size: 17px;
@@ -146,28 +150,35 @@ export default {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+                    align-items: first baseline;
                     color: var(--font-color-high);
                 }
 
                 .item-theme {
-                    align-items: center;
 
                     .item-theme-title {
                         margin-right: 30px;
                         font-weight: bold;
                     }
-                    
-                    .item-theme-content{
-                        align-items: center;
-                        margin-right: 10px;
-                        cursor: pointer;
-                        
-                        input[type="radio"] {
+
+                    .theme-item {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: first baseline;
+                        line-height: 32.1px;
+
+                        .item-theme-content {
+                            align-items: center;
+                            margin-right: 10px;
                             cursor: pointer;
-                        }
-                        
-                        label {
-                            cursor: pointer;
+
+                            input[type="radio"] {
+                                cursor: pointer;
+                            }
+
+                            label {
+                                cursor: pointer;
+                            }
                         }
                     }
                 }

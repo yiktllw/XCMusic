@@ -244,7 +244,6 @@ export default {
                 cursor: pointer;
                 padding: 6px 7px 6px 5px;
                 margin: 3px 0px 3px 0px;
-                transition: all 0.3s ease;
                 -webkit-app-region: no-drag;
                 user-select: none;
                 white-space: normal;

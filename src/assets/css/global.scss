@@ -11,10 +11,11 @@ html {
     --panel-background-color: #2d2d36;
     --border-color: rgba(255, 255, 255, 0.1);
     --icon-invert: invert(0);
-    --font-color-main: #fff;
-    --font-color-high: #ccc;
-    --font-color-standard: #999;
-    --font-color-low: #666;
+    --font-color-rgb: 0, 0, 0;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
     --font-size-standard: 1rem;
     --font-size-small: 0.8rem;
     --font-size-large: 1.2rem;
@@ -24,7 +25,7 @@ html {
     --font-size-largest: 1.6rem;
 }
 
-.g-icon{
+.g-icon {
     filter: var(--icon-invert);
 }
 

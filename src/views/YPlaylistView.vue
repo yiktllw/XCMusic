@@ -429,8 +429,10 @@ export default {
         },
         // 设置背景颜色
         async _setBackgroundColor() {
-            const themeType = themes.find(theme => theme.value === this.setting.display.theme).type;
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType);
+            const theme = themes.find(theme => theme.value === this.setting.display.theme)
+            const themeType = theme.type;
+            const themeBackground = theme.background;
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType, themeBackground);
         },
         // 处理搜索
         handleSearch(input, fromEnter) {

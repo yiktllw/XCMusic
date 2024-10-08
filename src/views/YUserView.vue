@@ -127,7 +127,7 @@ import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
-import { setBackgroundColor, getColorFromImg, setBackgroundColorTheme } from '@/ncm/color';
+import { YColor } from '@/ncm/color';
 import { mapState } from 'vuex';
 import { YPageC } from '@/tools/YPageC';
 import { markRaw } from 'vue';
@@ -177,7 +177,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(['login']),
+        ...mapState({
+            login: state => state.login,
+            setting: state => state.setting,
+        }),
         // 是否显示右侧切换视图
         showRightSwitcher() {
             return this.type === 'user' || (this.type === 'artist' && this.user.position === 'album');
@@ -450,15 +453,8 @@ export default {
     async mounted() {
         // 获取用户信息
         await this.fetchUser();
-        // 获取用户头像的主题色
-        let color = await getColorFromImg(this.user.picUrl + '?param=30y30', document);
-        if (color) {
-            // 设置背景颜色
-            setBackgroundColor(color);
-        } else {
-            // 设置默认背景颜色
-            setBackgroundColorTheme();
-        }
+        const theme = YColor.findTheme(this.setting.display.theme);
+        YColor.setBkColorFromImg(this.user.picUrl, document, theme.type, theme.background);
     }
 }
 

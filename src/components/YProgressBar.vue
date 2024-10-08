@@ -109,7 +109,6 @@ export default {
             height: 100%;
             background-color: rgb(254, 60, 90);
             border-radius: 10px;
-            transition: all 1s linear;
         }
 
         .progress-no-track {

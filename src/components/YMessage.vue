@@ -1,5 +1,5 @@
 <template>
-    <div class="msg">
+    <div class="msg theme-dark">
         <transition name="slide-fade"
             v-bind:style="{ '--slide-transform': slideTransform, '--animation-time': _animationTime, '--z-indez': zIndex }">
             <div class="container" v-if="showMsg" v-bind:style="{ '--color': _color }">

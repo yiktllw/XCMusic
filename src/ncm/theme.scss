@@ -2,10 +2,11 @@
 
 // 定义暗色主题颜色
 .theme-dark {
-    --font-color-main: #fff;
-    --font-color-high: #ccc;
-    --font-color-standard: #999;
-    --font-color-low: #666;
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
     --background-color: #131319;
     --foreground-color: #fff;
     --foreground-color-rgb: 255, 255, 255;
@@ -16,14 +17,143 @@
 
 // 定义亮色主题颜色
 .theme-light {
-    --font-color-main: #000;
-    --font-color-high: #333;
-    --font-color-standard: #666;
-    --font-color-low: #999;
+    --font-color-rgb: 0, 0, 0;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
     --background-color: #f7f9fc;
     --foreground-color: #000;
     --foreground-color-rgb: 0, 0, 0;
     --panel-background-color: #fff;
     --border-color: rgba(0, 0, 0, 0.1);
     --icon-invert: invert(1);
+}
+
+.theme-dark-high-contrast {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #000000;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #0e141e;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --icon-invert: invert(0);
+}
+
+.theme-light-high-contrast {
+    --font-color-rgb: 0, 0, 0;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #fff;
+    --foreground-color: #000;
+    --foreground-color-rgb: 0, 0, 0;
+    --panel-background-color: #fff;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(1);
+}
+
+.theme-yikt {
+    --font-color-rgb: 0, 0, 0;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #f2cada;
+    --foreground-color: #000;
+    --foreground-color-rgb: 0, 0, 0;
+    --panel-background-color: #fde;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(1);
+}
+
+// 来自vscode的主题颜色
+
+.theme-material {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #283237;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #283237;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(0);
+}
+
+.theme-onedark {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #292c33;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #22252a;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(0);
+}
+
+.theme-solarized-light {
+    --font-color-rgb: 0, 0, 0;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #fcf6e5;
+    --foreground-color: #000;
+    --foreground-color-rgb: 0, 0, 0;
+    --panel-background-color: #ede8d7;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(1);
+}
+
+.theme-abyss {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #020c17;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #26273f;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(0);
+}
+
+.theme-tomorrow-night-blue {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #0b254e;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #071d3d;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(0);
+}
+
+.theme-monokai {
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #272823;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #1e1f1c;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(0);
 }

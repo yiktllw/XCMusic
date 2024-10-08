@@ -1,4 +1,5 @@
 import Color from "color";
+import { themes } from "./theme";
 
 /**
  * @typedef {Object} COLOR - 颜色对象
@@ -61,7 +62,16 @@ export class YColor {
         '#6f6845',
         '#707046',
     ];
+    #themes = themes;
 
+    /**
+     * 查询值对应的主题
+     * @param {string} themeValue 主题值
+     * @returns {Object} 主题对象: { value: string, display: string, type?: string, background?: string }
+     */
+    static findTheme(themeValue) {
+        return themes.find((theme) => theme.value === themeValue);
+    }
     /**
      * 将HEX颜色转换为RGB颜色，返回一个对象
      * @param {string} hex hex颜色值
@@ -74,7 +84,7 @@ export class YColor {
         const b = bigint & 255;
         return { r, g, b };
     }
-    
+
     /**
      * 将RGB颜色转换为HEX颜色
      * @param {number} r 红色值
@@ -84,25 +94,25 @@ export class YColor {
      */
     static rgbToHex(r, g, b) {
         return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-      }
+    }
 
     /**
      * 将暗色转化为亮色
      * @param {string} hex HEX颜色值
      * @returns {string} HEX颜色值
      */
-    static getLightThemeColor(hex) {
+    static getLightThemeColor(hex, background = '#FFFFFF') {
         const rgb = this.hexToRgb(hex);
         if (!rgb) return null; // 如果 HEX 格式不正确，则返回 null
 
-        // 白色的 RGB 值
-        const white = { r: 255, g: 255, b: 255 };
+        // 背景的 RGB 值
+        const backgroundColor = this.hexToRgb(background);
 
-        // 计算与白色之间 1/3 的颜色
+        // 计算与背景之间 1/3 的颜色
         const closerColor = {
-            r: Math.round(rgb.r + (white.r - rgb.r) * 0.8642),
-            g: Math.round(rgb.g + (white.g - rgb.g) * 0.8642),
-            b: Math.round(rgb.b + (white.b - rgb.b) * 0.8642)
+            r: Math.round(rgb.r + (backgroundColor.r - rgb.r) * 0.8),
+            g: Math.round(rgb.g + (backgroundColor.g - rgb.g) * 0.8),
+            b: Math.round(rgb.b + (backgroundColor.b - rgb.b) * 0.8),
         };
 
         // 将 RGB 转换回 HEX 格式
@@ -114,15 +124,25 @@ export class YColor {
      * @param {string} imgSrc 图片地址
      * @param {Document} document Document 对象
      * @param {COLOR_THEME_TYPE} colorThemeType 颜色主题类型，'dark' 或 'light'
+     * @param {string} themeBackground 主题的背景颜色，HEX，默认为 '#131319'
      */
-    static setBkColorFromImg(imgSrc, document, colorThemeType) {
+    static setBkColorFromImg(imgSrc, document, colorThemeType, themeBackground = '#131319') {
         getColorFromImg(imgSrc, document).then((color) => {
             if (color) {
                 if (colorThemeType === 'dark') {
+                    // 暗色主题
                     setBackgroundColor(color);
-                } else {
+                } else if (colorThemeType === 'light') {
+                    // 亮色主题
                     let lightColor = this.getLightThemeColor(this.rgbToHex(color.r, color.g, color.b))
                     setBackgroundColor(this.hexToRgb(lightColor));
+                } else {
+                    // 其他主题，对应colorThemeType为Undefined
+                    const DOM = document.querySelector('.mainContainer');
+                    if (!DOM) return;
+                    const themeColorHEX = this.getLightThemeColor(this.rgbToHex(color.r, color.g, color.b), themeBackground);
+                    const themeColorRGB = this.hexToRgb(themeColorHEX);
+                    DOM.style.background = `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
                 }
             } else {
                 setBackgroundColorTheme();
