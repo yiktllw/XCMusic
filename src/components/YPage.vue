@@ -96,12 +96,10 @@ export default {
         margin: 5px;
         width: 20px;
         height: 20px;
-        /* border: 1px solid #fff; */
         border-radius: 10px;
     }
 
     .currentPage {
-        /* background-color: #fff; */
         color: rgb(200, 136, 166);
     }
 

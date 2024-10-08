@@ -69,7 +69,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-            background-color: rgba(255, 255, 255, .05);
+            background-color: rgba(var(--foreground-color-rgb), .05);
         }
 
         .artists-info {

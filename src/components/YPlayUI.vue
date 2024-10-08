@@ -590,7 +590,7 @@ export default {
             .switcher {
                 display: flex;
                 flex-direction: row;
-                background-color: rgba(255, 255, 255, .1);
+                background-color: rgba(var(--foreground-color-rgb), .1);
                 border-radius: 20px;
                 padding: 3px 3px;
                 width: 146px;
@@ -603,7 +603,7 @@ export default {
                 .selected {
                     color: var(--font-color-main);
                     font-weight: bold;
-                    background-color: rgba(255, 255, 255, .2);
+                    background-color: rgba(var(--foreground-color-rgb), .2);
                     border-radius: 20px;
                 }
 
@@ -717,7 +717,7 @@ export default {
                             width: calc(100% - 20px);
 
                             .content-first-listen {
-                                background-color: rgba(255, 255, 255, .1);
+                                background-color: rgba(var(--foreground-color-rgb), .1);
                                 border-radius: 10px;
                                 padding: 10px;
                                 text-align: left;
@@ -741,7 +741,7 @@ export default {
                             }
 
                             .listen-count {
-                                background-color: rgba(255, 255, 255, .1);
+                                background-color: rgba(var(--foreground-color-rgb), .1);
                                 border-radius: 10px;
                                 padding: 10px;
                                 margin-left: 10px;
@@ -783,7 +783,7 @@ export default {
                         .wiki-song-content {
                             display: flex;
                             flex-direction: column;
-                            background-color: rgba(255, 255, 255, .1);
+                            background-color: rgba(var(--foreground-color-rgb), .1);
                             padding: 10px;
                             border-radius: 10px;
                             width: inherit;
@@ -813,7 +813,7 @@ export default {
     .play-bar {
         width: 100%;
         height: 85px;
-        background-color: rgba(255, 255, 255, .03);
+        background-color: rgba(var(--foreground-color-rgb), .03);
     }
 }
 </style>

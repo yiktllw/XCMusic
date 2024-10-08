@@ -82,7 +82,7 @@ export default {
             height: 13px;
             left: -4px;
             background-color: #fff;
-            box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: -0px 0px 5px rgba(0, 0, 0, 0.4);
             border-radius: 50%;
             position: absolute;
             z-index: 3;

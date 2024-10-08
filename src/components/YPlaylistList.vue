@@ -145,7 +145,7 @@ export default {
             overflow: hidden;
 
             &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(var(--foreground-color-rgb), 0.1);
             }
         }
     }

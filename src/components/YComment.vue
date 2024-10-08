@@ -232,7 +232,7 @@ export default {
         .comment-line {
             width: calc(100% - 80px);
             height: 1px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(var(--foreground-color-rgb), 0.1);
             margin: 15px 30px 15px 50px;
         }
     }

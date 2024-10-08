@@ -421,22 +421,18 @@ export default {
     -webkit-user-drag: none;
 
     .buttons.arrows button {
-        margin: 0px;
+        margin: 5px;
         margin-top: 4px;
+        border: 1px solid rgba(var(--foreground-color-rgb), .1);
+        padding: 8px 1px 7px 1px;
+        border-radius: 7px;
 
-        .img.arrow {
-            top: 0;
-            margin: 0px;
-            padding: 8px 1px 7px 1px;
-            border-radius: 7px;
-            border: 1px solid rgba(255, 255, 255, .1);
-        }
     }
 
     .close-button {
         margin-left: 10px;
         padding: 10px 10px 5px 10px;
-        background-color: rgba(255, 255, 255, .05);
+        background-color: rgba(var(--foreground-color-rgb), .05);
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, .1);
         cursor: pointer;
@@ -469,7 +465,7 @@ export default {
                 border-style: solid;
                 border-width: 1.5px;
                 width: 250px;
-                border-color: rgba(255, 255, 255, 0.1);
+                border-color: rgba(var(--foreground-color-rgb), 0.2);
                 margin-top: 0px;
                 margin-left: 7px;
                 background-color: transparent;
@@ -539,11 +535,11 @@ export default {
             }
 
             &:hover::-webkit-scrollbar-thumb {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(var(--foreground-color-rgb), 0.1);
             }
 
             &:hover::-webkit-scrollbar-thumb:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+                background-color: rgba(var(--foreground-color-rgb), 0.2);
             }
 
             .search-history {
@@ -572,7 +568,7 @@ export default {
                         white-space: nowrap;
 
                         &:hover {
-                            background-color: rgba(255, 255, 255, .1);
+                            background-color: rgba(var(--foreground-color-rgb), .1);
                             color: var(--font-color-main);
                         }
                     }
@@ -598,13 +594,12 @@ export default {
                     border-radius: 5px;
                     text-align: left;
                     cursor: pointer;
-                    transition: all 0.3s ease;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     overflow: hidden;
 
                     &:hover {
-                        background-color: rgba(255, 255, 255, .1);
+                        background-color: rgba(var(--foreground-color-rgb), .1);
                     }
                 }
             }
@@ -641,7 +636,7 @@ export default {
             }
 
             .avatarImgPlaceholder {
-                background-color: #333;
+                background-color: rgba(var(--foreground-color-rgb), .3);
             }
         }
 
@@ -676,10 +671,10 @@ export default {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #333;
+            background-color: var(--panel-background-color);
             border-radius: 5px;
             padding: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
             z-index: 1;
 
             img {
@@ -745,7 +740,7 @@ export default {
                 .follows-splitline {
                     width: 1px;
                     height: 45px;
-                    background-color: #555;
+                    background-color: rgba(var(--foreground-color-rgb), .3);
                 }
             }
 

@@ -19,7 +19,7 @@
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px; color: var(--font-color-standard);">{{
                             sortingStates[currentSortingIndex].text
-                        }}</span>
+                            }}</span>
                     </div>
                 </button>
             </div>
@@ -36,7 +36,7 @@
                         <img :src="sortingStates_Album[currentSortingIndex_Album].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px; color: var(--font-color-standard)">{{
                             sortingStates_Album[currentSortingIndex_Album].text
-                        }}</span>
+                            }}</span>
                     </div>
                 </button>
             </div>
@@ -53,10 +53,11 @@
                     <span>时长</span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
-                        <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon" class="sort-icon g-icon" />
+                        <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon"
+                            class="sort-icon g-icon" />
                         <span style="font-size:13px;color: var(--font-color-standard)">{{
                             sortingStates_Duration[currentSortingIndex_Duration].text
-                        }}</span>
+                            }}</span>
                     </div>
                 </button>
             </div>
@@ -172,7 +173,7 @@
                             <!-- 5 热度 -->
                             <div class="popularity" v-if="showTrackPopularity">
                                 <div class="popularity-bar"
-                                    style="margin-left: 5px;width: 50px; height: 4px; background-color: #444; border-radius: 2px;">
+                                    style="margin-left: 5px;width: 50px; height: 4px; background-color:rgba(var(--foreground-color-rgb), 0.321); border-radius: 2px;">
                                 </div>
                                 <div class="popularity-bar"
                                     style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
@@ -679,7 +680,7 @@ export default {
             border-radius: 5px;
 
             &:hover {
-                background-color: rgba(255, 255, 255, 0.05);
+                background-color: rgba(var(--foreground-color-rgb), 0.05);
             }
         }
 
@@ -803,11 +804,11 @@ ul {
     border-radius: 10px;
 
     &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(var(--foreground-color-rgb), 0.1);
     }
 
     &:focus {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(var(--foreground-color-rgb), 0.1);
     }
 
     .align-up {
@@ -871,11 +872,12 @@ ul {
                         background-color: transparent;
                         border: none;
                         transition: all 0.3s;
-                        
+
                         &:hover {
                             color: var(--font-color-main);
                         }
                     }
+
                     .artist-button-active {
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -886,7 +888,7 @@ ul {
                         background-color: transparent;
                         border: none;
                         color: rgb(234, 78, 68);
-                        
+
                         &:hover {
                             color: rgb(255, 100, 90)
                         }

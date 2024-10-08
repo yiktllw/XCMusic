@@ -135,6 +135,7 @@ export default {
         padding: 11px 15px 11px 15px;
         border-radius: 10px;
         background-color: var(--panel-background-color);
+        cursor: pointer;
 
         .img {
             width: 50px;
@@ -149,7 +150,7 @@ export default {
         }
 
         &:hover {
-            background-color: rgba(255, 255, 255, .1);
+            background-color: rgba(var(--foreground-color-rgb), .1);
         }
     }
 }

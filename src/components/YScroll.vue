@@ -32,12 +32,12 @@ export default {
     }
 
     &:hover::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(var(--foreground-color-rgb), 0.1);
         /* 滚动条滑块背景 */
     }
 
     &:hover::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(var(--foreground-color-rgb), 0.2);
         /* 滚动条滑块悬停背景 */
     }
 }

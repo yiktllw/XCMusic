@@ -112,7 +112,7 @@ export default {
         }
 
         .placeholder {
-            background-color: #333;
+            background-color: rgba(var(--foreground-color-rgb), 0.3);
             border-radius: 10px;
         }
 

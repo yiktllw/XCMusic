@@ -10,7 +10,8 @@
                     <!-- 4 封面图片 -->
                     <img v-if="playlist.coverImgUrl" :src="playlist.coverImgUrl" alt="Cover Image"
                         class="playlist-cover" @load="_setBackgroundColor" />
-                    <div v-if="!playlist.coverImgUrl" class="playlist-cover" style="background-color: #333;"></div>
+                    <div v-if="!playlist.coverImgUrl" class="playlist-cover"
+                        style="background-color: rgba(var(--foreground-color-rgb), 0.3);"></div>
                     <!-- 4 渐变层 -->
                     <div class="gradient-overlay" v-if="type === 'playlist'"></div>
                     <!-- 4 播放次数 -->
@@ -34,14 +35,14 @@
                             <img v-if="playlist.createrAvatarUrl" :src="playlist.createrAvatarUrl"
                                 class="createrAvatar" />
                             <div v-if="!playlist.createrAvatarUrl" class="createrAvatar"
-                                style="background-color: #333;">
+                                style="background-color: rgba(var(--foreground-color-rgb), 0.3);">
                             </div>
                             <!-- 5 创建者名称 -->
                             <span class="creater-name">
                                 {{ playlist.createrName }}
                             </span>
                             <span v-if="!playlist.createrAvatarUrl" class="creater-name"
-                                style="background-color: #333;">创建者
+                                style="background-color: rgba(var(--foreground-color-rgb), 0.3);">创建者
                             </span>
                             <!-- 5 创建时间 -->
                             <span class="create-time font-color-standard">
@@ -70,8 +71,9 @@
                         <!-- 4 歌单按钮 -->
                         <div class="play-buttons">
                             <!-- 5 播放按钮 -->
-                            <button class="play-button font-color-main" @click="playAll">
-                                <img class="g-icon" src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
+                            <button class="play-button " @click="playAll">
+                                <img src="../assets/play.svg"
+                                    style="width: 15px; height: 15px; padding-right:5px;" />
                                 <span style="padding-bottom: 2px;">
                                     播放
                                 </span>
@@ -101,7 +103,8 @@
                                     @input="handleSearch($event.target.value, false)" placeholder="搜索..."
                                     spellcheck="false" v-model="searchQuery" />
                                 <img src="../assets/search.svg" class="img-search g-icon" />
-                                <img v-if="searchQuery !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchQuery = ''" />
+                                <img v-if="searchQuery !== ''" class="img-clear" src="../assets/clear2.svg"
+                                    @click="searchQuery = ''" />
                             </div>
                         </div>
                     </div>
@@ -149,8 +152,9 @@
                 :likelist="likelist" :showTrackPopularity="false" @send-playlist="sendPlaylist"
                 @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" :from="playlistId" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" @send-playlist="sendPlaylist"
-                @play-song-and-playlist="playSongAndPlaylist"  :id="'YPlaylist.vue-album'" :type="'album'" :show-header="false" :resortable="false" />
+                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels"
+                @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-album'"
+                :type="'album'" :show-header="false" :resortable="false" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <YPage v-if="type === 'playlist'" v-model="page" />
@@ -702,6 +706,7 @@ export default {
                     height: 35px;
 
                     .play-button {
+                        color: #fff;
                         cursor: pointer;
                         display: inline-flex;
                         align-items: center;
@@ -732,11 +737,10 @@ export default {
                         margin-right: 5px;
                         padding-top: 8px;
                         padding-bottom: 8px;
-                        background-color: rgba(255, 255, 255, 0.1);
-                        transition: all 0.3s;
+                        background-color: rgba(var(--foreground-color-rgb), 0.1);
 
                         &:hover {
-                            background-color: rgba(255, 255, 255, 0.2);
+                            background-color: rgba(var(--foreground-color-rgb), 0.2);
                         }
                     }
 
@@ -748,7 +752,7 @@ export default {
 
                         .search-input {
                             padding: 8px 30px 8px 30px;
-                            background-color: rgba(255, 255, 255, 0.05);
+                            background-color: rgba(var(--foreground-color-rgb), 0.05);
                             border-style: none;
                             border-radius: 100px;
                             width: 50px;
@@ -774,7 +778,7 @@ export default {
                             height: 15px;
                             -webkit-user-drag: none;
                         }
-                        
+
                         .img-clear {
                             position: absolute;
                             right: 10px;

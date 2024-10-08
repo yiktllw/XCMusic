@@ -961,7 +961,7 @@ export default {
                         padding-left: 15px;
 
                         &:hover {
-                            background-color: rgba(255, 255, 255, 0.1);
+                            background-color: rgba(var(--foreground-color-rgb), 0.1);
                         }
 
                         .quality-item-title {
@@ -1066,11 +1066,11 @@ export default {
     }
 
     &:hover::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(var(--foreground-color-rgb), 0.1);
     }
 
     &:hover::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(var(--foreground-color-rgb), 0.2);
     }
 }
 </style>

@@ -502,8 +502,8 @@ export default {
             font-size: 11px;
             font-weight: bold;
             border-radius: 10px;
-            border: 1px solid #555;
-            background-color: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(var(--foreground-color-rgb), .3);
+            background-color: rgba(var(--foreground-color-rgb), .05);
             padding: 2px 6px;
             margin: 6px 0px;
         }

@@ -109,7 +109,7 @@ export default {
         align-items: center;
 
         &:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(var(--foreground-color-rgb), 0.1);
         }
 
         .item-content {
@@ -132,7 +132,7 @@ export default {
         .separator {
             width: calc(100% - 20px);
             height: 1px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(var(--foreground-color-rgb), 0.1);
         }
     }
 }
