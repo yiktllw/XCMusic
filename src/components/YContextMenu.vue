@@ -4,7 +4,7 @@
             v-bind:style="{ '--transform': _transform, '--top': posY, '--left': posX }" ref="container">
             <div class="item font-color-main" v-for="item in items" :key="item.label" @click="handleClick(item.role)">
                 <div class="item-content" v-if="item.display">
-                    <img class="item-icon" :src="item.icon" v-if="item.icon" />
+                    <img class="item-icon g-icon" :src="item.icon" v-if="item.icon" />
                     <div class="item-label">
                         {{ item.label }}
                     </div>
@@ -93,9 +93,9 @@ export default {
     position: fixed;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
     border-radius: 5px;
-    background-color: rgb(45, 45, 56);
+    background-color: var(--panel-background-color);
     width: calc(321px - 123px);
     overflow: hidden;
     transform: var(--transform);

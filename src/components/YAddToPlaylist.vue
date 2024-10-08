@@ -134,7 +134,7 @@ export default {
         align-items: center;
         padding: 11px 15px 11px 15px;
         border-radius: 10px;
-        background-color: rgb(45, 45, 55);
+        background-color: var(--panel-background-color);
 
         .img {
             width: 50px;

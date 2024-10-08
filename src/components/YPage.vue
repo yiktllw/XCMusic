@@ -5,7 +5,7 @@ let page = defineModel(); // eslint-disable-line
 <template>
     <div class="page-main font-color-main" v-if="page.total > 1">
         <div class="previous" @click="page.previous">
-            <img src="@/assets/backarrow.svg" class="arrow-img">
+            <img src="@/assets/backarrow.svg" class="arrow-img g-icon">
         </div>
         <div class="all" v-if="page.total < 8">
             <div class="pages" v-for="i in page.total" :key="i" @click="page.current = i"
@@ -34,7 +34,7 @@ let page = defineModel(); // eslint-disable-line
             </div>
         </div>
         <div class="next" @click="page.next">
-            <img src="@/assets/forwardarrow.svg" class="arrow-img">
+            <img src="@/assets/forwardarrow.svg" class="arrow-img g-icon">
         </div>
     </div>
 </template>

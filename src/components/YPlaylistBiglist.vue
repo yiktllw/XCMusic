@@ -123,6 +123,7 @@ export default {
 
                 .play-count {
                     font-size: 14px;
+                    color: #fff;
                 }
             }
         }

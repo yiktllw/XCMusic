@@ -1,0 +1,29 @@
+//新增主题时在theme.js中添加主题名称
+
+// 定义暗色主题颜色
+.theme-dark {
+    --font-color-main: #fff;
+    --font-color-high: #ccc;
+    --font-color-standard: #999;
+    --font-color-low: #666;
+    --background-color: #131319;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #2d2d36;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --icon-invert: invert(0);
+}
+
+// 定义亮色主题颜色
+.theme-light {
+    --font-color-main: #000;
+    --font-color-high: #333;
+    --font-color-standard: #666;
+    --font-color-low: #999;
+    --background-color: #f7f9fc;
+    --foreground-color: #000;
+    --foreground-color-rgb: 0, 0, 0;
+    --panel-background-color: #fff;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --icon-invert: invert(1);
+}

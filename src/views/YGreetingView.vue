@@ -6,15 +6,11 @@
 </template>
 
 <script>
-import { setBackgroundColor } from '@/ncm/color';
+import { setBackgroundColorTheme } from '@/ncm/color';
 export default {
     name: 'YGreetingView',
     mounted() {
-        setBackgroundColor({
-            r: 19,
-            g: 19,
-            b: 25,
-        });
+        setBackgroundColorTheme();
     }
 };
 </script>

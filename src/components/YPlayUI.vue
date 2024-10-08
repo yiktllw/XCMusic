@@ -1,6 +1,6 @@
 <template>
     <transition name="playui-slide">
-        <div class="container" v-if="show" ref="playuiContainer">
+        <div class="container theme-dark" v-if="show" ref="playuiContainer">
             <div class="title-bar">
                 <YTitlebar :type="'play-ui'" @close-panel="show = false" />
             </div>
@@ -401,12 +401,12 @@ export default {
             await getColorFromImg(this.track.al.picUrl + '?param=50y50', document).then((color) => {
                 if (!color) {
                     if (this.$refs.playuiContainer) {
-                        this.$refs.playuiContainer.style.background = '#131319';
+                        this.$refs.playuiContainer.style.background = 'var(--background-color)';
                     }
                     return;
                 }
                 if (this.$refs.playuiContainer) {
-                    this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .4}, ${color.g * .4}, ${color.b * .4}) 100%)`;
+                    this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .321}, ${color.g * .321}, ${color.b * .321}) 100%)`;
                 }
                 let progressDOM = this.$refs?.playBar?.$refs?.progressBarNoTrack?.$refs?.progressDOM;
                 if (progressDOM) {

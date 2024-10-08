@@ -16,7 +16,7 @@
                     <div v-if="this.currentTrack" class="open-panel" @click="$emit('open-panel')">
                         <div class="open-panel-overlay">
                         </div>
-                        <img class="img-cover img img-open-panel" src="../assets/less.svg" />
+                        <img class="img-cover img img-open-panel " src="../assets/less.svg" />
                     </div>
                     <!-- 4 播放信息文本 -->
                     <div class="play-info-text">
@@ -40,13 +40,14 @@
                 <!-- 歌曲操作按钮 -->
                 <div class="play-info-right" v-if="showButton || type === 'play-ui'">
                     <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
-                        <img class="img-close-panel" src="../assets/more.svg" />
+                        <img class="img-close-panel g-icon" src="../assets/more.svg" />
                     </div>
-                    <img class="img-info play-info-ico" src="../assets/info.svg" title="歌曲信息" @click="openInfoPanel" />
-                    <img class="img-subscribe play-info-ico" src="../assets/subscribe.svg" title="收藏到歌单">
-                    <img class="img-download play-info-ico" src="../assets/smalldownload.svg" title="下载">
+                    <img class="img-info play-info-ico g-icon" src="../assets/info.svg" title="歌曲信息"
+                        @click="openInfoPanel" />
+                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" title="收藏到歌单">
+                    <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg" title="下载">
                     <div class="song-comment">
-                        <img class="img-comment play-info-ico" src="../assets/comment2.svg" title="评论"
+                        <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg" title="评论"
                             @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
@@ -67,11 +68,11 @@
                     :key="currentTrack?.id">
                     <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
                         title="取消喜欢">
-                    <img v-else class="img-like img" src="../assets/unlikes.svg" title="喜欢">
+                    <img v-else class="img-like img g-icon" src="../assets/unlikes.svg" title="喜欢">
                 </button>
                 <!-- 3 上一首按钮 -->
                 <button class="button previous-button" @click="goTo('backwards')" title="上一首">
-                    <img class="img-previous img" src="../assets/previous.svg">
+                    <img class="img-previous img g-icon" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
                 <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'"
@@ -81,18 +82,20 @@
                 </button>
                 <!-- 3 下一首按钮 -->
                 <button class="button next-button" @click="goTo('forward')" title="下一首">
-                    <img class="img-next img" src="../assets/next.svg">
+                    <img class="img-next img g-icon" src="../assets/next.svg">
                 </button>
                 <!-- 3 播放模式按钮 -->
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
                     ref="play_mode_panel_trigger">
-                    <img v-if="playMode === 'order'" class="img-order img" src="../assets/order.svg" title="顺序播放">
-                    <img v-if="playMode === 'listloop'" class="img-listloop img" src="../assets/listloop.svg"
+                    <img v-if="playMode === 'order'" class="img-order img g-icon" src="../assets/order.svg"
+                        title="顺序播放">
+                    <img v-if="playMode === 'listloop'" class="img-listloop img g-icon" src="../assets/listloop.svg"
                         title="列表循环">
-                    <img v-if="playMode === 'random'" class="img-random img" src="../assets/random.svg" title="随机播放">
+                    <img v-if="playMode === 'random'" class="img-random img g-icon" src="../assets/random.svg"
+                        title="随机播放">
                     <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
                         title="列表随机" style="opacity: 1;">
-                    <img v-if="playMode === 'loop'" class="img-loop img" src="../assets/loop.svg" title="单曲循环">
+                    <img v-if="playMode === 'loop'" class="img-loop img g-icon" src="../assets/loop.svg" title="单曲循环">
                 </button>
                 <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
@@ -100,15 +103,15 @@
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-order img playMode-img" src="../assets/order.svg">顺序播放
+                            <img class="img-order img g-icon playMode-img" src="../assets/order.svg">顺序播放
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('listloop'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-listloop img playMode-img" src="../assets/listloop.svg">列表循环
+                            <img class="img-listloop img playMode-img g-icon" src="../assets/listloop.svg">列表循环
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('random'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-random img playMode-img" src="../assets/random.svg">随机播放
+                            <img class="img-random img playMode-img g-icon" src="../assets/random.svg">随机播放
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('listrandom'); this.$refs.play_mode_panel.tooglePanel()">
@@ -116,7 +119,7 @@
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('loop'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-loop img playMode-img" src="../assets/loop.svg">单曲循环
+                            <img class="img-loop img playMode-img g-icon" src="../assets/loop.svg">单曲循环
                         </div>
                     </div>
                 </YPanel>
@@ -163,7 +166,7 @@
                     </div>
                 </YPanel>
                 <!-- 音量按钮 -->
-                <img class="img" src="../assets/volume.svg"
+                <img class="img g-icon" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <!-- 音量面板 -->
@@ -179,7 +182,7 @@
                     </div>
                 </YPanel>
                 <!-- 播放列表按钮 -->
-                <img class="img" src="../assets/playlist.svg"
+                <img class="img g-icon" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
                     @click="this.$refs.playlist_panel.tooglePanel" title="播放列表" ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
@@ -190,13 +193,13 @@
                             <div class="title-left font-color-main">
                                 <span>播放列表</span>
                                 <div class="songs-count"
-                                    style="color:#fff; margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
+                                    style="color:var(--font-color-main); margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
                                     {{ playlist.length }}
                                 </div>
                             </div>
                             <div class="title-right">
                                 <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
-                                    <img src="../assets/delete.svg"
+                                    <img class="g-icon" src="../assets/delete.svg"
                                         style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;"
                                         title="清空播放列表">
                                 </span>
@@ -743,7 +746,6 @@ export default {
                         font-size: 10px;
                         z-index: 1;
                         padding: 0px 0px 2px 2px;
-                        // background-color: rgb(45, 45, 55);
                     }
                 }
             }
@@ -783,6 +785,7 @@ export default {
                 .img-previous {
                     width: 18px;
                     height: 18px;
+                    opacity: .7;
                 }
             }
 
@@ -812,6 +815,7 @@ export default {
                 .img-next {
                     width: 18px;
                     height: 18px;
+                    opacity: .7;
                 }
             }
 
@@ -854,10 +858,10 @@ export default {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background-color: rgb(55, 55, 65);
+                background-color: var(--panel-background-color);
                 border-radius: 5px;
                 padding: 10px;
-                box-shadow: 2px -2px 10px #111;
+                box-shadow: 0px -0px 8px rgba(0, 0, 0, 0.4);
 
                 .playMode-item {
                     display: flex;
@@ -915,7 +919,7 @@ export default {
                 font-size: 14px;
                 font-weight: bold;
                 margin-right: 20px;
-                border: 1.5px solid rgba(255, 255, 255, 0.4);
+                border: 1.5px solid rgba(var(--foreground-color-rgb), 0.4);
                 padding: 3px 6px;
                 align-items: center;
                 justify-content: center;
@@ -927,12 +931,13 @@ export default {
                 display: flex;
                 flex-direction: column;
                 width: 321px;
-                background-color: rgb(55, 55, 65);
+                background-color: var(--panel-background-color);
                 border-radius: 5px;
                 transform: translate(calc(-100% - 20px), calc(-100% - 25px));
                 text-align: left;
                 padding-top: 15px;
                 padding-bottom: 10px;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 
                 .quality-title {
                     font-size: 17px;
@@ -982,10 +987,11 @@ export default {
                 height: 135px;
                 align-items: center;
                 justify-content: top;
-                background-color: rgb(52, 52, 61);
+                background-color: var(--panel-background-color);
                 border-radius: 5px;
                 padding: 10px 10px 20px 10px;
                 transform: translate(-100%, calc(-100% - 20px));
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 
                 .volume-text {
                     position: absolute;
@@ -996,7 +1002,7 @@ export default {
 
             .playlist-container {
                 position: absolute;
-                background-color: rgb(44, 45, 55);
+                background-color: var(--panel-background-color);
                 display: flex;
                 flex-direction: column;
                 border-radius: 5px;
@@ -1005,7 +1011,7 @@ export default {
                 transform: translate3d(calc(-100%), calc(-100% - 65px), 0);
                 width: calc(321px + 43px);
                 height: calc(100vh - 230px);
-                box-shadow: -1px -1px 10px #111;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 
                 .playlist-title {
                     display: flex;

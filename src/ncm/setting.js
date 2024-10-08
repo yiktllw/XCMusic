@@ -1,3 +1,4 @@
+import { themes } from "./theme";
 
 export class Setting {
     #modes = [
@@ -65,6 +66,17 @@ export class Setting {
             },
         }
         this.display = {
+            theme: {
+                value: localStorage.getItem('setting.display.theme') ?? 'dark',
+                default: 'dark',
+                validation: (value) => {
+                    let valid = typeof value === 'string' && themes.some(theme => theme.value === value);
+                    if (valid) {
+                        localStorage.setItem('setting.display.theme', value);
+                    }
+                    return valid;
+                }
+            },
             zoom: {
                 value: localStorage.getItem('setting.display.zoom') ?? 1,
                 default: 1,

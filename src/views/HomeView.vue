@@ -292,7 +292,7 @@ export default {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #131319;
+    background-color: var(--background-color);
     top: 0;
     left: 0;
     right: 0;
@@ -349,7 +349,8 @@ export default {
         height: 85px;
 
         .playbar {
-            background-color: rgb(45, 45, 55);
+            background-color: var(--panel-background-color);
+            border-top: 1px solid var(--border-color);
             position: relative;
             height: 100%;
             width: 100%;

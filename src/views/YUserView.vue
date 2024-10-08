@@ -57,9 +57,9 @@
                 <!-- 右侧切换视图 -->
                 <div v-if="showRightSwitcher" class="right-switcher"
                     style="display: flex;flex: 1;justify-content: flex-end; margin-right: 30px;">
-                    <img src="@/assets/biglist.svg" class="list-icon" @click="user.listType = false"
+                    <img src="@/assets/biglist.svg" class="list-icon g-icon" @click="user.listType = false"
                         :style="{ opacity: user.listType ? .6 : 1 }">
-                    <img src="@/assets/smalllist.svg" class="list-icon" @click="user.listType = true"
+                    <img src="@/assets/smalllist.svg" class="list-icon g-icon" @click="user.listType = true"
                         :style="{ opacity: user.listType ? 1 : .6 }">
                 </div>
             </div>
@@ -127,7 +127,7 @@ import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
-import { setBackgroundColor, getColorFromImg } from '@/ncm/color';
+import { setBackgroundColor, getColorFromImg, setBackgroundColorTheme } from '@/ncm/color';
 import { mapState } from 'vuex';
 import { YPageC } from '@/tools/YPageC';
 import { markRaw } from 'vue';
@@ -457,11 +457,7 @@ export default {
             setBackgroundColor(color);
         } else {
             // 设置默认背景颜色
-            setBackgroundColor({
-                r: 19,
-                g: 19,
-                b: 25,
-            });
+            setBackgroundColorTheme();
         }
     }
 }

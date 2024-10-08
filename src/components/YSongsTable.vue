@@ -16,7 +16,7 @@
                     <span>标题</span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
-                        <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon" />
+                        <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px; color: var(--font-color-standard);">{{
                             sortingStates[currentSortingIndex].text
                         }}</span>
@@ -33,7 +33,7 @@
                     <span>专辑</span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
-                        <img :src="sortingStates_Album[currentSortingIndex_Album].icon" class="sort-icon" />
+                        <img :src="sortingStates_Album[currentSortingIndex_Album].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px; color: var(--font-color-standard)">{{
                             sortingStates_Album[currentSortingIndex_Album].text
                         }}</span>
@@ -53,7 +53,7 @@
                     <span>时长</span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
-                        <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon" class="sort-icon" />
+                        <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px;color: var(--font-color-standard)">{{
                             sortingStates_Duration[currentSortingIndex_Duration].text
                         }}</span>
@@ -143,12 +143,12 @@
                         <div class="align-right">
                             <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
-                                <img src="@/assets/smalldownload.svg" class="track-menu-icon" title="下载">
-                                <img src="@/assets/subscribe.svg" class="track-menu-icon" title="收藏"
+                                <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon" title="下载">
+                                <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon" title="收藏"
                                     @click="openAddToPlaylist(track.id)">
-                                <img src="@/assets/comment.svg" class="track-menu-icon" title="评论"
+                                <img src="@/assets/comment.svg" class="track-menu-icon g-icon" title="评论"
                                     @click="openSongComment(track.id)">
-                                <img src="@/assets/detail.svg" class="track-menu-icon" title="更多"
+                                <img src="@/assets/detail.svg" class="track-menu-icon g-icon" title="更多"
                                     @click="openContextMenu($event, track, 'toogle')">
                             </div>
                             <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"

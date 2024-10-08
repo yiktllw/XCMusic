@@ -107,6 +107,11 @@ const routes = [
                     type: 'playlist',
                 })
             },
+            {
+                path: 'setting',
+                name: 'Setting',
+                component: () => import('../views/YSettingView.vue')
+            },
         ],
     },
 ]

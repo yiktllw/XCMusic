@@ -44,7 +44,7 @@
                             </div>
                             <div class="comment-like font-color-standard">
                                 {{ comment.likedCount }}
-                                <img src="@/assets/thumb.svg" class="like-img" />
+                                <img src="@/assets/thumb.svg" class="like-img g-icon" />
                             </div>
                         </div>
                     </div>

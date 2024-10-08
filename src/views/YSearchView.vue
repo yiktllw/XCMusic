@@ -33,7 +33,7 @@
             <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
                 @click="handleSwitcher(item.position)">
                 <span :class="{ 'choosed-text': item.position === position }" style="font-size: 16px; color:#fff;"
-                    :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? '#fff' : '#bbb' }">{{
+                    :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">{{
                         item.display }}</span>
                 <div class="choosed" style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
                     v-if="item.position === position">
@@ -86,7 +86,7 @@ import YScroll from '@/components/YScroll.vue';
 import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
-import { setBackgroundColor } from '@/ncm/color';
+import { setBackgroundColorTheme } from '@/ncm/color';
 import { useApi } from '../ncm/api';
 import { markRaw } from 'vue';
 
@@ -369,7 +369,7 @@ export default {
     mounted() {
         this.fetchData(this.position);
         // 设置背景颜色
-        setBackgroundColor({ r: 19, g: 19, b: 25 });
+        setBackgroundColorTheme();
         // 当前位置为默认位置时, 跳转到上次搜索位置
         this.position === 'default' ? this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` }) : null;
     },
@@ -404,7 +404,7 @@ export default {
     top: 0px;
     z-index: 1;
     width: 100%;
-    background-color: #131319;
+    background-color: var(--background-color);
     backdrop-filter: blur(10px);
 
     .switcher-item {

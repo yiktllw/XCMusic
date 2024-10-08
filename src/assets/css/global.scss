@@ -1,9 +1,16 @@
+@import '@/ncm/theme.scss';
+
 html {
     font-size: 16px;
 }
 
 // 使用 CSS 变量
 :root {
+    --background-color: #131319;
+    --foreground-color: #fff;
+    --panel-background-color: #2d2d36;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --icon-invert: invert(0);
     --font-color-main: #fff;
     --font-color-high: #ccc;
     --font-color-standard: #999;
@@ -17,20 +24,8 @@ html {
     --font-size-largest: 1.6rem;
 }
 
-// 定义亮色主题颜色
-.theme-dark {
-    --font-color-main: #fff;
-    --font-color-high: #ccc;
-    --font-color-standard: #999;
-    --font-color-low: #666;
-}
-
-// 定义暗色主题颜色
-.theme-light {
-    --font-color-main: #000;
-    --font-color-high: #333;
-    --font-color-standard: #666;
-    --font-color-low: #999;
+.g-icon{
+    filter: var(--icon-invert);
 }
 
 .font-color-main {

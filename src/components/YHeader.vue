@@ -3,8 +3,8 @@
         <!-- 导航元素 -->
         <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
             @click="handleSwitcher(item.position)">
-            <div :class="{ 'choosed-text': item.position === position }" style="font-size: 16px; color:#fff;"
-                :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? '#fff' : '#bbb' }">
+            <div :class="{ 'choosed-text': item.position === position }"
+                :style="{ 'font-weight': item.position === position ? 'bold' : 'var(--font-weight-header)', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                 {{ item.display }}
                 <!-- 选中效果 -->
                 <div class="choosed" style="" v-if="item.position === position">
@@ -61,7 +61,6 @@ export default {
 <style lang="scss" scoped>
 .switcher {
     display: flex;
-    font-size: 16px;
     align-items: center;
     padding-top: 10px;
     margin-left: 10px;
@@ -73,6 +72,7 @@ export default {
 
     .switcher-item {
         display: inline-flex;
+        font-size: var(--font-size-header);
         flex-direction: row;
         position: relative;
         height: 20px;

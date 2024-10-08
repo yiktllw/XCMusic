@@ -16,7 +16,7 @@
                     <!-- 4 播放次数 -->
                     <div class="play-info" v-if="type === 'playlist'">
                         <img src="../assets/play.svg" class="play-icon" />
-                        <span class="play-count font-color-main">{{ playlist.playCount }}</span>
+                        <span class="play-count">{{ playlist.playCount }}</span>
                     </div>
                 </div>
                 <!-- 3 歌单详情 -->
@@ -71,26 +71,26 @@
                         <div class="play-buttons">
                             <!-- 5 播放按钮 -->
                             <button class="play-button font-color-main" @click="playAll">
-                                <img src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
+                                <img class="g-icon" src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
                                 <span style="padding-bottom: 2px;">
                                     播放
                                 </span>
                             </button>
                             <!-- 5 添加到播放列表按钮 -->
                             <button class="add-button" @click="addPlaylistToQueue">
-                                <img src="../assets/addtoplaylist.svg"
+                                <img class="g-icon" src="../assets/addtoplaylist.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
                                 添加到播放列表
                             </button>
                             <!-- 5 下载按钮 -->
                             <button class="download-button" @click="downloadPlaylist">
-                                <img src="../assets/download.svg"
+                                <img class="g-icon" src="../assets/download.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
                                 下载
                             </button>
                             <!-- 5 多选按钮 -->
                             <button class="multichoice-button" @click="multiChoice">
-                                <img src="../assets/multichoice.svg"
+                                <img class="g-icon" src="../assets/multichoice.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
                                 多选
                             </button>
@@ -100,7 +100,7 @@
                                     @keydown.enter="handleSearch($event.target.value, true)"
                                     @input="handleSearch($event.target.value, false)" placeholder="搜索..."
                                     spellcheck="false" v-model="searchQuery" />
-                                <img src="../assets/search.svg" class="img-search" />
+                                <img src="../assets/search.svg" class="img-search g-icon" />
                                 <img v-if="searchQuery !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchQuery = ''" />
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                     <button class="orient-button" @click="orient = 'songs'">
                         <span :class="{ 'choosed-text': orient === 'songs' }"
                             style="font-size: 16px; color:var(--font-color-main);"
-                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? '#fff' : '#bbb' }">歌曲</span>
+                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">歌曲</span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
                             v-if="orient === 'songs'">
@@ -123,8 +123,8 @@
                     </button>
                 </div>
                 <div class="songs-count"
-                    style="color:#fff; margin:0;padding:0 20px 0px 2px;font-size: 13px; font-weight: bold;"
-                    :style="{ 'color': orient === 'songs' ? '#fff' : '#bbb' }">
+                    style="color:var(--font-color-main); margin:0;padding:0 20px 0px 2px;font-size: 13px; font-weight: bold;"
+                    :style="{ 'color': orient === 'songs' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                     {{ playlist.trackCount }}
                 </div>
                 <!-- 3 评论 -->
@@ -132,7 +132,7 @@
                     <!-- 4 评论按钮 -->
                     <button class="orient-button" @click="orient = 'comments'">
                         <span :class="{ 'choosed-text': orient === 'comments' }" style="font-size: 16px;"
-                            :style="{ 'font-weight': orient === 'comments' ? 'bold' : '500', 'color': orient === 'comments' ? '#fff' : '#bbb' }">
+                            :style="{ 'font-weight': orient === 'comments' ? 'bold' : '500', 'color': orient === 'comments' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                             评论
                         </span>
                         <div class="choosed"
@@ -168,7 +168,8 @@ import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
-import { getColorFromImg, setBackgroundColor } from '@/ncm/color'
+import { YColor } from '@/ncm/color'
+import { themes } from '@/ncm/theme';
 import { mapState } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
 import { markRaw } from 'vue';
@@ -198,6 +199,7 @@ export default {
             player: state => state.player,
             login: state => state.login,
             openedPlaylist: state => state.openedPlaylist,
+            setting: state => state.setting,
         }),
         likelist() {
             return this.login.likelist;
@@ -423,19 +425,8 @@ export default {
         },
         // 设置背景颜色
         async _setBackgroundColor() {
-            let color = await getColorFromImg(this.playlist.coverImgUrl + '?param=30y30', document);
-            // 设置背景颜色
-            if (color) {
-                setBackgroundColor(color);
-            } else {
-                // 默认背景颜色
-                setBackgroundColor({
-                    r: 19,
-                    g: 19,
-                    b: 25,
-                });
-            }
-
+            const themeType = themes.find(theme => theme.value === this.setting.display.theme).type;
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType);
         },
         // 处理搜索
         handleSearch(input, fromEnter) {
@@ -617,6 +608,7 @@ export default {
 
                 .play-count {
                     font-size: 14px;
+                    color: #fff;
                 }
             }
         }

@@ -8,10 +8,10 @@
                 <span style="margin-right: 5px;">创建的歌单({{ userPlaylists.length }})</span>
                 <div class="switch-user-playlist-icon-container">
                     <transition name="rotate">
-                        <img class="switch-user-playlist-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
+                        <img class="switch-user-playlist-icon g-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
                     </transition>
                     <transition name="rotate2">
-                        <img class=" switch-user-playlist-icon" v-if="!showMyPlaylist" src="@/assets/more.svg" />
+                        <img class=" switch-user-playlist-icon g-icon" v-if="!showMyPlaylist" src="@/assets/more.svg" />
                     </transition>
                 </div>
             </button>
@@ -31,10 +31,12 @@
                 <span style="margin-right: 5px;">收藏的歌单({{ userSubscribes.length }})</span>
                 <div class="switch-user-playlist-icon-container">
                     <transition name="rotate">
-                        <img class="switch-user-playlist-icon" v-if="showMySubscribedPlaylist" src="@/assets/less.svg" />
+                        <img class="switch-user-playlist-icon g-icon" v-if="showMySubscribedPlaylist"
+                            src="@/assets/less.svg" />
                     </transition>
                     <transition name="rotate2">
-                        <img class=" switch-user-playlist-icon" v-if="!showMySubscribedPlaylist" src="@/assets/more.svg" />
+                        <img class=" switch-user-playlist-icon g-icon" v-if="!showMySubscribedPlaylist"
+                            src="@/assets/more.svg" />
                     </transition>
                 </div>
             </button>

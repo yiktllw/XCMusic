@@ -2,7 +2,7 @@
     <div class="window font-color-main" v-if="showWindow">
         <div class="window-header">
             <slot name="header">标题</slot>
-            <img src="@/assets/close.svg" class="close-icon" @click="this.showWindow = false" />
+            <img src="@/assets/close.svg" class="close-icon g-icon" @click="this.showWindow = false" />
         </div>
         <slot></slot>
     </div>
@@ -46,11 +46,12 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgb(45, 45, 55);
+    background-color: var(--panel-background-color);
     width: 100%;
     border-radius: 5px;
     padding: 10px 0px;
     margin: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 
     .window-header {
         display: flex;

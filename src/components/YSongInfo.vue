@@ -13,14 +13,14 @@
                             <span class="song-info-item-title">歌曲名：</span>
                             <span class="song-info-item-content">{{ track.name }}</span>
                         </div>
-                        <img class="img-copy" @click="copy(track.name)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.name)" src="@/assets/copy.svg" title="点击复制">
                     </div>
                     <div class="song-info-item" v-if="track.tns?.length > 0">
                         <div class="left">
                             <span class="song-info-item-title">歌曲译名：</span>
                             <span class="song-info-item-content">{{ track.tns[0] }}</span>
                         </div>
-                        <img class="img-copy" @click="copy(track.tns[0])" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.tns[0])" src="@/assets/copy.svg" title="点击复制">
                     </div>
                     <div class="song-info-item" style="justify-content: start;">
                         <span class="song-info-item-title">歌手：</span>
@@ -28,36 +28,36 @@
                             <div class="song-info-artist" v-for="artist in track.ar" :key="artist.id"
                                 style="width: 100%;">
                                 <div class="left">
-                                    <span @click="openArtist(artist.id)">
+                                    <span @click="openArtist(artist.id)" title="点击查看歌手详情">
                                         {{ artist.name }}
                                     </span>
                                 </div>
-                                <img class="img-copy" @click="copy(artist.name)" src="@/assets/copy.svg" title="点击复制">
+                                <img class="img-copy g-icon" @click="copy(artist.name)" src="@/assets/copy.svg" title="点击复制">
                             </div>
                         </div>
                     </div>
                     <div class="song-info-item">
                         <div class="left">
                             <span class="song-info-item-title">专辑：</span>
-                            <span class="song-info-item-content album" @click="openAlbum(track.al.id)">
+                            <span class="song-info-item-content album" @click="openAlbum(track.al.id)" title="点击查看专辑详情">
                                 {{ track.al.name }}
                             </span>
                         </div>
-                        <img class="img-copy" @click="copy(track.al.name)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.al.name)" src="@/assets/copy.svg" title="点击复制">
                     </div>
                     <div class="song-info-item" v-if="track.al.tns?.length > 0">
                         <div class="left">
                             <span class="song-info-item-title">专辑译名：</span>
                             <span class="song-info-item-content">{{ track.al.tns[0] }}</span>
                         </div>
-                        <img class="img-copy" @click="copy(track.al.tns[0])" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.al.tns[0])" src="@/assets/copy.svg" title="点击复制">
                     </div>
                     <div class="song-info-item">
                         <div class="left">
                             <span class="song-info-item-title">歌曲ID：</span>
                             <span class="song-info-item-content">{{ track.id }}</span>
                         </div>
-                        <img class="img-copy" @click="copy(track.id)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.id)" src="@/assets/copy.svg" title="点击复制">
                     </div>
                     <div class="song-info-item">
                         <div class="left">
@@ -67,7 +67,7 @@
                                 }}
                             </span>
                         </div>
-                        <img class="img-copy" @click="copy(`https://music.163.com/song?id=${track.id}`)"
+                        <img class="img-copy g-icon" @click="copy(`https://music.163.com/song?id=${track.id}`)"
                             src="@/assets/copy.svg" title="点击复制">
                     </div>
                 </div>

@@ -29,8 +29,7 @@
     - 楼中楼功能
     - 时间排序功能完善
 - 播放界面
-    - 歌曲百科
-    - 回忆坐标等
+    - 曲谱
 - 首页推荐
 - 歌单
     - 滚动到顶部，定位到当前歌曲
@@ -43,6 +42,7 @@
     - 通知
     - 开机自启动功能
     - 完善系统托盘功能
+- 缓存播放过的歌曲
 - 记忆窗口大小,保存关闭时的播放列表，保存播放的歌曲和播放进度
 - 音乐云盘
 - 选择不同主题
@@ -80,9 +80,6 @@ npm run electron:serve
 ```
 npm run electron:build
 ```
-请注意，本项目使用的NeteaseCloudMusicApi是修改过的[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)，所以需要在安装依赖后手动替换`/node_modules/NeteaseCloudMusicApi`
-
-~~为什么不直接发布一个新包呢，因为我懒~~
 
 ## 灵感来源
 

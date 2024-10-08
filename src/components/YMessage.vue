@@ -10,7 +10,7 @@
                 <div class="message font-color-main" :title="message">
                     {{ message }}
                 </div>
-                <img class="img close-img" src="@/assets/close.svg" @click="showMsg = false" />
+                <img class="img close-img g-icon" src="@/assets/close.svg" @click="showMsg = false" />
             </div>
         </transition>
     </div>

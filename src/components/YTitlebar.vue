@@ -3,13 +3,13 @@
         <!-- 后退和前进按钮 -->
         <div class="buttons arrows">
             <button class="back" @click="back" title="后退" v-if="type === 'default'">
-                <img class="img arrow" src="../assets/backarrow.svg" />
+                <img class="img arrow g-icon" src="../assets/backarrow.svg" />
             </button>
             <button class="forward" @click="forward" title="前进" v-if="type === 'default'">
-                <img class="img arrow" src="../assets/forwardarrow.svg" />
+                <img class="img arrow g-icon" src="../assets/forwardarrow.svg" />
             </button>
             <div v-else-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
-                <img class="img-close-panel" src="../assets/more.svg" />
+                <img class="img-close-panel g-icon" src="../assets/more.svg" />
             </div>
         </div>
         <!-- 搜索栏 -->
@@ -18,8 +18,9 @@
                 <input type="text" class="search-input font-color-main" @keydown.enter="handleSearch"
                     v-model="searchInput" @input="getSearchSuggestions" placeholder="搜索..."
                     @click="this.$refs.search_panel._showPanel()" spellcheck="false" ref="search_input" />
-                <img class="img-search" src="../assets/search.svg" />
-                <img v-if="searchInput !== ''" class="img-clear" src="../assets/clear2.svg" @click="searchInput = ''" />
+                <img class="img-search g-icon" src="../assets/search.svg" />
+                <img v-if="searchInput !== ''" class="img-clear g-icon" src="../assets/clear2.svg"
+                    @click="searchInput = ''" />
             </div>
             <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
@@ -64,7 +65,7 @@
                 <div class="userInfoTxt" v-if="!this.login.status">
                     未登录
                 </div>
-                <img class="img-userInfo" src="../assets/more.svg" />
+                <img class="img-userInfo g-icon" src="../assets/more.svg" />
             </button>
             <!-- 扫码登录 -->
             <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
@@ -97,7 +98,7 @@
                     <div class="user-info-item">我的会员</div>
                     <div class="user-info-item">等级{{ userProfile?.level ?? 0 }}</div>
                     <div class="user-info-item" @click="openListenRank">我的听歌排行</div>
-                    <div class="user-info-item">个人信息设置</div>
+                    <div class="user-info-item">设置</div>
                     <div class="user-info-item" @click="this.openTestPage">测试页面</div>
                     <div class="user-info-item">关于XCMusic</div>
                     <div class="user-info-item" @click="this.login.logout()">退出登录</div>
@@ -105,16 +106,17 @@
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
             <button class="settings" @click="settings" title="设置" v-if="type === 'default'">
-                <img class="img settings" src="../assets/settings.svg" alt="Settings" />
+                <img class="img settings g-icon" @click="$router.push({ path: '/setting' })"
+                    src="../assets/settings.svg" alt="Settings" />
             </button>
-            <button class="minimize" @click="minimize" title="最小化">
-                <img class="img minimize" src="../assets/min.svg" alt="Minimize" />
+            <button class="minimize " @click="minimize" title="最小化">
+                <img class="img minimize g-icon" src="../assets/min.svg" alt="Minimize" />
             </button>
-            <button class="maximize" @click="maximize" title="最大化">
-                <img class="img maximize" src="../assets/max.svg" alt="Maximize" />
+            <button class="maximize " @click="maximize" title="最大化">
+                <img class="img maximize g-icon" src="../assets/max.svg" alt="Maximize" />
             </button>
             <button class="close" @click="close" title="关闭">
-                <img class="img close" src="../assets/close.svg" alt="Close" />
+                <img class="img close g-icon" src="../assets/close.svg" alt="Close" />
             </button>
         </div>
     </div>
@@ -518,7 +520,7 @@ export default {
             max-height: 400px;
             overflow-y: auto;
             transform: translateX(calc(-100% + 0px));
-            background-color: rgb(44, 44, 55);
+            background-color: var(--panel-background-color);
             border-radius: 5px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             top: 30px;
@@ -693,10 +695,10 @@ export default {
             width: 200px;
             height: 300px;
             transform: translate3d(-180px, 32.1px, 0px);
-            background-color: rgb(44, 44, 55);
+            background-color: var(--panel-background-color);
             border-radius: 5px;
             padding: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
             user-select: none;
 
             .user-info-item {
