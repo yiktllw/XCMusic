@@ -98,7 +98,7 @@
                     <div class="user-info-item">我的会员</div>
                     <div class="user-info-item">等级{{ userProfile?.level ?? 0 }}</div>
                     <div class="user-info-item" @click="openListenRank">我的听歌排行</div>
-                    <div class="user-info-item">设置</div>
+                    <div class="user-info-item" @click="$router.push({path: '/setting'})">设置</div>
                     <div class="user-info-item" @click="this.openTestPage">测试页面</div>
                     <div class="user-info-item">关于XCMusic</div>
                     <div class="user-info-item" @click="this.login.logout()">退出登录</div>
@@ -373,12 +373,10 @@ export default {
             let result = await useApi('/search/hot/detail', {}).catch((error) => {
                 console.error('Failed to get hot searches:', error);
             });
-            console.log('get hot searches', result.result.hots);
             this.hotSearches = result.result.hots;
         },
         openTestPage() {
             this.$router.push({ path: '/test' });
-            console.log('searchHistory:', this.setting.searchHistory);
         },
         openListenRank() {
             this.$router.push({ path: `/user_songs_rank/${this.login.userId}` })

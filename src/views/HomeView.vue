@@ -151,6 +151,12 @@ export default {
                     this.trackOfInfo = JSON.parse(event.data.data);
                     this.showSongInfo = true;
                 }
+            } else if (event.data.type === 'subscribe-now-playing') {
+                if (!this.player.currentTrack) {
+                    return;
+                }
+                this.trackIds = [this.player.currentTrack.id];
+                this.showAddToPlaylist = true;
             }
         },
         async getCommentCount(id) {

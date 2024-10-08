@@ -44,7 +44,7 @@
                     </div>
                     <img class="img-info play-info-ico g-icon" src="../assets/info.svg" title="歌曲信息"
                         @click="openInfoPanel" />
-                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" title="收藏到歌单">
+                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" title="收藏到歌单" @click="handleSubscribe">
                     <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg" title="下载">
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg" title="评论"
@@ -435,7 +435,12 @@ export default {
                 type: 'open-info-panel',
                 data: JSON.stringify(this.currentTrack),
             });
-        }
+        },
+        handleSubscribe() {
+            window.postMessage({
+                type: 'subscribe-now-playing',
+            })
+        },
     },
     async mounted() {
         if (this.login.status) {
