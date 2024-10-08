@@ -59,7 +59,7 @@ import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
 import YPlayUI from '@/components/YPlayUI.vue';
-import { YMessageC, Message } from '@/tools/YMessageC';
+import { Message } from '@/tools/YMessageC';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
 
@@ -198,10 +198,7 @@ export default {
                     break;
                 case 'song-addtoplaylist':
                     this.player.nextPlay(arg.target);
-                    Message.post(new YMessageC({
-                        type: 'info',
-                        message: '已添加到播放列表',
-                    }));
+                    Message.post('success', '已添加到播放列表');
                     break;
                 case 'song-comment':
                     this.$router.push(`/comment/song/${arg.target.id}`);
@@ -212,17 +209,10 @@ export default {
                 case 'song-copylink':
                     navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
                         .then(() => {
-                            Message.post(new YMessageC({
-                                type: 'success',
-                                message: '链接已复制',
-                            }));
+                            Message.post('success', `链接已复制: https://music.163.com/song?id=${arg.target.id}`);
                         })
                         .catch((error) => {
-                            Message.post(new YMessageC({
-                                type: 'error',
-                                message: `复制链接失败: ${error}`,
-                            }));
-                            console.log('Failed to copy link:', error);
+                            Message.post('error', `复制链接失败: ${error}`);
                         });
                     break;
                 case 'song-subscribe':
@@ -250,23 +240,13 @@ export default {
                 .then((res) => {
                     console.log('Track deleted from playlist:', res);
                     if (res.status === 200) {
-                        Message.post(new YMessageC({
-                            type: 'success',
-                            message: '删除成功',
-                        }));
+                        Message.post('success', '删除成功');
                     } else {
-                        Message.post(new YMessageC({
-                            type: 'error',
-                            message: `删除失败: ${res.message ?? (res.status ?? '未知原因')}`,
-                        }));
+                        Message.post('error', `删除失败: ${res.message ?? (res.status ?? '未知原因')}`);
                     }
                 })
                 .catch((error) => {
-                    Message.post(new YMessageC({
-                        type: 'error',
-                        message: `删除失败: ${error}`,
-                    }));
-                    console.error('Failed to delete track from playlist:', error);
+                    Message.post('error', `删除失败: ${error}`);
                 });
         },
         handleNewWindowState(val) {

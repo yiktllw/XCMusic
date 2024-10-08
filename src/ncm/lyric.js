@@ -4,6 +4,12 @@ export class Lyrics {
         'yrc',
         'lrc',
     ]
+    /**
+     * 从api返回的歌词数据中解析歌词
+     * @param {Object} params
+     * @param {string} params.type 歌词类型
+     * @param {string} params.data 歌词内容
+     */
     constructor({
         type,
         data,
@@ -18,6 +24,11 @@ export class Lyrics {
             }
         }
     }
+    /**
+     * 解析YRC歌词
+     * @param {string} yrc 
+     * @returns {Array} 返回解析后的歌词数组
+     */
     static parseYRC(yrc) {
         const lines = yrc.split('\n');  // 将yrc内容按行分割
         const lyrics = [];
@@ -66,6 +77,11 @@ export class Lyrics {
 
         return lyrics;
     }
+    /**
+     * 解析LRC歌词
+     * @param {string} lrc LRC歌词
+     * @returns {Array} 返回解析后的歌词数组
+     */
     static parseLRC(lrc) {
         // 将LRC文件按行分割
         const lines = lrc.split('\n');

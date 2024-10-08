@@ -1,6 +1,10 @@
 import { useApi } from "@/ncm/api";
 
 export class YTrackC {
+    /**
+     * 从歌曲id初始化歌曲信息
+     * @param {number|string} id 歌曲id
+     */
     constructor(id = null) {
         this._id = id;
         this._name = '';
@@ -8,9 +12,12 @@ export class YTrackC {
         this._ar = [];
         this._al = {};
         this._onTrackLoaded = null;
-        this.init();
+        this.#init();
     }
-    async init() {
+    /**
+     * 初始化歌曲信息
+     */
+    async #init() {
         if (!this._id) {
             return;
         } else {

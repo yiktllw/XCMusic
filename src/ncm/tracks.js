@@ -1,5 +1,12 @@
 
 export class Tracks {
+    /**
+     * 初始化歌曲列表
+     * @param {object} params 参数
+     * @param {string} params.url 请求地址
+     * @param {Array} params.tracks 歌曲列表
+     * @param {object} params.params 额外参数
+     */
     constructor({
         url = '/playlist/tracks/all',
         tracks = [],
@@ -145,6 +152,13 @@ export class Tracks {
 }
 
 export class Track {
+    /**
+     * 初始化歌曲信息
+     * @param {object} params 参数
+     * @param {string} params.url 请求地址
+     * @param {object} params.track 歌曲信息
+     * @param {object} params.params 额外参数
+     */
     constructor({
         url = '/playlist/tracks/all',
         track = {},

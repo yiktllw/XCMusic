@@ -8,39 +8,44 @@ export class SongPicker {
         this.homeDir = window.api.homeDir();
         this.damakuPath = window.api.pathJoin(this.homeDir, 'Documents', '弹幕姬', 'Plugins', 'xcmusic');
         this.filePath = window.api.pathJoin(this.damakuPath, 'songPicker.txt');
-        this.clearFile();
+        this.#clearFile();
 
-        this.subscriber = new Subscriber();
-        this.subscribeEvents = [
+        this.subscriber = new Subscriber([
             'track',
             'nextTrack',
-        ];
+        ]);
 
         this.song = null;
         this._track = null;
 
         this.timer = setInterval(() => {
-            this.getContent();
+            this.#getContent();
         }, 2000);
-        // setTimeout(() => {
-        //     clearInterval(this.timer);
-        // }, 1000 * 100);
     }
+
+    /**
+     * 订阅事件
+     * @param {Object} options - 事件处理的参数对象
+     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
+     * @param {string} [options.type=''] - 订阅的事件类型
+     * @param {Function} [options.func=()=>{}] - 事件处理函数
+     */
     subscribe({ id, func, type, }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('type is not in subscribeEvents: ', type);
-            return;
-        }
         this.subscriber.on({ id, func, type });
     }
+    /**
+     * 取消订阅事件
+     * @param {Object} options - 事件处理的参数对象
+     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
+     * @param {string} [options.type=''] - 订阅的事件类型
+     */
     unSubscribe({ id, type, }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('type is not in subscribeEvents: ', type);
-            return;
-        }
         this.subscriber.off({ id, type });
     }
-    async clearFile() {
+    /**
+     * 清空文件，程序启动时调用
+     */
+    async #clearFile() {
         try {
             await window.api.writeFile(this.filePath, '');
             console.log('文件已清空');
@@ -48,12 +53,20 @@ export class SongPicker {
             console.error('清空文件失败', err);
         }
     }
-    async readFile() {
+    /**
+     * 读取文件内容
+     * @returns {Promise<string[]>} 返回每一行的内容
+     */
+    async #readFile() {
         let result = await window.api.readFile(this.filePath);
         let lines = result.split('\n').map(line => line.trim()).filter(Boolean);
         return lines;
     }
-    async deleteLine(line) {
+    /**
+     * 删除文件中的指定行
+     * @param {string} line - 要删除的行
+     */
+    async #deleteLine(line) {
         try {
             // 读取文件内容
             const data = await window.api.readFile(this.filePath);
@@ -69,8 +82,11 @@ export class SongPicker {
             console.error('删除行失败:', err);
         }
     }
-    async getContent() {
-        let lines = await this.readFile()
+    /**
+     * 从文件中获取内容
+     */
+    async #getContent() {
+        let lines = await this.#readFile()
         lines.forEach((line) => {
             // 检查是否包含 "点歌" 和 "status:tbd"
             const startIndex = line.indexOf('点歌');
@@ -126,10 +142,14 @@ export class SongPicker {
                     })
                     this.getSearchedSong(startIndex !== -1);
                 }
-                this.deleteLine(line);
+                this.#deleteLine(line);
             }
         });
     }
+    /**
+     * 获取搜索到的歌曲
+     * @param {boolean} playNow - 是否立即播放
+     */
     async getSearchedSong(playNow) {
         if (this.song && this.song.type === 'keyword') {
             await useApi('/cloudsearch', {
@@ -146,6 +166,10 @@ export class SongPicker {
             });
         }
     }
+    /**
+     * 获取当前歌曲
+     * @returns {Object} 返回当前歌曲
+     */
     get track() {
         return this._track;
     }

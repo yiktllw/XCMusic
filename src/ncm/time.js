@@ -1,5 +1,9 @@
 
-// 格式化时间为 xxxx年xx月xx日
+/**
+ * 格式化时间戳为 yyyy-mm-dd
+ * @param {number} timestamp 时间戳
+ * @returns {string} 格式化后的时间字符串
+ */
 export function formatDate_yyyymmdd(timestamp) {
     const date = new Date(timestamp);
     const year = date.getFullYear();
@@ -8,7 +12,10 @@ export function formatDate_yyyymmdd(timestamp) {
     return `${year}-${month}-${day}`;
 }
 
-// 格式化歌曲时长为 mm:ss
+/**
+ * 格式化时间戳为 mm:ss
+ * @param {number} duration 时间戳
+ */
 export function formatDuration_mmss(duration) {
     const minutes = Math.floor(duration / 60000);
     const seconds = ((duration % 60000) / 1000).toFixed(0);

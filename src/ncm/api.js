@@ -28,6 +28,12 @@ apiClient.interceptors.request.use(
 );
 
 // 自定义 API 请求函数
+/**
+ * 使用网易云音乐的API
+ * @param {string} relativePath api的相对路径
+ * @param {Object} params 剩余参数对象
+ * @returns {Promise<any>} 返回一个Promise对象
+ */
 export async function useApi(relativePath, params) {
     try {
         const response = await apiClient.get(relativePath, { params });
@@ -37,6 +43,13 @@ export async function useApi(relativePath, params) {
     }
 }
 
+/**
+ * 设置喜欢/不喜欢
+ * @param {number} id 歌曲id
+ * @param {*} like 是否喜欢
+ * @param {*} cookie 登录cookie
+ * @returns 
+ */
 export async function setLike(id, like, cookie) {
     let result = await useApi('/like', {
         id: id,
@@ -48,6 +61,11 @@ export async function setLike(id, like, cookie) {
     return result;
 }
 
+/**
+ * 切换喜欢状态
+ * @param {number} id 歌曲id
+ * @param {*} status 当前状态
+ */
 export async function toogleLike(id, status) {
     if (status) {
         await setLike(id, false, localStorage.getItem('login_cookie'));

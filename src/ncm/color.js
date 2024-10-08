@@ -62,7 +62,6 @@ export class YColor {
         '#6f6845',
         '#707046',
     ];
-    #themes = themes;
 
     /**
      * 查询值对应的主题

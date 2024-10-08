@@ -22,7 +22,7 @@
 <script>
 import YWindow from '@/components/YWindow.vue';
 import YScroll from '@/components/YScroll.vue';
-import { YMessageC, Message } from '@/tools/YMessageC';
+import { Message } from '@/tools/YMessageC';
 import { useApi } from '@/ncm/api';
 import { mapState } from 'vuex';
 
@@ -63,29 +63,17 @@ export default {
                     console.log('Track added to playlist:', res);
                     console.log('status:', res.status);
                     if (res.status !== 200) {
-                        Message.post(new YMessageC({
-                            type: 'error',
-                            message: '添加歌曲失败',
-                        }));
+                        Message.post('error', '添加歌曲失败');
                     } else {
                         if (res.body.message) {
-                            Message.post(new YMessageC({
-                                type: 'warning',
-                                message: res.body.message,
-                            }));
+                            Message.post('warning', res.body.message);
                         } else {
-                            Message.post(new YMessageC({
-                                type: 'success',
-                                message: '添加歌曲成功',
-                            }));
+                            Message.post('success', '添加歌曲成功');
                         }
                     }
                 })
                 .catch((error) => {
-                    Message.post(new YMessageC({
-                        type: 'error',
-                        message: `添加歌曲失败: ${error}`,
-                    }));
+                    Message.post('error', `添加歌曲失败: ${error}`);
                     console.error('Failed to add track to playlist:', error);
                 });
             this.$refs.window.closeWindow();
@@ -97,12 +85,12 @@ export default {
     },
     mounted() {
         this.login.subscribe({
-            id: 'YAddToPlaylist',
+            id: 'YAddToPlaylist', 
+            type: 'userPlaylists',
             func: () => {
                 this.userPlaylists = this.login.userPlaylists;
-            },
-            type: 'userPlaylists',
-        })
+            }
+        });
     },
     beforeUnmount() {
         this.login.unSubscribe({

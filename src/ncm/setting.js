@@ -145,8 +145,7 @@ export class Setting {
                     set(target, prop, value) {
                         if (prop in target && 'value' in target[prop]) {
                             if (target[prop].validation && !target[prop].validation(value)) {
-                                console.error(`Invalid value for ${prop}, value: `, value);
-                                return false;
+                                throw new Error(`Invalid value: ${value} for ${prop}`);
                             }
                             target[prop].value = value;
                             console.log(`Set ${prop} to ${value}`);

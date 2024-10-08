@@ -1,5 +1,13 @@
 
 export class YContextMenuItemC {
+    /**
+     * @param {Object} params
+     * @param {string} params.label 显示的文字
+     * @param {string} params.role 作用
+     * @param {string} params.icon 图标
+     * @param {boolean} params.showSeparator 是否显示分隔符
+     * @param {boolean} params.display 是否显示此菜单项
+     */
     constructor({
         label = '播放',
         role = 'play',

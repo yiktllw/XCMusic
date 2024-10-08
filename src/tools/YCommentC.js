@@ -2,6 +2,11 @@ import { useApi } from "@/ncm/api";
 import { YPageC } from "./YPageC";
 
 export class YCommentC {
+    /**
+     * 
+     * @param {'song'|'playlist'|'album'} type 评论资源的类型
+     * @param {number|string} id 评论资源的id
+     */
     constructor(type = 'song', id = null) {
         this._type = null;
         // 0: song, 2: playlist, 3: album
@@ -19,11 +24,15 @@ export class YCommentC {
         // 评论总数
         this._count = 0;
         // 初始化数据
-        this.initData(true);
+        this.#initData(true);
         // 回调函数
         this._onCommentUpdate = null;
     }
-    async initData(newPageInstance = false) {
+    /**
+     * 初始化评论数据
+     * @param {boolean} newPageInstance 是否创建新的分页实例，创建则会重置页码
+     */
+    async #initData(newPageInstance = false) {
         await useApi('/comment/new', {
             id: this._id,
             type: this.typeId,
@@ -42,7 +51,7 @@ export class YCommentC {
                 this.page.total = Math.ceil(res.data?.totalCount / 100);
             }
             this.page.onPageChange = () => {
-                this.initData(false);
+                this.#initData(false);
             }
         }).catch(err => {
             console.error(err);
@@ -75,7 +84,7 @@ export class YCommentC {
     set sortType(sortType) {
         if (sortType === 'recommend' || sortType === 'time' || sortType === 'hot' && this._sortType !== sortType) {
             this._sortType = sortType;
-            this.initData(true);
+            this.#initData(true);
             console.log('sortType changed: ', this._sortType);
         } else {
             throw new Error('sortType error: sortType must be recommend or time, but got ' + sortType);

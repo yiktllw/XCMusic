@@ -116,11 +116,11 @@ export default {
         this.userSubscribes = this.login.userSubscribes;
         this.login.subscribe({
             id: 'YSidebar',
+            type: 'userPlaylists',
             func: () => {
                 this.userPlaylists = this.login.userPlaylists;
                 this.userSubscribes = this.login.userSubscribes;
             },
-            type: 'userPlaylists',
         })
     },
     beforeUnmount() {

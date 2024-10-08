@@ -1,5 +1,9 @@
 
 export class YPageC {
+    /**
+     * 分类类，用于YPage.vue
+     * @param {number} totalPage 总页数
+     */
     constructor(totalPage) {
         this._current = 1;
         this._total = totalPage;
@@ -65,6 +69,9 @@ export class YPageC {
             return [];
         }
     }
+    /**
+     * 下一页
+     */
     next() {
         if (this._current < this._total) {
             this._current++;
@@ -73,6 +80,9 @@ export class YPageC {
             }
         }
     }
+    /**
+     * 上一页
+     */
     previous() {
         if (this._current > 1) {
             this._current--;

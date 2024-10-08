@@ -12,10 +12,7 @@ export class Login {
         this._avatar = ref(localStorage.getItem('login_avatar') ?? null);
         this._userPlaylists = reactive([]);
         this._userSubscribes = reactive([]);
-        this.subscriber = markRaw(new Subscriber());
-        this.subscribeEvents = markRaw([
-            'userPlaylists',
-        ]);
+        this.subscriber = markRaw(new Subscriber(['userPlaylists']));
         this.init();
         this.interval = setInterval(() => {
             if (this._cookie && this._userId) {
@@ -23,15 +20,18 @@ export class Login {
             }
         }, 1000 * 60);
     }
+    /**
+     * 订阅事件
+     * @param {Object} options - 事件处理的参数对象
+     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
+     * @param {string} [options.type=''] - 订阅的事件类型
+     * @param {Function} [options.func=()=>{}] - 事件处理函数
+     */
     subscribe({
-        id = '',
-        func = () => { },
-        type = '',
+        id,
+        type,
+        func,
     }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('type is not in subscribeEvents: ', type);
-            return;
-        }
         this.subscriber.on({
             id: id,
             func: func,
@@ -42,10 +42,6 @@ export class Login {
         id = '',
         type = '',
     }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('type is not in subscribeEvents: ', type);
-            return;
-        }
         this.subscriber.off({
             id: id,
             type: type

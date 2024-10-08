@@ -71,8 +71,7 @@ export class Player {
         this._updateTime = null;
 
         // 订阅事件
-        this.subscriber = markRaw(new Subscriber());
-        this.subscribeEvents = markRaw([
+        this.subscriber = markRaw(new Subscriber([
             'playState',
             'playlist',
             'track',
@@ -83,7 +82,7 @@ export class Player {
             'volume',
             'history',
             'mode',
-        ]);
+        ]));
 
         this._mediaSessionInit = false;
         this.initMediaSession();
@@ -94,36 +93,21 @@ export class Player {
     // func: 订阅者的回调函数，例如 () => { console.log('PlayState changed') }
     // type: 订阅的属性，例如 'playState'
     Subscribe({ id, func, type }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('Subscribe event not supported: ', type);
-            return;
-        } else {
-            this.subscriber.on({
-                id: id,
-                func: func,
-                type: type,
-            });
-        }
+        this.subscriber.on({
+            id: id,
+            func: func,
+            type: type,
+        });
     }
     UnSubscribe({ id, type }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('Subscribe event not supported: ', type);
-            return;
-        } else {
-            this.subscriber.off({
-                id: id,
-                type: type,
-            });
-        }
+        this.subscriber.off({
+            id: id,
+            type: type,
+        });
     }
     // 执行已经订阅的回调函数
     Execute({ type }) {
-        if (!this.subscribeEvents.includes(type)) {
-            console.log('Execute event not supported: ', type);
-            return;
-        } else {
-            this.subscriber.exec(type);
-        }
+        this.subscriber.exec(type);
     }
     // 初始化MediaSession(系统媒体控制)
     initMediaSession() {
@@ -222,7 +206,7 @@ export class Player {
                 // 如果毫秒数发生了变化
                 this._currentTime = this._audio.currentTime;
                 this._progress = (this._currentTime / this._duration).toFixed(3);
-                this.Execute({ type: 'allTime'});
+                this.Execute({ type: 'allTime' });
             }
 
             this._updateTime = setTimeout(update, 50);  // 递归调用 setTimeout
