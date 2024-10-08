@@ -6,13 +6,10 @@ const emits = defineEmits(['update:modelValue', 'set-progress-end']); //eslint-d
 <template>
     <div class="progress-bigframe">
         <div class="progress-bar" @click="onClick" ref="progress_bar">
-            <div class="progress-fill" />
+            <div class="progress-fill" :style="{ clipPath: `inset( ${100 - progress * 100}% 0 0 0 round 20px)` }"></div>
             <div class="progress-pointer" :style="{ top: 'calc(100% - ' + progress * 100 + '%' + ' - 5px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress" />
-            <div class="overflow-hidden">
-                <div class="progress-fill-corner" :style="{ bottom: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
-                <div class="progress-track" :style="{ bottom: 'calc(' + progress * 100 + '%' + ' - 5px )' }" />
-            </div>
+            <div class="progress-track" />
         </div>
     </div>
 </template>
@@ -85,36 +82,20 @@ export default {
             height: 13px;
             left: -4px;
             background-color: #fff;
+            box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
             border-radius: 50%;
             position: absolute;
             z-index: 3;
         }
 
-        .overflow-hidden {
-            position: relative;
+        .progress-track {
+            top: 0;
+            position: absolute;
             width: 5px;
-            bottom: 100%;
             height: 100%;
-            border-radius: 5px;
-            overflow: hidden;
-
-            .progress-fill-corner {
-                width: 5px;
-                height: 5px;
-                background-color: rgb(254, 60, 90);
-                border-radius: 50%;
-                position: absolute;
-                z-index: 2;
-            }
-
-            .progress-track {
-                position: absolute;
-                width: 5px;
-                height: 120%;
-                background-color: #555;
-                border-radius: 10px;
-                z-index: 1;
-            }
+            background-color: rgba(var(--foreground-color-rgb), 0.21);
+            border-radius: 10px;
+            z-index: -1;
         }
     }
 }

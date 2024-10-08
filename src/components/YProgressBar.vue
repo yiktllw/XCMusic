@@ -1,13 +1,10 @@
 <template>
     <div class="progress-bigframe">
         <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="showTrack" :key="key">
-            <div class="progress-fill" />
+            <div class="progress-fill" :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"></div>
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
-                @mousedown="startSetProgress" @mouseup="endSetProgress" />
-            <div class="overflow-hidden">
-                <div class="progress-fill-corner" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" />
-                <div class="progress-track" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" />
-            </div>
+                @mousedown="startSetProgress" @mouseup="endSetProgress"></div>
+            <div class="progress-track"></div>
         </div>
         <div v-else class="progress-bar no-track" @click="onClick" ref="progress_bar_no_track">
             <div class="progress-no-track" :style="{ 'width': progress * 100 + '%' }" ref="progressDOM" />
@@ -122,6 +119,7 @@ export default {
             width: 14px;
             height: 14px;
             background-color: #fff;
+            box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
             border-radius: 50%;
             position: absolute;
             top: -5.0px;
@@ -129,33 +127,14 @@ export default {
             opacity: 0;
         }
 
-        .overflow-hidden {
-            position: relative;
+        .progress-track {
+            position: absolute;
+            top: 0;
             width: 100%;
-            top: -5px;
             height: 5px;
-            border-radius: 5px;
-            overflow: hidden;
-
-            .progress-fill-corner {
-                width: 5px;
-                height: 5px;
-                background-color: rgb(254, 60, 90);
-                border-radius: 50%;
-                position: absolute;
-                top: 0;
-                z-index: 2;
-            }
-
-            .progress-track {
-                position: absolute;
-                top: 0;
-                width: 120%;
-                height: 5px;
-                background-color: #555;
-                border-radius: 10px;
-                z-index: 1;
-            }
+            background-color: rgba(var(--foreground-color-rgb), 0.21);
+            border-radius: 10px;
+            z-index: -1;
         }
     }
 
