@@ -336,7 +336,7 @@ export default {
 
         .playbar {
             background-color: var(--panel-background-color);
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid rgba(var(--foreground-color-rgb), 0.1);
             position: relative;
             height: 100%;
             width: 100%;
