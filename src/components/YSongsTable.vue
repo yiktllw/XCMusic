@@ -168,7 +168,7 @@
                                 <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
                                 <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
-                                    :title="$t('cotenxt.view_comment')" @click="openSongComment(track.id)">
+                                    :title="$t('context.view_comment')" @click="openSongComment(track.id)">
                                 <img src="@/assets/detail.svg" class="track-menu-icon g-icon"
                                     title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
                             </div>
