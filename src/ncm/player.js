@@ -2,6 +2,7 @@ import { markRaw } from "vue";
 import { useApi } from "./api";
 import { Subscriber } from "@/tools/subscribe";
 import { SongPicker } from "@/tools/damakuSongPicker";
+import indexDB from "@/ncm/indexDB";
 
 export class Player {
     constructor() {
@@ -83,6 +84,42 @@ export class Player {
             'history',
             'mode',
         ]));
+
+        this.db = new indexDB('ncm', 'playlist');
+        this.db.openDatabase().then(() => {
+            console.log('Database opened');
+            this.Subscribe({
+                id: 'indexDB',
+                type: 'playlist',
+                func: () => {
+                    try {
+                        this.db.storePlaylist(this.playlist);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            })
+            try {
+                this.db.fetchPlaylist().then((res) => {
+                    this.playlist = res;
+                    const lastTrack = localStorage.getItem('currentTrack');
+                    if (lastTrack) {
+                        this.playTrack(JSON.parse(lastTrack), false);
+                        console.log('Last track played', JSON.parse(lastTrack));
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        this.Subscribe({
+            id: 'currentTrackStorage',
+            type: 'track',
+            func: () => {
+                localStorage.setItem('currentTrack', JSON.stringify(this.currentTrack));
+            }
+        })
 
         this._mediaSessionInit = false;
         this.initMediaSession();

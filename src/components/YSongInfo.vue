@@ -70,7 +70,7 @@
                     <div class="song-info-item">
                         <div class="left">
                             <span class="song-info-item-title">
-                                {{ song_info.song_id }} ：
+                                {{ $t('song_info.song_id') }} ：
                             </span>
                             <span class="song-info-item-content">{{ track.id }}</span>
                         </div>
