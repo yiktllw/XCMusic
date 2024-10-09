@@ -38,7 +38,15 @@
                                 <input type="radio" :id="item.value" name="theme" :value="item.value" v-model="theme"
                                     @change="handleTheme">
                                 <label :for="item.value" @click="switchToTheme(item.value)">
-                                    {{ $t(item.display) }}
+                                    {{
+                                        [
+                                            'setting_view.theme_name.dark',
+                                            'setting_view.theme_name.dark_high_contrast',
+                                            'setting_view.theme_name.light',
+                                            'setting_view.theme_name.light_high_contrast',
+                                        ].includes(item.display) ?
+                                            $t(item.display) : item.display
+                                    }}
                                 </label>
                             </div>
                         </div>
@@ -216,13 +224,13 @@ export default {
                         min-width: 100px;
                         text-align: left;
                     }
-                    
-                    .content-item-content{
+
+                    .content-item-content {
 
                         input[type="radio"] {
                             cursor: pointer;
                         }
-                        
+
                         label {
                             cursor: pointer;
                         }
