@@ -3,26 +3,26 @@ export var themes = [
         // value 是theme.scss里的class名的后半部分，比如 `theme-${value}`
         value: 'dark',
         // display 是显示在设置界面的名字
-        display: '深色',
+        display: 'setting_view.theme_name.dark',
         // 可选项，type和background二选一。
         // 'dark' / 'light'，暗色类主题，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
         type: 'dark',
     },
     {
         value: 'dark-high-contrast',
-        display: '深色高对比度',
+        display: 'setting_view.theme_name.dark_high_contrast',
         // 可选项，type和background二选一。
         // background是填在theme.scss的背景颜色，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
         background: '#000000',
     },
     {
         value: 'light',
-        display: '浅色',
+        display: 'setting_view.theme_name.light',
         type: 'light',
     },
     {
         value: 'light-high-contrast',
-        display: '浅色高对比度',
+        display: 'setting_view.theme_name.light_high_contrast',
         background: '#ffffff',
     },
     {

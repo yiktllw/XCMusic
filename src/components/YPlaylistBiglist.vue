@@ -16,7 +16,7 @@
                     {{ playlist.name }}
                 </div>
                 <div class="playlist-item-count font-color-standard">
-                    {{ (playlist.trackCount ?? playlist.size) ? (playlist.trackCount ?? playlist.size) + '首' : '&nbsp;'
+                    {{ (playlist.trackCount ?? playlist.size) ? (playlist.trackCount ?? playlist.size) + $t('playlist_biglist.song_count') : '&nbsp;'
                     }}
                 </div>
             </div>

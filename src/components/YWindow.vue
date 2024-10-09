@@ -1,8 +1,10 @@
 <template>
     <div class="window font-color-main" v-if="showWindow">
         <div class="window-header">
-            <slot name="header">标题</slot>
-            <img src="@/assets/close.svg" class="close-icon g-icon" @click="this.showWindow = false" />
+            <slot name="header">
+                {{ $t('window.title') }}
+            </slot>
+            <img src="@/assets/close.svg" class="close-icon g-icon" @click="this.showWindow = false" :title="$t('window.close')" />
         </div>
         <slot></slot>
     </div>

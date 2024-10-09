@@ -14,7 +14,8 @@
             <!-- 专辑数/粉丝数 -->
             <div class="artists-track-count font-color-standard"
                 :title="type === 'artist' ? artist.albumSize : artist.followeds">
-                <span>{{ type === 'artist' ? ('专辑: ' + artist.albumSize) : ('粉丝: ' + artist.followeds) }}</span>
+                <span>{{ type === 'artist' ? ($t('album') + ': ' + artist.albumSize) : ($t('fans') + ': ' +
+                    artist.followeds) }}</span>
             </div>
         </div>
     </div>

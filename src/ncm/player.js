@@ -891,23 +891,23 @@ export class Player {
     get qualityDisplay() {
         switch (this.quality) {
             case 'standard':
-                return '标准';
+                return 'quality.standard';
             case 'higher':
-                return '较高';
+                return 'quality.higher';
             case 'exhigh':
-                return '极高';
+                return 'quality.exhigh';
             case 'lossless':
-                return '无损';
+                return 'quality.lossless';
             case 'hires':
-                return 'Hi-Res';
+                return 'quality.hires';
             case 'jyeffect':
-                return '高清环绕声';
+                return 'quality.jyeffect';
             case 'sky':
-                return '沉浸环绕声';
+                return 'quality.sky';
             case 'jymaster':
-                return '超清母带';
+                return 'quality.jymaster';
             default:
-                return '未知';
+                return 'quality.default';
         }
     }
     // 格式化文件大小

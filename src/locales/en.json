@@ -1,6 +1,241 @@
 {
-    "welcome": "Welcome",
-    "login": "Login",
-    "logout": "Logout",
-    "settings": "Settings"
+	"add_to_playlist": "Add to playlist",
+	"album": "Album",
+	"comment": {
+		"all_comment": "All Comments",
+		"hot_order": "Popularity",
+		"recommend_order": "Recommended",
+		"time_order": "Time"
+	},
+	"context": {
+		"copy_link": "Copy Link",
+		"delete_from_playlist": "Remove from Playlist",
+		"download": "Download",
+		"info": "Song Info",
+		"nextplay": "Play Next",
+		"play": "Play",
+		"subscribe": "Add to Playlist",
+		"view_comment": "View Comments"
+	},
+	"default": "Default",
+	"fans": "Fans",
+	"header": {
+		"setting_view": {
+			"about": "About",
+			"download": "Download",
+			"normal": "Normal",
+			"play": "Play"
+		}
+	},
+	"login": "Login",
+	"logout": "Logout",
+	"message": {
+		"homeview": {
+			"add_to_playlist_success": "Added to playlist",
+			"delete_fail": "Failed to delete",
+			"delete_success": "Successfully deleted",
+			"errorToCopyLink": "Error to copy link",
+			"linkCopied": "Link Copied",
+			"unknown_reason": "Unknown Reason"
+		},
+		"playlist_view": {
+			"added_to_playlist": "Added to playlist"
+		},
+		"setting_view": {
+			"only_desktop": "The zoom feature is only effective on desktop",
+			"zoom_applied": "Zoom applied",
+			"zoom_range_50_200": "Please enter a number between 50 and 200"
+		}
+	},
+	"playbar": {
+		"cancel_like": "Unlike",
+		"clear_playlist": "Clear Playlist",
+		"like": "Like",
+		"listloop": "List Loop",
+		"listrandom": "List Random",
+		"loop": "Loop",
+		"next": "Next",
+		"order": "Order",
+		"pause": "Pause",
+		"play": "Play",
+		"playlist": "Playlist",
+		"playlist_panel": {
+			"like": "Like",
+			"title": "Title"
+		},
+		"previous": "Previous",
+		"quality": {
+			"desc": {
+				"exhigh": "Near CD Quality Detail Experience, Up to 320kbps",
+				"hires": "Richer and Clearer High-Resolution Sound Quality, Up to 192kHz/24bit",
+				"jyeffect": "Surround Sound Experience, Enhanced Audio Quality, 96kHz/24bit",
+				"jymaster": "Restore Audio Details, 192kHz/24bit",
+				"lossless": "High-Fidelity Lossless Sound Quality, Up to 48kHz/16bit",
+				"sky": "Immersive Experience, Up to 5.1 Channels",
+				"standard": "128kbps"
+			},
+			"exhigh": "Extreme High",
+			"hires": "Hi-Res",
+			"jyeffect": "JY Effect",
+			"jymaster": "JY Master",
+			"lossless": "Lossless",
+			"sky": "Sky",
+			"standard": "Standard"
+		},
+		"random": "Random",
+		"select_sound_quality": "Select Sound Quality",
+		"song_info": "Song Information",
+		"sound_quality": "Sound Quality",
+		"volume": "Volume"
+	},
+	"playlist_biglist": {
+		"song_count": ""
+	},
+	"playlist_list": {
+		"author": "Author",
+		"create_time": "Release Date",
+		"creator": "Creator",
+		"play_count": "Play Count",
+		"song_count": "Number of Songs",
+		"song_counter": "",
+		"title": "Title"
+	},
+	"playlist_view": {
+		"add_to_playlist": "Add to playlist",
+		"author": "Author",
+		"comments": "Comments",
+		"created_time": "Created",
+		"creator": "Creator",
+		"download": "Download",
+		"multi_select": "Multi Select",
+		"my_favorite_musics": "My Favorite Musics",
+		"play": "Play",
+		"published_time": "Published",
+		"search": "Search",
+		"songs": "Songs"
+	},
+	"playui": {
+		"lyric": "Lyrics",
+		"sheet": "Sheets",
+		"wiki": "Wiki"
+	},
+	"quality": {
+		"default": "Unknown",
+		"exhigh": "ExHigh",
+		"higher": "Higher",
+		"hires": "Hi-Res",
+		"jyeffect": "JY Effect",
+		"jymaster": "JY Master",
+		"lossless": "Lossless",
+		"sky": "Sky",
+		"standard": "Standard"
+	},
+	"search_view": {
+		"albums": " albums",
+		"artists": " artists",
+		"playlists": " playlists",
+		"search_info_after": "are as follows: found",
+		"search_info_before": "The search results for",
+		"songs": " songs",
+		"switcher": {
+			"album": "Albums",
+			"artist": "Artists",
+			"lyric": "Lyrics",
+			"playlist": "Playlists",
+			"song": "Songs",
+			"user": " Users"
+		},
+		"users": "users"
+	},
+	"setting_view": {
+		"apply": "Apply",
+		"language": "Language",
+		"theme": "Theme",
+		"theme_name": {
+			"dark": "Dark",
+			"dark_high_contrast": "Dark High Contrast",
+			"light": "Light",
+			"light_high_contrast": "Light High Contrast"
+		},
+		"zoom": "Zoom"
+	},
+	"settings": "Settings",
+	"sidebar": {
+		"created_playlist": "Created Playlists",
+		"subscribed_playlist": "Subscribed Playlists"
+	},
+	"song_added_failed": "Song Added Failed",
+	"song_added_successfully": "Song Added Successfully",
+	"song_info": {
+		"album_tns": "Album Translation",
+		"artist": "Artists",
+		"click_to_copy": "Click to Copy",
+		"click_to_view_album_details": "Click to View Album Details",
+		"click_to_view_artist_details": "Click to View Artist Details",
+		"song_id": "Song ID",
+		"song_info": "Song Information",
+		"song_link": "Song Link",
+		"song_name": "Song Name",
+		"song_tns": "Song Translation"
+	},
+	"songs_table": {
+		"album": "Album",
+		"duration": "Duration",
+		"like": "Like",
+		"listen_count": "Listen Count",
+		"more": "More",
+		"popularity": "Popularity",
+		"sort": {
+			"album_ascending": "Album Ascending",
+			"album_descending": "Album Descending",
+			"artist_ascending": "Artist Ascending",
+			"artist_descending": "Artist Descending",
+			"default": "Default",
+			"duration_ascending": "Duration Ascending",
+			"duration_default": "",
+			"duration_descending": "Duration Descending",
+			"title_ascending": "Title Ascending",
+			"title_descending": "Title Descending"
+		},
+		"title": "Title",
+		"unknown_artist": "Unknown Artist",
+		"unknown_name": "Unknown Name"
+	},
+	"titlebar": {
+		"about": "About",
+		"back": "Back",
+		"close": "Close",
+		"followers": "Followers",
+		"follows": "Follows",
+		"forward": "Forward",
+		"level": "Level",
+		"listenRank": "My Listen Rank",
+		"logout": "Logout",
+		"maximize": "Maximize",
+		"minimize": "Minimize",
+		"notLoggedIn": "Not Logged In",
+		"scanQRCodeToLogin": "Scan QR Code to Login",
+		"search": "Search",
+		"searchHistory": "Search History",
+		"settings": "Settings",
+		"suggestedSearches": "Suggested Searches",
+		"testPage": "Test Page",
+		"trending": "Trending"
+	},
+	"user_songs_rank_view": {
+		"alltime": "All Time",
+		"last_week": "Last Week"
+	},
+	"user_view": {
+		"albums": "Albums",
+		"detail": "Detail",
+		"listen_rank": "Listen Rank",
+		"songs": "Songs",
+		"total_listen": "Total Songs Listened "
+	},
+	"welcome": "Welcome",
+	"window": {
+		"close": "Close",
+		"title": "Title"
+	}
 }

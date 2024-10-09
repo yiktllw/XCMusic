@@ -3,7 +3,7 @@
         <div class="header">
             <div class="header-left">
                 <div class="comment-title" v-if="showHeader">
-                    {{ cmt.title }}
+                    {{ $t('comment.all_comment') }}
                 </div>
                 <div class="comment-count" v-if="showHeader && cmt.count > 0">
                     {{ cmt.count }}
@@ -13,15 +13,15 @@
             <div class="header-right">
                 <div class="sort-recommend sort-item" :class="cmt.sortType === 'recommend' ? 'sort-now' : ''"
                     @click="cmt.sortType = 'recommend'">
-                    推荐排序
+                    {{ $t('comment.recommend_order') }}
                 </div>
                 <div class="sort-hot sort-item" :class="cmt.sortType === 'hot' ? 'sort-now' : ''"
                     @click="cmt.sortType = 'hot'">
-                    热度排序
+                    {{ $t('comment.hot_order') }}
                 </div>
                 <div class="sort-time sort-item" :class="cmt.sortType === 'time' ? 'sort-now' : ''"
                     @click="cmt.sortType = 'time'">
-                    时间排序
+                    {{ $t('comment.time_order') }}
                 </div>
             </div>
         </div>

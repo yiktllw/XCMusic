@@ -1,0 +1,54 @@
+{
+    "add_to_playlist": "",
+    "album": "",
+    "comment": {
+        "recommend_order": "",
+        "hot_order": "",
+        "time_order": ""
+    },
+    "context": {
+        "copy_link": "",
+        "delete_from_playlist": "",
+        "download": "",
+        "info": "",
+        "nextplay": "",
+        "play": "",
+        "subscribe": "",
+        "view_comment": ""
+    },
+    "default": "",
+    "fans": "",
+    "header": {
+        "setting_view": {
+            "about": "",
+            "download": "",
+            "play": "",
+            "normal": ""
+        }
+    },
+    "login": "",
+    "logout": "",
+    "message": {
+        "setting_view": {
+            "only_desktop": "",
+            "zoom_applied": "",
+            "zoom_range_50_200": ""
+        }
+    },
+    "settings": "",
+    "setting_view": {
+        "apply": "",
+        "language": "",
+        "theme": "",
+        "theme_name": {
+            "dark": "",
+            "dark_high_contrast": "",
+            "light": "",
+            "light_high_contrast": ""
+        },
+        "zoom": ""
+    },
+    "song_added_failed": "",
+    "song_added_successfully": "",
+    "welcome": ""
+}

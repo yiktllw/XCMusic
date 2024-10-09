@@ -3,7 +3,7 @@
         <YWindow ref="window" @new-window-state="handleNewWindowState">
             <template #header>
                 <span style="font-size: 19px; font-weight: bold;">
-                    收藏到歌单
+                    {{ $t('add_to_playlist') }}
                 </span>
             </template>
             <YScroll>
@@ -63,17 +63,17 @@ export default {
                     console.log('Track added to playlist:', res);
                     console.log('status:', res.status);
                     if (res.status !== 200) {
-                        Message.post('error', '添加歌曲失败');
+                        Message.post('error', this.$t('song_added_failed'));
                     } else {
                         if (res.body.message) {
                             Message.post('warning', res.body.message);
                         } else {
-                            Message.post('success', '添加歌曲成功');
+                            Message.post('success', this.$t('song_added_successfully'));
                         }
                     }
                 })
                 .catch((error) => {
-                    Message.post('error', `添加歌曲失败: ${error}`);
+                    Message.post('error', this.$t('song_added_failed')+`${error}`);
                     console.error('Failed to add track to playlist:', error);
                 });
             this.$refs.window.closeWindow();

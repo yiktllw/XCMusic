@@ -66,6 +66,17 @@ export class Setting {
             },
         }
         this.display = {
+            language: {
+                value: localStorage.getItem('setting.display.language') ?? 'zh',
+                default: 'zh',
+                validation: (value) => {
+                    let valid = ['zh', 'en'].includes(value);
+                    if (valid) {
+                        localStorage.setItem('setting.display.language', value);
+                    }
+                    return valid;
+                }
+            },
             theme: {
                 value: localStorage.getItem('setting.display.theme') ?? 'dark',
                 default: 'dark',

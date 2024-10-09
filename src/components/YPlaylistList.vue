@@ -11,25 +11,35 @@
             <!-- 4 歌单标题-表头 -->
             <div class="playlists-name">
                 <div class="header-button">
-                    <span>标题</span>
+                    <span>
+                        {{ $t('playlist_list.title') }}
+                    </span>
                 </div>
             </div>
             <!-- 4 歌曲数量-表头 -->
             <div class="playlists-track-count font-color-standard ">
                 <div class="header-button">
-                    <span>歌曲数</span>
+                    <span>
+                        {{ $t('playlist_list.song_count') }}
+                    </span>
                 </div>
             </div>
             <!-- 4 作者-表头 -->
             <div class="playlists-author font-color-standard">
                 <div class="header-button">
-                    <span>{{ type === 'playlist' ? '创建者' : '作者' }}</span>
+                    <span>
+                        {{ type === 'playlist' ? $t('playlist_list.creator') : $t('playlist_list.author') }}
+                    </span>
                 </div>
             </div>
             <div class="play-count font-color-standard">
                 <div class="header-button">
-                    <span v-if="type === 'playlist'">播放量</span>
-                    <span v-else>时间</span>
+                    <span v-if="type === 'playlist'">
+                        {{ $t('playlist_list.play_count') }}
+                    </span>
+                    <span v-else>
+                        {{ $t('playlist_list.create_time') }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -44,11 +54,16 @@
                 <div class="playlists-name font-color-main" :title="playlist.name">
                     <img :src="playlist._picUrl"
                         style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">
-                    <span class="playlists-name-text">{{ playlist.name }}</span>
+                    <span class="playlists-name-text">
+                        {{ playlist.name }}
+                    </span>
                 </div>
                 <!-- 5 歌曲数 -->
                 <div class="playlists-track-count font-color-standard" :title="playlist.trackCount + '首'">
-                    <span>{{ type === 'playlist' ? playlist.trackCount : playlist.size }}首</span>
+                    <span>
+                        {{ type === 'playlist' ? playlist.trackCount : playlist.size }}
+                        {{ $t('playlist_list.song_counter') }}
+                    </span>
                 </div>
                 <!-- 5 作者 -->
                 <div class="playlists-author font-color-standard"
@@ -120,9 +135,8 @@ export default {
 
     .table-header {
         display: flex;
-        position: sticky;
+        align-items: center;
         top: 0;
-        z-index: 1;
         justify-content: space-between;
         backdrop-filter: blur(8px);
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -198,16 +212,17 @@ export default {
 
 /* 5 排序按钮 */
 .header-button {
-    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    padding: 5px 0px 5px 6px;
     font-size: 13px;
-    padding-bottom: 5px;
     margin-bottom: 5px;
-    padding-left: 6px;
     background: none;
     border: none;
     color: var(--font-color-standard);
     text-align: left;
     width: 100%;
+    height: 100%;
     border-radius: 5px;
     transition: all 0.3s;
 }

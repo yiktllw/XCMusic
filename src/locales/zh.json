@@ -1,0 +1,241 @@
+{
+    "add_to_playlist": "收藏到歌单",
+    "album": "专辑",
+    "comment": {
+        "all_comment": "全部评论",
+        "hot_order": "热度排序",
+        "recommend_order": "推荐排序",
+        "time_order": "时间排序"
+    },
+    "context": {
+        "copy_link": "复制链接",
+        "delete_from_playlist": "从歌单中删除",
+        "download": "下载",
+        "info": "查看歌曲信息",
+        "nextplay": "下一首播放",
+        "play": "播放",
+        "subscribe": "收藏到歌单",
+        "view_comment": "查看评论"
+    },
+    "default": "默认",
+    "fans": "粉丝",
+    "header": {
+        "setting_view": {
+            "about": "关于",
+            "download": "下载",
+            "normal": "常规",
+            "play": "播放"
+        }
+    },
+    "login": "登录",
+    "logout": "退出",
+    "message": {
+        "homeview": {
+            "add_to_playlist_success": "已添加到下一首播放",
+            "delete_fail": "删除失败",
+            "delete_success": "删除成功",
+            "errorToCopyLink": "复制链接失败",
+            "linkCopied": "链接已复制",
+            "unknown_reason": "未知原因"
+        },
+        "playlist_view": {
+            "added_to_playlist": "已添加到播放列表"
+        },
+        "setting_view": {
+            "only_desktop": "缩放功能仅在桌面端有效",
+            "zoom_applied": "缩放已应用",
+            "zoom_range_50_200": "请输入50到200之间的数字"
+        }
+    },
+    "playbar": {
+        "cancel_like": "取消喜欢",
+        "clear_playlist": "清空播放列表",
+        "like": "喜欢",
+        "listloop": "列表循环",
+        "listrandom": "列表随机",
+        "loop": "单曲循环",
+        "next": "下一首",
+        "order": "顺序播放",
+        "pause": "暂停",
+        "play": "播放",
+        "playlist": "播放列表",
+        "playlist_panel": {
+            "like": "喜欢",
+            "title": "标题"
+        },
+        "previous": "上一首",
+        "quality": {
+            "desc": {
+                "exhigh": "近CD品质的细节体验，最高320kbps",
+                "hires": "更饱满清晰的高解析度音质，最高192kHz/24bit",
+                "jyeffect": "环绕声体验，声音听感增强，96kHz/24bit",
+                "jymaster": "还原音频细节，192kHz/24bit",
+                "lossless": "高保真无损音质，最高48kHz/16bit",
+                "sky": "沉浸式体验，最高5.1声道",
+                "standard": "128kbps"
+            },
+            "exhigh": "极高(HQ)",
+            "hires": "高解析度无损(Hi-Res)",
+            "jyeffect": "高清环绕声(Spatial Audio)",
+            "jymaster": "超清母带(Master)",
+            "lossless": "无损(SQ)",
+            "sky": "沉浸环绕声(Surround Audio)",
+            "standard": "标准"
+        },
+        "random": "随机播放",
+        "select_sound_quality": "选择音质",
+        "song_info": "查看歌曲信息",
+        "sound_quality": "歌曲音质",
+        "volume": "音量"
+    },
+    "playlist_biglist": {
+        "song_count": "首"
+    },
+    "playlist_list": {
+        "author": "作者",
+        "create_time": "创建时间",
+        "creator": "创建者",
+        "play_count": "播放次数",
+        "song_count": "歌曲数",
+        "song_counter": "首",
+        "title": "标题"
+    },
+    "playlist_view": {
+        "add_to_playlist": "添加到播放列表",
+        "author": "作者",
+        "comments": "评论",
+        "created_time": "创建",
+        "creator": "创建者",
+        "download": "下载",
+        "multi_select": "多选",
+        "my_favorite_musics": "我喜欢的音乐",
+        "play": "播放",
+        "published_time": "发布",
+        "search": "搜索",
+        "songs": "歌曲"
+    },
+    "playui": {
+        "lyric": "歌词",
+        "sheet": "曲谱",
+        "wiki": "百科"
+    },
+    "quality": {
+        "default": "未知",
+        "exhigh": "极高",
+        "higher": "较高",
+        "hires": "Hi-Res",
+        "jyeffect": "高清环绕声",
+        "jymaster": "超清母带",
+        "lossless": "无损",
+        "sky": "沉浸环绕声",
+        "standard": "标准"
+    },
+    "search_view": {
+        "albums": "张专辑",
+        "artists": "位歌手",
+        "playlists": "个歌单",
+        "search_info_after": "的搜索结果如下: 共找到",
+        "search_info_before": "",
+        "songs": "首歌曲",
+        "switcher": {
+            "album": "专辑",
+            "artist": "歌手",
+            "lyric": "歌词",
+            "playlist": "歌单",
+            "song": "歌曲",
+            "user": "用户"
+        },
+        "users": "个用户"
+    },
+    "setting_view": {
+        "apply": "应用",
+        "language": "语言",
+        "theme": "主题",
+        "theme_name": {
+            "dark": "暗色",
+            "dark_high_contrast": "暗色高对比度",
+            "light": "亮色",
+            "light_high_contrast": "亮色高对比度"
+        },
+        "zoom": "缩放"
+    },
+    "settings": "设置",
+    "sidebar": {
+        "created_playlist": "创建的歌单",
+        "subscribed_playlist": "收藏的歌单"
+    },
+    "song_added_failed": "添加歌曲失败",
+    "song_added_successfully": "添加歌曲成功",
+    "song_info": {
+        "album_tns": "专辑译名",
+        "artist": "歌手译名",
+        "click_to_copy": "点击复制",
+        "click_to_view_album_details": "点击查看专辑详情",
+        "click_to_view_artist_details": "点击查看歌手详情",
+        "song_id": "歌曲ID",
+        "song_info": "歌曲信息",
+        "song_link": "歌曲链接",
+        "song_name": "歌曲名",
+        "song_tns": "歌曲译名"
+    },
+    "songs_table": {
+        "album": "专辑",
+        "duration": "时长",
+        "like": "喜欢",
+        "listen_count": "播放次数",
+        "more": "更多",
+        "popularity": "热度",
+        "sort": {
+            "album_ascending": "专辑升序",
+            "album_descending": "专辑降序",
+            "artist_ascending": "歌手升序",
+            "artist_descending": "歌手降序",
+            "default": "默认排序",
+            "duration_ascending": "",
+            "duration_default": "",
+            "duration_descending": "",
+            "title_ascending": "标题升序",
+            "title_descending": "标题降序"
+        },
+        "title": "标题",
+        "unknown_artist": "未知歌手",
+        "unknown_name": "未知名称"
+    },
+    "titlebar": {
+        "about": "关于XCMusic",
+        "back": "后退",
+        "close": "关闭",
+        "followers": "粉丝",
+        "follows": "关注",
+        "forward": "前进",
+        "level": "等级",
+        "listenRank": "我的听歌排行",
+        "logout": "退出登录",
+        "maximize": "最大化",
+        "minimize": "最小化",
+        "notLoggedIn": "未登录",
+        "scanQRCodeToLogin": "扫码登录",
+        "search": "搜索",
+        "searchHistory": "搜索历史",
+        "settings": "设置",
+        "suggestedSearches": "猜你想搜",
+        "testPage": "测试页面",
+        "trending": "热搜榜"
+    },
+    "user_songs_rank_view": {
+        "alltime": "所有时间",
+        "last_week": "最近一周"
+    },
+    "user_view": {
+        "albums": "专辑",
+        "detail": "详情",
+        "listen_rank": "听歌排行",
+        "songs": "歌曲",
+        "total_listen": "总共听歌"
+    },
+    "welcome": "欢迎",
+    "window": {
+        "close": "关闭窗口",
+        "title": "标题"
+    }
+}

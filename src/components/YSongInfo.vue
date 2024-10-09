@@ -3,72 +3,92 @@
         <YWindow ref="window" @new-window-state="handleNewWindowState">
             <template #header>
                 <span style="font-size: 19px; font-weight: bold;">
-                    歌曲信息
+                    {{ $t('song_info.song_info') }}
                 </span>
             </template>
             <YScroll>
                 <div class="song-info-content">
                     <div class="song-info-item">
                         <div class="left">
-                            <span class="song-info-item-title">歌曲名：</span>
-                            <span class="song-info-item-content">{{ track.name }}</span>
+                            <span class="song-info-item-title">
+                                {{ $t('song_info.song_name') }} ：
+                            </span>
+                            <span class="song-info-item-content">
+                                {{ track.name }}
+                            </span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.name)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.name)" src="@/assets/copy.svg"
+                            :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item" v-if="track.tns?.length > 0">
                         <div class="left">
-                            <span class="song-info-item-title">歌曲译名：</span>
+                            <span class="song-info-item-title">
+                                {{ $t('song_tns') }}：
+                            </span>
                             <span class="song-info-item-content">{{ track.tns[0] }}</span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.tns[0])" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.tns[0])" src="@/assets/copy.svg"
+                            :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item" style="justify-content: start;">
-                        <span class="song-info-item-title">歌手：</span>
+                        <span class="song-info-item-title">{{ $t('song_info.artist') }} ：</span>
                         <div class="song-info-item-content" style="width: 100%;">
                             <div class="song-info-artist" v-for="artist in track.ar" :key="artist.id"
                                 style="width: 100%;">
                                 <div class="left">
-                                    <span @click="openArtist(artist.id)" title="点击查看歌手详情">
+                                    <span @click="openArtist(artist.id)"
+                                        :title="$t('song_info.click_to_view_artist_details')">
                                         {{ artist.name }}
                                     </span>
                                 </div>
-                                <img class="img-copy g-icon" @click="copy(artist.name)" src="@/assets/copy.svg" title="点击复制">
+                                <img class="img-copy g-icon" @click="copy(artist.name)" src="@/assets/copy.svg"
+                                    :title="$t('song_info.click_to_copy')">
                             </div>
                         </div>
                     </div>
                     <div class="song-info-item">
                         <div class="left">
                             <span class="song-info-item-title">专辑：</span>
-                            <span class="song-info-item-content album" @click="openAlbum(track.al.id)" title="点击查看专辑详情">
+                            <span class="song-info-item-content album" @click="openAlbum(track.al.id)"
+                                :title="$t('song_info.click_to_view_album_details')">
                                 {{ track.al.name }}
                             </span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.al.name)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.al.name)" src="@/assets/copy.svg"
+                            :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item" v-if="track.al.tns?.length > 0">
                         <div class="left">
-                            <span class="song-info-item-title">专辑译名：</span>
+                            <span class="song-info-item-title">
+                                {{ $t('song_info.album_tns') }} ：
+                            </span>
                             <span class="song-info-item-content">{{ track.al.tns[0] }}</span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.al.tns[0])" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.al.tns[0])" src="@/assets/copy.svg"
+                            :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item">
                         <div class="left">
-                            <span class="song-info-item-title">歌曲ID：</span>
+                            <span class="song-info-item-title">
+                                {{ song_info.song_id }} ：
+                            </span>
                             <span class="song-info-item-content">{{ track.id }}</span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.id)" src="@/assets/copy.svg" title="点击复制">
+                        <img class="img-copy g-icon" @click="copy(track.id)" src="@/assets/copy.svg"
+                            :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item">
                         <div class="left">
-                            <span class="song-info-item-title">歌曲链接：</span>
+                            <span class="song-info-item-title">
+                                {{ $t('song_info.song_link') }} ：
+                            </span>
                             <span class="song-info-item-content">
                                 {{ `https://music.163.com/song?id=${track.id}`
                                 }}
                             </span>
                         </div>
                         <img class="img-copy g-icon" @click="copy(`https://music.163.com/song?id=${track.id}`)"
-                            src="@/assets/copy.svg" title="点击复制">
+                            src="@/assets/copy.svg" :title="$t('song_info.click_to_copy')">
                     </div>
                 </div>
             </YScroll>

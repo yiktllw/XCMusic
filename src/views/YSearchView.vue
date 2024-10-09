@@ -3,25 +3,27 @@
     <YScroll style="max-height:100%;">
         <div class="search-info">
             <div class="search-info-title font-color-main">
+                {{ $t('search_view.search_info_before') }}
                 「&nbsp;{{ search }}&nbsp;」
-                <span class="font-color-high" style="font-size: 16px;">的搜索结果如下, 共找到
+                <span class="font-color-high" style="font-size: 16px;">
+                    {{ $t('search_view.search_info_after') }}
                     <span v-if="position === 'song'">
-                        {{ switcher[0].total }}首歌曲
+                        {{ switcher[0].total }}{{ $t('search_view.songs') }}
                     </span>
                     <span v-else-if="position === 'album'">
-                        {{ switcher[1].total }}张专辑
+                        {{ switcher[1].total }}{{ $t('search_view.albums') }}
                     </span>
                     <span v-else-if="position === 'playlist'">
-                        {{ switcher[2].total }}个歌单
+                        {{ switcher[2].total }}{{ $t('search_view.playlists') }}
                     </span>
                     <span v-else-if="position === 'artist'">
-                        {{ switcher[3].total }}位歌手
+                        {{ switcher[3].total }} {{ $t('search_view.artists') }}
                     </span>
                     <span v-else-if="position === 'lyric'">
-                        {{ switcher[4].total }}首歌曲
+                        {{ switcher[4].total }}{{ $t('search_view.songs') }}
                     </span>
                     <span v-else-if="position === 'user'">
-                        {{ switcher[5].total }}位用户
+                        {{ switcher[5].total }}{{ $t('search_view.users') }}
                     </span>
                 </span>
             </div>
@@ -33,8 +35,9 @@
             <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
                 @click="handleSwitcher(item.position)">
                 <span :class="{ 'choosed-text': item.position === position }" style="font-size: 16px; color:#fff;"
-                    :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">{{
-                        item.display }}</span>
+                    :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
+                    {{ $t(item.display) }}
+                </span>
                 <div class="choosed" style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
                     v-if="item.position === position">
                 </div>
@@ -130,37 +133,37 @@ export default {
             // 导航
             switcher: [
                 {
-                    display: '歌曲',
+                    display: 'search_view.switcher.song',
                     position: 'song',
                     tracks: [],
                     total: 0,
                 },
                 {
-                    display: '专辑',
+                    display: 'search_view.switcher.album',
                     position: 'album',
                     playlists: [],
                     total: 0,
                 },
                 {
-                    display: '歌单',
+                    display: 'search_view.switcher.playlist',
                     position: 'playlist',
                     playlists: [],
                     total: 0,
                 },
                 {
-                    display: '歌手',
+                    display: 'search_view.switcher.artist',
                     position: 'artist',
                     artists: [],
                     total: 0,
                 },
                 {
-                    display: '歌词',
+                    display: 'search_view.switcher.lyric',
                     position: 'lyric',
                     lyricsList: [],
                     total: 0,
                 },
                 {
-                    display: '用户',
+                    display: 'search_view.switcher.user',
                     position: 'user',
                     users: [],
                     total: 0,

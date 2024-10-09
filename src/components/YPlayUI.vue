@@ -32,15 +32,15 @@
                     <div class="switcher">
                         <div class="switcher-lyric switcher-item"
                             :class="position === 'lyric' ? 'selected' : 'not-selected'" @click="position = 'lyric'">
-                            歌词
+                            {{ $t('playui.lyric') }}
                         </div>
                         <div class="switcher-wiki switcher-item"
                             :class="position === 'wiki' ? 'selected' : 'not-selected'" @click="position = 'wiki'">
-                            百科
+                            {{ $t('playui.wiki') }}
                         </div>
                         <div class="switcher-sheet switcher-item"
                             :class="position === 'sheet' ? 'selected' : 'not-selected'" @click="position = 'sheet'">
-                            曲谱
+                            {{ $t('playui.sheet') }}
                         </div>
                     </div>
                     <YScroll style="height: calc(100vh - 350px); margin-left: 5px; " ref="lyricContainer">
@@ -339,7 +339,7 @@ export default {
         },
         scrollToCurrentLine() {
             // 确保 ref 存在，并且有 lyrics 内容
-            if (this.$refs.lyricContainer?.$el && this.lyrics.length) {
+            if (this.$refs.lyricContainer?.$el && this.lyrics?.length) {
                 const container = this.$refs.lyricContainer.$el;
                 const currentLineElement = container.getElementsByClassName('current-line')[0];
 
@@ -593,10 +593,11 @@ export default {
                 background-color: rgba(var(--foreground-color-rgb), .1);
                 border-radius: 20px;
                 padding: 3px 3px;
-                width: 146px;
                 margin: 0 0 10px 0;
 
                 .switcher-item {
+                    display: flex;
+                    align-items: center;
                     padding: 2px 8px 4px 8px;
                 }
 

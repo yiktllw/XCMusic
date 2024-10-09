@@ -42,12 +42,12 @@
                     <div v-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
                         <img class="img-close-panel g-icon" src="../assets/more.svg" />
                     </div>
-                    <img class="img-info play-info-ico g-icon" src="../assets/info.svg" title="歌曲信息"
+                    <img class="img-info play-info-ico g-icon" src="../assets/info.svg" :title="$t('playbar.song_info')"
                         @click="openInfoPanel" />
-                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" title="收藏到歌单" @click="handleSubscribe">
-                    <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg" title="下载">
+                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" :title="$t('context.subscribe')" @click="handleSubscribe">
+                    <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg" :title="$t('context.download')">
                     <div class="song-comment">
-                        <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg" title="评论"
+                        <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg" :title="$t('context.view_comment')"
                             @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
@@ -67,35 +67,35 @@
                 <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))"
                     :key="currentTrack?.id">
                     <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
-                        title="取消喜欢">
-                    <img v-else class="img-like img g-icon" src="../assets/unlikes.svg" title="喜欢">
+                        :title="$t('playbar.cancel_like')">
+                    <img v-else class="img-like img g-icon" src="../assets/unlikes.svg" :title="$t('playbar.like')">
                 </button>
                 <!-- 3 上一首按钮 -->
-                <button class="button previous-button" @click="goTo('backwards')" title="上一首">
+                <button class="button previous-button" @click="goTo('backwards')" :title="$t('playbar.previous')">
                     <img class="img-previous img g-icon" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
-                <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? '播放' : '暂停'"
+                <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')"
                     :key="playState">
                     <img v-show="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
                 <!-- 3 下一首按钮 -->
-                <button class="button next-button" @click="goTo('forward')" title="下一首">
+                <button class="button next-button" @click="goTo('forward')" :title="$t('playbar.next')">
                     <img class="img-next img g-icon" src="../assets/next.svg">
                 </button>
                 <!-- 3 播放模式按钮 -->
                 <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
                     ref="play_mode_panel_trigger">
                     <img v-if="playMode === 'order'" class="img-order img g-icon" src="../assets/order.svg"
-                        title="顺序播放">
+                        :title="$t('playbar.order')">
                     <img v-if="playMode === 'listloop'" class="img-listloop img g-icon" src="../assets/listloop.svg"
-                        title="列表循环">
+                        :title="$t('playbar.listloop')">
                     <img v-if="playMode === 'random'" class="img-random img g-icon" src="../assets/random.svg"
-                        title="随机播放">
+                        :title="$t('playbar.random')">
                     <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
-                        title="列表随机" style="opacity: 1;">
-                    <img v-if="playMode === 'loop'" class="img-loop img g-icon" src="../assets/loop.svg" title="单曲循环">
+                        :title="$t('playbar.listrandom')" style="opacity: 1;">
+                    <img v-if="playMode === 'loop'" class="img-loop img g-icon" src="../assets/loop.svg" :title="$t('playbar.loop')">
                 </button>
                 <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
@@ -103,23 +103,28 @@
                     <div class="playMode-switcher">
                         <div class="playMode-item"
                             @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-order img g-icon playMode-img" src="../assets/order.svg">顺序播放
+                            <img class="img-order img g-icon playMode-img" src="../assets/order.svg">
+                            {{ $t('playbar.order') }}
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('listloop'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-listloop img playMode-img g-icon" src="../assets/listloop.svg">列表循环
+                            <img class="img-listloop img playMode-img g-icon" src="../assets/listloop.svg">
+                            {{ $t('playbar.listloop') }}
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('random'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-random img playMode-img g-icon" src="../assets/random.svg">随机播放
+                            <img class="img-random img playMode-img g-icon" src="../assets/random.svg">
+                            {{ $t('playbar.random') }}
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('listrandom'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-random img playMode-img" src="../assets/listrandom.svg">列表随机
+                            <img class="img-random img playMode-img" src="../assets/listrandom.svg">
+                            {{ $t('playbar.listrandom') }}
                         </div>
                         <div class="playMode-item"
                             @click="tooglePlayMode('loop'); this.$refs.play_mode_panel.tooglePanel()">
-                            <img class="img-loop img playMode-img g-icon" src="../assets/loop.svg">单曲循环
+                            <img class="img-loop img playMode-img g-icon" src="../assets/loop.svg">
+                            {{ $t('playbar.loop') }}
                         </div>
                     </div>
                 </YPanel>
@@ -142,24 +147,24 @@
             <div class="buttons" style="margin-right: 10px;">
                 <!-- 音质按钮 -->
                 <div class="quality-button font-color-standard" ref="quality_panel_trigger"
-                    @click="this.$refs.quality_panel.tooglePanel()" title="选择音质">
-                    {{ qualityDisplay }}
+                    @click="this.$refs.quality_panel.tooglePanel()" :title="$t('playbar.select_sound_quality')">
+                    {{ $t(qualityDisplay) }}
                 </div>
                 <!-- 选择音质面板 -->
                 <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
                     :default-show="false" :animation-time="0.1" :slide-distance="15">
                     <div class="quality-panel">
                         <div class="quality-title font-color-main">
-                            歌曲音质
+                            {{ $t('playbar.sound_quality') }}
                         </div>
                         <div class="quality-switcher">
                             <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
                                 @click="setQuality(quality.name)" :style="{ 'opacity': quality.available ? 1 : .4 }">
                                 <div class="quality-item-title font-color-high">
-                                    {{ quality.display }}
+                                    {{ $t(quality.display) }}
                                 </div>
                                 <div class="quality-item-desc font-color-standard">
-                                    {{ quality.size + ' ' + quality.desc }}
+                                    {{ quality.size + ' ' + $t(quality.desc) }}
                                 </div>
                             </div>
                         </div>
@@ -167,7 +172,7 @@
                 </YPanel>
                 <!-- 音量按钮 -->
                 <img class="img g-icon" src="../assets/volume.svg"
-                    style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" title="音量"
+                    style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" :title="$t('playbar.volume')"
                     ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
                 <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5"
@@ -184,14 +189,16 @@
                 <!-- 播放列表按钮 -->
                 <img class="img g-icon" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
-                    @click="this.$refs.playlist_panel.tooglePanel" title="播放列表" ref="playlist_panel_trigger">
+                    @click="this.$refs.playlist_panel.tooglePanel" :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4"
                     :default-show="false">
                     <div class="playlist-container">
                         <div class="playlist-title">
                             <div class="title-left font-color-main">
-                                <span>播放列表</span>
+                                <span>
+                                    {{ $t('playbar.playlist') }}
+                                </span>
                                 <div class="songs-count"
                                     style="color:var(--font-color-main); margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
                                     {{ playlist.length }}
@@ -201,13 +208,17 @@
                                 <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
                                     <img class="g-icon" src="../assets/delete.svg"
                                         style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;"
-                                        title="清空播放列表">
+                                        :title="$t('playbar.clear_playlist')">
                                 </span>
                             </div>
                         </div>
                         <div class="playlist-header font-color-standard">
-                            <div class="playlist-header-item">标题</div>
-                            <div class="playlist-header-item">喜欢</div>
+                            <div class="playlist-header-item">
+                                {{ $t('playbar.playlist_panel.title') }}
+                            </div>
+                            <div class="playlist-header-item">
+                                {{ $t('playbar.playlist_panel.like') }}
+                            </div>
                         </div>
                         <div class="scrollable">
                             <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
@@ -255,57 +266,57 @@ export default {
             qualityGroup: [
                 {
                     name: 'jymaster',
-                    display: '超清母带(Master)',
+                    display: 'playbar.quality.jymaster',
                     id: 0,
-                    desc: '还原音频细节，192kHz/24bit',
+                    desc: 'playbar.quality.desc.jymaster',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'sky',
-                    display: '沉浸环绕声(Surround Audio)',
+                    display: 'playbar.quality.sky',
                     id: 1,
-                    desc: '沉浸式体验，最高5.1声道',
+                    desc: 'playbar.quality.desc.sky',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'jyeffect',
-                    display: '高清环绕声(Spatial Audio)',
+                    display: 'playbar.quality.jyeffect',
                     id: 2,
-                    desc: '环绕声体验，声音听感增强，96kHz/24bit',
+                    desc: 'playbar.quality.desc.jyeffect',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'hires',
-                    display: '高解析度无损(Hi-Res)',
+                    display: 'playbar.quality.hires',
                     id: 3,
-                    desc: '更饱满清晰的高解析度音质，最高192kHz/24bit',
+                    desc: 'playbar.quality.desc.hires',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'lossless',
-                    display: '无损(SQ)',
+                    display: 'playbar.quality.lossless',
                     id: 4,
-                    desc: '高保真无损音质，最高48kHz/16bit',
+                    desc: 'playbar.quality.desc.lossless',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'exhigh',
-                    display: '极高(HQ)',
+                    display: 'playbar.quality.exhigh',
                     id: 5,
-                    desc: '近CD品质的细节体验，最高320kbps',
+                    desc: 'playbar.quality.desc.exhigh',
                     available: false,
                     size: '',
                 },
                 {
                     name: 'standard',
-                    display: '标准',
+                    display: 'playbar.quality.standard',
                     id: 7,
-                    desc: '128kbps',
+                    desc: 'playbar.quality.desc.standard',
                     available: false,
                     size: '',
                 }
@@ -857,27 +868,26 @@ export default {
             .playMode-switcher {
                 display: flex;
                 position: absolute;
-                width: 90px;
-                height: 190px;
-                transform: translate(calc(-100% + 35px), calc(-100% - 20px));
+                transform: translate(calc(-50% - 21px ), calc(-100% - 21px));
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 background-color: var(--panel-background-color);
                 border-radius: 5px;
-                padding: 10px;
+                padding: 2px 10px;
                 box-shadow: 0px -0px 8px rgba(0, 0, 0, 0.4);
 
                 .playMode-item {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
+                    justify-content: start;
+                    white-space: nowrap;
                     width: 100%;
                     height: 30px;
                     cursor: pointer;
                     color: var(--font-color-high);
                     font-size: 15px;
-                    padding: 10px 0px;
+                    padding: 5px 0px;
                     margin: 0px;
 
                     &:not(:last-child) {
@@ -885,7 +895,7 @@ export default {
                     }
 
                     .playMode-img {
-                        margin-right: 5px;
+                        margin-right: 8px;
                     }
                 }
             }

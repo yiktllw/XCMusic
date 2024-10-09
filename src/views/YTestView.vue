@@ -3,6 +3,9 @@
         <button @click="$refs.playUI.tooglePanel">
             切换
         </button>
+        <p>
+            {{ $t('settings') }}
+        </p>
         <YMultiSelect ref="playUI" :tracks="tracks" />
     </div>
 </template>

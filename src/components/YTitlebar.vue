@@ -2,10 +2,10 @@
     <div class="titlebar font-color-main">
         <!-- 后退和前进按钮 -->
         <div class="buttons arrows">
-            <button class="back" @click="back" title="后退" v-if="type === 'default'">
+            <button class="back" @click="back" :title="$t('titlebar.back')" v-if="type === 'default'">
                 <img class="img arrow g-icon" src="../assets/backarrow.svg" />
             </button>
-            <button class="forward" @click="forward" title="前进" v-if="type === 'default'">
+            <button class="forward" @click="forward" :title="$t('titlebar.forward')" v-if="type === 'default'">
                 <img class="img arrow g-icon" src="../assets/forwardarrow.svg" />
             </button>
             <div v-else-if="type === 'play-ui'" class="close-button" @click="$emit('close-panel')">
@@ -16,7 +16,7 @@
         <div class="searchbar" ref="search_panel_trigger" v-if="type === 'default'">
             <div class="input-wrapper">
                 <input type="text" class="search-input font-color-main" @keydown.enter="handleSearch"
-                    v-model="searchInput" @input="getSearchSuggestions" placeholder="搜索..."
+                    v-model="searchInput" @input="getSearchSuggestions" :placeholder="$t('titlebar.search') + '...'"
                     @click="this.$refs.search_panel._showPanel()" spellcheck="false" ref="search_input" />
                 <img class="img-search g-icon" src="../assets/search.svg" />
                 <img v-if="searchInput !== ''" class="img-clear g-icon" src="../assets/clear2.svg"
@@ -26,7 +26,9 @@
                 :default-show="false" :slide-direction="1">
                 <div class="search-panel">
                     <div class="search-history" v-if="searchHistory.length > 0">
-                        <div class="search-history-title">搜索历史</div>
+                        <div class="search-history-title">
+                            {{ $t('titlebar.searchHistory') }}
+                        </div>
                         <div class="search-history-items">
                             <div v-for="item in searchHistory" :key="item" @click="search(item)"
                                 class="search-history-item font-color-standard">
@@ -35,14 +37,17 @@
                         </div>
                     </div>
                     <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
-                        <div class="search-suggestions-title">猜你想搜</div>
+                        <div class="search-suggestions-title">
+                            {{ $t('titlebar.suggestedSearches') }}
+                        </div>
                         <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
                             :title="suggestion.keyword" @click="search(suggestion.keyword)"
                             v-html="highlightMatching(suggestion.keyword)">
                         </div>
                     </div>
                     <div class="search-suggestions" v-else>
-                        <div class="search-suggestions-title">热搜榜
+                        <div class="search-suggestions-title">
+                            {{ $t('titlebar.trending') }}
                         </div>
                         <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches"
                             :key="hotSearch" :title="hotSearch.first" @click="search(hotSearch.first)"
@@ -63,13 +68,15 @@
                     {{ userNickName }}
                 </div>
                 <div class="userInfoTxt" v-if="!this.login.status">
-                    未登录
+                    {{ $t('titlebar.notLoggedIn') }}
                 </div>
                 <img class="img-userInfo g-icon" src="../assets/more.svg" />
             </button>
             <!-- 扫码登录 -->
             <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
-                <div class="login_text">扫码登录</div>
+                <div class="login_text">
+                    {{ $t('titlebar.scanQRCodeToLogin') }}
+                </div>
                 <img :src="base64Image" />
             </div>
             <!-- 用户名下拉菜单 -->
@@ -82,7 +89,7 @@
                                 {{ userProfile?.follows ?? 0 }}
                             </div>
                             <div class="follows-text font-color-low">
-                                关注
+                                {{ $t('titlebar.follows') }}
                             </div>
                         </div>
                         <div class="follows-splitline" />
@@ -91,31 +98,43 @@
                                 {{ userProfile?.followeds ?? 0 }}
                             </div>
                             <div class="follows-text font-color-low">
-                                粉丝
+                                {{ $t('titlebar.followers') }}
                             </div>
                         </div>
                     </div>
-                    <div class="user-info-item">我的会员</div>
-                    <div class="user-info-item">等级{{ userProfile?.level ?? 0 }}</div>
-                    <div class="user-info-item" @click="openListenRank">我的听歌排行</div>
-                    <div class="user-info-item" @click="$router.push({path: '/setting'})">设置</div>
-                    <div class="user-info-item" @click="this.openTestPage">测试页面</div>
-                    <div class="user-info-item">关于XCMusic</div>
-                    <div class="user-info-item" @click="this.login.logout()">退出登录</div>
+                    <div class="user-info-item" @click="$router.push({ path: '/setting' })">
+                        {{ $t('titlebar.settings') }}
+                    </div>
+                    <div class="user-info-item">
+                        {{ $t('titlebar.level') }}:
+                        {{ userProfile?.level ?? 0 }}
+                    </div>
+                    <div class="user-info-item" @click="openListenRank">
+                        {{ $t('titlebar.listenRank') }}
+                    </div>
+                    <div class="user-info-item" @click="this.openTestPage">
+                        {{ $t('titlebar.testPage') }}
+                    </div>
+                    <div class="user-info-item">
+                        {{ $t('titlebar.about') }}
+                    </div>
+                    <div class="user-info-item" @click="this.login.logout()">
+                        {{ $t('titlebar.logout') }}
+                    </div>
                 </div>
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
-            <button class="settings" @click="settings" title="设置" v-if="type === 'default'">
+            <button class="settings" @click="settings" :title="$t('titlebar.settings')" v-if="type === 'default'">
                 <img class="img settings g-icon" @click="$router.push({ path: '/setting' })"
                     src="../assets/settings.svg" alt="Settings" />
             </button>
-            <button class="minimize " @click="minimize" title="最小化">
+            <button class="minimize " @click="minimize" :title="$t('titlebar.minimize')">
                 <img class="img minimize g-icon" src="../assets/min.svg" alt="Minimize" />
             </button>
-            <button class="maximize " @click="maximize" title="最大化">
+            <button class="maximize " @click="maximize" :title="$t('titlebar.maximize')">
                 <img class="img maximize g-icon" src="../assets/max.svg" alt="Maximize" />
             </button>
-            <button class="close" @click="close" title="关闭">
+            <button class="close" @click="close" :title="$t('titlebar.close')">
                 <img class="img close g-icon" src="../assets/close.svg" alt="Close" />
             </button>
         </div>

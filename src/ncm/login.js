@@ -1,6 +1,7 @@
 import { Subscriber } from "@/tools/subscribe";
 import { useApi } from "./api";
 import { ref, reactive, markRaw, shallowReactive } from 'vue'; // eslint-disable-line
+import i18n from "@/i18n";
 
 export class Login {
     constructor() {
@@ -176,7 +177,7 @@ export class Login {
             console.error('Failed to get user playlist:', error);
         });
         if (this.userPlaylists.length > 0) {
-            this.userPlaylists[0].label = '我喜欢的音乐';
+            this.userPlaylists[0].label = i18n.global.t('playlist_view.my_favorite_musics');
         }
         this.subscriber.exec('userPlaylists');
     }

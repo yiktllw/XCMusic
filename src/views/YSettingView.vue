@@ -1,7 +1,7 @@
 <template>
     <div class="setting">
         <div class="header">
-            <div class="title font-color-main">设置</div>
+            <div class="title font-color-main">{{ $t('settings') }}</div>
             <div class="switcher">
                 <YHeader :switcher="switcher" @new-position="handleSwitcher"></YHeader>
             </div>
@@ -9,27 +9,49 @@
         <div class="main font-color-main">
             <div class="normal item">
                 <div class="normal-title item-title">
-                    常规
+                    {{ $t('header.setting_view.normal') }}
                 </div>
                 <div class="normal-content item-content ">
+                    <div class="content-item item-languige">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.language') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="radio" id="zh" name="language" value="zh" v-model="language"
+                                @change="handleLanguage">
+                            <label for="zh" @click="switchToLanguage('zh')">
+                                简体中文
+                            </label>
+                            <input type="radio" id="en" name="language" value="en" v-model="language"
+                                @change="handleLanguage">
+                            <label for="en" @click="switchToLanguage('en')">
+                                English
+                            </label>
+                        </div>
+                    </div>
                     <div class="content-item item-theme ">
-                        <div class="content-item-title item-theme-title ">主题</div>
-
+                        <div class="content-item-title item-theme-title ">
+                            {{ $t('setting_view.theme') }}
+                        </div>
                         <div class="theme-item">
                             <div v-for="item in themes" :key="item.value" class="item-theme-content">
                                 <input type="radio" :id="item.value" name="theme" :value="item.value" v-model="theme"
                                     @change="handleTheme">
-                                <label :for="item.value" @click="switchToTheme(item.value)">{{ item.display }}</label>
+                                <label :for="item.value" @click="switchToTheme(item.value)">
+                                    {{ $t(item.display) }}
+                                </label>
                             </div>
                         </div>
                     </div>
                     <div class="content-item item-zoom">
-                        <div class="content-item-title item-zoom-title">缩放</div>
+                        <div class="content-item-title item-zoom-title">
+                            {{ $t('setting_view.zoom') }}
+                        </div>
                         <div class="zoom-item">
                             <div class="item-zoom-content">
                                 <input type="number" min="50" max="200" step="5" v-model="zoom">
                                 <div class="zoom-apply" @click="handleZoom">
-                                    应用
+                                    {{ $t('setting_view.apply') }}
                                 </div>
                             </div>
                         </div>
@@ -64,27 +86,28 @@ export default {
                     num: 0,
                     showNum: false,
                     position: 'normal',
-                    display: '常规',
+                    display: 'header.setting_view.normal',
                 },
                 {
                     num: 0,
                     showNum: false,
                     position: 'play',
-                    display: '播放',
+                    display: 'header.setting_view.play',
                 },
                 {
                     num: 0,
                     showNum: false,
                     position: 'download',
-                    display: '下载',
+                    display: 'header.setting_view.download',
                 },
                 {
                     num: 0,
                     showNum: false,
                     position: 'about',
-                    display: '关于',
+                    display: 'header.setting_view.about',
                 }
             ],
+            language: 'zh',
             themes: themes,
             theme: 'dark',
             zoom: 100,
@@ -105,20 +128,26 @@ export default {
         handleZoom() {
             try {
                 this.setting.display.zoom = this.zoom / 100;
-                if (!window.electron?.isElectron) {
-                    Message.post('info', '缩放功能仅在桌面端生效');
+                if (window.electron?.isElectron) {
+                    Message.post('success', this.$t('message.setting_view.zoom_applied'));
                 } else {
-                    Message.post('success', '缩放已应用');
+                    Message.post('info', this.$t('message.setting_view.only_desktop'));
                 }
             } catch (error) {
-                Message.post('error', '请输入50到200之间的数字');
+                Message.post('error', this.$t('message.setting_view.zoom_range_50_200'));
             }
+        },
+        switchToLanguage(language) {
+            this.language = language;
+            this.setting.display.language = language;
+            this.$i18n.locale = this.language;
         },
     },
     mounted() {
         setBackgroundColorTheme();
         this.theme = this.setting.display.theme;
         this.zoom = this.setting.display.zoom * 100;
+        this.language = this.setting.display.language;
     },
 }
 </script>
@@ -164,7 +193,9 @@ export default {
             .item-title {
                 font-size: 17px;
                 font-weight: bold;
-                margin: 10px 43.21px 10px 23px;
+                margin: 10px 0 10px 23px;
+                text-align: left;
+                min-width: 86.42px;
             }
 
             .item-content {
@@ -179,12 +210,28 @@ export default {
                     align-items: first baseline;
                     color: var(--font-color-high);
                     margin-bottom: 10px;
+
+                    .content-item-title {
+                        font-weight: bold;
+                        min-width: 100px;
+                        text-align: left;
+                    }
+                    
+                    .content-item-content{
+
+                        input[type="radio"] {
+                            cursor: pointer;
+                        }
+                        
+                        label {
+                            cursor: pointer;
+                        }
+                    }
                 }
 
                 .item-theme {
 
                     .item-theme-title {
-                        margin-right: 30px;
                         font-weight: bold;
                     }
 
@@ -214,7 +261,6 @@ export default {
                 .item-zoom {
 
                     .item-zoom-title {
-                        margin-right: 30px;
                         font-weight: bold;
                     }
 
@@ -239,12 +285,12 @@ export default {
                                 border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
                                 color: var(--font-color-high);
                                 border-radius: 5px;
-                                
+
                                 &:focus {
                                     outline: none;
                                 }
                             }
-                            
+
                             .zoom-apply {
                                 cursor: pointer;
                                 margin-left: 10px;

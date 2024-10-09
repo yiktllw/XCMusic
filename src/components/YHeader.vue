@@ -5,7 +5,7 @@
             @click="handleSwitcher(item.position)">
             <div :class="{ 'choosed-text': item.position === position }"
                 :style="{ 'font-weight': item.position === position ? 'bold' : 'var(--font-weight-header)', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
-                {{ item.display }}
+                {{ $t(item.display) }}
                 <!-- 选中效果 -->
                 <div class="choosed" style="" v-if="item.position === position">
                 </div>
@@ -29,14 +29,8 @@ export default {
                     num: 0,
                     showNum: true,
                     position: 'default',
-                    display: '默认',
+                    display: 'default',
                 },
-                {
-                    num: 0,
-                    showNum: true,
-                    position: 'hot',
-                    display: '选择1',
-                }
             ],
         }
     },

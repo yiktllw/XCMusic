@@ -6,7 +6,7 @@
                 <div class="item-content" v-if="item.display">
                     <img class="item-icon g-icon" :src="item.icon" v-if="item.icon" />
                     <div class="item-label">
-                        {{ item.label }}
+                        {{ $t(item.label) }}
                     </div>
                 </div>
                 <div class="separator" v-if="item.showSeparator" />

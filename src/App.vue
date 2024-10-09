@@ -14,13 +14,14 @@ export default {
     },
     mounted() {
         this.$router.push({ path: '/greeting' });
-        console.log('this.setting', typeof this.setting.display.zoom);
         // 初始化缩放
         if (window.electron.isElectron) {
             window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom));
         }
         // 初始化主题
         document.body.className = `theme-${this.setting.display.theme}`;
+        // 初始化语言
+        this.$i18n.locale = this.setting.display.language;
     }
 }
 

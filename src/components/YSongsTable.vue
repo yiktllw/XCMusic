@@ -13,64 +13,83 @@
             <div class="songsName" ref="songs_name_ref" v-if="showTrackTitle">
                 <!-- 5 标题排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort">
-                    <span>标题</span>
+                    <span>
+                        {{ $t('songs_table.title') }}
+                    </span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon g-icon" />
-                        <span style="font-size:13px; color: var(--font-color-standard);">{{
-                            sortingStates[currentSortingIndex].text
-                            }}</span>
+                        <span style="font-size:13px; color: var(--font-color-standard);">
+                            {{
+                                $t(sortingStates[currentSortingIndex].text)
+                            }}
+                        </span>
                     </div>
                 </button>
             </div>
             <!-- 4 resize控件 -->
-            <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)"></div>
+            <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)">
+            </div>
             <!-- 4 专辑-表头 -->
             <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum"
                 :style="{ 'width': `${this.alWidth}px` }">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
-                    <span>专辑</span>
+                    <span>
+                        {{ $t('songs_table.album') }}
+                    </span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates_Album[currentSortingIndex_Album].icon" class="sort-icon g-icon" />
-                        <span style="font-size:13px; color: var(--font-color-standard)">{{
-                            sortingStates_Album[currentSortingIndex_Album].text
-                            }}</span>
+                        <span style="font-size:13px; color: var(--font-color-standard)">
+                            {{
+                                $t(sortingStates_Album[currentSortingIndex_Album].text)
+                            }}
+                        </span>
                     </div>
                 </button>
             </div>
             <!-- 4 喜欢-表头 -->
             <div class="likes" v-if="showTrackLikes">
                 <button class="header-button">
-                    <span>喜欢</span>
+                    <span>
+                        {{ $t('songs_table.like') }}
+                    </span>
                 </button>
             </div>
             <!-- 4 时长-表头 -->
             <div class="songsDuration" v-if="showTrackDuration">
                 <!-- 5 时长排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Duration">
-                    <span>时长</span>
+                    <span>
+                        {{ $t('songs_table.duration') }}
+                    </span>
                     <!-- 6 排序内容 -->
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates_Duration[currentSortingIndex_Duration].icon"
                             class="sort-icon g-icon" />
-                        <span style="font-size:13px;color: var(--font-color-standard)">{{
-                            sortingStates_Duration[currentSortingIndex_Duration].text
-                            }}</span>
+                        <span style="font-size:13px;color: var(--font-color-standard)">
+                            {{
+                                $t(sortingStates_Duration[currentSortingIndex_Duration].text)
+                            }}
+                        </span>
                     </div>
                 </button>
             </div>
             <!-- 4 热度-表头 -->
             <div class="popularity" v-if="showTrackPopularity">
                 <button class="header-button">
-                    <span>热度</span>
+                    <span>
+                        {{ $t('songs_table.popularity') }}
+                    </span>
                 </button>
             </div>
             <!-- 4 听歌次数-表头 -->
             <div class="listen-count" v-if="showListenCount">
                 <button class="header-button">
-                    <span>听歌次数</span>
+                    <span>
+                        {{ $t('songs_table.listen_count') }}
+                    </span>
                 </button>
             </div>
         </div>
@@ -81,10 +100,10 @@
                 :key="track.id">
                 <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
                     <div class="reels-title font-color-main">
-                        {{ alReels[track.reelIndex]?.showreelName ?? '未知名称' }}
+                        {{ alReels[track.reelIndex]?.showreelName ?? $t('songs_table.unknown_name') }}
                     </div>
                     <div class="reels-other font-color-standard" v-if="alReels[track.reelIndex]?.composerName">
-                        {{ alReels[track.reelIndex]?.composerName ?? '未知作曲家' }}
+                        {{ alReels[track.reelIndex]?.composerName ?? $t('songs_table.unknown_artist') }}
                     </div>
                     <div class="reels-other font-color-standard"
                         v-for="artist in alReels[track.reelIndex]?.otherArtists" :key="artist">
@@ -144,13 +163,14 @@
                         <div class="align-right">
                             <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
-                                <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon" title="下载">
-                                <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon" title="收藏"
-                                    @click="openAddToPlaylist(track.id)">
-                                <img src="@/assets/comment.svg" class="track-menu-icon g-icon" title="评论"
-                                    @click="openSongComment(track.id)">
-                                <img src="@/assets/detail.svg" class="track-menu-icon g-icon" title="更多"
-                                    @click="openContextMenu($event, track, 'toogle')">
+                                <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
+                                    :title="$t('context.download')">
+                                <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
+                                    :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
+                                <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
+                                    :title="$t('cotenxt.view_comment')" @click="openSongComment(track.id)">
+                                <img src="@/assets/detail.svg" class="track-menu-icon g-icon"
+                                    title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
                             </div>
                             <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
                                 :style="{ 'width': `${this.alWidth}px` }">
@@ -189,7 +209,7 @@
                     </div>
                     <div class="align-down" v-if="showLyrics">
                         <div class="lyrics" style="color: #aaa; font-size: 14px; margin-top: 5px; margin-left: 50px;">
-                            歌词:
+                            {{ $t('playui.lyric') }}:
                             <span v-for="(lyric, index) in track.lyrics" :key="index" v-html="formatLyric(lyric)">
                             </span>
                         </div>
@@ -328,23 +348,23 @@ export default {
             newWidth: 0,    // resize控件的新的专辑宽度
             // 歌曲标题栏的排序状态
             sortingStates: [
-                { icon: require('../assets/updown-arrow.svg'), text: '默认排序', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: '标题升序', key: 'titleAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: '标题降序', key: 'titleDesc' },
-                { icon: require('../assets/up-arrow.svg'), text: '歌手升序', key: 'artistAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: '歌手降序', key: 'artistDesc' },
+                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.default', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.title_ascending', key: 'titleAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.title_descending', key: 'titleDesc' },
+                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.artist_ascending', key: 'artistAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.artist_descending', key: 'artistDesc' },
             ],
             // 专辑栏的排序状态
             sortingStates_Album: [
-                { icon: require('../assets/updown-arrow.svg'), text: '默认排序', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: '专辑升序', key: 'albumAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: '专辑降序', key: 'albumDesc' },
+                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.default', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.album_ascending', key: 'albumAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.album_descending', key: 'albumDesc' },
             ],
             // 时长栏的排序状态
             sortingStates_Duration: [
-                { icon: require('../assets/updown-arrow.svg'), text: '', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: '', key: 'albumAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: '', key: 'albumDesc' },
+                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'default' },
+                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'albumAsc' },
+                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'albumDesc' },
             ],
             currentSortingIndex: 0, // 标题栏当前排序状态的索引
             currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引

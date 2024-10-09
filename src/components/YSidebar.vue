@@ -5,7 +5,10 @@
         </div>
         <div class="scrollable">
             <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
-                <span style="margin-right: 5px;">创建的歌单({{ userPlaylists.length }})</span>
+                <span style="margin-right: 5px;">
+                    {{ $t('sidebar.created_playlist') }}
+                    ({{ userPlaylists.length }})
+                </span>
                 <div class="switch-user-playlist-icon-container">
                     <transition name="rotate">
                         <img class="switch-user-playlist-icon g-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
@@ -28,7 +31,10 @@
             </transition>
             <button class="switch-user-playlist font-color-main"
                 @click="showMySubscribedPlaylist = !showMySubscribedPlaylist">
-                <span style="margin-right: 5px;">收藏的歌单({{ userSubscribes.length }})</span>
+                <span style="margin-right: 5px;">
+                    {{ $t('sidebar.subscribed_playlist') }}
+                    ({{ userSubscribes.length }})
+                </span>
                 <div class="switch-user-playlist-icon-container">
                     <transition name="rotate">
                         <img class="switch-user-playlist-icon g-icon" v-if="showMySubscribedPlaylist"
@@ -99,7 +105,7 @@ export default {
         resize(e) {
             const sidebar = this.$refs.sidebar_component
             let newWidth = e.clientX;
-            if (newWidth > 180 && newWidth < 260) {
+            if (newWidth > 220 && newWidth < 260) {
                 this.newWidth = newWidth;
                 sidebar.style.width = `${this.newWidth}px`;
             }

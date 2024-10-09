@@ -31,11 +31,17 @@
                     </div>
                     <!-- 关注/粉丝 -->
                     <div class="user-follow font-color-high" v-if="type === 'user'">
-                        <div>关注: {{ user.follows }}</div>
+                        <div>
+                            {{ $t('titlebar.follows') }}:
+                            {{ user.follows }}
+                        </div>
                         <div
                             style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
                         </div>
-                        <div>粉丝: {{ user.followeds }}</div>
+                        <div>
+                            {{ $t('titlebar.followers') }}:
+                            {{ user.followeds }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,8 +52,9 @@
                     @click="handleSwitcher(item.position)">
                     <span :class="{ 'choosed-text': item.position === user.position }"
                         style="font-size: 16px; color:var(--font-color-main);"
-                        :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">{{
-                            item.display }}</span>
+                        :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
+                        {{ $t(item.display) }}
+                    </span>
                     <!-- 选中效果 -->
                     <div class="choosed"
                         style="transform: translate(7px,4px); width: calc(100% - 15px); height: 4px; border-radius: 2px;"
@@ -255,11 +262,11 @@ export default {
                     // 用户界面的切换器
                     switcher: [
                         {
-                            display: '创建的歌单',
+                            display: 'sidebar.created_playlist',
                             position: 'createdPlaylist',
                         },
                         {
-                            display: '收藏的歌单',
+                            display: 'sidebar.subscribed_playlist',
                             position: 'subscribedPlaylist',
                         },
                     ],
@@ -304,16 +311,16 @@ export default {
                     // 歌手界面的切换器
                     switcher: [
                         {
-                            display: '歌曲',
+                            display: 'user_view.songs',
                             position: 'song',
                         },
                         {
-                            display: '专辑',
+                            display: 'user_view.albums',
                             position: 'album',
                             playlists: [],
                         },
                         {
-                            display: '详情',
+                            display: 'user_view.detail',
                             position: 'detail',
                             detail: '',
                         },
@@ -338,12 +345,12 @@ export default {
             });
             // 清空用户的歌单
             this.user.userPlaylists = [{
-                name: '听歌排行',
+                name: this.$t('user_view.listen_rank'),
                 id: `user-record-${this.userId}`,
                 userId: this.userId,
                 creator: response.playlist[0]?.creator ?? null,
                 playCount: 0,
-                trackCount: `累计听歌${this.user.listenSongs}`,
+                trackCount: this.$t('user_view.total_listen') + `${this.user.listenSongs}`,
                 _picUrl: require('@/assets/songsrank.svg'),
                 _bigPicUrl: require('@/assets/songsrank.svg'),
             }];

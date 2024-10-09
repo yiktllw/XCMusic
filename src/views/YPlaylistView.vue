@@ -42,11 +42,13 @@
                                 {{ playlist.createrName }}
                             </span>
                             <span v-if="!playlist.createrAvatarUrl" class="creater-name"
-                                style="background-color: rgba(var(--foreground-color-rgb), 0.3);">创建者
+                                style="background-color: rgba(var(--foreground-color-rgb), 0.3);">
+                                {{ $t('playlist_view.creator') }}
                             </span>
                             <!-- 5 创建时间 -->
                             <span class="create-time font-color-standard">
-                                {{ playlist.createTime }}创建
+                                {{ playlist.createTime }}
+                                {{ $t('playlist_view.created_time') }}
                             </span>
                         </div>
                         <!-- 4 创建信息 -->
@@ -63,7 +65,8 @@
                         <div class="createrInfo" v-if="type === 'album'">
                             <!-- 5 创建时间 -->
                             <span class="create-time-album font-color-standard">
-                                {{ playlist.createTime }}&nbsp;发布
+                                {{ playlist.createTime }}&nbsp;
+                                {{ $t('playlist_view.published_time') }}
                             </span>
                         </div>
                     </div>
@@ -72,36 +75,36 @@
                         <div class="play-buttons">
                             <!-- 5 播放按钮 -->
                             <button class="play-button " @click="playAll">
-                                <img src="../assets/play.svg"
-                                    style="width: 15px; height: 15px; padding-right:5px;" />
+                                <img src="../assets/play.svg" style="width: 15px; height: 15px; padding-right:5px;" />
                                 <span style="padding-bottom: 2px;">
-                                    播放
+                                    {{ $t('playlist_view.play') }}
                                 </span>
                             </button>
                             <!-- 5 添加到播放列表按钮 -->
                             <button class="add-button" @click="addPlaylistToQueue">
                                 <img class="g-icon" src="../assets/addtoplaylist.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
-                                添加到播放列表
+                                {{ $t('playlist_view.add_to_playlist') }}
                             </button>
                             <!-- 5 下载按钮 -->
                             <button class="download-button" @click="downloadPlaylist">
                                 <img class="g-icon" src="../assets/download.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
-                                下载
+                                {{ $t('playlist_view.download') }}
                             </button>
                             <!-- 5 多选按钮 -->
                             <button class="multichoice-button" @click="multiChoice">
                                 <img class="g-icon" src="../assets/multichoice.svg"
                                     style="width: 15px; height: 15px; padding-right:5px;" />
-                                多选
+                                {{ $t('playlist_view.multi_select') }}
                             </button>
                             <!-- 5 搜索框 -->
                             <div class="input-wrapper">
                                 <input type="text" class="search-input font-color-main"
                                     @keydown.enter="handleSearch($event.target.value, true)"
-                                    @input="handleSearch($event.target.value, false)" placeholder="搜索..."
-                                    spellcheck="false" v-model="searchQuery" />
+                                    @input="handleSearch($event.target.value, false)"
+                                    :placeholder="$t('playlist_view.search') + '...'" spellcheck="false"
+                                    v-model="searchQuery" />
                                 <img src="../assets/search.svg" class="img-search g-icon" />
                                 <img v-if="searchQuery !== ''" class="img-clear" src="../assets/clear2.svg"
                                     @click="searchQuery = ''" />
@@ -118,7 +121,9 @@
                     <button class="orient-button" @click="orient = 'songs'">
                         <span :class="{ 'choosed-text': orient === 'songs' }"
                             style="font-size: 16px; color:var(--font-color-main);"
-                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">歌曲</span>
+                            :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
+                            {{ $t('playlist_view.songs') }}
+                        </span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
                             v-if="orient === 'songs'">
@@ -136,7 +141,7 @@
                     <button class="orient-button" @click="orient = 'comments'">
                         <span :class="{ 'choosed-text': orient === 'comments' }" style="font-size: 16px;"
                             :style="{ 'font-weight': orient === 'comments' ? 'bold' : '500', 'color': orient === 'comments' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
-                            评论
+                            {{ $t('playlist_view.comments') }}
                         </span>
                         <div class="choosed"
                             style="transform: translate(7px,4px); width: 60%; height: 4px; border-radius: 2px;"
@@ -367,7 +372,7 @@ export default {
                             ).then(myFavoriteId => {
                                 // 我喜欢的音乐
                                 if (myFavoriteId.playlist[0].id == id) {
-                                    this.playlist.name = '我喜欢的音乐';
+                                    this.playlist.name = this.$t('playlist_view.my_favorite_musics');
                                 }
                                 return myFavoriteId;
                             }).catch(error => {
@@ -385,7 +390,7 @@ export default {
                 });
                 if (this.type === 'playlist' && result[1].value === id) {
                     // 我喜欢的音乐
-                    this.playlist.name = '我喜欢的音乐';
+                    this.playlist.name = this.$t('playlist_view.my_favorite_musics');
                 }
 
                 // 处理fetchTracks获取的多个页面的track
@@ -480,7 +485,7 @@ export default {
             // 预处理歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playAll(playlist);
-            Message.post('success', '已添加到播放列表');
+            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
@@ -488,7 +493,7 @@ export default {
         // 添加到播放列表
         async addPlaylistToQueue() {
             this.player.addPlaylist(this.playlist.tracks);
-            Message.post('success', '已添加到播放列表');
+            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
         },
         // 播放歌曲
         async playSongs(track) {
@@ -505,7 +510,7 @@ export default {
             let playlist = preparePlaylist(this.playlist.tracks);
             console.log('sendPlaylist');
             this.player.playlist = playlist;
-            Message.post('success', '已添加到播放列表');
+            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
             if (this.type === 'playlist') {
                 await this.updatePlayCount();
             }
@@ -516,7 +521,7 @@ export default {
             // 准备歌单
             let playlist = preparePlaylist(this.playlist.tracks);
             this.player.playlist = playlist;
-            Message.post('success', '已添加到播放列表');
+            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
             await this.player.playTrack(JSON.parse(track));
             this.player.playState = 'play';
             if (this.type === 'playlist') {

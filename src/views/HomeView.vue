@@ -138,7 +138,7 @@ export default {
                 this.setDirection(data.x, data.y, menuWidth, menuHeight);
                 console.log(data)
                 let commentCount = await this.getCommentCount(this.target.id)
-                this.menu[4].label = `查看评论(${commentCount})`
+                this.menu[4].label = this.$t('context.view_comment') + `(${commentCount})`
             } else if (event.data.type === 'song-open-add-to-playlist') {
                 this.trackIds = event.data.data.ids;
                 console.log('ids: ', this.trackIds);
@@ -204,7 +204,7 @@ export default {
                     break;
                 case 'song-addtoplaylist':
                     this.player.nextPlay(arg.target);
-                    Message.post('success', '已添加到播放列表');
+                    Message.post('success', this.$t('message.homeview.add_to_playlist_success'));
                     break;
                 case 'song-comment':
                     this.$router.push(`/comment/song/${arg.target.id}`);
@@ -215,10 +215,10 @@ export default {
                 case 'song-copylink':
                     navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
                         .then(() => {
-                            Message.post('success', `链接已复制: https://music.163.com/song?id=${arg.target.id}`);
+                            Message.post('success', this.$t('message.homeview.linkCopied') + `: https://music.163.com/song?id=${arg.target.id}`);
                         })
                         .catch((error) => {
-                            Message.post('error', `复制链接失败: ${error}`);
+                            Message.post('error', this.$t('message.homeview.errorToCopyLink')`: ${error}`);
                         });
                     break;
                 case 'song-subscribe':
@@ -246,13 +246,13 @@ export default {
                 .then((res) => {
                     console.log('Track deleted from playlist:', res);
                     if (res.status === 200) {
-                        Message.post('success', '删除成功');
+                        Message.post('success', this.$t('message.homeview.delete_success'));
                     } else {
-                        Message.post('error', `删除失败: ${res.message ?? (res.status ?? '未知原因')}`);
+                        Message.post('error', this.$t('message.homeview.delete_fail') + `: ${res.message ?? (res.status ?? this.$t('message.homeview.unknown_reason'))}`);
                     }
                 })
                 .catch((error) => {
-                    Message.post('error', `删除失败: ${error}`);
+                    Message.post('error', this.$t('message.homeview.delete_fail') + `: ${error}`);
                 });
         },
         handleNewWindowState(val) {
