@@ -332,7 +332,7 @@ export default {
             progress: 0,
             progressInterval: null,
             volume: 0,
-            qualityDisplay: '标准',
+            qualityDisplay: 'quality.standard',
         }
     },
     watch: {

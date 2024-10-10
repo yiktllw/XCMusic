@@ -158,8 +158,10 @@ export class Setting {
                             if (target[prop].validation && !target[prop].validation(value)) {
                                 throw new Error(`Invalid value: ${value} for ${prop}`);
                             }
-                            target[prop].value = value;
-                            console.log(`Set ${prop} to ${value}`);
+                            if (target[prop].value !== value) {
+                                target[prop].value = value;
+                                console.log(`Set ${prop} to ${value}`);
+                            }
                             return true;
                         }
                         return false; // 不允许修改非 value 属性的其他属性

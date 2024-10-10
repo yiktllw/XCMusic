@@ -83,6 +83,7 @@ export class Player {
             'volume',
             'history',
             'mode',
+            'playerReady',
         ]));
 
         this.db = new indexDB('ncm', 'playlist');
@@ -101,11 +102,17 @@ export class Player {
             })
             try {
                 this.db.fetchPlaylist().then((res) => {
-                    this.playlist = res;
+                    this._playlist = res;
                     const lastTrack = localStorage.getItem('currentTrack');
                     if (lastTrack) {
-                        this.playTrack(JSON.parse(lastTrack), false);
-                        console.log('Last track played', JSON.parse(lastTrack));
+                        this.Subscribe({
+                            id: 'indexDB',
+                            type: 'playerReady',
+                            func: () => {
+                                this.playTrack(JSON.parse(lastTrack), true);
+                                console.log('Last track played', JSON.parse(lastTrack));
+                            }
+                        })
                     }
                 });
             } catch (error) {
@@ -123,8 +130,12 @@ export class Player {
 
         this._mediaSessionInit = false;
         this.initMediaSession();
+
+        setTimeout(() => {
+            this.Execute({ type: 'playerReady' });
+        }, 500);
     }
-    // 由于vue的响应式原理，Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
+    // Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
     // 同时，为了在组件中获取此对象的最新属性，需要提供回调函数接口，在使用最新属性的地方订阅属性发生变动的消息。
     // id: 订阅者的唯一标识，例如 YPlaybar.vue
     // func: 订阅者的回调函数，例如 () => { console.log('PlayState changed') }
@@ -235,8 +246,8 @@ export class Player {
             if (this.playState === 'play' && Math.floor(this._currentTime) !== Math.floor(this._audio.currentTime)) {
                 // 如果秒数发生了变化
                 this._currentTime = Math.floor(this._audio.currentTime);
-                this._progress = (this._currentTime / this._duration).toFixed(3);
                 this._duration = this._audio.duration;
+                this._progress = Math.max(0, Math.min(1, (this._currentTime / this._duration).toFixed(3)));
                 this.Execute({ type: 'time' });
                 this.Execute({ type: 'trackReady' });
             } else if (this.playState === 'play' && this._currentTime !== this._audio.currentTime) {
@@ -744,13 +755,13 @@ export class Player {
             return;
         }
         // 如果播放模式改变
-        if (value !== this._mode) {
-            // 清空播放历史
-            this.clearHistory();
-            // 设置播放模式
-            this._mode = value;
-            this.Execute({ type: 'mode' });
-        }
+        if (value === this._mode) return;
+
+        // 清空播放历史
+        this.clearHistory();
+        // 设置播放模式
+        this._mode = value;
+        this.Execute({ type: 'mode' });
         // 如果播放模式不为列表随机
         if (value === 'order' || value === 'listloop' || value === 'random' || value === 'loop') {
             // 保存当前歌曲
