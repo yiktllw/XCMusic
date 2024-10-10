@@ -679,7 +679,6 @@ export default {
                     return true;
                 }
             });
-            console.log('currentTrackIndex', currentTrackIndex);
             if (currentTrack && currentTrackIndex) {
                 if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current) {
                     this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;

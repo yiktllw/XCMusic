@@ -5,52 +5,116 @@ import { SongPicker } from "@/tools/damakuSongPicker";
 import indexDB from "@/ncm/indexDB";
 
 export class Player {
+    /**
+     * 当音频错误时，最后一次加载的歌曲ID
+     * @type {Number}
+     */
+    #lastloadTrack = 0;
     constructor() {
-        // 初始化音频为空
+        /**
+         * 音频对象
+         * @type {HTMLAudioElement}
+         */
         this._audio = new Audio('');
         this._audio.onerror = async () => {
-            await this.reloadUrl();
+            if (this.#lastloadTrack === this.currentTrack?.id) {
+                console.warn('Already Loading Track', this.currentTrack);
+                return;
+            } else {
+                if (!this.currentTrack?.id) return;
+                this.#lastloadTrack = this.currentTrack?.id;
+                setTimeout(() => {
+                    this.#lastloadTrack = 0;
+                }, 1000 * 2)
+                await this.reloadUrl();
+            }
         };
-        // 初始化音频上下文
+        /**
+         * 音频上下文，用于设置增益
+         * @type {AudioContext}
+         */
         this._audioContext = null;
-        // 初始化增益节点
+        /**
+         * 增益节点，用于设置音量均衡
+         * @type {GainNode}
+         */
         this._gainNode = null;
         // 初始化音量均衡控件
         this.initAudioContext();
 
-        // 初始化播放列表为空
+        /**
+         * 播放列表
+         * @type {Array}
+         */
         this._playlist = [];
-        // 初始化歌单ID为0
+        /**
+         * 歌单ID
+         * @type {Number}
+         */
         this._playlistId = 0;
-        // 初始化当前播放索引为0
+        /**
+         * 当前播放的歌曲索引
+         * @type {Number}
+         */
         this._current = 0;
 
-        // 初始化播放模式为顺序播放
+        /**
+         * 播放模式
+         * @type {'order'|'listloop'|'random'|'loop'|'listrandom'}
+         */
         this._mode = 'order';
 
-        // 初始化随机播放历史为空
+        /**
+         * 播放历史
+         * @type {Array<tracks>}
+         */
         this._history = [];
-        // 初始化历史索引为0
+        /**
+         * 播放历史索引
+         * @type {Number}
+         */
         this._historyIndex = 0;
 
-        // 初始化播放状态为暂停
+        /**
+         * 播放状态
+         * @type {'play'|'pause'}
+         */
         this._playState = 'pause';
 
-        // 初始化音量为1
+        /**
+         * 音量
+         * @type {Number} 0-1
+         */
         this._volume = 1;
 
-        // 初始化播放时间为0
+        /**
+         * 当前播放时间
+         * @type {Number} 秒
+         */
         this._currentTime = 0;
-        // 初始化播放进度为0
+        /**
+         * 播放进度
+         * @type {Number} 0-1
+         */
         this._progress = 0;
-        // 初始化总时长为0
+        /**
+         * 歌曲总时长
+         * @type {Number} 秒
+         */
         this._duration = 0;
 
-        // 初始化音质为极高
+        /**
+         * 音质
+         * @type {'standard'|'exhigh'|'lossless'|'hires'|'jyeffect'|'sky'|'jymaster'}
+         */
         this._quality = 'exhigh';
 
         // 点歌功能
         if (window.electron?.isElectron) {
+            /**
+             * 点歌功能
+             * @type {SongPicker}
+             */
             this.songPicker = markRaw(new SongPicker());
             this.songPicker.subscribe({
                 id: 'player.js',
@@ -68,10 +132,16 @@ export class Player {
             });
         }
 
-        // 更新时间的计时器
+        /**
+         * 更新时间的定时器
+         * @type {Number}
+         */
         this._updateTime = null;
 
-        // 订阅事件
+        /**
+         * 订阅事件
+         * @type {Subscriber}
+         */
         this.subscriber = markRaw(new Subscriber([
             'playState',
             'playlist',
@@ -86,6 +156,10 @@ export class Player {
             'playerReady',
         ]));
 
+        /**
+         * IndexDB, 用于存储播放列表
+         * @type {indexDB}
+         */
         this.db = new indexDB('ncm', 'playlist');
         this.db.openDatabase().then(() => {
             console.log('Database opened');
@@ -282,10 +356,6 @@ export class Player {
      */
     async reloadUrl() {
         if (!this.currentTrack) return;
-        console.log('Reloading url', {
-            id: this.currentTrack.id,
-            name: this.currentTrack.name,
-        });
         let result = await this.getUrl(this.currentTrack.id);
         let url = result.url;
         this._audio.src = url;
@@ -295,9 +365,15 @@ export class Player {
                 await this._audio.play();
                 this.updateTime();
             }
-            console.log('Reloaded url', url);
+            console.log('Reload url', {
+                id: this.currentTrack.id,
+                name: this.currentTrack.name,
+            }, '\nurl:', url);
         } catch (error) {
-            console.error(error);
+            console.error('failed to reload url of track: ',{
+                id: this.currentTrack.id,
+                name: this.currentTrack.name,
+            }, '\n', error);
         }
     }
     /**

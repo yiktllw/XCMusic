@@ -51,7 +51,7 @@
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
                             :title="$t('context.view_comment')"
-                            @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
+                            @click="handleCommentClick(currentTrack?.id)">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
                         </div>
@@ -457,6 +457,10 @@ export default {
             window.postMessage({
                 type: 'subscribe-now-playing',
             })
+        },
+        handleCommentClick(id) {
+            this.$router.push({ path: `/comment/song/${id}` });
+            this.$emit('close-panel');
         },
         scrollToCurrentTrack() {
             this.$nextTick(() => {

@@ -23,7 +23,7 @@
                     <div class="song-info-item" v-if="track.tns?.length > 0">
                         <div class="left">
                             <span class="song-info-item-title">
-                                {{ $t('song_tns') }}：
+                                {{ $t('song_info.song_tns') }}：
                             </span>
                             <span class="song-info-item-content">{{ track.tns[0] }}</span>
                         </div>
