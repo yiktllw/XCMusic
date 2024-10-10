@@ -392,7 +392,7 @@ export default {
             this.user.albums = response.hotAlbums.map(album => {
                 return {
                     ...album,
-                    _picUrl: album.picUrl + '?param=40y40',
+                    _picUrl: album.picUrl + '?param=80y80',
                     _bigPicUrl: album.picUrl + '?param=180y180',
                 }
             });

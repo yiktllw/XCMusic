@@ -96,7 +96,7 @@
         <!-- 3 歌曲列表内容 -->
         <ul>
             <template
-                v-for="(track, index) in localTracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
+                v-for="(track, index) in tracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
                 :key="track.id">
                 <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
                     <div class="reels-title font-color-main">
@@ -113,15 +113,17 @@
                     </div>
                 </div>
                 <li :id="`track-item-${track.id}`" class="track-item" ref="track_item_ref"
-                    @mouseover="trackMouseEnter(track.id)" @mouseleave="trackMouseLeave(track.id)"
-                    @dblclick="playSongAndPlaylist(track)" @click="setFocused(track.id)" tabindex="0"
-                    @contextmenu="openContextMenu($event, track)">
+                    :class="nowPlaying === track.id ? 'current_play_item' : ''" @mouseover="trackMouseEnter(track.id)"
+                    @mouseleave="trackMouseLeave(track.id)" @dblclick="playSongAndPlaylist(track)"
+                    @click="setFocused(track.id)" tabindex="0" @contextmenu="openContextMenu($event, track)">
                     <div class="align-up">
                         <!-- 4 左侧对齐 -->
                         <div class="align-left">
                             <!-- 5 歌曲序号 -->
                             <div class="track-count font-color-standard" v-if="showTrackCounter">
-                                <span v-if="nowPlaying !== track.id">{{ index + 1 }}</span>
+                                <span v-if="nowPlaying !== track.id">
+                                    {{ (page.current - 1) * 500 + index + 1 }}
+                                </span>
                                 <YPlaying v-else />
                             </div>
                             <!-- 5 封面图片 -->
@@ -227,10 +229,29 @@ import { mapState } from 'vuex';
 import YPlaying from './YPlaying.vue';
 import YPage from './YPage.vue';
 import { YPageC } from '@/tools/YPageC';
+import { Message } from '@/tools/YMessageC';
+import { ref, watch } from 'vue';
+import upArrow from '../assets/up-arrow.svg';
+import downArrow from '../assets/down-arrow.svg';
+import updownArrow from '../assets/updown-arrow.svg';
 
 export default {
     name: 'YSongsTable',
+    setup(props) { // eslint-disable-line
+        const tracks = ref(props.modelValue);
+        watch(() => props.modelValue, (newValue) => {
+            tracks.value = newValue;
+        });
+        return {
+            tracks
+        };
+    },
     props: {
+        modelValue: {
+            type: Array,
+            required: true,
+            default: () => []
+        },
         type: {
             type: String,
             default: 'playlist',
@@ -291,11 +312,6 @@ export default {
             type: Boolean,
             default: true,
         },
-        tracks: {
-            type: Array,
-            default: () => [],
-            required: true,
-        },
         localPlay: {
             type: Boolean,
             default: false,
@@ -348,35 +364,33 @@ export default {
             newWidth: 0,    // resize控件的新的专辑宽度
             // 歌曲标题栏的排序状态
             sortingStates: [
-                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.default', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.title_ascending', key: 'titleAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.title_descending', key: 'titleDesc' },
-                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.artist_ascending', key: 'artistAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.artist_descending', key: 'artistDesc' },
+                { icon: updownArrow, text: 'songs_table.sort.default', key: 'default' },
+                { icon: upArrow, text: 'songs_table.sort.title_ascending', key: 'titleAsc' },
+                { icon: downArrow, text: 'songs_table.sort.title_descending', key: 'titleDesc' },
+                { icon: upArrow, text: 'songs_table.sort.artist_ascending', key: 'artistAsc' },
+                { icon: downArrow, text: 'songs_table.sort.artist_descending', key: 'artistDesc' },
             ],
             // 专辑栏的排序状态
             sortingStates_Album: [
-                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.default', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.album_ascending', key: 'albumAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.album_descending', key: 'albumDesc' },
+                { icon: updownArrow, text: 'songs_table.sort.default', key: 'default' },
+                { icon: upArrow, text: 'songs_table.sort.album_ascending', key: 'albumAsc' },
+                { icon: downArrow, text: 'songs_table.sort.album_descending', key: 'albumDesc' },
             ],
             // 时长栏的排序状态
             sortingStates_Duration: [
-                { icon: require('../assets/updown-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'default' },
-                { icon: require('../assets/up-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'albumAsc' },
-                { icon: require('../assets/down-arrow.svg'), text: 'songs_table.sort.duration_default', key: 'albumDesc' },
+                { icon: updownArrow, text: 'songs_table.sort.duration_default', key: 'default' },
+                { icon: upArrow, text: 'songs_table.sort.duration_default', key: 'albumAsc' },
+                { icon: downArrow, text: 'songs_table.sort.duration_default', key: 'albumDesc' },
             ],
             currentSortingIndex: 0, // 标题栏当前排序状态的索引
             currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引
             currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
-            localTracks: [],
             alWidth: 230,
             page: new YPageC(),
             nowPlaying: 0,
         }
     },
     async mounted() {
-        this.localTracks = this.tracks;
         if (this.login.status) {
             if (this.login.likelist?.length === 0) {
                 this.login.reloadLikelist();
@@ -400,29 +414,16 @@ export default {
     },
     watch: {
         tracks(newVal) {
-            this.localTracks = newVal;
             this.alWidth = this.setting.display.albumWidth;
-        },
-        localTracks(newVal) {
             this.page = new YPageC(Math.ceil(newVal.length / this.limit));
         },
     },
     methods: {
-        // playSongs(track) {
-        //     console.log('Play Songs:', track.id);
-        //     if (!this.localPlay) {
-        //         this.$emit('play-songs', JSON.stringify(track));
-        //     } else {
-        //         this.player.playTrack(track);
-        //         this.player.playState = 'play';
-        //     }
-        //     this.sendPlaylist();
-        // },
         sendPlaylist() {
             if (!this.localPlay) {
                 this.$emit('send-playlist');
             } else {
-                this.player.playlist = this.localTracks;
+                this.player.playlist = this.tracks;
             }
         },
         async playSongAndPlaylist(track) {
@@ -433,7 +434,7 @@ export default {
                 await this.player.playTrack(track);
             }
             if (this.localPlay) {
-                this.player.playlist = this.localTracks;
+                this.player.playlist = this.tracks;
                 await this.player.playTrack(track);
                 this.player.playState = 'play';
             }
@@ -540,27 +541,27 @@ export default {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'titleAsc':
                     console.log('按标题升序排序');
                     // 处理按标题升序排序逻辑
-                    this.localTracks.sort((a, b) => a.name.localeCompare(b.name));
+                    this.tracks.sort((a, b) => a.name.localeCompare(b.name));
                     break;
                 case 'titleDesc':
                     console.log('按标题降序排序');
                     // 处理按标题降序排序逻辑
-                    this.localTracks.sort((a, b) => b.name.localeCompare(a.name));
+                    this.tracks.sort((a, b) => b.name.localeCompare(a.name));
                     break;
                 case 'artistAsc':
                     console.log('按歌手升序排序');
                     // 处理按歌手升序排序逻辑
-                    this.localTracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
+                    this.tracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
                     break;
                 case 'artistDesc':
                     console.log('按歌手降序排序');
                     // 处理按歌手降序排序逻辑
-                    this.localTracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
+                    this.tracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -573,17 +574,17 @@ export default {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按专辑升序排序');
                     // 处理按专辑升序排序逻辑
-                    this.localTracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
+                    this.tracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
                     break;
                 case 'albumDesc':
                     console.log('按专辑降序排序');
                     // 处理按专辑降序排序逻辑
-                    this.localTracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
+                    this.tracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -596,17 +597,17 @@ export default {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.localTracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按时间升序排序');
                     // 处理按时间升序排序逻辑
-                    this.localTracks.sort((a, b) => parseFloat(a.dt) - parseFloat(b.dt));
+                    this.tracks.sort((a, b) => parseFloat(a.dt) - parseFloat(b.dt));
                     break;
                 case 'albumDesc':
                     console.log('按时间降序排序');
                     // 处理按时间降序排序逻辑
-                    this.localTracks.sort((a, b) => parseFloat(b.dt) - parseFloat(a.dt));
+                    this.tracks.sort((a, b) => parseFloat(b.dt) - parseFloat(a.dt));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -666,6 +667,34 @@ export default {
             });
             console.log('Open Add To Playlist:', id);
             // 在HomeView中处理
+        },
+        scrollToCurrentTrack() {
+            if (!this.player.currentTrack) {
+                return;
+            }
+            let currentTrackIndex = null;
+            const currentTrack = this.tracks.find((track, index) => {
+                if (track.id === this.player.currentTrack.id) {
+                    currentTrackIndex = index;
+                    return true;
+                }
+            });
+            console.log('currentTrackIndex', currentTrackIndex);
+            if (currentTrack && currentTrackIndex) {
+                if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current) {
+                    this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;
+                }
+                this.$nextTick(() => {
+                    const rowElement = this.$refs.main.querySelector('.current_play_item');
+                    if (rowElement) {
+                        rowElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
+                        Message.post('success', this.$t('message.playlist_view.scrolled_to_current_track'));
+                    }
+                })
+            }
         },
     },
 }

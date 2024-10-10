@@ -44,10 +44,13 @@
                     </div>
                     <img class="img-info play-info-ico g-icon" src="../assets/info.svg" :title="$t('playbar.song_info')"
                         @click="openInfoPanel" />
-                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg" :title="$t('context.subscribe')" @click="handleSubscribe">
-                    <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg" :title="$t('context.download')">
+                    <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg"
+                        :title="$t('context.subscribe')" @click="handleSubscribe">
+                    <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg"
+                        :title="$t('context.download')">
                     <div class="song-comment">
-                        <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg" :title="$t('context.view_comment')"
+                        <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
+                            :title="$t('context.view_comment')"
                             @click="this.$router.push({ path: `/comment/song/${currentTrack?.id}` })">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
@@ -75,8 +78,8 @@
                     <img class="img-previous img g-icon" src="../assets/previous.svg">
                 </button>
                 <!-- 3 播放/暂停按钮 -->
-                <button class="button play-button" @click="tooglePlayState" :title="playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')"
-                    :key="playState">
+                <button class="button play-button" @click="tooglePlayState"
+                    :title="playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')" :key="playState">
                     <img v-show="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
@@ -95,7 +98,8 @@
                         :title="$t('playbar.random')">
                     <img v-if="playMode === 'listrandom'" class="img-random img" src="../assets/listrandom.svg"
                         :title="$t('playbar.listrandom')" style="opacity: 1;">
-                    <img v-if="playMode === 'loop'" class="img-loop img g-icon" src="../assets/loop.svg" :title="$t('playbar.loop')">
+                    <img v-if="playMode === 'loop'" class="img-loop img g-icon" src="../assets/loop.svg"
+                        :title="$t('playbar.loop')">
                 </button>
                 <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
@@ -172,8 +176,9 @@
                 </YPanel>
                 <!-- 音量按钮 -->
                 <img class="img g-icon" src="../assets/volume.svg"
-                    style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;" :title="$t('playbar.volume')"
-                    ref="volume_panel_trigger" @click="this.$refs.volume_panel.tooglePanel()">
+                    style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;"
+                    :title="$t('playbar.volume')" ref="volume_panel_trigger"
+                    @click="this.$refs.volume_panel.tooglePanel()">
                 <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5"
                     :animation-time="0.1" :slide-distance="10">
@@ -189,10 +194,11 @@
                 <!-- 播放列表按钮 -->
                 <img class="img g-icon" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
-                    @click="this.$refs.playlist_panel.tooglePanel" :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
+                    @click="this.$refs.playlist_panel.tooglePanel" :title="$t('playbar.playlist')"
+                    ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4"
-                    :default-show="false">
+                    :default-show="false" @show-panel="scrollToCurrentTrack">
                     <div class="playlist-container">
                         <div class="playlist-title">
                             <div class="title-left font-color-main">
@@ -221,10 +227,10 @@
                             </div>
                         </div>
                         <div class="scrollable">
-                            <YSongsTable class="songs-table" :tracks="this.playlist" :showTrackCounter="false"
+                            <YSongsTable class="songs-table" v-model="playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
                                 :showHeader="false" :resortable="false" :canSendPlaylist="false" :limit="500"
-                                :id="'YPlaybar.vue'" />
+                                :id="'YPlaybar.vue'" ref="songstable" />
                         </div>
                     </div>
                 </YPanel>
@@ -452,6 +458,15 @@ export default {
                 type: 'subscribe-now-playing',
             })
         },
+        scrollToCurrentTrack() {
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    if (this.$refs.songstable) {
+                        this.$refs.songstable.scrollToCurrentTrack();
+                    }
+                }, 300);
+            })
+        }
     },
     async mounted() {
         if (this.login.status) {
@@ -638,10 +653,6 @@ export default {
                     opacity: 0;
                     transition: all 0.2s ease;
 
-                    &:hover {
-                        opacity: 1;
-                    }
-
                     .open-panel-overlay {
                         position: absolute;
                         width: 50px;
@@ -765,6 +776,12 @@ export default {
                     }
                 }
             }
+
+            &:hover {
+                .open-panel {
+                    opacity: 1;
+                }
+            }
         }
     }
 
@@ -868,7 +885,7 @@ export default {
             .playMode-switcher {
                 display: flex;
                 position: absolute;
-                transform: translate(calc(-50% - 21px ), calc(-100% - 21px));
+                transform: translate(calc(-50% - 21px), calc(-100% - 21px));
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;

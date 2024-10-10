@@ -137,9 +137,13 @@ export class Player {
     }
     // Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
     // 同时，为了在组件中获取此对象的最新属性，需要提供回调函数接口，在使用最新属性的地方订阅属性发生变动的消息。
-    // id: 订阅者的唯一标识，例如 YPlaybar.vue
-    // func: 订阅者的回调函数，例如 () => { console.log('PlayState changed') }
-    // type: 订阅的属性，例如 'playState'
+    /**
+     * 订阅属性变动
+     * @param {Object} obj 订阅者的信息
+     * @param {string} obj.id 订阅者的唯一标识
+     * @param {Function} obj.func 订阅者的回调函数
+     * @param {string} obj.type 订阅的属性
+     */
     Subscribe({ id, func, type }) {
         this.subscriber.on({
             id: id,
@@ -147,17 +151,29 @@ export class Player {
             type: type,
         });
     }
+    /** 
+     * 取消订阅
+     * @param {Object} obj 取消订阅者的信息
+     * @param {string} obj.id 取消订阅者的唯一标识
+     * @param {string} obj.type 取消订阅的属性
+     */
     UnSubscribe({ id, type }) {
         this.subscriber.off({
             id: id,
             type: type,
         });
     }
-    // 执行已经订阅的回调函数
+    /** 
+     * 执行订阅者的回调函数
+     * @param {Object} obj 执行订阅者的信息
+     * @param {string} obj.type 执行订阅的属性
+     */
     Execute({ type }) {
         this.subscriber.exec(type);
     }
-    // 初始化MediaSession(系统媒体控制)
+    /**
+     * 初始化媒体会话
+     */
     initMediaSession() {
         this.Subscribe({
             id: 'mediaSession',
@@ -174,7 +190,6 @@ export class Player {
                         { src: imgSrc ? imgSrc + '?param=128y128' : '', sizes: '128x128', type: 'image/png' },
                     ],
                 }
-                // console.log('MediaSession track changed');
                 navigator.mediaSession.metadata = new window.MediaMetadata(metaData);
                 navigator.mediaSession.setActionHandler('play', () => {
                     this.playState = 'play';
@@ -200,7 +215,6 @@ export class Player {
                 navigator.mediaSession.setActionHandler('seekforward', event => {
                     this.currentTime = this.currentTime + event.seekOffset ?? 10;
                 });
-                // console.log('mediaSession', navigator.mediaSession)
                 navigator.mediaSession.playbackState = 'playing';
                 this._mediaSessionInit = true;
             }
@@ -227,12 +241,13 @@ export class Player {
                         position: this.currentTime,
                         duration: this.duration,
                     })
-                    // console.log('state changed', this.currentTime,'\n',navigator.mediaSession)
                 }
             }
         })
     }
-    // 更新播放时间、播放进度、总时长
+    /**
+     * 更新歌曲总时长、当前播放时间、播放进度
+     */
     updateTime() {
         if (this._updateTime) {
             clearTimeout(this._updateTime);
@@ -262,10 +277,15 @@ export class Player {
 
         this._updateTime = setTimeout(update, 50);  // 初次调用
     }
-    // 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url
+    /** 
+     * 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url
+     */
     async reloadUrl() {
         if (!this.currentTrack) return;
-        console.log('Reloading url', this.currentTrack);
+        console.log('Reloading url', {
+            id: this.currentTrack.id,
+            name: this.currentTrack.name,
+        });
         let result = await this.getUrl(this.currentTrack.id);
         let url = result.url;
         this._audio.src = url;
@@ -280,14 +300,21 @@ export class Player {
             console.error(error);
         }
     }
-    // 播放指定的歌曲
+    /**
+     * 播放指定歌曲
+     * @param {Object} track 歌曲对象
+     * @param {Boolean} autoPlay 是否自动播放
+     */
     async playTrack(track, autoPlay = true) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
         if (trackIndex === -1) {
             // 如果不在播放列表中则添加到播放列表
             this.addTrack(track);
-            console.log('Track not in playlist, added to playlist and played', track);
+            console.log('Track not in playlist, added to playlist and played', {
+                id: track.id,
+                name: track.name,
+            });
             await this.playTrack(track);
         } else {
             // 如果在播放列表中
@@ -367,25 +394,35 @@ export class Player {
                 }
             }
             // 设置音量均衡
-            this.setGain(gain, peak);
+            let gainMsg = this.setGain(gain, peak);
+            let autoPlayMsg = 'Not autoplay';
             if (autoPlay) {
                 try {
                     // 更新播放状态
                     await this._audio.play();
                     this.playState = 'play';
-                    console.log('auto play');
+                    autoPlayMsg = 'Autoplay';
                 } catch (error) {
                     console.error(error);
                 }
             }
             this.updateTime();
-            console.log('Playing', track);
-            console.log('track url: ', url);
+            console.log(
+                'Playing', { id: track.id, name: track.name, }, '\n',
+                'track url:', url, '\n',
+                'track gain:', gain, '\n',
+                'track peak:', peak, '\n',
+                'gain message:', gainMsg, '\n',
+                autoPlayMsg,
+            );
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
         }
     }
-    // 获取所有音质的信息，并添加到 currentTrack
+    /**
+     * 获取所有音质的信息，并添加到 currentTrack
+     * @param {Number} id 歌曲ID
+     */
     async setAllQuality(id) {
         // 异步执行这些请求
         let requests = [
@@ -435,7 +472,20 @@ export class Player {
         // 执行所有请求
         await Promise.all(requests);
     }
-    // 获取音质信息
+    /**
+     * @typedef {Object} QualityInfo
+     * @property {String} name - 音质名称
+     * @property {Number} size - 文件大小
+     * @property {Number} gain - 音量均衡的增益
+     * @property {Number} peak - 文件的峰值
+     */
+
+    /**
+     * 获取音质信息
+     * @param {Number} id - 歌曲ID
+     * @param {String} quality - 音质
+     * @returns {QualityInfo} 返回一个包含音质信息的对象
+     */
     async getQuality(id, quality) {
         let response = null;
         if (localStorage.getItem('login_cookie')) {
@@ -454,13 +504,6 @@ export class Player {
                 console.error(error);
             });
         }
-        // 返回对象:
-        // {
-        //     name: 音质名称，如 'standard'
-        //     size: 当前音质的文件大小
-        //     gain: 音量均衡的增益
-        //     peak: 文件的峰值
-        // }
         if (response?.data[0].level === quality) {
             let result = {
                 name: quality,
@@ -473,16 +516,16 @@ export class Player {
             return null;
         }
     }
-    // 初始化音量均衡控件
+    /**
+     * 初始化音频增益
+     */
     initAudioContext() {
         if (!this._audioContext) {
             // 创建一个新的 AudioContext
             this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            // console.log('audioContext', this.audioContext);
 
             // 创建一个增益节点
             this._gainNode = this._audioContext.createGain();
-            // console.log('gainNode', this.gainNode);
 
             // 连接增益节点到 AudioContext 的目标
             this._gainNode.connect(this._audioContext.destination);
@@ -494,7 +537,10 @@ export class Player {
             source.connect(this._gainNode);
         }
     }
-    // 随机播放
+    /** 
+     * 随机播放
+     * @param {-1|1} direction 方向 1: 下一首 -1: 上一首
+     */
     async randomPlay(direction) {
         if (this._history[this._historyIndex + direction]) {
             // 如果历史记录中有上一首/下一首歌曲
@@ -514,7 +560,9 @@ export class Player {
         }
         await this.playTrack(this.currentTrack);
     }
-    // 播放下一首
+    /**
+     * 下一首
+     */
     async next() {
         // 如果播放列表为空则返回
         if (this.playlistCount === 0) return;
@@ -531,7 +579,9 @@ export class Player {
             await this.playTrack(this.currentTrack);
         }
     }
-    // 播放上一首
+    /**
+     * 上一首
+     */
     async previous() {
         // 如果播放列表为空则返回
         if (this.playlistCount === 0) return;
@@ -545,15 +595,21 @@ export class Player {
             await this.playTrack(this.currentTrack);
         }
     }
-    // 获取播放列表
+    /** 
+     * 获取播放列表
+     */
     get playlist() {
         return this._playlist;
     }
-    // 获取播放列表长度
+    /**
+     * 获取播放列表长度
+     */
     get playlistCount() {
         return this._playlist.length;
     }
-    // 设置播放列表
+    /** 
+     * 设置播放列表
+     */
     set playlist(list) {
         // 清空播放历史
         this.clearHistory();
@@ -566,7 +622,9 @@ export class Player {
         }
         this.Execute({ type: 'playlist' });
     }
-    // 添加播放列表
+    /** 
+     * 添加列表到播放列表
+     */
     addPlaylist(list) {
         // 保存当前歌曲
         let ori_track = this._playlist[this._current] ?? null;
@@ -612,6 +670,9 @@ export class Player {
         }
         this.Execute({ type: 'playlist' });
     }
+    /**
+     * 清空播放列表
+     */
     clearPlaylist() {
         this._playlist = [];
         this._current = 0;
@@ -621,6 +682,10 @@ export class Player {
         this.clearHistory();
         this.Execute({ type: 'playlist' });
     }
+    /** 
+     * 下一首播放指定歌曲
+     * @param {Object} track 歌曲对象
+     */
     nextPlay(track) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
@@ -635,7 +700,10 @@ export class Player {
         }
         this.Execute({ type: 'playlist' });
     }
-    // 播放全部
+    /** 
+     * 播放全部
+     * @param {Array} list 歌曲列表
+     */
     async playAll(list) {
         // 设置播放列表
         this.playlist = list;
@@ -651,7 +719,10 @@ export class Player {
             await this.playTrack(this.currentTrack);
         }
     }
-    // 添加单曲到播放列表
+    /** 
+     * 添加歌曲到播放列表
+     * @param {Object} value 歌曲对象
+     */
     addTrack(value) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === value.id);
@@ -670,7 +741,9 @@ export class Player {
         }
         this.Execute({ type: 'playlist' });
     }
-    // 更新歌单播放量
+    /** 
+     * 更新歌单播放数据
+     */
     async updatePlaycount() {
         if (!localStorage.getItem('login_cookie')) return;
         await useApi('/playlist/update/playcount', {
@@ -682,7 +755,10 @@ export class Player {
             console.log('update playlist playcount error: ', err)
         });
     }
-    // 更新歌曲播放数据
+    /** 
+     * 更新歌曲播放数据(此网易云音乐接口可能已弃用)
+     * @param {Number} id 歌曲ID
+     */
     async scrobble(id) {
         if (!localStorage.getItem('login_cookie')) return;
         if (this._playlistId > 0) {
@@ -708,46 +784,69 @@ export class Player {
             })
         }
     }
-    // 获取当前播放索引
+    /** 
+     * 获取当前歌曲的位置
+     */
     get current() {
         return this._current;
     }
-    // 获取当前播放歌曲
+    /** 
+     * 获取当前歌曲
+     */
     get currentTrack() {
         return this._playlist[this._current];
     }
+    /** 
+     * 设置当前歌曲
+     */
     set currentTrack(value) {
         if (this._playlist.length > 0 && this._playlist[this._current]) {
             this._playlist[this._current] = value;
             // this.Execute({ type: 'track' });
         }
     }
-    // 获取当前播放歌曲封面
+    /** 
+     * 获取当前歌曲封面
+     */
     get currentTrackCover() {
         return this._playlist[this._current]?.al.picUrl;
     }
-    // 获取当前播放歌曲名称
+    /** 
+     * 获取当前播放歌曲名称
+     */
     get currentTrackName() {
         return this._playlist[this._current]?.name;
     }
-    // 获取当前播放歌曲作者
+    /**
+     * 获取当前播放歌曲作者
+     */
     get currentTrackArtists() {
         return this._playlist[this._current]?.ar;
     }
-    // 获取播放歌单ID
+    /**
+     * 获取播放歌单ID
+     */
     get playlistId() {
         return this._playlistId;
     }
-    // 设置播放歌单ID
+    /**
+     * 设置播放歌单ID
+     * @param {Number} value 歌单ID
+     */
     set playlistId(value) {
         this._playlistId = value;
         this.updatePlaycount();
     }
-    // 获取播放模式
+    /**
+     * 获取播放模式
+     */
     get mode() {
         return this._mode;
     }
-    // 设置播放模式
+    /**
+     * 设置播放模式
+     * @param {'order'|'listloop'|'random'|'loop'|'listrandom'} value 播放模式
+     */
     set mode(value) {
         if (value === this._mode) return;
         if (value !== 'order' && value !== 'listloop' && value !== 'random' && value !== 'loop' && value !== 'listrandom') {
@@ -784,39 +883,48 @@ export class Player {
             }
         }
     }
-    // 获取播放历史
+    /**
+     * 获取播放历史
+     */
     get history() {
         return this._history;
     }
-    // 添加到历史
+    /** 
+     * 添加到历史
+     * @param {Object} track 歌曲对象
+     */
     appendToHistory(track) {
         this._history.push(track)
         this._historyIndex = this._history.length - 1;
         this.Execute({ type: 'history' });
     }
-    // 插入到历史开头
+    /** 
+     * 插入到历史开头
+     * @param {Object} track 歌曲对象
+     */
     insertToHistory(track) {
         this._history.splice(0, 0, track);
         this._historyIndex = 0;
         this.Execute({ type: 'history' });
     }
-    // 清空历史
+    /**
+     * 清空历史
+     */
     clearHistory() {
         this._history = [];
         this._historyIndex = 0;
         this.Execute({ type: 'history' });
     }
-    // 向前/向后跳转
-    goTo(position) {
-        if (position === -1 || position === 1) {
-            console.log('Go to', position);
-        }
-    }
-    // 获取播放状态
+    /** 
+     * 获取播放状态
+     */
     get playState() {
         return this._playState;
     }
-    // 设置播放状态 'play' : 'pause'
+    /** 
+     * 设置播放状态
+     * @param {'play'|'pause'} value 播放状态
+     */
     set playState(value) {
         if ((value === 'play' || value === 'pause')) {
             if (this._audio && this._audio.readyState) {
@@ -830,10 +938,16 @@ export class Player {
             console.error('PlayState not supported: ', value);
         }
     }
+    /**
+     * 切换播放状态
+     */
     tooglePlayState() {
         this.playState = this.playState === 'play' ? 'pause' : 'play';
     }
-    // 获取歌曲id对应的url及其他信息
+    /** 
+     * 获取歌曲url
+     * @param {Number} id 歌曲ID
+     */
     async getUrl(id) {
         let response = null;
         if (localStorage.getItem('login_cookie')) {
@@ -855,15 +969,23 @@ export class Player {
         let result = response.data[0];
         return result;
     }
-    // 分贝转线性
+    /** 
+     * 分贝转换为线性
+     * @param {Number} dB 分贝
+     */
     dBToGain(dB) {
         return Math.pow(10, (dB) / 20);
     }
-    // 获取音量
+    /** 
+     * 获取音量
+     */
     get volume() {
         return this._volume;
     }
-    // 设置音量
+    /** 
+     * 设置音量
+     * @param {Number} value 音量
+     */
     set volume(value) {
         if (value >= 0 && value <= 1) {
             this._volume = value;
@@ -871,7 +993,12 @@ export class Player {
             this.Execute({ type: 'volume' });
         }
     }
-    // 设置增益
+    /**
+     * 设置增益
+     * @param {Number} gain 增益，单位为分贝
+     * @param {Number} peak 峰值，用于判断增益是否合理，0到1之间
+     * @returns {String} 返回设置增益的信息
+     */
     setGain(gain, peak) {
         // 将分贝转换为线性
         let gain_linear = this.dBToGain(gain);
@@ -881,8 +1008,7 @@ export class Player {
             gain_linear = 1 / peak;
         }
         if (gain_linear < 0 || typeof gain_linear !== 'number' || isNaN(gain_linear) || gain_linear === Infinity || peak === Infinity || peak < 0 || peak > 2 || typeof peak !== 'number' || isNaN(peak)) {
-            console.log('Gain or not supported, gain: ', gain_linear, 'peak: ', peak);
-            return;
+            return 'Gain not supported, gain: ' + gain_linear + 'peak: ' + peak;
         }
         if (gain_linear > 4) {
             gain_linear = 4;
@@ -893,13 +1019,18 @@ export class Player {
         } catch (error) {
             console.error(error);
         }
-        console.log('Gain set to', gain_linear, 'Peak', peak * gain_linear);
+        return 'Gain set to ' + gain_linear + ' Peak ' + peak * gain_linear;
     }
-    // 获取当前播放时间
+    /**
+     * 获取当前播放时间
+     */
     get currentTime() {
         return this._currentTime;
     }
-    // 设置当前播放时间
+    /** 
+     * 设置当前播放时间
+     * @param {Number} value 当前播放时间
+     */
     set currentTime(value) {
         if (value >= 0 && value <= this._duration) {
             this._audio.currentTime = value;
@@ -908,11 +1039,16 @@ export class Player {
             this.Execute({ type: 'time' })
         }
     }
-    // 获取播放进度
+    /**
+     * 获取播放进度
+     */
     get progress() {
         return this._progress;
     }
-    // 设置播放进度
+    /** 
+     * 设置播放进度
+     * @param {Number} value 播放进度，0-1之间
+     */
     set progress(value) {
         if (value >= 0 && value <= 1) {
             this._progress = value;
@@ -920,13 +1056,22 @@ export class Player {
             this._audio.currentTime = this._currentTime;
         }
     }
-    // 获取总时长
+    /**
+     * 获取歌曲总时长
+     */
     get duration() {
         return this._duration;
     }
+    /** 
+     * 获取音质
+     */
     get quality() {
         return this._quality;
     }
+    /** 
+     * 设置音质
+     * @param {'standard'|'higher'|'exhigh'|'lossless'|'hires'|'jyeffect'|'sky'|'jymaster'} value 音质
+     */
     set quality(value) {
         if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'lossless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
             this._quality = value;
@@ -936,6 +1081,10 @@ export class Player {
             console.log('Quality not supported: ', value);
         }
     }
+    /** 
+     * 获取音质显示
+     * @returns {'quality.standard'|'quality.higher'|'quality.exhigh'|'quality.lossless'|'quality.hires'|'quality.jyeffect'|'quality.sky'|'quality.jymaster'}
+     */
     get qualityDisplay() {
         switch (this.quality) {
             case 'standard':
@@ -958,7 +1107,10 @@ export class Player {
                 return 'quality.default';
         }
     }
-    // 格式化文件大小
+    /**
+     * 格式化音频文件大小
+     * @param {Number} size 文件大小, 单位为字节
+     */
     formatSize(size) {
         if (size < 1024) {
             return size + 'B';
@@ -968,7 +1120,10 @@ export class Player {
             return (size / 1024 / 1024).toFixed(1) + 'MB';
         }
     }
-    // 获取当前歌曲的可用音质
+    /** 
+     * 获取当前歌曲的可用音质
+     * @returns {Array} 返回一个包含音质信息的数组, 数组元素为对象: {name: 'quality', size: 'size'}
+     */
     get availableQuality() {
         let result = [];
         if (!this.currentTrack) return [];

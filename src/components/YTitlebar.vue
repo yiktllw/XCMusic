@@ -720,12 +720,16 @@ export default {
                 color: var(--font-color-standard);
                 font-weight: 600;
                 font-size: medium;
-                padding: 5px;
+                padding: 8px 5px;
                 margin: 0;
                 cursor: pointer;
 
                 &:hover {
                     color: var(--font-color-main);
+                }
+                
+                &:not(:last-child) {
+                    border-bottom: 1px solid rgba(var(--foreground-color-rgb), .1);
                 }
 
                 .follows-container {

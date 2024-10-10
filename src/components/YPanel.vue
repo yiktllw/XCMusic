@@ -25,6 +25,10 @@ export default {
             showPanel: false,
         }
     },
+    emits: [
+        'update:modelValue',
+        'show-panel',
+    ],
     props: {
         trigger: {
             type: Element,
@@ -85,6 +89,7 @@ export default {
         showPanel(val) {
             if (val) {
                 window.addEventListener('click', this.handleClickOutside);
+                this.$emit('show-panel');
             } else {
                 window.removeEventListener('click', this.handleClickOutside);
             }

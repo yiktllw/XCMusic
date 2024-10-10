@@ -2,7 +2,8 @@
     <div class="progress-bigframe">
         <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="true" :key="key">
             <div :class="showTrack ? 'progress-fill' : 'progress-no-track'"
-                :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }" :ref="showTrack ? 'noSelect' : 'progressDOM'"></div>
+                :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"
+                :ref="showTrack ? 'noSelect' : 'progressDOM'"></div>
             <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
                 @mousedown="startSetProgress" @mouseup="endSetProgress"></div>
             <div class="progress-track" v-if="showTrack"></div>
@@ -48,19 +49,10 @@ export default {
             default: true,
         },
     },
-    watch: {
-        progress(newValue) {
-            this.key = newValue > 0.5 ? 1 : 0;
-        }
-    },
     methods: {
         updateProgress(x) {
             let rect = null;
-            if (this.showTrack) {
-                rect = this.$refs.progress_bar.getBoundingClientRect();
-            } else {
-                rect = this.$refs.progress_bar_no_track.getBoundingClientRect();
-            }
+            rect = this.$refs.progress_bar.getBoundingClientRect();
             const dx = x - rect.left;
             let progress = dx / rect.width;
             if (progress < 0) {

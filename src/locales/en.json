@@ -39,7 +39,8 @@
 			"unknown_reason": "Unknown Reason"
 		},
 		"playlist_view": {
-			"added_to_playlist": "Added to playlist"
+			"added_to_playlist": "Added to playlist",
+			"scrolled_to_current_track": "Scrolled to current track"
 		},
 		"setting_view": {
 			"only_desktop": "The zoom feature is only effective on desktop",

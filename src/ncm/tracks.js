@@ -12,6 +12,7 @@ export class Tracks {
         tracks = [],
         params = {},
     }) {
+        this._tracksMap = new Map();
         this._tracks = tracks.map((item, index) => {
             let resultTrack = {
                 id: 0,
@@ -87,7 +88,7 @@ export class Tracks {
                     if (params.needIndex) {
                         resultTrack = {
                             ...resultTrack,
-                            originalIndex: index,
+                            originalIndex: params.page ? (params.page - 1) * 500 + index : index,
                         }
                     }
                     if (params.reels) {
@@ -106,7 +107,7 @@ export class Tracks {
                     if (params.needIndex) {
                         resultTrack = {
                             ...resultTrack,
-                            originalIndex: index,
+                            originalIndex: params.page ? (params.page - 1) * 500 + index : index,
                         }
                     }
                     if (url === '/album' && params.alPicUrl) {
@@ -120,7 +121,7 @@ export class Tracks {
                 resultTrack.al.name = track.al.name;
                 resultTrack.al.picUrl = track.al.picUrl;
                 resultTrack.al.tns = track.al.tns ?? '';
-                resultTrack._picUrl = track.al.picUrl + '?param=40y40';
+                resultTrack._picUrl = track.al.picUrl + '?param=80y80';
                 resultTrack.cd = track.cd ?? 1;
                 resultTrack.no = track.no ?? 1;
                 resultTrack.ar = track.ar.map((ar) => {
@@ -143,11 +144,30 @@ export class Tracks {
                 }
             }
 
+            // 将 resultTrack 放入 Map 中，使用 id 作为键
+            this._tracksMap.set(resultTrack.id, resultTrack);
+
             return resultTrack;
         });
     }
     get tracks() {
         return this._tracks;
+    }
+    /**
+     * 获取 tracks 的 Map 形式
+     * @returns {Map} 返回基于 track.id 的 Map
+     */
+    get tracksMap() {
+        return this._tracksMap;
+    }
+
+    /**
+     * 使用 id 获取单个 track
+     * @param {number} id 要获取的 track 的 id
+     * @returns {object|null} 返回对应 id 的 track 对象或 null
+     */
+    getTrackById(id) {
+        return this._tracksMap.get(id) || null;
     }
 }
 

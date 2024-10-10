@@ -24,7 +24,7 @@
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
-                        <img :src="button.img + '?param=30y30'" class="button-icon" :id="button.img" />
+                        <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>
@@ -52,7 +52,7 @@
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
                         :disabled="activeButtonId === button.id">
-                        <img :src="button.img + '?param=30y30'" class="button-icon" :id="button.img" />
+                        <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
                 </div>

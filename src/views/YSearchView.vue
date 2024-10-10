@@ -68,7 +68,7 @@
             </div>
             <!-- 歌词 -->
             <div class="lyrics" v-else-if="position === 'lyric'">
-                <YSearchLyrics :listWithLyrics="switcher[4].lyricsList" />
+                <YSearchLyrics v-model="switcher[4].lyricsList" />
                 <YPage v-model="lyricsPage" />
             </div>
             <!-- 用户 -->
@@ -250,7 +250,7 @@ export default {
                     this.switcher[1].playlists = result.result.albums?.map((album) => {
                         return {
                             ...album,
-                            _picUrl: album.picUrl + '?param=40y40',
+                            _picUrl: album.picUrl + '?param=80y80',
                         }
                     });
                     this.switcher[1].total = result.result.albumCount;

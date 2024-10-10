@@ -29,7 +29,7 @@
             <div class="comment-item" v-for="(comment, index) in cmt.comments" :key="comment.commentId">
                 <div class="content">
                     <div class="comment-avatar" @click="openUserPage(comment.user.userId)">
-                        <img :src="comment.user.avatarUrl + '?param=50y50'" class="avatar-img">
+                        <img :src="comment.user.avatarUrl + '?param=100y100'" class="avatar-img">
                     </div>
                     <div class="after-avatar">
                         <div class="comment-user" @click="openUserPage(comment.user.userId)">

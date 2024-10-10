@@ -153,16 +153,21 @@
             <!-- 2 加载中动画 -->
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
-            <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" :tracks="this.filteredTracks"
-                :likelist="likelist" :showTrackPopularity="false" @send-playlist="sendPlaylist"
-                @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-playlist'" :from="playlistId" />
-            <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" :tracks="this.filteredTracks"
+            <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" v-model="filteredTracks"
+                :showTrackPopularity="false" @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist"
+                :id="'YPlaylist.vue-playlist'" :from="playlistId" ref="playlist_songstable" />
+            <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" v-model="filteredTracks"
                 :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels"
                 @send-playlist="sendPlaylist" @play-song-and-playlist="playSongAndPlaylist" :id="'YPlaylist.vue-album'"
-                :type="'album'" :show-header="false" :resortable="false" />
+                :type="'album'" :show-header="false" :resortable="false" ref="album_songstable" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
-            <YPage v-if="type === 'playlist'" v-model="page" />
+            <!-- 2 滚动按钮 -->
+            <div class="scroll-buttons">
+                <div class="button" @click="scrollToCurrentTrack">
+                    <img src="../assets/position.svg" class="g-icon" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -170,11 +175,9 @@
 <script>
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
-import YPage from '@/components/YPage.vue';
 import YComment from '@/components/YComment.vue';
 import { Message } from '@/tools/YMessageC';
 import { Tracks } from '@/ncm/tracks';
-import { YPageC } from '@/tools/YPageC';
 import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { YColor } from '@/ncm/color'
@@ -189,7 +192,6 @@ export default {
         YSongsTable,
         YLoading,
         YComment,
-        YPage,
     },
     props: {
         // 传入的歌单 ID
@@ -234,7 +236,7 @@ export default {
             searchQuery: '',    // 搜索关键字
             filteredTracks: [], // 搜索过滤后的歌曲列表
             orient: 'songs',    // 歌曲列表或评论列表
-            page: new YPageC(1),
+            page: 1,            // 歌单页数
         };
     },
     watch: {
@@ -256,7 +258,6 @@ export default {
         searchQuery: {
             handler() {
                 this.updateTracks();
-                // console.log('filterTracks', this.filteredTracks);
             }
         },
     },
@@ -291,11 +292,7 @@ export default {
                             this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
                             // 歌曲数量
                             this.playlist.trackCount = response.playlist.trackCount;
-                            // 总页数
-                            this.page = new YPageC(Math.ceil(this.playlist.trackCount / 500));
-                            this.page.onPageChange = () => {
-                                this.updateTracks();
-                            }
+                            this.page = Math.floor(response.playlist.trackCount / 500) + 1;
                             return response;
                         }).catch(error => {
                             console.error('Failed to fetch playlist:', error);
@@ -394,10 +391,10 @@ export default {
                 }
 
                 // 处理fetchTracks获取的多个页面的track
-                if (this.page.total > 1 && this.type === 'playlist') {
+                if (this.page > 1 && this.type === 'playlist') {
                     const promises = [];
 
-                    for (let i = 2; i <= this.page.total; i++) {
+                    for (let i = 2; i <= this.page; i++) {
                         promises.push(this.fetchTracks(id, i));
                     }
 
@@ -429,6 +426,7 @@ export default {
                 tracks: getTracks.songs,
                 params: {
                     needIndex: true,
+                    page: page,
                 }
             })).tracks);
         },
@@ -451,10 +449,7 @@ export default {
         },
         // 更新歌曲列表 搜索过滤
         updateTracks() {
-            if (!this.searchQuery && this.type === 'playlist') {
-                this.filteredTracks = this.playlist.tracks.slice((this.page.current - 1) * 500, this.page.current * 500);
-                return;
-            } else if (!this.searchQuery && this.type === 'album') {
+            if (!this.searchQuery) {
                 this.filteredTracks = this.playlist.tracks;
                 return;
             }
@@ -544,6 +539,12 @@ export default {
             this.$router.push({
                 path: '/artist/' + artistId,
             })
+        },
+        scrollToCurrentTrack() {
+            let songstable = this.$refs.playlist_songstable ?? (this.$refs.album_songstable ?? null);
+            if (songstable) {
+                songstable.scrollToCurrentTrack();
+            }
         },
     },
     beforeUnmount() {
@@ -820,6 +821,41 @@ export default {
             background-color: rgb(254, 60, 90);
             transform: translateY(1px);
             transform: translateX(1px);
+        }
+    }
+
+    .scroll-buttons {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: var(--panel-background-color);
+            border-style: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 0 5px rgba($color: #000000, $alpha: 0.4);
+            padding: 0;
+
+            img {
+                width: 32.1px;
+                height: 32.1px;
+                opacity: .6;
+            }
+
+            &:hover {
+                img {
+                    opacity: 1;
+                }
+            }
         }
     }
 }

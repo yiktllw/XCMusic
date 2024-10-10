@@ -10,7 +10,7 @@
                 <div class="playlists" style="max-height: 432.1px;">
                     <div class="playlist" v-for="playlist in login.userPlaylists" :key="playlist.id"
                         @click="addToPlaylist(playlist.id)">
-                        <img class="img" :src="playlist.img + '?param=50y50'" />
+                        <img class="img" :src="playlist.img + '?param=100y100'" />
                         <div class="playlist-name font-color-high">{{ playlist.name }}</div>
                     </div>
                 </div>
