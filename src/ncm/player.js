@@ -370,7 +370,7 @@ export class Player {
                 name: this.currentTrack.name,
             }, '\nurl:', url);
         } catch (error) {
-            console.error('failed to reload url of track: ',{
+            console.error('failed to reload url of track: ', {
                 id: this.currentTrack.id,
                 name: this.currentTrack.name,
             }, '\n', error);
@@ -409,66 +409,26 @@ export class Player {
             this._audio.onended = () => this.next();
             // 获取当前歌曲的所有音质的数据(音量均衡数据)
             await this.setAllQuality(this.currentTrack.id);
-            let gain = 1;
-            let peak = 1;
+            let gain = null;
+            let peak = null;
+            let gainData = [], peakData = [];
             // 因为所有音质的文件峰值是相同的，也是就说能够混用音量均衡数据
             // 所以，在所有音质的音量均衡数据中，查找音量最大的数据。
-            if (this.currentTrack.l) {
-                if (this.currentTrack.l.gain > gain) {
-                    gain = this.currentTrack.l.gain;
-                }
-                if (this.currentTrack.l.peak < peak && this.currentTrack.l.peak !== 0) {
-                    peak = this.currentTrack.l.peak;
-                }
+            const prop = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
+            for (let i = 0; i < prop.length; i++) {
+                gainData.push(this.currentTrack[prop[i]]?.gain);
+                peakData.push(this.currentTrack[prop[i]]?.peak);
             }
-            if (this.currentTrack.h) {
-                if (this.currentTrack.h.gain > gain) {
-                    gain = this.currentTrack.h.gain;
+            gainData.forEach(value => {
+                if (gain === null || (value && value > gain)) {
+                    gain = value;
                 }
-                if (this.currentTrack.h.peak < peak && this.currentTrack.h.peak !== 0) {
-                    peak = this.currentTrack.h.peak;
+            });
+            peakData.forEach(value => {
+                if (peak === null || (value && value < peak && value !== 0)) {
+                    peak = value;
                 }
-            }
-            if (this.currentTrack.sq) {
-                if (this.currentTrack.sq.gain > gain) {
-                    gain = this.currentTrack.sq.gain;
-                }
-                if (this.currentTrack.sq.peak < peak && this.currentTrack.sq.peak !== 0) {
-                    peak = this.currentTrack.sq.peak;
-                }
-            }
-            if (this.currentTrack.hr) {
-                if (this.currentTrack.hr.gain > gain) {
-                    gain = this.currentTrack.hr.gain;
-                }
-                if (this.currentTrack.hr.peak < peak && this.currentTrack.hr.peak !== 0) {
-                    peak = this.currentTrack.hr.peak;
-                }
-            }
-            if (this.currentTrack.jyeffect) {
-                if (this.currentTrack.jyeffect.gain > gain) {
-                    gain = this.currentTrack.jyeffect.gain;
-                }
-                if (this.currentTrack.jyeffect.peak < peak && this.currentTrack.jyeffect.peak !== 0) {
-                    peak = this.currentTrack.jyeffect.peak;
-                }
-            }
-            if (this.currentTrack.sky) {
-                if (this.currentTrack.sky.gain > gain) {
-                    gain = this.currentTrack.sky.gain;
-                }
-                if (this.currentTrack.sky.peak < peak && this.currentTrack.sky.peak !== 0) {
-                    peak = this.currentTrack.sky.peak;
-                }
-            }
-            if (this.currentTrack.jymaster) {
-                if (this.currentTrack.jymaster.gain > gain) {
-                    gain = this.currentTrack.jymaster.gain;
-                }
-                if (this.currentTrack.jymaster.peak < peak && this.currentTrack.jymaster.peak !== 0) {
-                    peak = this.currentTrack.jymaster.peak;
-                }
-            }
+            });
             // 设置音量均衡
             let gainMsg = this.setGain(gain, peak);
             let autoPlayMsg = 'Not autoplay';
@@ -486,8 +446,8 @@ export class Player {
             console.log(
                 'Playing', { id: track.id, name: track.name, }, '\n',
                 'track url:', url, '\n',
-                'track gain:', gain, '\n',
-                'track peak:', peak, '\n',
+                'track gain:', gainData, '\n',
+                'track peak:', peakData, '\n',
                 'gain message:', gainMsg, '\n',
                 autoPlayMsg,
             );
@@ -1079,7 +1039,7 @@ export class Player {
         // 将分贝转换为线性
         let gain_linear = this.dBToGain(gain);
         // 如果增益大于1或小于0.9且不为0
-        if ((peak * gain_linear > 1 || peak * gain_linear < 0.9) && peak !== 0) {
+        if ((peak * gain_linear > 1) && peak !== 0) {
             // 重新计算增益
             gain_linear = 1 / peak;
         }
@@ -1095,7 +1055,7 @@ export class Player {
         } catch (error) {
             console.error(error);
         }
-        return 'Gain set to ' + gain_linear + ' Peak ' + peak * gain_linear;
+        return '\n Required Gain: ' + this.dBToGain(gain).toFixed(3) + ', Gain set to ' + gain_linear.toFixed(3) + '\n Original Peak: ' + peak.toFixed(3) + ', Peak set to ' + (peak * gain_linear).toFixed(3);
     }
     /**
      * 获取当前播放时间

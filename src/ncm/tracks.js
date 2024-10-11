@@ -34,6 +34,7 @@ export class Tracks {
                 _picUrl: '',
                 cd: 1,
                 no: 1,
+                reelName: null,
                 reelIndex: 0,
                 songInReelIndex: 0,
                 dt: 0,
@@ -95,7 +96,7 @@ export class Tracks {
                         params.reels.forEach((reel, reelIndex) => {
                             reel.songList.forEach((song, songIndex) => {
                                 if (song.songId == track.id) {
-                                    track.name = song.songName;
+                                    track.reelName = song.songName;
                                     resultTrack.reelIndex = reelIndex;
                                     resultTrack.songInReelIndex = songIndex;
                                 }
@@ -142,6 +143,7 @@ export class Tracks {
                 } else if (url === '/user/record') {
                     resultTrack.playCount = item.playCount;
                 }
+                resultTrack.reelName = track.reelName ?? null;
             }
 
             // 将 resultTrack 放入 Map 中，使用 id 作为键

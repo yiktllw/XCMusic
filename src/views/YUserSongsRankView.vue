@@ -1,7 +1,7 @@
 <template>
     <YHeader :switcher="switcher" @new-position="handleNewPosition" />
     <YSongsTable :show-track-album="false" :show-track-popularity="false" :show-header="false" :show-listen-count="true"
-        :local-play="true" :resortable="false" :tracks="position === 'recent' ? recentTracks : alltimeTracks"
+        :local-play="true" :resortable="false" v-model="displayTracks"
         style="margin: 0px 20px 0px 10px;" :id="'YUserSongRankView.vue'" />
 </template>
 
@@ -27,6 +27,9 @@ export default {
     },
     computed: {
         ...mapState(['login']),
+        displayTracks() {
+            return this.position === 'recent' ? this.recentTracks : this.alltimeTracks;
+        }
     },
     data() {
         return {

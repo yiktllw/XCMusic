@@ -137,7 +137,7 @@
                                 <div class="track-name" ref="track_name_ref"
                                     :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-main)' }"
                                     :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">
-                                    {{ track.name }}
+                                    {{ type === 'album' ? track.reelName ?? track.name : track.name }}
                                     <span class="font-color-standard">
                                         {{ (track.tns ?
                                             (' (' + track.tns + ')') :

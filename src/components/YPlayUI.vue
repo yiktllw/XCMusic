@@ -49,7 +49,7 @@
                                 <div class="before-lyric" />
                                 <div class="lyric-lrc-line" v-for="(line, index) in lyrics" :key="line"
                                     :class="lineClass(index)"
-                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all ${line.content ? 0.5 : ((currentTime < (line.startTime + (line.duration ?? 0))) ? 0.5 : 0.2)}s ease` }">
+                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all 0.5s ease` }">
                                     <span v-if="line.content">
                                         <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
@@ -287,10 +287,20 @@ export default {
                 this.scrollToCurrentLine();
             });
         },
-        position() {
-            this.$nextTick(() => {
-                this.scrollToCurrentLine();
-            });
+        position(newPos) {
+            if (newPos === 'lyric') {
+                this.$nextTick(() => {
+                    this.scrollToCurrentLine();
+                });
+            } else if (newPos === 'wiki') {
+                this.$nextTick(() => {
+                    const container = this.$refs.lyricContainer.$el;
+                    if (!container) {
+                        return;
+                    }
+                    container.scrollTop = 0;
+                });
+            }
         },
     },
     methods: {
@@ -307,12 +317,12 @@ export default {
             await useApi('/lyric/new', {
                 id: id,
             }).then((res) => {
-                if (res.yrc) {
+                if (res?.yrc) {
                     this.lyrics = (new Lyrics({
                         type: 'yrc',
                         data: res.yrc.lyric,
                     })).lyrics;
-                } else if (res.lrc) {
+                } else if (res?.lrc) {
                     this.lyrics = (new Lyrics({
                         type: 'lrc',
                         data: res.lrc.lyric,
@@ -339,59 +349,60 @@ export default {
         },
         scrollToCurrentLine() {
             // 确保 ref 存在，并且有 lyrics 内容
-            if (this.$refs.lyricContainer?.$el && this.lyrics?.length) {
-                const container = this.$refs.lyricContainer.$el;
-                const currentLineElement = container.getElementsByClassName('current-line')[0];
+            if (!this.$refs.lyricContainer?.$el || !this.lyrics?.length) {
+                return;
+            }
+            const container = this.$refs.lyricContainer.$el;
+            const currentLineElement = container.getElementsByClassName('current-line')[0];
 
-                // 如果当前行元素存在
-                if (currentLineElement) {
-                    // 计算当前行在容器中的位置
-                    const containerHeight = container.clientHeight;
-                    const lineHeight = currentLineElement.clientHeight;
-                    const lineTopOffset = currentLineElement.offsetTop;
+            // 如果当前行元素存在
+            if (currentLineElement) {
+                // 计算当前行在容器中的位置
+                const containerHeight = container.clientHeight;
+                const lineHeight = currentLineElement.clientHeight;
+                const lineTopOffset = currentLineElement.offsetTop;
 
-                    // 设置滚动条位置，使当前行居中显示
-                    let scrollTop = lineTopOffset - (containerHeight) + (lineHeight / 2);
-                    let scrollTopNow = container.scrollTop;
+                // 设置滚动条位置，使当前行居中显示
+                let scrollTop = lineTopOffset - (containerHeight) + (lineHeight / 2);
+                let scrollTopNow = container.scrollTop;
 
-                    // 如果已有动画在进行，取消当前动画
-                    if (this.scrollAnimationFrame) {
-                        cancelAnimationFrame(this.scrollAnimationFrame);
-                    }
-
-                    // 动画参数
-                    const duration = 600; // 动画持续时间
-                    const startTime = performance.now(); // 动画开始时间
-
-                    // 缓动函数 (三次缓动)
-                    const easeInOutCubic = (t) => {
-                        return t < 0.5
-                            ? 4 * t * t * t
-                            : 1 - Math.pow(-2 * t + 2, 3) / 2;
-                    };
-
-                    // 动画循环
-                    const animateScroll = (currentTime) => {
-                        // 计算已经过的时间
-                        const elapsed = currentTime - startTime;
-                        const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
-                        const easeT = easeInOutCubic(t); // 应用缓动
-
-                        // 计算当前的 scrollTop 值
-                        const currentScrollTop = scrollTopNow + (scrollTop - scrollTopNow) * easeT;
-                        container.scrollTop = currentScrollTop;
-
-                        // 如果动画尚未结束，继续请求下一个动画帧
-                        if (t < 1) {
-                            this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
-                        } else {
-                            this.scrollAnimationFrame = null; // 动画完成后重置动画 ID
-                        }
-                    };
-
-                    // 启动动画
-                    this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
+                // 如果已有动画在进行，取消当前动画
+                if (this.scrollAnimationFrame) {
+                    cancelAnimationFrame(this.scrollAnimationFrame);
                 }
+
+                // 动画参数
+                const duration = 600; // 动画持续时间
+                const startTime = performance.now(); // 动画开始时间
+
+                // 缓动函数 (三次缓动)
+                const easeInOutCubic = (t) => {
+                    return t < 0.5
+                        ? 4 * t * t * t
+                        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                };
+
+                // 动画循环
+                const animateScroll = (currentTime) => {
+                    // 计算已经过的时间
+                    const elapsed = currentTime - startTime;
+                    const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
+                    const easeT = easeInOutCubic(t); // 应用缓动
+
+                    // 计算当前的 scrollTop 值
+                    const currentScrollTop = scrollTopNow + (scrollTop - scrollTopNow) * easeT;
+                    container.scrollTop = currentScrollTop;
+
+                    // 如果动画尚未结束，继续请求下一个动画帧
+                    if (t < 1) {
+                        this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
+                    } else {
+                        this.scrollAnimationFrame = null; // 动画完成后重置动画 ID
+                    }
+                };
+
+                // 启动动画
+                this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
             }
         },
         async setBackgroundColor() {
@@ -446,6 +457,10 @@ export default {
                     this.getWiki(),
                 ]
                 await Promise.all(requests);
+                this.currentLine = 0;
+                this.$nextTick(() => {
+                    this.scrollToCurrentLine();
+                });
             },
             type: 'track',
         })
@@ -650,7 +665,7 @@ export default {
                                 .item-ori {
                                     opacity: 0;
                                 }
-                                
+
                                 .item-standard {
                                     top: 0;
                                     left: 0;

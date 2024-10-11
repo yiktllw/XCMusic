@@ -31,7 +31,13 @@ export class Lyrics {
      */
     static parseYRC(yrc) {
         const lines = yrc.split('\n');  // 将yrc内容按行分割
-        const lyrics = [];
+        const lyrics = [{
+            startTime: 0,
+            duration: 0,
+            words: [
+                { startTime: 0, duration: 0, text: '' },
+            ],
+        }];
 
         for (const line of lines) {
             // 解析时间轴和逐字歌词
@@ -86,7 +92,12 @@ export class Lyrics {
         // 将LRC文件按行分割
         const lines = lrc.split('\n');
         // 存储解析结果的数组
-        const lyrics = [];
+        const lyrics = [
+            {
+                startTime: 0,
+                content: '',
+            }
+        ];
 
         // 遍历每一行LRC文件内容
         lines.forEach(line => {

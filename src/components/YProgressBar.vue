@@ -1,6 +1,6 @@
 <template>
     <div class="progress-bigframe">
-        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="true" :key="key">
+        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="true">
             <div :class="showTrack ? 'progress-fill' : 'progress-no-track'"
                 :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"
                 :ref="showTrack ? 'noSelect' : 'progressDOM'"></div>
@@ -18,7 +18,6 @@ export default {
     name: 'YProgressBar',
     data() {
         return {
-            key: 0,
         };
     },
     emits: [
