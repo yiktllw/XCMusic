@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="display-area" id="display-area-main">
-            <YScroll style="height: calc(100% - 8px);max-height: calc(100% - 8px);">
+            <YScroll style="height: calc(100% - 8px);max-height: calc(100% - 8px);" id="yscroll-display-area">
                 <RouterView />
             </YScroll>
         </div>

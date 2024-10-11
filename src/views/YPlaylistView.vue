@@ -214,7 +214,7 @@ export default {
         }),
         likelist() {
             return this.login.likelist;
-        }
+        },
     },
     data() {
         return {
@@ -260,9 +260,33 @@ export default {
                 this.updateTracks();
             }
         },
+        isLoading(val) {
+            if (!val) {
+                this.$nextTick(() => {
+                    const mainScroll = document.getElementById('yscroll-display-area');
+                    if (window.savedPositions[this.$route.path]) {
+                        mainScroll.scrollTop = window.savedPositions[this.$route.path].top;
+                    }
+                });
+            }
+        },
+        '$route'(to, from) {
+            const mainScroll = document.getElementById('yscroll-display-area');
+            window.savedPositions[from.path] = {
+                top: mainScroll.scrollTop,
+                left: 0,
+            }
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        const mainScroll = document.getElementById('yscroll-display-area');
+        window.savedPositions[from.path] = {
+            top: mainScroll.scrollTop,
+            left: 0,
+        }
+        next();
     },
     methods: {
-
         // 获取歌单
         async fetchPlaylist(id) {
             try {

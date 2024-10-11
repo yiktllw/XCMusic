@@ -22,6 +22,8 @@ export default {
         document.body.className = `theme-${this.setting.display.theme}`;
         // 初始化语言
         this.$i18n.locale = this.setting.display.language;
+        // 初始化用来控制滚动位置的全局变量
+        window.savedPositions = {};
     }
 }
 
