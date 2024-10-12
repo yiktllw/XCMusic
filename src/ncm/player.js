@@ -188,6 +188,7 @@ export class Player {
                             }
                         })
                     }
+                    this.Execute({ type: 'playlist'});
                 });
             } catch (error) {
                 console.error(error);
