@@ -679,7 +679,7 @@ export default {
                     return true;
                 }
             });
-            if (currentTrack && currentTrackIndex) {
+            if (currentTrack && currentTrackIndex >= 0 && typeof currentTrackIndex === 'number') {
                 if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current) {
                     this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;
                 }
