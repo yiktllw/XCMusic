@@ -8,6 +8,12 @@ export class SongPicker {
         this.homeDir = window.api.homeDir();
         this.damakuPath = window.api.pathJoin(this.homeDir, 'Documents', '弹幕姬', 'Plugins', 'xcmusic');
         this.filePath = window.api.pathJoin(this.damakuPath, 'songPicker.txt');
+        if (!window.api.existsSync(this.damakuPath)) {
+            window.api.makeDirSync(this.damakuPath);
+        }
+        if (!window.api.existsSync(this.filePath)) {
+            window.api.writeFile(this.filePath, '');
+        }
         this.#clearFile();
 
         this.subscriber = new Subscriber([

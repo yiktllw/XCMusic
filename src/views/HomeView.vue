@@ -30,11 +30,9 @@
             <YContextMenu :items="menu" :target="target" :posX="posX" :posY="posY" :direction="direction"
                 ref="contextMenu" @menu-click="handleMenuClick" />
         </div>
-        <div class="add-to-playlist-container" ref="add_to_playlist_container" v-if="showAddToPlaylist">
-            <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" />
-        </div>
-        <div class="add-to-playlist-container" ref="song-info-container" v-if="showSongInfo">
-            <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" />
+        <div class="prevent-action-container" ref="prevent_container" v-if="showPreventContainer">
+            <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" v-if="showAddToPlaylist" />
+            <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" v-if="showSongInfo" />
         </div>
         <div class="message-container">
             <div></div>
@@ -74,6 +72,7 @@ export default {
             posX: '0px',
             posY: '0px',
             direction: 4,
+            showPreventContainer: false,
             showAddToPlaylist: false,
             trackIds: [],
             trackOfInfo: null,
@@ -143,6 +142,7 @@ export default {
                 this.trackIds = event.data.data.ids;
                 console.log('ids: ', this.trackIds);
                 this.showAddToPlaylist = true;
+                this.showPreventContainer = true;
             } else if (event.data.type === 'message-show') {
                 this.msg = event.data.data;
                 this.msgKey++;
@@ -150,6 +150,7 @@ export default {
                 if (event.data.data) {
                     this.trackOfInfo = JSON.parse(event.data.data);
                     this.showSongInfo = true;
+                    this.showPreventContainer = true;
                 }
             } else if (event.data.type === 'subscribe-now-playing') {
                 if (!this.player.currentTrack) {
@@ -157,6 +158,7 @@ export default {
                 }
                 this.trackIds = [this.player.currentTrack.id];
                 this.showAddToPlaylist = true;
+                this.showPreventContainer = true;
             }
         },
         async getCommentCount(id) {
@@ -224,10 +226,12 @@ export default {
                 case 'song-subscribe':
                     this.trackIds = [arg.target.id];
                     this.showAddToPlaylist = true;
+                    this.showPreventContainer = true;
                     break;
                 case 'song-infomation':
                     this.trackOfInfo = arg.target;
                     this.showSongInfo = true;
+                    this.showPreventContainer = true;
                     break;
                 default:
                     break;
@@ -258,11 +262,13 @@ export default {
         handleNewWindowState(val) {
             if (val === false) {
                 this.showAddToPlaylist = false;
+                this.showPreventContainer = false;
             }
         },
         handleNewWindowState_songInfo(val) {
             if (val === false) {
                 this.showSongInfo = false;
+                this.showPreventContainer = false;
             }
         },
     },
@@ -349,7 +355,7 @@ export default {
         z-index: 1000;
     }
 
-    .add-to-playlist-container {
+    .prevent-action-container {
         top: 0;
         left: 0;
         position: absolute;
