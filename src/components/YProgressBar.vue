@@ -118,8 +118,8 @@ export default {
     &:hover {
         .progress-bar {
             .progress-no-track {
-                height: 150%;
-                transform: translateY(-75%);
+                height: 115%;
+                transform: translateY(-40%);
             }
         }
     }

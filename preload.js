@@ -15,6 +15,8 @@ contextBridge.exposeInMainWorld('api', {
     existsSync: (path) => fs.existsSync(path, 'utf-8'), // 判断文件是否存在
     makeDirSync: (path) => fs.mkdirSync(path, { recursive: true }), // 创建文件夹
     homeDir: () => os.homedir(), // 获取用户主目录
+    fs: fs,
+    path: path,
 });
 contextBridge.exposeInMainWorld(
     'electron',

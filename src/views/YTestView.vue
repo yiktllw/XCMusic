@@ -13,7 +13,7 @@
 <script lang="js">
 import YMultiSelect from '@/components/YMultiSelect.vue';
 import { mapState } from 'vuex';
-import { setBackgroundColor } from '@/ncm/color';
+import { Setting } from '@/ncm/setting';
 
 export default {
     name: 'YTestView',
@@ -60,12 +60,8 @@ export default {
             },
             type: 'playlist',
         })
-        window.setBkColor = (color) => {
-            setBackgroundColor(color);
-        }
-        window.setBkColorHEX = (color) => {
-            setBackgroundColor(this.hexToRgb(color));
-        }
+        window.setting = this.setting;
+        window.Setting = Setting;
     },
     beforeUnmount() {
         this.player.UnSubscribe({
