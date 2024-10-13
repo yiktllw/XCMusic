@@ -43,6 +43,7 @@ module.exports = defineConfig({
                         loader: 'ts-loader',
                         options: {
                             appendTsSuffixTo: [/\.vue$/],  // 为 vue 文件增加 .ts 处理
+                            happyPackMode: true,
                         },
                     },
                 },
