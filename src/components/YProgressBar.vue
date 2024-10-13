@@ -1,23 +1,33 @@
 <template>
-    <div class="progress-bigframe">
-        <div class="progress-bar" @click="onClick" ref="progress_bar" v-if="true">
+    <div class="progress-bigframe" ref="big_frame" @mousemove="handleMousemove" @mouseleave="HideInfo" @click="onClick">
+        <div class="progress-bar" ref="progress_bar" v-if="true">
             <div :class="showTrack ? 'progress-fill' : 'progress-no-track'"
                 :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"
                 :ref="showTrack ? 'noSelect' : 'progressDOM'"></div>
-            <div class="progress-pointer" :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
-                @mousedown="startSetProgress" @mouseup="endSetProgress"></div>
+            <div class="progress-pointer" v-if="showTrack"
+                :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }" @mousedown="startSetProgress"
+                @mouseup="endSetProgress">
+            </div>
+            <div class="play-info" v-else-if="showInfo" :style="{
+                left: 'calc(' + mouseProgress * 100 + '%' + ' - 30px )',
+            }">
+                {{ formatDuration(mouseProgress) }}
+            </div>
             <div class="progress-track" v-if="showTrack"></div>
         </div>
     </div>
 </template>
 
 <script lang="js">
+import { formatDuration_mmss } from '@/ncm/time';
 import { ref, watch } from 'vue';
 
 export default {
     name: 'YProgressBar',
     data() {
         return {
+            mouseProgress: 0,
+            showInfo: false,
         };
     },
     emits: [
@@ -47,6 +57,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        totalTime: {
+            type: Number,
+            default: 100,
+        }
     },
     methods: {
         updateProgress(x) {
@@ -75,7 +89,18 @@ export default {
         endSetProgress() {
             window.removeEventListener('mousemove', this.updateProgressEvent);
             this.$emit('set-progress-end');
-        }
+        },
+        formatDuration(progress) {
+            let duration = Math.floor(progress * this.totalTime * 1000);
+            return formatDuration_mmss(duration);
+        },
+        handleMousemove(event) {
+            this.mouseProgress = event.clientX / this.$refs.big_frame.getBoundingClientRect().width;
+            this.showInfo = true;
+        },
+        HideInfo() {
+            this.showInfo = false;
+        },
     }
 };
 
@@ -85,9 +110,19 @@ export default {
 .progress-bigframe {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 30px;
     align-items: center;
     position: relative;
+    cursor: pointer;
+
+    &:hover {
+        .progress-bar {
+            .progress-no-track {
+                height: 150%;
+                transform: translateY(-75%);
+            }
+        }
+    }
 
     .progress-bar {
         width: 100%;
@@ -106,7 +141,7 @@ export default {
             height: 75%;
             background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
             border-radius: 10px;
-            transition: all 1s linear;
+            transition: clip-path 1s linear, height 0.3s ease, transform 0.3s ease;
         }
 
         .progress-pointer {
@@ -131,6 +166,31 @@ export default {
             z-index: -1;
         }
 
+        .play-info {
+            position: absolute;
+            top: -38px;
+            background-color: var(--panel-background-color);
+            color: var(--font-color-main);
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 2;
+            box-shadow: rgba($color: #000, $alpha: 0.4) 0 0 3px 0;
+
+            &::after {
+                content: "";
+                position: absolute;
+                bottom: -10px;
+                /* 控制尖角距离矩形的距离 */
+                left: 50%;
+                /* 尖角居中对齐 */
+                transform: translateX(-50%);
+                border-width: 10px 10px 0 10px;
+                border-style: solid;
+                border-color: var(--panel-background-color) transparent transparent transparent;
+            }
+        }
     }
 }
 

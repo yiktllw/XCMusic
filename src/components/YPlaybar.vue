@@ -1,8 +1,8 @@
 <template>
     <!-- 0 播放栏 -->
     <div class="big-progress" v-if="type === 'play-ui'">
-        <YProgressBar v-model="progress" style="height: 20px; width: 100%;" @update:model-value="setAudioProgress"
-            :show-track="false" ref="progressBarNoTrack" />
+        <YProgressBar v-model="progress" style="height: 30px; width: 100%;" @update:model-value="setAudioProgress"
+            :show-track="false" :total-time="duration" ref="progressBarNoTrack" />
     </div>
     <div class="playbar font-color-main">
         <!-- 1 左侧 -->
@@ -601,7 +601,7 @@ export default {
 .big-progress {
     position: absolute;
     width: 100%;
-    bottom: 75px;
+    bottom: 69px;
 }
 
 .playbar {

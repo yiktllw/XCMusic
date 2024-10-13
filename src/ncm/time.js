@@ -14,7 +14,7 @@ export function formatDate_yyyymmdd(timestamp) {
 
 /**
  * 格式化时间戳为 mm:ss
- * @param {number} duration 时间戳
+ * @param {number} duration 时间戳, 毫秒
  */
 export function formatDuration_mmss(duration) {
     const minutes = Math.floor(duration / 60000);
