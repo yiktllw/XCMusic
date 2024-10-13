@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*",
+            ],
+            "vuex": [
+                "./node_modules/vuex/types"
+            ],
+        },
+        "strict": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "outDir": "./dist",
+        // "checkJs": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/types"
+        ],
+        "types": [
+            "vuex"
+        ]
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

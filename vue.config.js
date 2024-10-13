@@ -29,8 +29,23 @@ module.exports = defineConfig({
                 __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // 禁用生产环境的 hydration mismatch 错误详细信息
             }),
         ],
+        resolve: {
+            alias: {
+                '@': require('path').resolve(__dirname, 'src'), // 将 @ 指向 src 目录
+            },
+            extensions: ['.js', '.vue', '.json'] // 确保 .js 扩展名会被解析
+        },
         module: {
             rules: [
+                {
+                    test: /\.ts$/,
+                    use: {
+                        loader: 'ts-loader',
+                        options: {
+                            appendTsSuffixTo: [/\.vue$/],  // 为 vue 文件增加 .ts 处理
+                        },
+                    },
+                },
                 {
                     test: /\.js$/,
                     use: {

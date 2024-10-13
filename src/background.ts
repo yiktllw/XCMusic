@@ -12,8 +12,8 @@ protocol.registerSchemesAsPrivileged([
 ])
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
 app.commandLine.appendSwitch('js-flags', '--max-new-space-size=256');
-let win = null;
-let tray = null;
+let win: BrowserWindow | null = null;
+let tray: Tray | null = null;
 
 async function createWindow() {
     // Create the browser window.
@@ -24,7 +24,7 @@ async function createWindow() {
         minHeight: 700,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION === 'true',
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
             webviewTag: true,
             backgroundThrottling: false, // 禁止后台时限制性能
@@ -68,7 +68,7 @@ app.on('ready', async () => {
         // Install Vue Devtools
         try {
             await installExtension(VUEJS3_DEVTOOLS)
-        } catch (e) {
+        } catch (e: any) {
             console.error('Vue Devtools failed to install:', e.toString())
         }
     }
@@ -79,10 +79,12 @@ app.on('ready', async () => {
     await Promise.all(requests).catch((err) => {
         console.error(err);
     });
-    
+
     // 监听缩放比例消息
     ipcMain.on('zoom', (event, zoomLevel) => {
-        win.webContents.setZoomFactor(zoomLevel);
+        if (win) {
+            win.webContents.setZoomFactor(zoomLevel);
+        }
     });
 
     // 创建托盘
@@ -97,9 +99,9 @@ app.on('ready', async () => {
             label: '显示主窗口',
             id: 'show-window',
             click: () => {
-                win.show();
+                win?.show();
             },
-            enabled: !win.show,
+            enabled: !win?.show,
         },
         {
             label: '退出',
@@ -113,23 +115,31 @@ app.on('ready', async () => {
     tray.setToolTip('XCMusic');
 
     // 处理窗口隐藏
-    win.on('hide', () => {
-        menu.getMenuItemById('show-window').enabled = true;
-        tray.setContextMenu(menu);
+    win?.on('hide', () => {
+        const showWindowMenuItem = menu.getMenuItemById('show-window');
+        if (showWindowMenuItem) {
+            showWindowMenuItem.enabled = true;
+        }
+        tray?.setContextMenu(menu);
     });
 
     // 处理窗口显示
-    win.on('show', () => {
-        menu.getMenuItemById('show-window').enabled = false;
-        tray.setContextMenu(menu);
+    win?.on('show', () => {
+        if (menu?.getMenuItemById('show-window')) {
+            const showWindowMenuItem = menu.getMenuItemById('show-window');
+            if (showWindowMenuItem) {
+                showWindowMenuItem.enabled = false;
+            }
+        }
+        tray?.setContextMenu(menu);
     });
 
     // 处理托盘点击事件
     tray.on('double-click', () => {
-        if (win.isVisible()) {
+        if (win?.isVisible()) {
             win.hide();
         } else {
-            win.show();
+            win?.show();
         }
     });
 })
@@ -148,5 +158,5 @@ if (isDevelopment) {
         })
     }
 }
-import './ncm/titlebarEvent';
+import './ncm/titlebarEvent.js';
 

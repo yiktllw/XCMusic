@@ -1,8 +1,9 @@
 <template>
     <div class="display">
-        <button @click="$refs.playUI.tooglePanel">
+        <button >
             切换
         </button>
+        <TSTest />
         <p>
             {{ $t('settings') }}
         </p>
@@ -11,14 +12,16 @@
 </template>
 
 <script lang="js">
-import YMultiSelect from '@/components/YMultiSelect.vue';
+import YMultiSelect from '../components/YMultiSelect.vue';
 import { mapState } from 'vuex';
-import { Setting } from '@/ncm/setting';
+import { Setting } from '../ncm/setting';
+import TSTest from '../components/TSTest.vue';
 
 export default {
     name: 'YTestView',
     components: {
         YMultiSelect,
+        TSTest,
     },
     computed: {
         ...mapState({
