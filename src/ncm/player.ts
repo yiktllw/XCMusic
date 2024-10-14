@@ -9,7 +9,9 @@ import { markRaw } from "vue";
 import { useApi } from "./api";
 import { Subscriber } from "@/tools/subscribe";
 import { SongPicker } from "@/tools/damakuSongPicker";
+import { Message } from "@/tools/YMessageC";
 import indexDB from "@/ncm/indexDB";
+import i18n from "@/i18n";
 
 export class Player {
     /**
@@ -433,7 +435,12 @@ export class Player {
             // 触发 track 的回调函数
             this.Execute({ type: 'track' });
             // 获取歌曲播放信息
-            let result = await this.getUrl(track.id);
+            let nourl = false;
+            let result = await this.getUrl(track.id).catch(error => {
+                this.next();
+                nourl = true;
+            });
+            if (nourl) return;
             let url = result.url;
             this._audio.src = url;
             this._audio.onended = () => this.next();
@@ -1026,6 +1033,11 @@ export class Player {
             });
         }
         let result = response.data[0];
+        if (result.url === null) {
+            const msg = i18n.global.t('player.noUrlError');
+            Message.post('error', msg);
+            throw new Error('Failed to get track url');
+        }
         return result;
     }
     /** 
