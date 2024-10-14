@@ -117,6 +117,7 @@
 	},
 	"playui": {
 		"lyric": "Lyrics",
+		"noSheet": "No Sheet",
 		"sheet": "Sheets",
 		"wiki": "Wiki"
 	},

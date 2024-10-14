@@ -117,6 +117,7 @@
 	},
 	"playui": {
 		"lyric": "歌词",
+		"noSheet": "暂无曲谱",
 		"sheet": "曲谱",
 		"wiki": "百科"
 	},

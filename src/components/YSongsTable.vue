@@ -410,7 +410,7 @@ export default defineComponent({
             currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引
             currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
             alWidth: 230,
-            page: new YPageC(1),
+            page: new YPageC(Math.ceil(this.tracks.length / this.limit)),
             nowPlaying: 0,
         }
     },

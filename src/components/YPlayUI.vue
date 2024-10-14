@@ -15,7 +15,8 @@
                         </div>
                         <div class="track-artist font-color-standard">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
-                                <span class="artist-button" @click="$router.push({ path: `/artist/${artist.id}` }); show = false;"
+                                <span class="artist-button"
+                                    @click="$router.push({ path: `/artist/${artist.id}` }); show = false;"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
                                     {{ artist.name }}
                                 </span>
@@ -23,7 +24,8 @@
                             </span>
                         </div>
                         <div class="track-album font-color-standard"
-                            @click="$router.push({ path: `/album/${track?.al.id}` }); show = false" :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
+                            @click="$router.push({ path: `/album/${track?.al.id}` }); show = false"
+                            :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
                             {{ track.al.name }}
                         </div>
                     </div>
@@ -135,6 +137,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="sheet font-color-main" v-else-if="position === 'sheet'">
+                            <div class="sheet-list" v-if="sheets">
+                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index">
+                                    <div class="sheet-item-img">
+                                        <img class="sheet-preview-img" :src="sheet.coverImageUrl + '?param=80y100'" />
+                                    </div>
+                                    <div class="sheet-item-title font-color-main">
+                                        {{ sheet.name }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="no-sheet" v-else>
+                                {{ $t('playui.noSheet') }}
+                            </div>
+                        </div>
                     </YScroll>
                 </div>
             </div>
@@ -169,7 +186,7 @@ export default defineComponent({
         const store = useStore();
         const player = store.state.player;
         const login = store.state.login;
-        
+
         return {
             lyricContainer,
             playuiContainer,
@@ -271,6 +288,7 @@ export default defineComponent({
             lyrics: null as any,
             firstListen: null as any,
             songWiki: null as any,
+            sheets: null as any,
             currentTime: 0,
             currentLine: 0,
             timeInterval: null as any,
@@ -306,6 +324,15 @@ export default defineComponent({
                     this.scrollToCurrentLine();
                 });
             } else if (newPos === 'wiki') {
+                this.$nextTick(() => {
+                    const container = this.lyricContainer?.$el;
+                    if (!container) {
+                        return;
+                    }
+                    container.scrollTop = 0;
+                });
+            } else if (newPos === 'sheet') {
+                this.getSheets();
                 this.$nextTick(() => {
                     const container = this.lyricContainer?.$el;
                     if (!container) {
@@ -453,6 +480,22 @@ export default defineComponent({
             } else {
                 return (duration / 60).toFixed(0) + '小时';
             }
+        },
+        async getSheets() {
+            await useApi('/sheet/list', {
+                id: this.track.id,
+                cookie: this.login.cookie,
+            }).then((res) => {
+                if (res.code !== 200) {
+                    console.log('id: ', this.track.id, '获取曲谱失败, ', res.code);
+                }
+                const data = res.data;
+                if (data.musicSheetSimpleInfoVOS) {
+                    this.sheets = data.musicSheetSimpleInfoVOS;
+                } else {
+                    this.sheets = null;
+                }
+            })
         }
     },
     async mounted() {
@@ -468,6 +511,7 @@ export default defineComponent({
                     this.setBackgroundColor(),
                     this.getLyrics(this.player.currentTrack.id),
                     this.getWiki(),
+                    this.getSheets(),
                 ]
                 await Promise.all(requests);
                 this.currentLine = 0;
@@ -835,6 +879,40 @@ export default defineComponent({
                             }
                         }
                     }
+                }
+            }
+
+            .sheet {
+                display: flex;
+                align-items: center;
+                min-height: 100%;
+                width: 43.21vw;
+
+                .sheet-list {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    width: 100%;
+
+                    .sheet-item {
+                        min-width: 110px;
+                        max-width: 140px;
+                        margin: 10px 0px;
+                        cursor: pointer;
+
+                        .sheet-item-img {
+                            .sheet-preview-img {
+                                width: 80px;
+                                height: 100px;
+                                border-radius: 10px;
+                            }
+                        }
+                    }
+                }
+
+                .no-sheet{
+                    font-size: 20px;
+                    font-weight: bold;
                 }
             }
         }
