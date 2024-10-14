@@ -16,14 +16,16 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
     name: 'YMessage',
     props: {
         type: {
             type: String,
             default: 'error',
-            validator(value) {
+            validator(value: string) {
                 return ['info', 'success', 'warning', 'error'].includes(value)
             }
         },
@@ -42,20 +44,20 @@ export default {
         slideDirection: {
             type: Number,
             default: 3,
-            validator(value) {
+            validator(value: number) {
                 return value >= 1 && value <= 10
             }
         },
     },
     computed: {
-        _color() {
-            const colors = {
+        _color(): string {
+            const colors: { [key in 'info' | 'success' | 'warning' | 'error']: string } = {
                 info: 'rgba(64, 66, 66, .8)',
                 success: 'rgba(60, 118, 61, .8)',
                 warning: 'rgba(100, 86, 70, .8)',
                 error: 'rgba(138, 88, 82, .8)',
             };
-            return colors[this.type];
+            return colors[this.type as 'info' | 'success' | 'warning' | 'error'];
         },
         _animationTime() {
             return this.aniDuration / 1000 + 's';
@@ -95,7 +97,7 @@ export default {
             this.showMsg = false;
         }, this.duration);
     }
-}
+})
 </script>
 
 <style lang="scss" scoped>

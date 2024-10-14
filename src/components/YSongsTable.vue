@@ -31,8 +31,7 @@
             <div v-if="showTrackAlbum" class="resizer" @mousedown="startResize($event)">
             </div>
             <!-- 4 专辑-表头 -->
-            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum"
-                :style="{ 'width': `${this.alWidth}px` }">
+            <div class="songsAlbum" ref="songs_album_ref" v-if="showTrackAlbum" :style="{ 'width': `${alWidth}px` }">
                 <!-- 5 专辑排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort_Album">
                     <span>
@@ -95,8 +94,7 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul>
-            <template
-                v-for="(track, index) in tracks.slice((this.page.current - 1) * this.limit, this.page.current * this.limit)"
+            <template v-for="(track, index) in tracks.slice((page.current - 1) * limit, page.current * limit)"
                 :key="track.id">
                 <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
                     <div class="reels-title font-color-main">
@@ -175,7 +173,7 @@
                                     title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
                             </div>
                             <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
-                                :style="{ 'width': `${this.alWidth}px` }">
+                                :style="{ 'width': `${alWidth}px` }">
                                 <!-- 6 专辑按钮 -->
                                 <button @click="handleAlbumClick(track.al.id)" class="album-button font-color-standard"
                                     :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
@@ -223,29 +221,25 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import { formatDuration_mmss } from '@/ncm/time';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import YPlaying from './YPlaying.vue';
 import YPage from './YPage.vue';
 import { YPageC } from '@/tools/YPageC';
 import { Message } from '@/tools/YMessageC';
-import { ref, watch } from 'vue';
+import { ref, watch, defineComponent } from 'vue';
 import upArrow from '../assets/up-arrow.svg';
 import downArrow from '../assets/down-arrow.svg';
 import updownArrow from '../assets/updown-arrow.svg';
 
-export default {
-    name: 'YSongsTable',
-    setup(props) { 
-        const tracks = ref(props.modelValue);
-        watch(() => props.modelValue, (newValue) => {
-            tracks.value = newValue;
-        });
-        return {
-            tracks
-        };
-    },
+type AlReels = {
+    showreelName: string;
+    composerName: string;
+    otherArtists: string[];
+}
+
+export default defineComponent({
     props: {
         modelValue: {
             type: Array,
@@ -333,9 +327,35 @@ export default {
             default: -1,
         },
         alReels: {
-            type: Array,
+            type: Array as () => AlReels[],
             default: () => [],
         },
+    },
+    name: 'YSongsTable',
+    setup(props: { modelValue: Array<any> }) {
+        const tracks = ref < Array < any >> (props.modelValue);
+        watch(() => props.modelValue, (newValue) => {
+            tracks.value = newValue;
+        });
+
+        const main = ref < HTMLElement | null > (null);
+        const songs_album_ref = ref < HTMLElement | null > (null);
+        const songs_name_ref = ref < HTMLElement | null > (null);
+        const track_item_ref = ref < HTMLElement[] | null > (null);
+        const track_name_ref = ref < HTMLElement[] | null > (null);
+        const trackInfo = ref < HTMLElement[] | null > (null);
+        const track_album_ref = ref < HTMLElement[] | null > (null);
+
+        return {
+            tracks,
+            songs_album_ref,
+            songs_name_ref,
+            track_item_ref,
+            track_name_ref,
+            trackInfo,
+            track_album_ref,
+            main,
+        };
     },
     components: {
         YPlaying,
@@ -347,11 +367,15 @@ export default {
         'play-song-and-playlist',
     ],
     computed: {
-        ...mapState({
-            player: state => state.player,
-            login: state => state.login,
-            setting: state => state.setting,
-        }),
+        player() {
+            return useStore().state.player;
+        },
+        login() {
+            return useStore().state.login;
+        },
+        setting() {
+            return useStore().state.setting;
+        },
         likelist() {
             return this.login.likelist ?? [];
         },
@@ -386,7 +410,7 @@ export default {
             currentSortingIndex_Album: 0, // 专辑栏当前排序状态的索引
             currentSortingIndex_Duration: 0,    // 时长栏当前排序状态的索引
             alWidth: 230,
-            page: new YPageC(),
+            page: new YPageC(1),
             nowPlaying: 0,
         }
     },
@@ -426,7 +450,7 @@ export default {
                 this.player.playlist = this.tracks;
             }
         },
-        async playSongAndPlaylist(track) {
+        async playSongAndPlaylist(track: any) {
             console.log('Play Song And Playlist:', track.id);
             if (this.canSendPlaylist) {
                 this.$emit('play-song-and-playlist', JSON.stringify(track));
@@ -439,14 +463,14 @@ export default {
                 this.player.playState = 'play';
             }
         },
-        formatDuration(duration) {
+        formatDuration(duration: number) {
             return formatDuration_mmss(duration);
         },
         // 开始resize
-        startResize(event) {
+        startResize(event: MouseEvent) {
             // 记录初始鼠标位置和专辑宽度
             this.initialMouseX = event.clientX;
-            this.initialAlbumWidth = this.$refs.songs_album_ref.offsetWidth;
+            this.initialAlbumWidth = this.songs_album_ref?.offsetWidth ?? 0;
 
             // 添加鼠标移动监听
             window.addEventListener('mousemove', this.resize);
@@ -461,7 +485,7 @@ export default {
             });
         },
         // resize
-        resize(event) {
+        resize(event: MouseEvent) {
             // 计算鼠标移动距离
             this.deltaX = event.clientX - this.initialMouseX;
             // 计算新的专辑宽度
@@ -469,21 +493,21 @@ export default {
                 this.newWidth = this.initialAlbumWidth - this.deltaX;
             }
             // 设置专辑宽度
-            if (this.$refs.songs_album_ref && this.newWidth > 200 && this.newWidth < 400) {
-                this.$refs.songs_album_ref.style.width = `${this.newWidth}px`;
+            if (this.songs_album_ref && this.newWidth > 200 && this.newWidth < 400) {
+                this.songs_album_ref.style.width = `${this.newWidth}px`;
             }
 
         },
-        setAlbumWidth(width) {
-            if (this.$refs.songs_album_ref) {
-                this.$refs.songs_album_ref.style.width = `${width}px`;
+        setAlbumWidth(width: number) {
+            if (this.songs_album_ref) {
+                this.songs_album_ref.style.width = `${width}px`;
             }
             this.resizeByNewWidth(width);
         },
         // 根据新的专辑宽度调整歌曲名称和专辑的宽度
-        resizeByNewWidth(newWidth) {
-            if (this.$refs.track_album_ref) {
-                this.$refs.track_album_ref.forEach(element => {
+        resizeByNewWidth(newWidth: number) {
+            if (this.track_album_ref) {
+                this.track_album_ref.forEach(element => {
                     if (element) { // 确保元素存在
                         element.style.width = `${newWidth}px`;
                     }
@@ -497,12 +521,12 @@ export default {
             window.removeEventListener('mouseup', this.stopResize);
         },
         // 处理歌手点击
-        handleArtistClick(artistId) {
+        handleArtistClick(artistId: number | string) {
             this.$router.push(`/artist/${artistId}`);
             console.log('Open Artist with ID:', artistId);
         },
         // 处理专辑点击
-        handleAlbumClick(albumId) {
+        handleAlbumClick(albumId: number | string) {
             this.$router.push(`/album/${albumId}`);
             console.log('Open Album with ID:', albumId);
         },
@@ -535,118 +559,118 @@ export default {
             this.sortTracks_Duration(currentSortKey);
         },
         // 标题排序
-        sortTracks(sortKey) {
+        sortTracks(sortKey: string) {
             // 根据不同的排序 key 进行排序操作
             switch (sortKey) {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
                     break;
                 case 'titleAsc':
                     console.log('按标题升序排序');
                     // 处理按标题升序排序逻辑
-                    this.tracks.sort((a, b) => a.name.localeCompare(b.name));
+                    this.tracks.sort((a: any, b: any) => a.name.localeCompare(b.name));
                     break;
                 case 'titleDesc':
                     console.log('按标题降序排序');
                     // 处理按标题降序排序逻辑
-                    this.tracks.sort((a, b) => b.name.localeCompare(a.name));
+                    this.tracks.sort((a: any, b: any) => b.name.localeCompare(a.name));
                     break;
                 case 'artistAsc':
                     console.log('按歌手升序排序');
                     // 处理按歌手升序排序逻辑
-                    this.tracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
+                    this.tracks.sort((a: any, b: any) => a.ar[0].name.localeCompare(b.ar[0].name));
                     break;
                 case 'artistDesc':
                     console.log('按歌手降序排序');
                     // 处理按歌手降序排序逻辑
-                    this.tracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
+                    this.tracks.sort((a: any, b: any) => b.ar[0].name.localeCompare(a.ar[0].name));
                     break;
                 default:
                     console.log('未知排序选项');
             }
         },
         // 专辑排序
-        sortTracks_Album(sortKey) {
+        sortTracks_Album(sortKey: string) {
             // 根据不同的排序 key 进行排序操作
             switch (sortKey) {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按专辑升序排序');
                     // 处理按专辑升序排序逻辑
-                    this.tracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
+                    this.tracks.sort((a: any, b: any) => a.al.name.localeCompare(b.al.name));
                     break;
                 case 'albumDesc':
                     console.log('按专辑降序排序');
                     // 处理按专辑降序排序逻辑
-                    this.tracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
+                    this.tracks.sort((a: any, b: any) => b.al.name.localeCompare(a.al.name));
                     break;
                 default:
                     console.log('未知排序选项');
             }
         },
         // 时长排序
-        sortTracks_Duration(sortKey) {
+        sortTracks_Duration(sortKey: string) {
             // 根据不同的排序 key 进行排序操作
             switch (sortKey) {
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按时间升序排序');
                     // 处理按时间升序排序逻辑
-                    this.tracks.sort((a, b) => parseFloat(a.dt) - parseFloat(b.dt));
+                    this.tracks.sort((a: any, b: any) => parseFloat(a.dt) - parseFloat(b.dt));
                     break;
                 case 'albumDesc':
                     console.log('按时间降序排序');
                     // 处理按时间降序排序逻辑
-                    this.tracks.sort((a, b) => parseFloat(b.dt) - parseFloat(a.dt));
+                    this.tracks.sort((a: any, b: any) => parseFloat(b.dt) - parseFloat(a.dt));
                     break;
                 default:
                     console.log('未知排序选项');
             }
         },
-        formatLyric(lyric) {
+        formatLyric(lyric: string) {
             return '   ' + lyric + '   ';
         },
-        trackMouseEnter(id) {
+        trackMouseEnter(id: number | string) {
             // console.log('trackMouseEnter', id);
-            let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
+            let dom = this.main?.querySelector(`#track-menu-${id}`);
             if (dom) {
-                dom.style.display = 'flex';
+                (dom as HTMLElement).style.display = 'flex';
             }
         },
-        trackMouseLeave(id) {
+        trackMouseLeave(id: number | string) {
             // console.log('trackMouseLeave', id);
-            let dom = this.$refs.main?.querySelector(`#track-menu-${id}`);
+            let dom = this.main?.querySelector(`#track-menu-${id}`);
             if (dom) {
-                dom.style.display = 'none';
+                (dom as HTMLElement).style.display = 'none';
             }
         },
-        trackAlTns(name, tns) {
+        trackAlTns(name: string, tns: string | string[]) {
             let result = name;
             if (tns?.length > 0) {
                 result += ' (' + tns + ')';
             }
             return result;
         },
-        setFocused(id) {
-            let dom = this.$refs.main?.querySelector(`#track-item-${id}`);
+        setFocused(id: number | string) {
+            let dom = this.main?.querySelector(`#track-item-${id}`);
             if (dom) {
                 dom?.classList.add('focused');
             }
         },
-        openSongComment(id) {
+        openSongComment(id: number | string) {
             this.$router.push(`/comment/song/${id}`);
         },
-        openContextMenu(event, track, type = 'show') {
+        openContextMenu(event: any, track: any, type = 'show') {
             window.postMessage({
                 type: type === 'show' ? 'song-open-context-menu' : 'song-toogle-context-menu',
                 data: {
@@ -658,7 +682,7 @@ export default {
             });
             // 在HomeView中处理
         },
-        openAddToPlaylist(id) {
+        openAddToPlaylist(id: number | string) {
             window.postMessage({
                 type: 'song-open-add-to-playlist',
                 data: {
@@ -673,18 +697,18 @@ export default {
                 return;
             }
             let currentTrackIndex = null;
-            const currentTrack = this.tracks.find((track, index) => {
+            const currentTrack = this.tracks.find((track: any, index: number) => {
                 if (track.id === this.player.currentTrack.id) {
                     currentTrackIndex = index;
                     return true;
                 }
             });
-            if (currentTrack && currentTrackIndex >= 0 && typeof currentTrackIndex === 'number') {
+            if (currentTrack && (currentTrackIndex ?? -1) >= 0 && typeof currentTrackIndex === 'number') {
                 if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current) {
                     this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;
                 }
                 this.$nextTick(() => {
-                    const rowElement = this.$refs.main.querySelector('.current_play_item');
+                    const rowElement = this.main?.querySelector('.current_play_item');
                     if (rowElement) {
                         rowElement.scrollIntoView({
                             behavior: 'smooth',
@@ -696,7 +720,7 @@ export default {
             }
         },
     },
-}
+})
 
 
 </script>

@@ -1,14 +1,14 @@
 import { createStore } from 'vuex';  // 使用 createStore 创建 Vuex store
 import { Player } from '../ncm/player';  // 引入 Player 类
 import { Login } from '../ncm/login';
-import { Setting } from '../ncm/setting';
+import { Setting, Settings } from '../ncm/setting';
 import { OpenedPlaylist } from '../tools/openedPlaylist';
 import { markRaw } from 'vue';
 
 export interface State {
     player: Player;  // player 属性的类型为 Player
     login: Login;
-    setting: Setting;
+    setting: Settings;
     openedPlaylist: OpenedPlaylist;
 }
 

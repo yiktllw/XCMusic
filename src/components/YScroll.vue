@@ -4,10 +4,11 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
     name: 'YScroll',
-}
+})
 </script>
 
 <style lang="scss" scoped>

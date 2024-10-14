@@ -24,18 +24,19 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
     name: 'YPlaylistBiglist',
     props: {
         playlists: {
-            type: Array,
+            type: Array as () => any[],
             default: () => [],
         },
         type: {
             type: String,
             default: 'playlist',
-            validator(value) {
+            validator(value: string) {
                 return ['playlist', 'album'].includes(value)
             }
         },
@@ -45,7 +46,7 @@ export default {
         },
     },
     methods: {
-        openPlaylist(id) {
+        openPlaylist(id: number | string) {
             if (typeof id === 'string' && id.startsWith('user-record-')) {
                 let uid = id.split('user-record-')[1];
                 this.$router.push({ path: `/user_songs_rank/${uid}` });
@@ -57,7 +58,7 @@ export default {
                 this.$router.push({ path: `/album/${id}` });
         },
     },
-}
+})
 </script>
 
 <style lang="scss" scoped>

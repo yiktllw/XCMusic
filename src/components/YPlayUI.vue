@@ -15,7 +15,7 @@
                         </div>
                         <div class="track-artist font-color-standard">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
-                                <span class="artist-button" @click="$router.push({ path: `/artist/${artist.id}` })"
+                                <span class="artist-button" @click="$router.push({ path: `/artist/${artist.id}` }); show = false;"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
                                     {{ artist.name }}
                                 </span>
@@ -23,7 +23,7 @@
                             </span>
                         </div>
                         <div class="track-album font-color-standard"
-                            @click="$router.push({ path: `/album/${track?.al.id}` })">
+                            @click="$router.push({ path: `/album/${track?.al.id}` }); show = false" :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
                             {{ track.al.name }}
                         </div>
                     </div>
@@ -145,27 +145,40 @@
     </transition>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import YPlaybar from './YPlaybar.vue';
 import YTitlebar from './YTitlebar.vue';
 import YScroll from './YScroll.vue';
+import { defineComponent, ref } from 'vue';
 import { Lyrics } from '@/ncm/lyric';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { useApi } from '@/ncm/api';
 import { getColorFromImg } from '@/ncm/color';
 
-export default {
+export default defineComponent({
     name: 'YPlayUI',
     components: {
         YTitlebar,
         YPlaybar,
         YScroll,
     },
+    setup() {
+        const lyricContainer = ref<InstanceType<typeof YScroll>>();
+        const playuiContainer = ref<HTMLElement>();
+        const playBar = ref<InstanceType<typeof YPlaybar>>();
+        const store = useStore();
+        const player = store.state.player;
+        const login = store.state.login;
+        
+        return {
+            lyricContainer,
+            playuiContainer,
+            playBar,
+            player,
+            login,
+        };
+    },
     computed: {
-        ...mapState({
-            player: state => state.player,
-            login: state => state.login,
-        }),
         firstListenPeriod() {
             if (this.firstListen && this.firstListen.creatives.length > 0) {
                 return this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.season + '的' + this.firstListen.creatives[0].resources[0].resourceExt.musicFirstListenDto.period;
@@ -209,16 +222,16 @@ export default {
             return '';
         },
         creatives() {
-            let res = [];
+            let res: any[] = [];
             if (this.songWiki) {
-                this.songWiki.creatives.forEach((element) => {
-                    let contentRes = [];
+                this.songWiki.creatives.forEach((element: any) => {
+                    let contentRes: any[] = [];
                     if (element.uiElement.textLinks) {
-                        element.uiElement.textLinks.forEach((textLink) => {
+                        element.uiElement.textLinks.forEach((textLink: any) => {
                             contentRes.push(textLink.text);
                         });
                     } else if (element.resources) {
-                        element.resources.forEach((resource) => {
+                        element.resources.forEach((resource: any) => {
                             if (resource.uiElement.mainTitle) {
                                 contentRes.push(resource.uiElement.mainTitle.title);
                             }
@@ -255,13 +268,13 @@ export default {
                 ],
             },
             position: 'lyric',
-            lyrics: null,
-            firstListen: null,
-            songWiki: null,
+            lyrics: null as any,
+            firstListen: null as any,
+            songWiki: null as any,
             currentTime: 0,
             currentLine: 0,
-            timeInterval: null,
-            scrollAnimationFrame: null,
+            timeInterval: null as any,
+            scrollAnimationFrame: null as any,
         };
     },
     emits: [
@@ -294,7 +307,7 @@ export default {
                 });
             } else if (newPos === 'wiki') {
                 this.$nextTick(() => {
-                    const container = this.$refs.lyricContainer.$el;
+                    const container = this.lyricContainer?.$el;
                     if (!container) {
                         return;
                     }
@@ -313,7 +326,7 @@ export default {
         tooglePanel() {
             this.show = !this.show;
         },
-        async getLyrics(id) {
+        async getLyrics(id: number | string) {
             await useApi('/lyric/new', {
                 id: id,
             }).then((res) => {
@@ -332,7 +345,7 @@ export default {
                 }
             });
         },
-        lineClass(index) {
+        lineClass(index: number) {
             if (index === this.currentLine) {
                 return 'current-line';
             } else if (index === this.currentLine - 1 || index === this.currentLine + 1) {
@@ -349,10 +362,10 @@ export default {
         },
         scrollToCurrentLine() {
             // 确保 ref 存在，并且有 lyrics 内容
-            if (!this.$refs.lyricContainer?.$el || !this.lyrics?.length) {
+            if (!this.lyricContainer?.$el || !this.lyrics?.length) {
                 return;
             }
-            const container = this.$refs.lyricContainer.$el;
+            const container = this.lyricContainer.$el;
             const currentLineElement = container.getElementsByClassName('current-line')[0];
 
             // 如果当前行元素存在
@@ -376,14 +389,14 @@ export default {
                 const startTime = performance.now(); // 动画开始时间
 
                 // 缓动函数 (三次缓动)
-                const easeInOutCubic = (t) => {
+                const easeInOutCubic = (t: number) => {
                     return t < 0.5
                         ? 4 * t * t * t
                         : 1 - Math.pow(-2 * t + 2, 3) / 2;
                 };
 
                 // 动画循环
-                const animateScroll = (currentTime) => {
+                const animateScroll = (currentTime: number) => {
                     // 计算已经过的时间
                     const elapsed = currentTime - startTime;
                     const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
@@ -411,15 +424,15 @@ export default {
             }
             await getColorFromImg(this.track.al.picUrl + '?param=50y50', document).then((color) => {
                 if (!color) {
-                    if (this.$refs.playuiContainer) {
-                        this.$refs.playuiContainer.style.background = 'var(--background-color)';
+                    if (this.playuiContainer) {
+                        this.playuiContainer.style.background = 'var(--background-color)';
                     }
                     return;
                 }
-                if (this.$refs.playuiContainer) {
-                    this.$refs.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .321}, ${color.g * .321}, ${color.b * .321}) 100%)`;
+                if (this.playuiContainer) {
+                    this.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * .321}, ${color.g * .321}, ${color.b * .321}) 100%)`;
                 }
-                let progressDOM = this.$refs?.playBar?.$refs?.progressBarNoTrack?.$refs?.progressDOM;
+                let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
                 if (progressDOM) {
                     progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .1), rgb(${color.r}, ${color.g}, ${color.b} ))`;
                 }
@@ -434,7 +447,7 @@ export default {
                 this.songWiki = res.data.blocks[1];
             });
         },
-        formatDuration(duration) {
+        formatDuration(duration: number) {
             if (duration < 600) {
                 return duration + '分钟';
             } else {
@@ -469,12 +482,12 @@ export default {
             await this.getWiki();
         }
         if (this.player.currentTrack) {
-            this.currentTime = parseInt(this.player.currentTime * 1000);
+            this.currentTime = parseInt((this.player.currentTime * 1000).toString());
         }
         this.player.Subscribe({
             id: 'YPlayUI',
             func: () => {
-                this.currentTime = parseInt(this.player.currentTime * 1000);
+                this.currentTime = parseInt((this.player.currentTime * 1000).toString());
                 if (this.lyrics) {
                     for (let i = 0; i < this.lyrics.length; i++) {
                         if (this.lyrics[i]?.startTime > this.currentTime) {
@@ -506,7 +519,7 @@ export default {
         });
         this.$emit('close-panel');
     },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -685,6 +698,7 @@ export default {
 
                     .current-line {
                         padding: 10px 0;
+                        line-height: 1.5;
                     }
 
                     .near-line-1 {

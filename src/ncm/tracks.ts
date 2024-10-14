@@ -9,7 +9,7 @@ export class Tracks {
      * @param {Array} params.tracks 歌曲列表
      * @param {object} params.params 额外参数
      */
-    constructor({ url, tracks, params, }: { url: string; tracks: Array<any>; params: any; }) {
+    constructor({ url, tracks, params, }: { url: string; tracks: Array<any>; params?: any; }) {
         this._tracksMap = new Map();
         this._tracks = tracks.map((item, index) => {
             let resultTrack = {

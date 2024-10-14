@@ -11,9 +11,27 @@ type SettingCatagory = {
     }
 }
 
-type SettingGroup = {
+export type SettingGroup = {
     [key: string]: SettingCatagory
 };
+
+export interface Settings {
+    play: {
+        volume: number,
+        mode: string,
+        quality: string,
+    },
+    display: {
+        language: string,
+        theme: string,
+        zoom: number,
+        sidebarWidth: number,
+        albumWidth: number,
+    },
+    titleBar: {
+        searchHistory: string[],
+    }
+}
 
 export const settingGroup: SettingGroup = {
     play: {
@@ -33,7 +51,7 @@ export const settingGroup: SettingGroup = {
             value: localStorage.getItem('setting.play.mode') ?? 'order',
             default: 'order',
             validation: (value) => {
-                let valid = typeof value === 'string' && ['order', 'random', 'listrandom', 'listloop', 'loop'].includes(value);
+                let valid = typeof value === 'string' && modes.includes(value);
                 if (valid) {
                     localStorage.setItem('setting.play.mode', value);
                 }
@@ -44,7 +62,7 @@ export const settingGroup: SettingGroup = {
             value: localStorage.getItem('setting.play.quality') ?? 'standard',
             default: 'standard',
             validation: (value) => {
-                let valid = typeof value === 'string' && ['standard', 'higher', 'exhigh', 'lossless', 'hires', 'jyeffect', 'sky', 'jymaster'].includes(value);
+                let valid = typeof value === 'string' && qualities.includes(value);
                 if (valid) {
                     localStorage.setItem('setting.play.quality', value);
                 }
@@ -133,28 +151,30 @@ export const settingGroup: SettingGroup = {
     }
 }
 
+const modes = [
+    'order',
+    'random',
+    'listrandom',
+    'listloop',
+    'loop'
+]
+
+const qualities = [
+    'standard',
+    'higher',
+    'exhigh',
+    'lossless',
+    'hires',
+    'jyeffect',
+    'sky',
+    'jymaster',
+]
+
 export class Setting {
-    #modes = [
-        'order',
-        'random',
-        'listrandom',
-        'listloop',
-        'loop'
-    ];
-    #qualities = [
-        'standard',
-        'higher',
-        'exhigh',
-        'lossless',
-        'hires',
-        'jyeffect',
-        'sky',
-        'jymaster',
-    ];
     constructor() {
         return Setting.createProxy(settingGroup);
     }
-    static createProxy(obj: SettingGroup): any {
+    static createProxy(obj: SettingGroup): SettingGroup {
         const proxyObj: { [key: string]: any } = {};
 
         for (const key of Object.keys(obj)) {
@@ -238,12 +258,5 @@ export class Setting {
             }
         }
         return instance;
-    }
-
-    get modes() {
-        return this.#modes;
-    }
-    get qualities() {
-        return this.#qualities;
     }
 }

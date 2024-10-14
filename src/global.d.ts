@@ -4,7 +4,7 @@ import path from "path";
 
 interface electron {
     ipcRenderer: {
-        send(channel: string, data: any): void;
+        send(channel: string, data?: any): void;
         on(channel: string, listener: (event: any, ...args: any[]) => void): void;
         once(channel: string, listener: (event: any, ...args: any[]) => void): void;
     };

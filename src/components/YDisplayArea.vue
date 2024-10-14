@@ -8,15 +8,16 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import YScroll from './YScroll.vue';
 
-export default {
+export default defineComponent({
     name: 'YDisplayarea',
     components: {
         YScroll
     }
-};
+});
 </script>
 
 <style scoped>

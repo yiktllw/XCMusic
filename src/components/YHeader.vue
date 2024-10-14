@@ -18,12 +18,21 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
+
+interface SwitcherItem {
+    num: number;
+    showNum: boolean;
+    position: string;
+    display: string;
+}
+
+export default defineComponent({
     name: 'YHeader',
     props: {
         switcher: {
-            type: Array,
+            type: Array as PropType<SwitcherItem[]>,
             default: () => [
                 {
                     num: 0,
@@ -40,15 +49,15 @@ export default {
         };
     },
     methods: {
-        handleSwitcher(position) {
+        handleSwitcher(position: string) {
             this.position = position;
             this.$emit('new-position', position);
         },
     },
     mounted() {
-        this.position = this.switcher[0].position;
+        this.position = (this.switcher as SwitcherItem[])[0].position;
     },
-}
+})
 
 </script>
 

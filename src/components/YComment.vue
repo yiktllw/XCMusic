@@ -56,12 +56,13 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import YPage from './YPage.vue';
-import { YCommentC } from '@/tools/YCommentC';
-import { formatDate_yyyymmdd } from '@/ncm/time';
+import { YCommentC, Types } from '@/tools/YCommentC';
+import { formatDate_yyyymmdd } from '../ncm/time';
 
-export default {
+export default defineComponent({
     name: 'YComment',
     props: {
         type: {
@@ -82,15 +83,15 @@ export default {
     },
     data() {
         return {
-            cmt: new YCommentC(this.type, this.id),
+            cmt: new YCommentC(this.type as Types, this.id),
             key: 0,
         };
     },
     methods: {
-        _formatDate_yyyymmdd(time) {
+        _formatDate_yyyymmdd(time: number) {
             return formatDate_yyyymmdd(time);
         },
-        openUserPage(id) {
+        openUserPage(id: number | string) {
             this.$router.push({ path: `/user/${id}` });
         },
         update() {
@@ -102,7 +103,7 @@ export default {
             this.key++;
         };
     },
-};
+});
 
 </script>
 

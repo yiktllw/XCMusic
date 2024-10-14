@@ -13,7 +13,7 @@
                     <!-- 3 封面 -->
                     <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
                         :key="currentTrackCover">
-                    <div v-if="this.currentTrack" class="open-panel" @click="$emit('open-panel')">
+                    <div v-if="currentTrack" class="open-panel" @click="$emit('open-panel')">
                         <div class="open-panel-overlay">
                         </div>
                         <img class="img-cover img img-open-panel " src="../assets/less.svg" />
@@ -26,7 +26,7 @@
                         </div>
                         <!-- 5 播放信息文本:艺术家 -->
                         <div class="play-info-text-artist font-color-standard">
-                            <span v-for="(artist, index) in this.currentTrackArtists" :key="artist.id">
+                            <span v-for="(artist, index) in currentTrackArtists" :key="artist.id">
                                 <!-- 艺术家名 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="play-info-time font-color-standard" v-if="type === 'play-ui'">
-                        {{ currentTime ? formatDuration(currentTime) : '00:00' }} / {{ formatDuration(this.duration) }}
+                        {{ currentTime ? formatDuration(currentTime) : '00:00' }} / {{ formatDuration(duration) }}
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                     <img class="img-next img g-icon" src="../assets/next.svg">
                 </button>
                 <!-- 3 播放模式按钮 -->
-                <button class="button playMode-button" @click="this.$refs.play_mode_panel.tooglePanel()"
+                <button class="button playMode-button" @click="play_mode_panel?.tooglePanel()"
                     ref="play_mode_panel_trigger">
                     <img v-if="playMode === 'order'" class="img-order img g-icon" src="../assets/order.svg"
                         :title="$t('playbar.order')">
@@ -102,31 +102,31 @@
                         :title="$t('playbar.loop')">
                 </button>
                 <!-- 选择播放模式面板 -->
-                <YPanel :default-show="false" ref="play_mode_panel" :trigger="this.$refs.play_mode_panel_trigger"
+                <YPanel :default-show="false" ref="play_mode_panel" :trigger="play_mode_panel_trigger"
                     :slide-direction="5" :hide-mode="'show'" :slide-distance="8" :animation-time="0.1">
                     <div class="playMode-switcher">
                         <div class="playMode-item"
-                            @click="tooglePlayMode('order'); this.$refs.play_mode_panel.tooglePanel()">
+                            @click="tooglePlayMode('order'); play_mode_panel?.tooglePanel()">
                             <img class="img-order img g-icon playMode-img" src="../assets/order.svg">
                             {{ $t('playbar.order') }}
                         </div>
                         <div class="playMode-item"
-                            @click="tooglePlayMode('listloop'); this.$refs.play_mode_panel.tooglePanel()">
+                            @click="tooglePlayMode('listloop'); play_mode_panel?.tooglePanel()">
                             <img class="img-listloop img playMode-img g-icon" src="../assets/listloop.svg">
                             {{ $t('playbar.listloop') }}
                         </div>
                         <div class="playMode-item"
-                            @click="tooglePlayMode('random'); this.$refs.play_mode_panel.tooglePanel()">
+                            @click="tooglePlayMode('random'); play_mode_panel?.tooglePanel()">
                             <img class="img-random img playMode-img g-icon" src="../assets/random.svg">
                             {{ $t('playbar.random') }}
                         </div>
                         <div class="playMode-item"
-                            @click="tooglePlayMode('listrandom'); this.$refs.play_mode_panel.tooglePanel()">
+                            @click="tooglePlayMode('listrandom'); play_mode_panel?.tooglePanel()">
                             <img class="img-random img playMode-img" src="../assets/listrandom.svg">
                             {{ $t('playbar.listrandom') }}
                         </div>
                         <div class="playMode-item"
-                            @click="tooglePlayMode('loop'); this.$refs.play_mode_panel.tooglePanel()">
+                            @click="tooglePlayMode('loop'); play_mode_panel?.tooglePanel()">
                             <img class="img-loop img playMode-img g-icon" src="../assets/loop.svg">
                             {{ $t('playbar.loop') }}
                         </div>
@@ -141,8 +141,8 @@
                 </div>
                 <YProgressBar v-model="progress" style="height:20px;width: 321px"
                     @update:model-value="setAudioProgress" />
-                <div class="time font-color-main" :key="this.duration">
-                    {{ formatDuration(this.duration) }}
+                <div class="time font-color-main" :key="duration">
+                    {{ formatDuration(duration) }}
                 </div>
             </div>
         </div>
@@ -151,19 +151,19 @@
             <div class="buttons" style="margin-right: 10px;">
                 <!-- 音质按钮 -->
                 <div class="quality-button font-color-standard" ref="quality_panel_trigger"
-                    @click="this.$refs.quality_panel.tooglePanel()" :title="$t('playbar.select_sound_quality')">
+                    @click="quality_panel?.tooglePanel()" :title="$t('playbar.select_sound_quality')">
                     {{ $t(qualityDisplay) }}
                 </div>
                 <!-- 选择音质面板 -->
-                <YPanel ref="quality_panel" :trigger="this.$refs.quality_panel_trigger" :slide-direction="4"
-                    :default-show="false" :animation-time="0.1" :slide-distance="15">
+                <YPanel ref="quality_panel" :trigger="quality_panel_trigger" :slide-direction="4"
+                    :default-show="false" :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
                     <div class="quality-panel">
                         <div class="quality-title font-color-main">
                             {{ $t('playbar.sound_quality') }}
                         </div>
                         <div class="quality-switcher">
                             <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
-                                @click="setQuality(quality.name)" :style="{ 'opacity': quality.available ? 1 : .4 }">
+                                @click="setQuality(quality.name as 'jymaster' | 'sky' | 'jyeffect' | 'hires' | 'lossless' | 'exhigh' | 'standard')" :style="{ 'opacity': quality.available ? 1 : .4 }">
                                 <div class="quality-item-title font-color-high">
                                     {{ $t(quality.display) }}
                                 </div>
@@ -178,14 +178,14 @@
                 <img class="img g-icon" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;"
                     :title="$t('playbar.volume')" ref="volume_panel_trigger"
-                    @click="this.$refs.volume_panel.tooglePanel()">
+                    @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
-                <YPanel ref="volume_panel" :trigger="this.$refs.volume_panel_trigger" :slide-direction="5"
+                <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5"
                     :animation-time="0.1" :slide-distance="10">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
-                            @set-progress-end="this.updateVolumeInSetting" />
+                            @set-progress-end="updateVolumeInSetting" />
                         <div class="volume-text">
                             {{ Math.round(volume * 100) + '%' }}
                         </div>
@@ -194,10 +194,10 @@
                 <!-- 播放列表按钮 -->
                 <img class="img g-icon" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
-                    @click="this.$refs.playlist_panel.tooglePanel" :title="$t('playbar.playlist')"
+                    @click="playlist_panel?.tooglePanel" :title="$t('playbar.playlist')"
                     ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
-                <YPanel ref="playlist_panel" :trigger="this.$refs.playlist_panel_trigger" :slide-direction="4"
+                <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger" :slide-direction="4"
                     :default-show="false" @show-panel="scrollToCurrentTrack">
                     <div class="playlist-container">
                         <div class="playlist-title">
@@ -211,7 +211,7 @@
                                 </div>
                             </div>
                             <div class="title-right">
-                                <span @click="this.player.clearPlaylist()" style="cursor: pointer;">
+                                <span @click="player.clearPlaylist()" style="cursor: pointer;">
                                     <img class="g-icon" src="../assets/delete.svg"
                                         style="width: 20px; height: 20px;margin-right: 8px; opacity: .8;"
                                         :title="$t('playbar.clear_playlist')">
@@ -239,16 +239,17 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
 import { toogleLike, useApi } from '@/ncm/api';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
 import YProgressBarV from './YProgressBarV.vue';
 import YTextBanner from './YTextBanner.vue';
 
-export default {
+export default defineComponent({
     name: 'YPlaybar',
     components: {
         YSongsTable,
@@ -256,6 +257,32 @@ export default {
         YProgressBar,
         YProgressBarV,
         YTextBanner,
+    },
+    setup() {
+        const quality_panel = ref<InstanceType<typeof YPanel>>();
+        const songstable = ref<InstanceType<typeof YSongsTable>>();
+        const play_mode_panel = ref<InstanceType<typeof YPanel>>();
+        const play_mode_panel_trigger = ref<HTMLElement>();
+        const quality_panel_trigger = ref<HTMLElement>();
+        const volume_panel = ref<InstanceType<typeof YPanel>>();
+        const volume_panel_trigger = ref<HTMLElement>();
+        const playlist_panel = ref<InstanceType<typeof YPanel>>();
+        const playlist_panel_trigger = ref<HTMLElement>();
+        
+        const progressBarNoTrack = ref<InstanceType<typeof YProgressBar>>();
+        
+        return {
+            quality_panel,
+            songstable,
+            play_mode_panel,
+            play_mode_panel_trigger,
+            quality_panel_trigger,
+            volume_panel,
+            volume_panel_trigger,
+            playlist_panel,
+            playlist_panel_trigger,
+            progressBarNoTrack,
+        }
     },
     props: {
         type: {
@@ -328,12 +355,12 @@ export default {
                 }
             ],
             showButton: false,
-            playlist: [],
+            playlist: [] as any[],
             playState: 'pause',
-            currentTrack: null,
+            currentTrack: null as any,
             currentTrackComment: '0',
             playMode: 'order',
-            duration: 0,
+            duration: 0 as number,
             currentTime: 0,
             progress: 0,
             progressInterval: null,
@@ -347,11 +374,15 @@ export default {
         }
     },
     computed: {
-        ...mapState({
-            player: state => state.player,
-            login: state => state.login,
-            setting: state => state.setting,
-        }),
+        player() {
+            return useStore().state.player;
+        },
+        login() {
+            return useStore().state.login;
+        },
+        setting() {
+            return useStore().state.setting;
+        },
         likelist() {
             return this.login.likelist ?? [];
         },
@@ -366,17 +397,17 @@ export default {
         },
     },
     methods: {
-        setAudioProgress(progress) {
+        setAudioProgress(progress: number) {
             this.player.progress = progress;
         },
         // 格式化时间
-        formatDuration(time) {
+        formatDuration(time: number) {
             const minutes = Math.floor(time / 60);
             const seconds = Math.floor(time % 60);
             return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         },
         // 切换喜欢状态
-        async _toogleLike(status) {
+        async _toogleLike(status: boolean) {
             if (!this.player.currentTrack) {
                 return;
             }
@@ -392,33 +423,33 @@ export default {
             this.player.tooglePlayState();
         },
         // 下一首
-        async goTo(direction) {
+        async goTo(direction: string) {
             let forward = direction === 'forward' ? true : false;
             console.log(forward ? 'next' : 'previous');
             forward ? this.player.next() : this.player.previous();
         },
-        tooglePlayMode(mode) {
+        tooglePlayMode(mode: 'order' | 'listloop' | 'random' | 'listrandom' | 'loop') {
             this.player.mode = mode;
             this.setting.play.mode = mode;
         },
-        async playTrack(track) {
+        async playTrack(track: any) {
             await this.player.playTrack(track);
         },
-        addTrackToPlaylist(track) {
+        addTrackToPlaylist(track: any) {
             this.player.addTrack(track);
         },
-        handleArtistClick(artistId) {
+        handleArtistClick(artistId: number | string) {
             console.log('Artist ID:', artistId);
             this.$router.push({ path: '/artist/' + artistId });
         },
         updateVolumeInSetting() {
             this.setting.play.volume = this.volume;
         },
-        setQuality(quality) {
+        setQuality(quality: 'jymaster' | 'sky' | 'jyeffect' | 'hires' | 'lossless' | 'exhigh' | 'standard') {
             console.log('setQuality:', quality);
             this.player.quality = quality;
             this.setting.play.quality = quality;
-            this.$refs.quality_panel.tooglePanel();
+            this.quality_panel?.tooglePanel();
         },
         setShowButton() {
             if (this.player.currentTrack) {
@@ -458,15 +489,15 @@ export default {
                 type: 'subscribe-now-playing',
             })
         },
-        handleCommentClick(id) {
+        handleCommentClick(id: number | string) {
             this.$router.push({ path: `/comment/song/${id}` });
             this.$emit('close-panel');
         },
         scrollToCurrentTrack() {
             this.$nextTick(() => {
                 setTimeout(() => {
-                    if (this.$refs.songstable) {
-                        this.$refs.songstable.scrollToCurrentTrack();
+                    if (this.songstable) {
+                        this.songstable.scrollToCurrentTrack();
                     }
                 }, 300);
             })
@@ -477,7 +508,7 @@ export default {
             this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
         }
         this.player.volume = this.setting.play.volume;
-        this.tooglePlayMode(this.setting.play.mode);
+        this.tooglePlayMode(this.setting.play.mode as 'order' | 'listloop' | 'random' | 'listrandom' | 'loop');
         this.player.Subscribe({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
@@ -523,12 +554,12 @@ export default {
             type: 'track',
         })
         this.currentTime = this.player.currentTime;
-        this.duration = this.player.duration;
+        this.duration = this.player.duration as number;
         this.progress = this.player.progress;
         this.player.Subscribe({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
-                this.duration = this.player.duration;
+                this.duration = this.player.duration as number;
                 this.currentTime = this.player.currentTime;
                 this.progress = this.player.progress;
             },
@@ -593,7 +624,7 @@ export default {
             type: 'quality',
         })
     },
-}
+})
 
 </script>
 

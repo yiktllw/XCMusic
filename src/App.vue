@@ -2,21 +2,25 @@
     <router-view />
 </template>
 
-<script lang="js">
-import { mapState } from 'vuex';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
+export default defineComponent({
     name: 'App',
     computed: {
-        ...mapState({
-            setting: state => state.setting,
-        }),
+    },
+    setup() {
+        const store = useStore();
+        return {
+            setting: store.state.setting,
+        };
     },
     mounted() {
         this.$router.push({ path: '/greeting' });
         // 初始化缩放
         if (window.electron.isElectron) {
-            window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom));
+            window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom.toString()));
         }
         // 初始化主题
         document.body.className = `theme-${this.setting.display.theme}`;
@@ -25,7 +29,7 @@ export default {
         // 初始化用来控制滚动位置的全局变量
         window.savedPositions = {};
     }
-}
+})
 
 </script>
 

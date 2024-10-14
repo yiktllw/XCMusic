@@ -17,13 +17,11 @@
                             {{ $t('setting_view.language') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="radio" id="zh" name="language" value="zh" v-model="language"
-                                @change="handleLanguage">
+                            <input type="radio" id="zh" name="language" value="zh" v-model="language">
                             <label for="zh" @click="switchToLanguage('zh')">
                                 简体中文
                             </label>
-                            <input type="radio" id="en" name="language" value="en" v-model="language"
-                                @change="handleLanguage">
+                            <input type="radio" id="en" name="language" value="en" v-model="language">
                             <label for="en" @click="switchToLanguage('en')">
                                 English
                             </label>
@@ -70,22 +68,27 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { setBackgroundColorTheme } from '@/ncm/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/tools/YMessageC';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { themes } from '@/ncm/theme';
 
-export default {
+export default defineComponent({
     name: 'YSettingView',
     components: {
         YHeader,
     },
+    setup() {
+        const store = useStore();
+
+        return {
+            setting: store.state.setting,
+        }
+    },
     computed: {
-        ...mapState({
-            setting: state => state.setting,
-        }),
     },
     data() {
         return {
@@ -122,13 +125,13 @@ export default {
         }
     },
     methods: {
-        handleSwitcher(position) {
+        handleSwitcher(position: string) {
             console.log(position);
         },
-        handleTheme(e) {
+        handleTheme(e: any) {
             this.switchToTheme(e.target.value);
         },
-        switchToTheme(theme) {
+        switchToTheme(theme: string) {
             this.theme = theme;
             document.body.className = `theme-${this.theme}`;
             this.setting.display.theme = this.theme;
@@ -145,7 +148,7 @@ export default {
                 Message.post('error', this.$t('message.setting_view.zoom_range_50_200'));
             }
         },
-        switchToLanguage(language) {
+        switchToLanguage(language: string) {
             this.language = language;
             this.setting.display.language = language;
             this.$i18n.locale = this.language;
@@ -157,7 +160,7 @@ export default {
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
     },
-}
+})
 </script>
 
 <style lang="scss" scoped>

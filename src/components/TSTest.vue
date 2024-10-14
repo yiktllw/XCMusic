@@ -1,13 +1,10 @@
 <template>
     <div>
-        <YPanel ref="panel">
-
-        </YPanel>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import YPanel from '@/components/YPanel.vue';
 
@@ -19,16 +16,22 @@ export default defineComponent({
         function increment() {
             store.commit('increment');
         }
+        const panel = ref<InstanceType<typeof YPanel>>();
+        onMounted(() => {
+            console.log(panel.value);
+        });
 
         return {
             player,
             increment,
+            panel,
         };
+    },
+    computed: {
     },
     methods: {
         test(val: string) {
             console.log('test', val);
-            console.log('panel', this.$refs.panel)
         },
     },
     components: {
@@ -36,6 +39,7 @@ export default defineComponent({
     },
     mounted() {
         console.log('TSTest mounted');
+        this.test('hello');
     },
 });
 

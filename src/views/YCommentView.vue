@@ -26,13 +26,14 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import YComment from '@/components/YComment.vue';
 import { YTrackC } from '@/tools/YTrackC';
 import { YColor } from '@/ncm/color';
-import { mapState } from 'vuex';
+import { mapState, useStore } from 'vuex';
 
-export default {
+export default defineComponent({
     name: 'YCommentView',
     components: {
         YComment,
@@ -47,10 +48,11 @@ export default {
             required: true,
         },
     },
-    computed:{
-        ...mapState({
-            setting: state => state.setting,
-        }),
+    setup() {
+        const store = useStore();
+        return {
+            setting: store.state.setting,
+        };
     },
     watch: {
         id(newId) {
@@ -67,10 +69,10 @@ export default {
         };
     },
     methods: {
-        openAlbum(id) {
+        openAlbum(id: number | string) {
             this.$router.push({ path: `/album/${id}` });
         },
-        openArtist(id) {
+        openArtist(id: number | string) {
             this.$router.push({ path: `/artist/${id}` });
         },
         async trackLoaded() {
@@ -84,7 +86,7 @@ export default {
             await this.trackLoaded();
         };
     },
-}
+})
 </script>
 
 <style lang="scss" scoped>

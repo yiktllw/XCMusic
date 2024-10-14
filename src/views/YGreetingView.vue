@@ -5,14 +5,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { setBackgroundColorTheme } from '@/ncm/color';
-export default {
+export default defineComponent({
     name: 'YGreetingView',
     mounted() {
         setBackgroundColorTheme();
     }
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -15,7 +15,7 @@
                     <YTitlebar />
                     <!-- 显示区域 -->
                     <div class="content">
-                        <YDisplayArea class="display-area" ref="YDisplayArea" />
+                        <YDisplayArea class="display-area" ref="YDisplayArea_ref" />
                     </div>
                 </div>
             </div>
@@ -23,7 +23,7 @@
         <div class="align-down">
             <!-- 播放栏 -->
             <div class="playbar">
-                <YPlaybar @open-panel="$refs.playUI?.showPanel()" />
+                <YPlaybar @open-panel="playUI?.showPanel()" />
             </div>
         </div>
         <div class="context-menu">
@@ -46,11 +46,12 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
 import YDisplayArea from '@/components/YDisplayArea.vue';
 import YSidebar from '../components/YSidebar.vue';
 import YTitlebar from '../components/YTitlebar.vue';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
 import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
@@ -61,21 +62,21 @@ import { Message } from '@/tools/YMessageC';
 import { songItems } from '@/tools/YContextMenuItemC';
 import { useApi } from '@/ncm/api';
 
-export default {
+export default defineComponent({
     name: 'App',
     data() {
         return {
             // 打开的播放列表
             opened_playlist: 0,
             menu: songItems,
-            target: null,
+            target: null as any,
             posX: '0px',
             posY: '0px',
             direction: 4,
             showPreventContainer: false,
             showAddToPlaylist: false,
-            trackIds: [],
-            trackOfInfo: null,
+            trackIds: [] as any[],
+            trackOfInfo: null as any,
             showSongInfo: false,
             msg: {
                 type: 'none',
@@ -97,33 +98,47 @@ export default {
         YPlayUI,
     },
     computed: {
-        ...mapState({
-            // 播放列表
-            player: state => state.player,
-            setting: state => state.setting,
-            login: state => state.login,
-        }),
+    },
+    setup() {
+        const store = useStore();
+        const player = store.state.player;
+        const setting = store.state.setting;
+        const login = store.state.login;
+        const contextMenu = ref<typeof YContextMenu | null>(null);
+        const playUI = ref<typeof YPlayUI | null>(null);
+        const YSidebar_ref = ref<typeof YSidebar | null>(null);
+        const YDisplayArea_ref = ref<typeof YDisplayArea | null>(null);
+        const prevent_container = ref<HTMLElement | null>(null);
+
+        return {
+            player,
+            setting,
+            login,
+            contextMenu,
+            playUI,
+            YSidebar_ref,
+            YDisplayArea_ref,
+            prevent_container,
+        };
     },
     mounted() {
-        // console.log(this.$refs.YDisplayArea);
         window.addEventListener('message', this.handleMessage);
-        this.player.quality = this.setting.play.quality;
+        this.player.quality = this.setting.play.quality as "jymaster" | "sky" | "jyeffect" | "hires" | "lossless" | "exhigh" | "standard" | "higher";
     },
     beforeUnmount() {
         window.removeEventListener('message', this.handleMessage);
     },
     methods: {
-        async handleMessage(event) {
+        async handleMessage(event: any) {
             if (event.data.type === 'song-open-context-menu' || event.data.type === 'song-toogle-context-menu') {
                 if (event.data.type === 'song-toogle-context-menu') {
-                    this.$refs.contextMenu.toogleContextMenu();
+                    this.contextMenu?.toogleContextMenu();
                 } else {
-                    this.$refs.contextMenu.showContextMenu();
+                    this.contextMenu?.showContextMenu();
                 }
                 let data = event.data.data;
                 this.menu = songItems;
                 if (data.from && data.from !== -1) {
-                    this.menu[this.menu.length - 1].from = data.from;
                     this.menu[this.menu.length - 1].display = true;
                     console.log('from:', data.from, this.menu);
                 } else {
@@ -161,7 +176,7 @@ export default {
                 this.showPreventContainer = true;
             }
         },
-        async getCommentCount(id) {
+        async getCommentCount(id: number | string) {
             let result = '0';
             await useApi(`/comment/music`, {
                 id: id ?? null,
@@ -183,7 +198,7 @@ export default {
             })
             return result;
         },
-        setDirection(x, y, menuWidth, menuHeight) {
+        setDirection(x: number, y: number, menuWidth: number, menuHeight: number) {
             if (x + menuWidth > window.innerWidth) {
                 if (y + menuHeight > window.innerHeight) {
                     this.direction = 2;
@@ -199,7 +214,7 @@ export default {
             }
 
         },
-        handleMenuClick(arg) {
+        handleMenuClick(arg: any) {
             switch (arg.role) {
                 case 'song-play':
                     this.player.playTrack(arg.target);
@@ -220,7 +235,7 @@ export default {
                             Message.post('success', this.$t('message.homeview.linkCopied') + `: https://music.163.com/song?id=${arg.target.id}`);
                         })
                         .catch((error) => {
-                            Message.post('error', this.$t('message.homeview.errorToCopyLink')`: ${error}`);
+                            Message.post('error', `${this.$t('message.homeview.errorToCopyLink')}: ${error}`);
                         });
                     break;
                 case 'song-subscribe':
@@ -237,7 +252,7 @@ export default {
                     break;
             }
         },
-        async deleteFromPlaylist(trackId, playlistId) {
+        async deleteFromPlaylist(trackId: string | number, playlistId: string | number) {
             if (playlistId === -1) {
                 return;
             }
@@ -259,20 +274,20 @@ export default {
                     Message.post('error', this.$t('message.homeview.delete_fail') + `: ${error}`);
                 });
         },
-        handleNewWindowState(val) {
+        handleNewWindowState(val: boolean) {
             if (val === false) {
                 this.showAddToPlaylist = false;
                 this.showPreventContainer = false;
             }
         },
-        handleNewWindowState_songInfo(val) {
+        handleNewWindowState_songInfo(val: boolean) {
             if (val === false) {
                 this.showSongInfo = false;
                 this.showPreventContainer = false;
             }
         },
     },
-};
+});
 </script>
 
 <style lang="scss" scoped>

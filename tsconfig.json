@@ -22,10 +22,12 @@
         // "checkJs": true,
         "typeRoots": [
             "./node_modules/@types",
-            "./src/types"
+            "./src/types",
         ],
         "types": [
-            "vuex"
+            "vuex",
+            "shims-svg",
+            "shims-vue",
         ]
     },
     "include": [
@@ -33,6 +35,7 @@
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
+        "src/types/**/*.d.ts" 
     ],
     "exclude": [
         "node_modules"

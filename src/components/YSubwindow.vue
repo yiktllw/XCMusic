@@ -11,15 +11,17 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
     name: 'YSubwindow',
     methods: {
         closeSubwindow() {
             this.$emit('close-subwindow');
         }
     }
-};
+});
 </script>
 
 <style lang="scss" scoped>

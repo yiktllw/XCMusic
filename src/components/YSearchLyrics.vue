@@ -3,12 +3,18 @@
         v-model="listWithLyrics" :showLyrics="true" ref="songs_table" :id="'YSearchLyrics.vue'" />
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref, watch } from 'vue';
 import YSongsTable from './YSongsTable.vue';
-import { ref, watch } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'YSearchLyrics',
+    props: {
+        modelValue: {
+            type: Array as () => any[],
+            default: () => [],
+        },
+    },
     setup(props) { 
         // progress 的本地状态
         const listWithLyrics = ref(props.modelValue);
@@ -24,7 +30,7 @@ export default {
     components: {
         YSongsTable,
     },
-}
+})
 
 </script>
 

@@ -6,7 +6,8 @@
                 <div class="item-content" v-if="item.display">
                     <img class="item-icon g-icon" :src="item.icon" v-if="item.icon" />
                     <div class="item-label">
-                        {{ item.label.includes('查看评论') ||item.label.includes('View Comment') ? item.label : $t(item.label) }}
+                        {{ item.label.includes('查看评论') || item.label.includes('View Comment') ? item.label :
+                        $t(item.label) }}
                     </div>
                 </div>
                 <div class="separator" v-if="item.showSeparator" />
@@ -15,17 +16,24 @@
     </YPanel>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
 import { YContextMenuItemC } from '../tools/YContextMenuItemC'
 import YPanel from './YPanel.vue';
 
-export default {
+export default defineComponent({
     name: 'YContextMenu',
+    setup() {
+        const panel = ref<InstanceType<typeof YPanel>>();
+        return {
+            panel
+        }
+    },
     props: {
         items: {
             type: Array,
             required: true,
-            validator: function (value) {
+            validator: function (value: any[]) {
                 return value.every(item => item instanceof YContextMenuItemC)
             }
         },
@@ -67,25 +75,25 @@ export default {
         },
     },
     methods: {
-        handleClick(role) {
+        handleClick(role: string) {
             this.$emit('menu-click', {
                 role: role,
                 target: this.target,
-                from: this.items[this.items.length - 1].from ?? -1,
+                from: -1,
             })
-            this.$refs.panel.tooglePanel();
+            this.panel?.tooglePanel();
         },
         showContextMenu() {
-            this.$refs.panel._showPanel();
+            this.panel?._showPanel();
         },
         closeContextMenu() {
-            this.$refs.panel.closePanel();
+            this.panel?.closePanel();
         },
         toogleContextMenu() {
-            this.$refs.panel.tooglePanel();
+            this.panel?.tooglePanel();
         },
     }
-}
+})
 </script>
 
 <style lang="scss" scoped>

@@ -17,12 +17,12 @@
             <div class="input-wrapper">
                 <input type="text" class="search-input font-color-main" @keydown.enter="handleSearch"
                     v-model="searchInput" @input="getSearchSuggestions" :placeholder="$t('titlebar.search') + '...'"
-                    @click="this.$refs.search_panel._showPanel()" spellcheck="false" ref="search_input" />
+                    @click="search_panel?._showPanel()" spellcheck="false" ref="search_input" />
                 <img class="img-search g-icon" src="../assets/search.svg" />
                 <img v-if="searchInput !== ''" class="img-clear g-icon" src="../assets/clear2.svg"
                     @click="searchInput = ''" />
             </div>
-            <YPanel ref="search_panel" :trigger="this.$refs.search_panel_trigger" style="position:relative; width:0px"
+            <YPanel ref="search_panel" :trigger="search_panel_trigger ?? undefined" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
                 <div class="search-panel">
                     <div class="search-history" v-if="searchHistory.length > 0">
@@ -58,16 +58,16 @@
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
-            <button class="avatar" v-if="this.login.status && type === 'default'" @click="openUserPage">
-                <img class="avatarImg" :src="this.login.avatar" v-if="this.login.avatar" />
+            <button class="avatar" v-if="login.status && type === 'default'" @click="openUserPage">
+                <img class="avatarImg" :src="login.avatar as string" v-if="login.avatar" />
                 <div class="avatarImg avatarImgPlaceholder" v-else></div>
             </button>
             <button class="userInfo font-color-main" @click="userInfo" ref="user_info_menu_trigger"
                 v-if="type === 'default'">
-                <div class="userInfoTxt" v-if="this.login.status">
+                <div class="userInfoTxt" v-if="login.status">
                     {{ userNickName }}
                 </div>
-                <div class="userInfoTxt" v-if="!this.login.status">
+                <div class="userInfoTxt" v-else>
                     {{ $t('titlebar.notLoggedIn') }}
                 </div>
                 <img class="img-userInfo g-icon" src="../assets/more.svg" />
@@ -80,7 +80,7 @@
                 <img :src="base64Image" />
             </div>
             <!-- 用户名下拉菜单 -->
-            <YPanel class="userInfoPanel" :trigger="this.$refs.user_info_menu_trigger" ref="user_info_panel"
+            <YPanel class="userInfoPanel" :trigger="user_info_menu_trigger ?? undefined" ref="user_info_panel"
                 :default-show="false" :slide-direction="1">
                 <div class="user-info-menu">
                     <div class="user-info-item follows">
@@ -112,13 +112,13 @@
                     <div class="user-info-item" @click="openListenRank">
                         {{ $t('titlebar.listenRank') }}
                     </div>
-                    <div class="user-info-item" @click="this.openTestPage">
+                    <div class="user-info-item" @click="openTestPage">
                         {{ $t('titlebar.testPage') }}
                     </div>
                     <div class="user-info-item">
                         {{ $t('titlebar.about') }}
                     </div>
-                    <div class="user-info-item" @click="this.login.logout()">
+                    <div class="user-info-item" @click="login.logout()">
                         {{ $t('titlebar.logout') }}
                     </div>
                 </div>
@@ -141,12 +141,13 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
 import { useApi } from '@/ncm/api';
-import { mapState, mapActions } from 'vuex';
+import { mapActions, useStore } from 'vuex';
 import YPanel from './YPanel.vue';
 
-export default {
+export default defineComponent({
     name: 'YTitlebar',
     emits: [
         'navigate-back',
@@ -160,6 +161,29 @@ export default {
             default: 'default',
         },
     },
+    setup() {
+        const search_panel = ref<typeof YPanel | null>(null);
+        const search_panel_trigger = ref<HTMLElement | null>(null);
+        const search_input = ref<HTMLElement | null>(null);
+        const dropdownMenu = ref<HTMLElement | null>(null);
+        const user_info_panel = ref<typeof YPanel | null>(null);
+        const user_info_menu_trigger = ref<HTMLElement | null>(null);
+        
+        const store = useStore();
+        const login = store.state.login;
+        const setting = store.state.setting;
+        
+        return {
+            search_panel,
+            search_panel_trigger,
+            search_input,
+            dropdownMenu,
+            user_info_panel,
+            user_info_menu_trigger,
+            login,
+            setting,
+        };
+    },
     components: {
         YPanel,
     },
@@ -171,13 +195,14 @@ export default {
                 level: 0,
             },    // 用于存储用户信息
             showDropdown: false,    // 用于控制下拉登录菜单的显示
-            searchHistory: [],    // 用于存储搜索历史
+            searchHistory: [] as any[],    // 用于存储搜索历史
             base64Image: '',    // 用于存储 Base64 图片
             userNickName: '用户昵称',   // 用于存储用户昵称
             avatarSrc: '',      // 用于存储头像地址
             searchInput: '',    // 用于存储搜索输入
-            searchSuggestions: [],  // 用于存储搜索建议
-            hotSearches: [],    // 用于存储热搜榜
+            qrKey: '',  // 用于存储二维码 key
+            searchSuggestions: [] as any[],  // 用于存储搜索建议
+            hotSearches: [] as any[],    // 用于存储热搜榜
             selectedSuggestion: 0,  // 用于存储选中的搜索建议
         };
     },
@@ -189,10 +214,6 @@ export default {
         },
     },
     computed: {
-        ...mapState({
-            login: state => state.login,
-            setting: state => state.setting,
-        })
     },
     methods: {
         ...mapActions(['updateLoginStatus']),
@@ -211,11 +232,11 @@ export default {
             }
         },
         // 用户信息
-        async userInfo(event) {
+        async userInfo(event: MouseEvent) {
             event.stopPropagation(); // 阻止事件冒泡以免立即触发外部点击处理器
             // 如果已登录，则打开用户信息窗口
             if (this.login.cookie && this.login.status) {
-                this.$refs.user_info_panel.tooglePanel();
+                this.user_info_panel?.tooglePanel();
                 console.log('open userInfo');
             } else {
                 // 如果未登录，则显示二维码登录
@@ -264,8 +285,8 @@ export default {
         },
 
         // 处理登录窗口的外部点击
-        handleOutsideClick(event) {
-            const dropdownMenu = this.$refs.dropdownMenu;
+        handleOutsideClick(event: any) {
+            const dropdownMenu = this.dropdownMenu;
             if (dropdownMenu && !dropdownMenu.contains(event.target)) {
                 this.showDropdown = false; // 隐藏下拉菜单
             }
@@ -304,12 +325,12 @@ export default {
             }
         },
         // 搜索
-        handleSearch(event) {
+        handleSearch(event: any) {
             this.search(event.target.value);
         },
-        search(text) {
+        search(text: string) {
             this.$router.push({ path: `/search/${text}/default` });
-            this.$refs.search_panel.closePanel();
+            this.search_panel?.closePanel();
             const SEARCH_HISTORY_LENGTH = 10;
             this.searchInput = text;
             if (this.searchHistory.length > 0 && this.searchHistory.length <= SEARCH_HISTORY_LENGTH) {
@@ -344,7 +365,7 @@ export default {
             }
             console.log('search:', text);
         },
-        async getSearchSuggestions(event) {
+        async getSearchSuggestions(event: any) {
             const searchText = event.target.value;
             if (!searchText) {
                 this.searchSuggestions = [];
@@ -364,8 +385,8 @@ export default {
         async init() {
             document.addEventListener('click', this.handleOutsideClick);
             if (this.login.cookie) {
-                this.userNickName = this.login.userName;
-                this.avatarSrc = this.login.avatar;
+                this.userNickName = this.login.userName as string;
+                this.avatarSrc = this.login.avatar as string;
 
                 if (!this.login.userId) {
                     await this.login.updateInfo();
@@ -381,7 +402,7 @@ export default {
                 // console.log('userProfile:', this.userProfile);
             }
         },
-        highlightMatching(keyword) {
+        highlightMatching(keyword: string) {
             if (keyword.startsWith(this.searchInput)) {
                 return `<span style="color: rgb(255, 60, 90);">${this.searchInput}</span>${keyword.slice(this.searchInput.length)}`;
             }
@@ -413,7 +434,7 @@ export default {
         // 移除外部点击处理器
         document.removeEventListener('click', this.handleOutsideClick);
     },
-}
+})
 </script>
 
 <style lang="scss" scoped>

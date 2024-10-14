@@ -91,11 +91,11 @@
                     <div class="artist-works" v-if="user.position === 'song'">
                         <!-- 歌曲列表 -->
                         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
-                            v-model="this.user.tracks" v-if="this.user.tracks" :id="'YUserView.vue'" />
+                            v-model="user.tracks" v-if="user.tracks" :id="'YUserView.vue'" />
                         <YPage v-model="page" />
                     </div>
                     <!-- 加载中 -->
-                    <YLoading v-if="!this.user.tracks" />
+                    <YLoading v-if="!user.tracks" />
                     <!-- 歌单界面 -->
                     <div class="playlist-list" v-if="user.listType && user.position === 'album'">
                         <!-- 歌手专辑列表 -->
@@ -125,7 +125,7 @@
     </YScroll>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import YScroll from '@/components/YScroll.vue';
 import YPlaylistList from '@/components/YPlaylistList.vue';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
@@ -135,11 +135,11 @@ import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
 import { YColor } from '@/ncm/color';
-import { mapState } from 'vuex';
+import { mapState, useStore } from 'vuex';
 import { YPageC } from '@/tools/YPageC';
-import { markRaw } from 'vue';
+import { markRaw, ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'YUserView',
     props: {
         // 用户 id
@@ -174,20 +174,18 @@ export default {
     data() {
         return {
             // 用户/歌手信息
-            user: {
-                tracks: [],
-                albums: [],
-                userPlaylists: [],
-                userSubscribedPlaylists: [],
-            },
+            user: null as any,
             page: new YPageC(1),
         }
     },
+    setup() {
+        const store = useStore();
+        return {
+            login: store.state.login,
+            setting: store.state.setting,
+        };
+    },
     computed: {
-        ...mapState({
-            login: state => state.login,
-            setting: state => state.setting,
-        }),
         // 是否显示右侧切换视图
         showRightSwitcher() {
             return this.type === 'user' || (this.type === 'artist' && this.user.position === 'album');
@@ -195,7 +193,7 @@ export default {
     },
     methods: {
         // 切换导航位置，并获取对应的数据
-        handleSwitcher(position) {
+        handleSwitcher(position: string) {
             console.log('switch position', position);
             this.user.position = position;
             switch (position) {
@@ -356,7 +354,7 @@ export default {
             }];
             this.user.userSubscribedPlaylists = [];
             // 返回处理后的歌单
-            response.playlist.forEach(item => {
+            response.playlist.forEach((item: any) => {
                 if (!item.subscribed) {
                     // 用户创建的歌单
                     this.user.userPlaylists.push({
@@ -389,7 +387,7 @@ export default {
                 console.log('fetch artist albums error:', err);
             });
             // 返回处理后的专辑
-            this.user.albums = response.hotAlbums.map(album => {
+            this.user.albums = response.hotAlbums.map((album: any) => {
                 return {
                     ...album,
                     _picUrl: album.picUrl + '?param=80y80',
@@ -398,7 +396,7 @@ export default {
             });
         },
         // 按页获取歌手的作品
-        async fetchArtistWorks(page, newPage = false) {
+        async fetchArtistWorks(page: number, newPage = false) {
             const SONGS_PER_PAGE = 100;
             //  如果不是歌手界面，返回
             if (this.type !== 'artist') {
@@ -461,9 +459,11 @@ export default {
         // 获取用户信息
         await this.fetchUser();
         const theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBkColorFromImg(this.user.picUrl, document, theme.type, theme.background);
+        if (this.user.picUrl) {
+            YColor.setBkColorFromImg(this.user.picUrl, document, theme.type, theme.background);
+        }
     }
-}
+})
 
 </script>
 

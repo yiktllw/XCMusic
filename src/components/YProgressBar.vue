@@ -18,38 +18,16 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { formatDuration_mmss } from '@/ncm/time';
 import { ref, watch } from 'vue';
 
-export default {
-    name: 'YProgressBar',
-    data() {
-        return {
-            mouseProgress: 0,
-            showInfo: false,
-        };
-    },
-    emits: [
-        'update:modelValue',
-        'set-progress-end'
-    ],
-    setup(props) { 
-        // progress 的本地状态
-        const progress = ref(props.modelValue);
-
-        // 监听 modelValue 的变化
-        watch(() => props.modelValue, (newValue) => {
-            progress.value = newValue;
-        });
-        return {
-            progress
-        };
-    },
+export default defineComponent({
     props: {
         modelValue: {
             default: 0,
-            validator: (value) => {
+            validator: (value: number) => {
                 return value >= 0 && value <= 1;
             }
         },
@@ -62,10 +40,46 @@ export default {
             default: 100,
         }
     },
+    name: 'YProgressBar',
+    data() {
+        return {
+            mouseProgress: 0,
+            showInfo: false,
+        };
+    },
+    emits: [
+        'update:modelValue',
+        'set-progress-end'
+    ],
+    setup(props) {
+        // progress 的本地状态
+        const progress = ref(props.modelValue);
+
+        // 监听 modelValue 的变化
+        watch(() => props.modelValue, (newValue) => {
+            progress.value = newValue;
+        });
+
+        const progress_bar = ref<HTMLElement | null>(null);
+        const big_frame = ref<HTMLElement | null>(null);
+        const progressDOM = ref<HTMLElement | null>(null);
+        const noSelect = ref<HTMLElement | null>(null);
+
+        return {
+            progress,
+            progress_bar,
+            big_frame,
+            progressDOM,
+            noSelect,
+        };
+    },
     methods: {
-        updateProgress(x) {
+        updateProgress(x: number) {
             let rect = null;
-            rect = this.$refs.progress_bar.getBoundingClientRect();
+            rect = this.progress_bar?.getBoundingClientRect();
+            if (!rect) {
+                return;
+            }
             const dx = x - rect.left;
             let progress = dx / rect.width;
             if (progress < 0) {
@@ -75,10 +89,10 @@ export default {
             }
             this.$emit('update:modelValue', progress);
         },
-        updateProgressEvent(e) {
+        updateProgressEvent(e: MouseEvent) {
             this.updateProgress(e.clientX);
         },
-        onClick(e) {
+        onClick(e: MouseEvent) {
             this.updateProgress(e.clientX);
             this.$emit('set-progress-end');
         },
@@ -90,19 +104,19 @@ export default {
             window.removeEventListener('mousemove', this.updateProgressEvent);
             this.$emit('set-progress-end');
         },
-        formatDuration(progress) {
+        formatDuration(progress: number) {
             let duration = Math.floor(progress * this.totalTime * 1000);
             return formatDuration_mmss(duration);
         },
-        handleMousemove(event) {
-            this.mouseProgress = event.clientX / this.$refs.big_frame.getBoundingClientRect().width;
+        handleMousemove(event: MouseEvent) {
+            this.mouseProgress = event.clientX / (this.big_frame?.getBoundingClientRect().width || 100);
             this.showInfo = true;
         },
         HideInfo() {
             this.showInfo = false;
         },
     }
-};
+});
 
 </script>
 

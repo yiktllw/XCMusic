@@ -80,13 +80,14 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { formatDate_yyyymmdd } from '@/ncm/time';
-export default {
+export default defineComponent({
     name: 'YPlaylistList',
     props: {
         playlists: {
-            type: Array,
+            type: Array as () => any[],
             default: () => [],
         },
         type: {
@@ -103,7 +104,7 @@ export default {
         },
     },
     methods: {
-        openPlaylist(id) {
+        openPlaylist(id: number | string) {
             if (typeof id === 'string' && id.startsWith('user-record-')) {
                 let uid = id.split('user-record-')[1];
                 this.$router.push({ path: `/user_songs_rank/${uid}` });
@@ -113,17 +114,17 @@ export default {
                 this.$router.push({ path: `/playlist/${id}` }) :
                 this.$router.push({ path: `/album/${id}` });
         },
-        openUserPage(id) {
+        openUserPage(id: number | string) {
             console.log('open user page: ', id);
         },
-        formatedPlayCount(count) {
+        formatedPlayCount(count: number) {
             return count > 10000 ? `${(count / 10000).toFixed(1)}万` : count;
         },
-        formatedTime(time) {
+        formatedTime(time: number) {
             return formatDate_yyyymmdd(time);
         },
     },
-}
+})
 
 </script>
 

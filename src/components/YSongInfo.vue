@@ -96,18 +96,26 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
 import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
 import { Message } from '@/tools/YMessageC';
 
-export default {
+export default defineComponent({
     name: 'YSongInfo',
     props: {
         track: {
             type: Object,
             required: true,
         },
+    },
+    setup() { 
+        const window = ref<InstanceType<typeof YWindow>>();
+        
+        return {
+            window,
+        };
     },
     components: {
         YWindow,
@@ -121,10 +129,10 @@ export default {
         'new-window-state'
     ],
     methods: {
-        handleNewWindowState(val) {
+        handleNewWindowState(val: boolean) {
             this.$emit('new-window-state', val);
         },
-        copy(text) {
+        copy(text: string) {
             navigator.clipboard.writeText(text).then(() => {
                 console.log('复制成功: ', text);
                 Message.post('success', `复制成功: ${text}`);
@@ -132,16 +140,16 @@ export default {
                 Message.post('error', `复制失败: ${text}`);
             });
         },
-        openArtist(id) {
+        openArtist(id: number | string) {
             this.$router.push(`/artist/${id}`)
-            this.$refs.window.closeWindow();
+            this.window?.closeWindow();
         },
-        openAlbum(id) {
+        openAlbum(id: number | string) {
             this.$router.push(`/album/${id}`)
-            this.$refs.window.closeWindow();
+            this.window?.closeWindow();
         },
     },
-}
+});
 </script>
 
 <style lang="scss" scoped>

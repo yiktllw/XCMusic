@@ -5,15 +5,16 @@
         style="margin: 0px 20px 0px 10px;" :id="'YUserSongRankView.vue'" />
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import YHeader from '@/components/YHeader.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
 import { Tracks } from '@/ncm/tracks';
 import { useApi } from '@/ncm/api';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { markRaw } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'YUserSongsRank',
     props: {
         userId: {
@@ -25,8 +26,13 @@ export default {
         YHeader,
         YSongsTable,
     },
+    setup() {
+        const store = useStore();
+        return {
+            login: store.state.login,
+        };
+    },
     computed: {
-        ...mapState(['login']),
         displayTracks() {
             return this.position === 'recent' ? this.recentTracks : this.alltimeTracks;
         }
@@ -53,7 +59,7 @@ export default {
         };
     },
     methods: {
-        handleNewPosition(position) {
+        handleNewPosition(position: string) {
             this.position = position;
         },
         async fetchUserSongsRank() {
@@ -86,6 +92,6 @@ export default {
     async mounted() {
         await this.fetchUserSongsRank();
     },
-}
+})
 
 </script>

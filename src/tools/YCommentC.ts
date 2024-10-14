@@ -1,6 +1,6 @@
 import { useApi } from "@/ncm/api";
 import { YPageC } from "./YPageC";
-type Types = 'song' | 'playlist' | 'album';
+export type Types = 'song' | 'playlist' | 'album';
 
 export class YCommentC {
     _type: Types;

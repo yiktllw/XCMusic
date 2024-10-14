@@ -21,8 +21,10 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
     name: 'YArtistList',
     props: {
         // 歌手列表
@@ -37,7 +39,7 @@ export default {
         }
     },
     methods: {
-        openUserPage(id) {
+        openUserPage(id: number | string) {
             if (this.type === 'artist') {
                 console.log('open artist page :', id)
                 this.$router.push({ path: `/artist/${id}` })
@@ -47,7 +49,7 @@ export default {
             }
         }
     },
-}
+})
 
 </script>
 

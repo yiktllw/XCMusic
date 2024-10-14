@@ -48,7 +48,7 @@
             <!-- 歌曲 -->
             <div class="songs" v-if="position === 'song'">
                 <YSongsTable :resortable="false" stickyTop="50px" :canSendPlaylist="false" :showTrackCover="true"
-                    v-model="this.switcher[0].tracks" :id="'YSearchView.vue'" />
+                    v-model="switcher[0].tracks" :id="'YSearchView.vue'" />
                 <YPage v-model="songsPage" />
             </div>
             <!-- 专辑 -->
@@ -80,7 +80,7 @@
     </YScroll>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import YSongsTable from '@/components/YSongsTable.vue';
 import YPlaylistList from '@/components/YPlaylistList.vue';
 import YArtistList from '@/components/YArtistList.vue';
@@ -91,9 +91,9 @@ import { Tracks } from '@/ncm/tracks';
 import { YPageC } from '@/tools/YPageC';
 import { setBackgroundColorTheme } from '@/ncm/color';
 import { useApi } from '../ncm/api';
-import { markRaw } from 'vue';
+import { markRaw, ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'YSearchView',
     props: {
         // 搜索关键字
@@ -181,7 +181,7 @@ export default {
     },
     methods: {
         // 切换搜索位置
-        handleSwitcher(position) {
+        handleSwitcher(position: string) {
             console.log('switch position', position);
             this.$router.push({ path: `/search/${this.search}/${position}` });
         },
@@ -219,7 +219,7 @@ export default {
                 offset: (this.playlistsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[2].playlists = result.result.playlists?.map((playlist) => {
+                    this.switcher[2].playlists = result.result.playlists?.map((playlist: any) => {
                         return {
                             ...playlist,
                             _picUrl: playlist.coverImgUrl + '?param=40y40',
@@ -247,7 +247,7 @@ export default {
                 offset: (this.albumsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[1].playlists = result.result.albums?.map((album) => {
+                    this.switcher[1].playlists = result.result.albums?.map((album: any) => {
                         return {
                             ...album,
                             _picUrl: album.picUrl + '?param=80y80',
@@ -274,7 +274,7 @@ export default {
                 offset: (this.artistsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[3].artists = result.result.artists?.map((artist) => {
+                    this.switcher[3].artists = result.result.artists?.map((artist: any) => {
                         return {
                             ...artist,
                             _picUrl: artist.picUrl + '?param=130y130',
@@ -325,7 +325,7 @@ export default {
                 offset: (this.usersPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[5].users = result.result.userprofiles?.map((user) => {
+                    this.switcher[5].users = result.result.userprofiles?.map((user: any) => {
                         return {
                             ...user,
                             _picUrl: user.avatarUrl + '?param=130y130',
@@ -343,7 +343,7 @@ export default {
                     console.log('fetchUsers', err);
                 });
         },
-        fetchData(position) {
+        fetchData(position: string) {
             switch (position) {
                 case 'song':
                     this.fetchTracks();
@@ -376,7 +376,7 @@ export default {
         // 当前位置为默认位置时, 跳转到上次搜索位置
         this.position === 'default' ? this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` }) : null;
     },
-}
+})
 
 </script>
 

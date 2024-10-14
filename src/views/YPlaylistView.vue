@@ -101,8 +101,8 @@
                             <!-- 5 搜索框 -->
                             <div class="input-wrapper">
                                 <input type="text" class="search-input font-color-main"
-                                    @keydown.enter="handleSearch($event.target.value, true)"
-                                    @input="handleSearch($event.target.value, false)"
+                                    @keydown.enter="handleSearch(($event.target as HTMLInputElement).value, true)"
+                                    @input="handleSearch(($event.target as HTMLInputElement).value, false)"
                                     :placeholder="$t('playlist_view.search') + '...'" spellcheck="false"
                                     v-model="searchQuery" />
                                 <img src="../assets/search.svg" class="img-search g-icon" />
@@ -172,7 +172,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YComment from '@/components/YComment.vue';
@@ -182,11 +182,11 @@ import { useApi } from '@/ncm/api';
 import { formatDate_yyyymmdd } from '@/ncm/time';
 import { YColor } from '@/ncm/color'
 import { themes } from '@/ncm/theme';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { preparePlaylist } from '@/tools/playlist';
-import { markRaw } from 'vue';
+import { markRaw, ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'YPlaylist',
     components: {
         YSongsTable,
@@ -205,13 +205,21 @@ export default {
             default: 'playlist' // playlist, album
         },
     },
+    setup() {
+        const store = useStore();
+        const playlist_songstable = ref<typeof YSongsTable | null>(null);
+        const album_songstable = ref<typeof YSongsTable | null>(null);
+        
+        return {
+            player: store.state.player,
+            login: store.state.login,
+            openedPlaylist: store.state.openedPlaylist,
+            setting: store.state.setting,
+            playlist_songstable,
+            album_songstable,
+        };
+    },
     computed: {
-        ...mapState({
-            player: state => state.player,
-            login: state => state.login,
-            openedPlaylist: state => state.openedPlaylist,
-            setting: state => state.setting,
-        }),
         likelist() {
             return this.login.likelist;
         },
@@ -222,19 +230,19 @@ export default {
                 name: '',           // 歌单名称
                 transName: '',      // 歌单翻译名称
                 coverImgUrl: '',    // 封面图片 URL
-                artists: [],        // 歌单歌手
+                artists: [] as any[],        // 歌单歌手
                 playCount: 0,       // 播放次数
                 createTime: '',     // 创建时间
                 createrId: 0,       // 创建者 ID
                 createrName: '',    // 创建者名称
                 createrAvatarUrl: '', // 创建者头像 URL
                 trackCount: 0,      // 歌曲数量
-                alReels: [],        // 专辑信息
-                tracks: [], // 歌曲列表
+                alReels: [] as any[],        // 专辑信息
+                tracks: [] as any[], // 歌曲列表
             },
             isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字
-            filteredTracks: [], // 搜索过滤后的歌曲列表
+            filteredTracks: [] as any[], // 搜索过滤后的歌曲列表
             orient: 'songs',    // 歌曲列表或评论列表
             page: 1,            // 歌单页数
         };
@@ -245,7 +253,6 @@ export default {
             immediate: true,
             handler(newVal) {
                 this.fetchPlaylist(newVal);
-                this.openedPlaylist.id = newVal;
                 this.isLoading = true;
                 this.orient = 'songs';
             }
@@ -264,8 +271,8 @@ export default {
             if (!val) {
                 this.$nextTick(() => {
                     const mainScroll = document.getElementById('yscroll-display-area');
-                    if (window.savedPositions[this.$route.path]) {
-                        mainScroll.scrollTop = window.savedPositions[this.$route.path].top;
+                    if (window.savedPositions[this.$route.path] && mainScroll) {
+                        mainScroll.scrollTop = window.savedPositions[this.$route.path].top as number;
                     }
                 });
             }
@@ -273,22 +280,22 @@ export default {
         '$route'(to, from) {
             const mainScroll = document.getElementById('yscroll-display-area');
             window.savedPositions[from.path] = {
-                top: mainScroll.scrollTop,
+                top: mainScroll?.scrollTop ?? 0,
                 left: 0,
             }
         }
     },
-    beforeRouteLeave(to, from, next) {
+    beforeRouteLeave(to: any, from: any, next: any) {
         const mainScroll = document.getElementById('yscroll-display-area');
         window.savedPositions[from.path] = {
-            top: mainScroll.scrollTop,
+            top: mainScroll?.scrollTop ?? 0,
             left: 0,
         }
         next();
     },
     methods: {
         // 获取歌单
-        async fetchPlaylist(id) {
+        async fetchPlaylist(id: number | string) {
             try {
                 let requests = [];
                 if (this.type === 'playlist') {
@@ -409,7 +416,7 @@ export default {
                     console.error('Failed to fetch playlist or tracks:', error);
                     throw error;
                 });
-                if (this.type === 'playlist' && result[1].value === id) {
+                if (this.type === 'playlist' && result[1].status === 'fulfilled' && result[1].value === id) {
                     // 我喜欢的音乐
                     this.playlist.name = this.$t('playlist_view.my_favorite_musics');
                 }
@@ -434,7 +441,7 @@ export default {
             }
         },
         // 获取当前页的歌曲列表
-        async fetchTracks(id, page) {
+        async fetchTracks(id: number | string, page: number) {
             let offset = (page - 1) * 500;
             const limit = 500;
             let getTracks = await useApi('/playlist/track/all', {
@@ -457,12 +464,13 @@ export default {
         // 设置背景颜色
         async _setBackgroundColor() {
             const theme = themes.find(theme => theme.value === this.setting.display.theme)
+            if (!theme) { return; }
             const themeType = theme.type;
             const themeBackground = theme.background;
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType, themeBackground);
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType ?? 'dark', themeBackground);
         },
         // 处理搜索
-        handleSearch(input, fromEnter) {
+        handleSearch(input: string, fromEnter: boolean) {
             console.log('search', input);
             // 更新搜索关键字
             if (fromEnter) {
@@ -488,9 +496,9 @@ export default {
                     trackNameTns = track.tns[0] ? track.tns[0].toLowerCase() : '';
                 }
                 // 歌手名称
-                const trackArtist = track.ar.map(artist => artist.name.toLowerCase()).join(' / ');
+                const trackArtist = track.ar.map((artist: any) => artist.name.toLowerCase()).join(' / ');
                 // 歌手别名
-                const trackArtistTns = track.ar.map(artist => artist.tns[0] ? artist.tns[0].toLowerCase() : '').join('/');
+                const trackArtistTns = track.ar.map((artist: any) => artist.tns[0] ? artist.tns[0].toLowerCase() : '').join('/');
                 // 专辑名称
                 const trackAlbum = track.al.name.toLowerCase();
                 // 专辑别名
@@ -515,7 +523,7 @@ export default {
             Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
         },
         // 播放歌曲
-        async playSongs(track) {
+        async playSongs(track: any) {
             console.log('playSongs');
             await this.player.playTrack(track);
             this.player.playState = 'play';
@@ -535,7 +543,7 @@ export default {
             }
         },
         // 播放歌曲并发送歌单
-        async playSongAndPlaylist(track) {
+        async playSongAndPlaylist(track: any) {
             console.log('playSongAndPlaylist');
             // 准备歌单
             let playlist = preparePlaylist(this.playlist.tracks);
@@ -559,23 +567,29 @@ export default {
             console.log('updatePlayCount:', result);
         },
         // 处理歌手点击
-        handleArtistClick(artistId) {
+        handleArtistClick(artistId: number | string) {
             this.$router.push({
                 path: '/artist/' + artistId,
             })
         },
         scrollToCurrentTrack() {
-            let songstable = this.$refs.playlist_songstable ?? (this.$refs.album_songstable ?? null);
+            let songstable = this.playlist_songstable ?? (this.album_songstable ?? null);
             if (songstable) {
                 songstable.scrollToCurrentTrack();
             }
+        },
+        downloadPlaylist() {
+            console.log('downloadPlaylist');
+        },
+        multiChoice() {
+            console.log('multiChoice');
         },
     },
     beforeUnmount() {
         // 组件销毁时发送消息
         this.openedPlaylist.id = 0;
     }
-}
+})
 </script>
 
 <style lang="scss" scoped>

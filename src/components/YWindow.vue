@@ -11,7 +11,9 @@
 </template>
 
 <script lang="js">
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
     name: 'YWindow',
     data() {
         return {
@@ -39,7 +41,7 @@ export default {
     },
     mounted() {
     },
-}
+})
 </script>
 
 <style lang="scss" scoped>

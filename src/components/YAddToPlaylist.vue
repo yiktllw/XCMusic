@@ -19,20 +19,27 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import YWindow from '@/components/YWindow.vue';
 import YScroll from '@/components/YScroll.vue';
+import { defineComponent, ref } from 'vue';
 import { Message } from '@/tools/YMessageC';
 import { useApi } from '@/ncm/api';
-import { mapState } from 'vuex';
+import { mapState, useStore } from 'vuex';
 
-export default {
+export default defineComponent({
     name: 'YAddToPlaylist',
     props: {
         ids: {
             type: Array,
             required: true,
         },
+    },
+    setup() {
+        const window = ref<InstanceType<typeof YWindow>>();
+        return {
+            window,
+        };
     },
     emits: [
         'new-window-state'
@@ -42,17 +49,17 @@ export default {
         YScroll,
     },
     computed: {
-        ...mapState({
-            login: state => state.login,
-        })
+        login() {
+            return useStore().state.login;
+        }
     },
     data() {
         return {
-            userPlaylists: [],
+            userPlaylists: [] as any[],
         };
     },
     methods: {
-        async addToPlaylist(playlistId) {
+        async addToPlaylist(playlistId: number | string) {
             await useApi('/playlist/tracks', {
                 op: 'add',
                 pid: playlistId,
@@ -73,19 +80,19 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    Message.post('error', this.$t('song_added_failed')+`${error}`);
+                    Message.post('error', this.$t('song_added_failed') + `${error}`);
                     console.error('Failed to add track to playlist:', error);
                 });
-            this.$refs.window.closeWindow();
+            this.window?.closeWindow();
             this.login.refreshUserPlaylists();
         },
-        handleNewWindowState(val) {
+        handleNewWindowState(val: boolean) {
             this.$emit('new-window-state', val);
         },
     },
     mounted() {
         this.login.subscribe({
-            id: 'YAddToPlaylist', 
+            id: 'YAddToPlaylist',
             type: 'userPlaylists',
             func: () => {
                 this.userPlaylists = this.login.userPlaylists;
@@ -98,7 +105,7 @@ export default {
             type: 'userPlaylists',
         });
     },
-}
+})
 
 </script>
 

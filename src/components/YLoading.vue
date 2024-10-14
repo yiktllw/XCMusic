@@ -2,10 +2,11 @@
     <div class="loading-spinner"></div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
     name: 'YLoading'
-}
+})
 
 </script>
 

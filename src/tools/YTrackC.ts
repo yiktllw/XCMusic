@@ -1,7 +1,7 @@
 import { useApi } from "@/ncm/api";
 
 export class YTrackC {
-    _id: string | number;
+    _id: string | number | null;
     _name: string;
     _picUrl: string;
     _ar: any[];
@@ -16,7 +16,7 @@ export class YTrackC {
      * 从歌曲id初始化歌曲信息
      * @param {number|string} id 歌曲id
      */
-    constructor(id: number | string) {
+    constructor(id: number | string | null) {
         this._id = id;
         this._name = '';
         this._picUrl = '';

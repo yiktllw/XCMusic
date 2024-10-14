@@ -62,17 +62,22 @@
     <div class="resizer" @mousedown="initResize"></div>
 </template>
 
-<script lang="js">
-import { mapState } from 'vuex';
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import { mapState, useStore } from 'vuex';
 
-export default {
+export default defineComponent({
     name: 'YSidebar',
     computed: {
-        ...mapState({
-            login: state => state.login,
-            setting: state => state.setting,
-            activeButtonId: state => state.openedPlaylist.id,
-        })
+        login() {
+            return useStore().state.login;
+        },
+        setting() {
+            return useStore().state.setting;
+        },
+        activeButtonId() {
+            return useStore().state.openedPlaylist;
+        },
     },
     data() {
         return {
@@ -81,9 +86,9 @@ export default {
             showMySubscribedPlaylist: true,
             sidebarWidth: 200,
             newWidth: 0,
-            timeout: null,
-            userSubscribes: [],
-            userPlaylists: [],
+            timeout: null as any,
+            userSubscribes: [] as any[],
+            userPlaylists: [] as any[],
         };
     },
     props: {
@@ -92,8 +97,15 @@ export default {
             default: 0,
         },
     },
+    setup() {
+        const sidebar_component = ref<HTMLElement | null>(null);
+
+        return {
+            sidebar_component,
+        };
+    },
     methods: {
-        handleButtonClick(buttonId) {
+        handleButtonClick(buttonId: number | string) {
             const url = `/playlist/${buttonId}`;
             this.$router.push(url);
             console.log(`Button with ID ${buttonId} clicked`);
@@ -102,10 +114,10 @@ export default {
             window.addEventListener('mousemove', this.resize);
             window.addEventListener('mouseup', this.stopResize);
         },
-        resize(e) {
-            const sidebar = this.$refs.sidebar_component
+        resize(e: MouseEvent) {
+            const sidebar = this.sidebar_component
             let newWidth = e.clientX;
-            if (newWidth > 220 && newWidth < 260) {
+            if (newWidth > 220 && newWidth < 260 && sidebar) {
                 this.newWidth = newWidth;
                 sidebar.style.width = `${this.newWidth}px`;
             }
@@ -136,7 +148,7 @@ export default {
             type: 'userPlaylists',
         });
     },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -17,18 +17,10 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
-    name: 'YPanel',
-    data() {
-        return {
-            showPanel: false,
-        }
-    },
-    emits: [
-        'update:modelValue',
-        'show-panel',
-    ],
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+
+export default defineComponent({
     props: {
         trigger: {
             type: Element,
@@ -62,6 +54,22 @@ export default {
             },
         },
     },
+    setup() {
+        const panel = ref<HTMLElement | null>(null);
+        return {
+            panel,
+        };
+    },
+    name: 'YPanel',
+    data() {
+        return {
+            showPanel: false,
+        }
+    },
+    emits: [
+        'update:modelValue',
+        'show-panel',
+    ],
     computed: {
         _animationTime() {
             return this.animationTime + 's';
@@ -105,14 +113,14 @@ export default {
         closePanel() {
             this.showPanel = false;
         },
-        handleClickOutside(event) {
+        handleClickOutside(event: any) {
             if (this.trigger) {
-                if (this.$refs.panel && !this.$refs.panel.contains(event.target) && !this.trigger.contains(event.target) && this.showPanel) {
+                if (this.panel && !this.panel?.contains(event.target) && !this.trigger.contains(event.target) && this.showPanel) {
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }
             } else {
-                if (this.$refs.panel && !this.$refs.panel.contains(event.target) && this.showPanel) {
+                if (this.panel && !this.panel.contains(event.target) && this.showPanel) {
                     this.showPanel = false;
                     console.log('No trigger, handleClickOutside and close panel');
                 }
@@ -127,7 +135,7 @@ export default {
     beforeUnmount() {
         window.removeEventListener('click', this.handleClickOutside);
     },
-}
+})
 
 </script>
 

@@ -12,8 +12,10 @@
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+
+export default defineComponent({
     name: 'YTextBanner',
     props: {
         text: {
@@ -21,6 +23,15 @@ export default {
             required: true,
             default: '',
         },
+    },
+    setup() {
+        const main_ref = ref<HTMLElement | null>(null);
+        const scroll_ref = ref<HTMLElement | null>(null);
+
+        return {
+            main_ref,
+            scroll_ref,
+        };
     },
     computed: {
         animationTime() {
@@ -40,15 +51,23 @@ export default {
         text() {
             // 确保在更新 scroll 元素之后再获取 textwidth
             this.$nextTick(() => {
-                this.mainWidth = this.$refs.main_ref.offsetWidth;
-                this.textwidth = this.$refs.scroll_ref.offsetWidth;
+                if (this.main_ref) {
+                    this.mainWidth = this.main_ref?.offsetWidth;
+                }
+                if (this.scroll_ref) {
+                    this.textwidth = this.scroll_ref?.offsetWidth;
+                }
                 this.updateStyles();
             });
         }
     },
     mounted() {
-        this.textwidth = this.$refs.scroll_ref.offsetWidth;
-        this.mainWidth = this.$refs.main_ref.offsetWidth;
+        if (this.scroll_ref) {
+            this.textwidth = this.scroll_ref?.offsetWidth;
+        }
+        if (this.main_ref) {
+            this.mainWidth = this.main_ref?.offsetWidth;
+        }
         this.updateStyles();
     },
     data() {
@@ -91,7 +110,7 @@ export default {
             }
 
             // 移除现有的 style 元素
-            const existingStyle = this.$refs.main_ref.querySelector('#dynamic-styles');
+            const existingStyle = this.main_ref?.querySelector('#dynamic-styles');
             if (existingStyle) {
                 existingStyle.remove();
             }
@@ -102,17 +121,13 @@ export default {
             style.id = 'dynamic-styles';
 
             // 插入 CSS 规则到 <style> 元素
-            if (style.styleSheet) {
-                style.styleSheet.cssText = cssRules;
-            } else {
-                style.appendChild(document.createTextNode(cssRules));
-            }
+            style.appendChild(document.createTextNode(cssRules));
 
             // 将 <style> 元素插入到 <head> 中
-            this.$refs.main_ref.appendChild(style);
+            this.main_ref?.appendChild(style);
         }
     }
-}
+})
 </script>
 
 <style lang="scss" scoped>

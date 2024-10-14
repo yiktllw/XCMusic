@@ -1,7 +1,3 @@
-<script setup lang="js">
-let page = defineModel();
-</script>
-
 <template>
     <div class="page-main font-color-main" v-if="page.total > 1">
         <div class="previous" @click="page.previous">
@@ -39,17 +35,37 @@ let page = defineModel();
     </div>
 </template>
 
-<script lang="js">
-export default {
+<script lang="ts">
+import { YPageC } from '@/tools/YPageC';
+import { defineComponent, ref, watch } from 'vue';
+export default defineComponent({
     name: 'YPage',
     data() {
         return {
 
         };
     },
+    props: {
+        modelValue: {
+            type: YPageC,
+            default: new YPageC(1),
+        },
+    },
+    setup(props) {
+        const page = ref(props.modelValue);
+
+        // 监听 modelValue 的变化
+        watch(() => props.modelValue, (newValue) => {
+            page.value = newValue;
+        });
+        
+        return {
+            page,
+        };
+    },
     methods: {
     },
-}
+})
 
 </script>
 

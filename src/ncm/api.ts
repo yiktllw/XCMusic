@@ -34,7 +34,7 @@ apiClient.interceptors.request.use(
  * @param {Object} params 剩余参数对象
  * @returns {Promise<any>} 返回一个Promise对象
  */
-export async function useApi(relativePath: string, params: Object): Promise<any> {
+export async function useApi(relativePath: string, params?: Object): Promise<any> {
     try {
         const response = await apiClient.get(relativePath, { params });
         return response.data;

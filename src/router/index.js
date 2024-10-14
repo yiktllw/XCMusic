@@ -13,11 +13,6 @@ const routes = [
                 component: () => import('../views/AboutView.vue')
             },
             {
-                path: 'login',
-                name: 'Login',
-                component: () => import('../components/YLoginWindow.vue')
-            },
-            {
                 path: 'greeting',
                 name: 'Greeting',
                 component: () => import('../views/YGreetingView.vue')

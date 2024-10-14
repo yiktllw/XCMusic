@@ -11,31 +11,36 @@
     </div>
 </template>
 
-<script lang="js">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import YMultiSelect from '../components/YMultiSelect.vue';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { Setting } from '../ncm/setting';
 import TSTest from '../components/TSTest.vue';
 
-export default {
+export default defineComponent({
     name: 'YTestView',
     components: {
         YMultiSelect,
         TSTest,
     },
+    setup(){
+        const store = useStore();
+        
+        return {
+            player: store.state.player,
+            setting: store.state.setting,
+        }
+    },
     computed: {
-        ...mapState({
-            player: state => state.player,
-            setting: state => state.setting,
-        }),
     },
     data() {
         return {
-            tracks: [],
+            tracks: [] as any[],
         };
     },
     methods: {
-        hexToRgb(hex) {
+        hexToRgb(hex: string) {
             // 去掉前导的 '#' 符号（如果存在）
             hex = hex.replace(/^#/, '');
 
@@ -72,7 +77,7 @@ export default {
             type: 'playlist',
         });
     },
-}
+})
 
 </script>
 
