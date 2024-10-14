@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/yiktllw/XCMusic/compare/v0.1.1...v0.1.2) (2024-10-14)
+
+
+### Features
+
+* 实现曲谱预览 ([44c9bb2](https://github.com/yiktllw/XCMusic/commit/44c9bb2f5bc5aad9ae122f61de3f507d8e434a5b))
+* 新增播放界面进度条时间提示，优化进度条样式 ([f067b4f](https://github.com/yiktllw/XCMusic/commit/f067b4f38df1c1b9acfd676c272184c208a8ca23))
+* 在播放无版权音乐时，跳过到下一首 ([7084158](https://github.com/yiktllw/XCMusic/commit/70841582a1e9b0bebdfd1294c4476fc990709e1f))
+
+
+### Bug Fixes
+
+* 尝试修复部署错误 ([40b20b3](https://github.com/yiktllw/XCMusic/commit/40b20b344ef07b4c6e3291f917e13fdfcd32ecb2))
+* 修复评论界面错误，修复背景颜色错误 ([032b7d3](https://github.com/yiktllw/XCMusic/commit/032b7d3a8cf1ab883a38b459ba24e8c3bfdf7ced))
+
 ### 0.1.1 (2024-10-12)
 
 
