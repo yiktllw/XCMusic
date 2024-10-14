@@ -1,16 +1,15 @@
 import Color from "color";
 import { themes } from "./theme";
 
-/**
- * @typedef {Object} COLOR - 颜色对象
- * @property {number} r - 红色值
- * @property {number} g - 绿色值
- * @property {number} b - 蓝色值
- */
+/* eslint-disable no-undef */
 
-/**
- * @typedef {('dark'|'light')} COLOR_THEME_TYPE
- */
+type COLOR = {
+    r: number,
+    g: number,
+    b: number
+}
+
+type COLOR_THEME_TYPE = ('dark' | 'light');
 
 const darkThemeColors = [ // eslint-disable-line
     '#1d2932',
@@ -38,37 +37,12 @@ const darkThemeColors = [ // eslint-disable-line
 ]
 
 export class YColor {
-    darkThemeColors = [ // eslint-disable-line
-        '#1d2932',
-        '#3c4871',
-        '#405772',
-        '#425d72',
-        '#435f2f',
-        '#486f63',
-        '#4b3c71',
-        '#4d6e45',
-        '#576f46',
-        '#583d71',
-        '#5c6f45',
-        '#5d3d71',
-        '#5e6f45',
-        '#6e4455',
-        '#673e71',
-        '#693c4b',
-        '#6a3d60',
-        '#6a423f',
-        '#6d5a42',
-        '#6e6544',
-        '#6f6845',
-        '#707046',
-    ];
-
     /**
      * 查询值对应的主题
      * @param {string} themeValue 主题值
      * @returns {Object} 主题对象: { value: string, display: string, type?: string, background?: string }
      */
-    static findTheme(themeValue) {
+    static findTheme(themeValue: string): any {
         return themes.find((theme) => theme.value === themeValue);
     }
     /**
@@ -76,7 +50,7 @@ export class YColor {
      * @param {string} hex hex颜色值
      * @returns {COLOR} 对象: { r: number, g: number, b: number }
      */
-    static hexToRgb(hex) {
+    static hexToRgb(hex: string): COLOR {
         const bigint = parseInt(hex.slice(1), 16);
         const r = (bigint >> 16) & 255;
         const g = (bigint >> 8) & 255;
@@ -91,7 +65,7 @@ export class YColor {
      * @param {number} b 蓝色值
      * @returns HEX颜色值
      */
-    static rgbToHex(r, g, b) {
+    static rgbToHex(r: number, g: number, b: number) {
         return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
     }
 
@@ -100,7 +74,7 @@ export class YColor {
      * @param {string} hex HEX颜色值
      * @returns {string} HEX颜色值
      */
-    static getLightThemeColor(hex, background = '#FFFFFF') {
+    static getLightThemeColor(hex: string, background = '#FFFFFF'): string | null {
         const rgb = this.hexToRgb(hex);
         if (!rgb) return null; // 如果 HEX 格式不正确，则返回 null
 
@@ -125,7 +99,7 @@ export class YColor {
      * @param {COLOR_THEME_TYPE} colorThemeType 颜色主题类型，'dark' 或 'light'
      * @param {string} themeBackground 主题的背景颜色，HEX，默认为 '#131319'
      */
-    static setBkColorFromImg(imgSrc, document, colorThemeType, themeBackground = '#131319') {
+    static setBkColorFromImg(imgSrc: string, document: Document, colorThemeType: COLOR_THEME_TYPE, themeBackground: string = '#131319') {
         getColorFromImg(imgSrc, document).then((color) => {
             if (color) {
                 if (colorThemeType === 'dark') {
@@ -134,14 +108,14 @@ export class YColor {
                 } else if (colorThemeType === 'light') {
                     // 亮色主题
                     let lightColor = this.getLightThemeColor(this.rgbToHex(color.r, color.g, color.b))
-                    setBackgroundColor(this.hexToRgb(lightColor));
+                    setBackgroundColor(this.hexToRgb(lightColor ?? '#FFFFFF'));
                 } else {
                     // 其他主题，对应colorThemeType为Undefined
                     const DOM = document.querySelector('.mainContainer');
                     if (!DOM) return;
                     const themeColorHEX = this.getLightThemeColor(this.rgbToHex(color.r, color.g, color.b), themeBackground);
-                    const themeColorRGB = this.hexToRgb(themeColorHEX);
-                    DOM.style.background = `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
+                    const themeColorRGB = this.hexToRgb(themeColorHEX ?? '#FFFFFF');
+                    (DOM as HTMLElement).style.background = `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
                 }
             } else {
                 setBackgroundColorTheme();
@@ -155,7 +129,7 @@ export class YColor {
  * @param {string} imgSrc 图片地址
  * @param {Document} document Document 对象
  */
-export function setColorFromImg(imgSrc, document) {
+export function setColorFromImg(imgSrc: string, document: Document) {
     getColorFromImg(imgSrc, document).then((color) => {
         if (color) {
             setBackgroundColor(color);
@@ -170,10 +144,10 @@ export function setColorFromImg(imgSrc, document) {
  * @param {COLOR} color 对象: { r: number, g: number, b: number }
  * @returns 
  */
-export function setBackgroundColor(color) {
+export function setBackgroundColor(color: COLOR) {
     const DOM = document.querySelector('.mainContainer');
     if (!DOM) return;
-    DOM.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
+    (DOM as HTMLElement).style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
 }
 
 /**
@@ -181,10 +155,10 @@ export function setBackgroundColor(color) {
  * @param {string} hex HEX颜色值
  * @returns 
  */
-export function setBackgroundColorHex(hex) {
+export function setBackgroundColorHex(hex: string) {
     const DOM = document.querySelector('.mainContainer');
     if (!DOM) return;
-    DOM.style.background = `linear-gradient(180deg, ${hex} 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
+    (DOM as HTMLElement).style.background = `linear-gradient(180deg, ${hex} 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
 }
 
 /**
@@ -194,7 +168,7 @@ export function setBackgroundColorHex(hex) {
 export function setBackgroundColorTheme() {
     const DOM = document.querySelector('.mainContainer');
     if (!DOM) return;
-    DOM.style.background = 'var(--background-color)';
+    (DOM as HTMLElement).style.background = 'var(--background-color)';
 }
 
 /**
@@ -204,7 +178,7 @@ export function setBackgroundColorTheme() {
  * @param {number} b 蓝色值
  * @returns {COLOR} 对象: { r: number, g: number, b: number }
  */
-function increaseSaturation(r, g, b,) { // eslint-disable-line
+function increaseSaturation(r: number, g: number, b: number,): COLOR { // eslint-disable-line
     // 创建一个 Color 对象
     const color = Color.rgb(r, g, b);
 
@@ -225,25 +199,30 @@ function increaseSaturation(r, g, b,) { // eslint-disable-line
  * @param {Document} document Document 对象
  * @returns {COLOR} 对象: { r: number, g: number, b: number }
  */
-export async function getColorFromImg(imgSrc, document) {
+export async function getColorFromImg(imgSrc: string, document: Document): Promise<COLOR | null> {
     // 创建一个图片对象
     // console.log('step1');
     const img = new Image();
     img.crossOrigin = 'Anonymous';
     // 设置图片 URL为歌单封面
     img.src = imgSrc;
-    if (!img.src) return;
+    if (!img.src) {
+        return new Promise((resolve, reject) => {
+            reject('img src is null');
+        });
+    }
     // console.log('step2');
     // console.log(img);
 
     // 使用 Promise 包装 img.onload
-    const color = await new Promise((resolve, reject) => {
+    const color: COLOR | null = await new Promise<COLOR>((resolve, reject) => {
         // 图片加载完成后执行
         img.onload = () => {
             try {
                 // console.log('step3');
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
+                if (!context) return;
                 canvas.width = img.width;
                 canvas.height = img.height;
                 context.drawImage(img, 0, 0, img.width, img.height);
@@ -275,7 +254,7 @@ export async function getColorFromImg(imgSrc, document) {
                 }
 
                 if (count === 0) {
-                    resolve(null); // 防止除以零的情况
+                    reject('no valid pixel');
                     return;
                 }
 
@@ -312,14 +291,15 @@ export async function getColorFromImg(imgSrc, document) {
             reject(error); // 处理图片加载错误
         };
     }).catch((error) => {
-        console.error('get color from image error: ', error); // 捕获错误
-    });
+        console.error('get color from image error: ', error, ', return null'); // 捕获错误
+        return null; // 返回 null
+    }) ?? null;
 
     // console.log('color of img', color);
     return color; // 返回结果
 }
 
-export function hexToRgb(hex) {
+export function hexToRgb(hex: string): COLOR {
     const bigint = parseInt(hex.slice(1), 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
@@ -327,7 +307,7 @@ export function hexToRgb(hex) {
     return { r, g, b };
 }
 
-function colorDistance(color1, color2) {
+function colorDistance(color1: COLOR, color2: COLOR): number {
     // 计算两个颜色之间的欧几里得距离
     return Math.sqrt(
         Math.pow(color1.r - color2.r, 2) +

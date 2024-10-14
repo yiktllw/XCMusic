@@ -4,7 +4,7 @@
  * @param {Array} playlist 要准备的播放列表
  * @returns {Array} 返回准备好的播放列表
  */
-export function preparePlaylist(playlist) {
+export function preparePlaylist(playlist: any[]): Array<any> {
     return playlist.map((track, index) => {
         return {
             ...track,

@@ -1,22 +1,22 @@
 import { themes } from "./theme";
 
-/**
- * 设置项
- * @typedef {Object} SettingCatagory 设置分类
- * @property {Object} SettingCatagory.SettingItem 设置项
- * @property {any} SettingCatagory.SettingItem.value 设置项的值
- * @property {any} SettingCatagory.SettingItem.default 设置项的默认值
- * @property {Function} SettingCatagory.SettingItem.validation 设置项的验证函数
- * @property {String} SettingCatagory.SettingItem.type 设置项值的类型，可选，目前只支持为 'number'
- * @property {Boolean} SettingCatagory.SettingItem.nosave 是否不保存到 localStorage
- */
+/* eslint-disable no-undef */
 
-/**
- * 设置组
- * @typedef {Array<SettingCatagory>} SettingGroup 设置组
- */
+type SettingCatagory = {
+    [key: string]: {
+        value: any,
+        default: any,
+        validation: (value: any) => boolean,
+        type?: 'number',
+        nosave?: boolean
+    }
+}
 
-export const settingGroup = {
+type SettingGroup = {
+    [key: string]: SettingCatagory
+};
+
+export const settingGroup: SettingGroup = {
     play: {
         volume: {
             value: localStorage.getItem('setting.play.volume') ?? 1,
@@ -120,7 +120,7 @@ export const settingGroup = {
     },
     titleBar: {
         searchHistory: {
-            value: JSON.parse(localStorage.getItem('setting.searchHistory')) ?? [],
+            value: JSON.parse(localStorage.getItem('setting.searchHistory') || '[]') ?? [],
             default: [],
             nosave: true,
             validation: (value) => {
@@ -155,20 +155,20 @@ export class Setting {
     constructor() {
         return Setting.createProxy(settingGroup);
     }
-    static createProxy(obj) {
-        const proxyObj = {};
+    static createProxy(obj: SettingGroup): any {
+        const proxyObj: { [key: string]: any } = {};
 
         for (const key of Object.keys(obj)) {
             if (typeof obj[key] === 'object' && obj[key] !== null) {
-                proxyObj[key] = new Proxy(obj[key], {
+                proxyObj[key] = new Proxy(obj[key] as SettingCatagory, {
                     get(target, prop) {
-                        if (prop in target && 'value' in target[prop]) {
+                        if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
                             return target[prop].value;
                         }
-                        return target[prop];
+                        return typeof prop === 'string' ? target[prop] : undefined;
                     },
                     set(target, prop, value) {
-                        if (prop in target && 'value' in target[prop]) {
+                        if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
                             if (target[prop].type === 'number') {
                                 value = parseFloat(value);
                             }
@@ -196,8 +196,8 @@ export class Setting {
      * @param {Setting} instance Setting的实例
      * @returns {string} JSON string
      */
-    static exportToJSON(instance) {
-        let settings = {};
+    static exportToJSON(instance: any): string {
+        let settings: { [key: string]: any } = {};
         for (const key of Object.keys(settingGroup)) {
             settings[key] = {};
             try {
@@ -223,7 +223,7 @@ export class Setting {
      * @param {Setting} instance Setting的实例
      * @param {String} json JSON字符串
      */
-    static importFromJSON(instance, json) {
+    static importFromJSON(instance: any, json: string) {
         let settings = JSON.parse(json);
         for (const key of Object.keys(settings)) {
             try {

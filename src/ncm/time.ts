@@ -4,7 +4,7 @@
  * @param {number} timestamp 时间戳
  * @returns {string} 格式化后的时间字符串
  */
-export function formatDate_yyyymmdd(timestamp) {
+export function formatDate_yyyymmdd(timestamp: number): string {
     const date = new Date(timestamp);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -16,8 +16,8 @@ export function formatDate_yyyymmdd(timestamp) {
  * 格式化时间戳为 mm:ss
  * @param {number} duration 时间戳, 毫秒
  */
-export function formatDuration_mmss(duration) {
+export function formatDuration_mmss(duration: number) {
     const minutes = Math.floor(duration / 60000);
     const seconds = ((duration % 60000) / 1000).toFixed(0);
-    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${Number(seconds) < 10 ? '0' : ''}${seconds}`;
 }

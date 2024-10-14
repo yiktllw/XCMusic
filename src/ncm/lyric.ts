@@ -1,9 +1,17 @@
+/* eslint-disable no-undef */
+
+interface YrcItem {
+    startTime: number;
+    duration?: number;
+    words: Array<any>;
+}
 
 export class Lyrics {
     #allowTypes = [
         'yrc',
         'lrc',
     ]
+    lyrics: any[] | undefined;
     /**
      * 从api返回的歌词数据中解析歌词
      * @param {Object} params
@@ -13,7 +21,7 @@ export class Lyrics {
     constructor({
         type,
         data,
-    }) {
+    }: { type: string; data: string; }) {
         if (!this.#allowTypes.includes(type)) {
             console.error('Unsupported lyric type:', type, 'Supported types:', this.#allowTypes);
         } else {
@@ -29,9 +37,9 @@ export class Lyrics {
      * @param {string} yrc 
      * @returns {Array} 返回解析后的歌词数组
      */
-    static parseYRC(yrc) {
+    static parseYRC(yrc: string): Array<any> {
         const lines = yrc.split('\n');  // 将yrc内容按行分割
-        const lyrics = [{
+        const lyrics: YrcItem[] = [{
             startTime: 0,
             duration: 0,
             words: [
@@ -53,7 +61,11 @@ export class Lyrics {
                 const wordEntries = [];
                 if (textMatch) {
                     for (const text of textMatch) {
-                        const [, start, length, char] = text.match(/\((\d+),(\d+),\d+\)(.+)/);
+                        const match = text.match(/\((\d+),(\d+),\d+\)(.+)/);
+                        if (!match) {
+                            return [];
+                        }
+                        let [, start, length, char] = match;
                         wordEntries.push({
                             startTime: parseInt(start),
                             duration: parseInt(length),
@@ -72,7 +84,7 @@ export class Lyrics {
                     const obj = JSON.parse(line);
                     lyrics.push({
                         startTime: obj.t,
-                        words: obj.c.map(item => ({ text: item.tx })),
+                        words: obj.c.map((item: any) => ({ text: item.tx })),
                     });
                 } catch (e) {
                     // 忽略解析错误行
@@ -88,7 +100,7 @@ export class Lyrics {
      * @param {string} lrc LRC歌词
      * @returns {Array} 返回解析后的歌词数组
      */
-    static parseLRC(lrc) {
+    static parseLRC(lrc: string): Array<any> {
         // 将LRC文件按行分割
         const lines = lrc.split('\n');
         // 存储解析结果的数组

@@ -1,12 +1,9 @@
-/**
- * @typedef {'info'|'success'|'warning'|'error'} MSG_TYPES
- */
+/* eslint-disable no-undef */
 
-/**
- * @typedef {Object} Msg
- * @property {string} message
- * @property {MSG_TYPES} type
- */
+type Msg = {
+    message: string,
+    type: 'info' | 'success' | 'warning' | 'error',
+}
 
 export class YMessageC {
     #types = ['info', 'success', 'warning', 'error'];
@@ -19,7 +16,7 @@ export class YMessageC {
     constructor({
         message,
         type,
-    }) {
+    }: Msg) {
         this.#message = message;
         if (this.#types.includes(type)) {
             this.#type = type;
@@ -47,7 +44,7 @@ export class Message {
      * @param {'info'|'success'|'warning'|'error'} type 消息类型
      * @param {string} message 消息内容
      */
-    static post(type, message) {
+    static post(type: 'info' | 'success' | 'warning' | 'error', message: string) {
         if (['info', 'success', 'warning', 'error'].includes(type)) {
             const msg = new YMessageC({
                 type: type,

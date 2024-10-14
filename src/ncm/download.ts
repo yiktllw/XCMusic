@@ -19,9 +19,9 @@ export class Download {
      * @param {String} track.al.name 专辑名称
      * @param {String} track.al.picUrl 封面 URL
      */
-    static async song(songUrl, track) {
+    static async song(songUrl: string, track: { name: string; ar: Array<object>; al: { name: string; picUrl: string; }; }) {
         const name = track.name;
-        const artist = track.ar.map((ar) => ar.name).join('; ');
+        const artist = track.ar.map((ar: any) => ar.name).join('; ');
         const album = track.al.name;
         const coverUrl = track.al.picUrl;
 
@@ -85,19 +85,19 @@ export class Download {
             writer.on('error', reject);
         });
     }
-    
+
     /**
      * 在indexDB中保存已下载的歌曲信息
      * 
      * 
      */
-    static async #saveSongInfo(track, filePath) {
+    static async #saveSongInfo(track: any, filePath: string) {
         const db = new indexDB('ncm', 'downloaded_songs');
         await db.openDatabase();
         await db.storePlaylist([{
             id: track.id,
             name: track.name,
-            artist: track.ar.map((ar) => ar.name).join('; '),
+            artist: track.ar.map((ar: any) => ar.name).join('; '),
             album: track.al.name,
             filePath: filePath,
         }]);
@@ -107,9 +107,9 @@ export class Download {
      * 获取已下载的歌曲信息
      * 
      */
-    async getDownloadedSongs() {
-        const db = new indexDB('ncm', 'downloaded_songs');
-        await db.openDatabase();
-        return await db.getDownloadedSongs();
-    }
+    // async getDownloadedSongs() {
+    //     const db = new indexDB('ncm', 'downloaded_songs');
+    //     await db.openDatabase();
+    //     return await db.getDownloadedSongs();
+    // }
 }

@@ -4,6 +4,8 @@
         "module": "commonjs",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
         "baseUrl": ".",
         "paths": {
             "@/*": [

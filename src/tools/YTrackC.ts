@@ -1,17 +1,33 @@
 import { useApi } from "@/ncm/api";
 
 export class YTrackC {
+    _id: string | number;
+    _name: string;
+    _picUrl: string;
+    _ar: any[];
+    _al: {
+        id: number,
+        name: string,
+        picUrl: string,
+        tns: string[]
+    };
+    _onTrackLoaded: Function;
     /**
      * 从歌曲id初始化歌曲信息
      * @param {number|string} id 歌曲id
      */
-    constructor(id = null) {
+    constructor(id: number | string) {
         this._id = id;
         this._name = '';
         this._picUrl = '';
         this._ar = [];
-        this._al = {};
-        this._onTrackLoaded = null;
+        this._al = {
+            id: 0,
+            name: '',
+            picUrl: '',
+            tns: []
+        };
+        this._onTrackLoaded = () => {};
         this.#init();
     }
     /**
@@ -55,7 +71,7 @@ export class YTrackC {
     get onTrackLoaded() {
         return this._onTrackLoaded;
     }
-    get track(){
+    get track() {
         return {
             id: this._id,
             name: this._name,

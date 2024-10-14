@@ -1,5 +1,7 @@
 
 export class Tracks {
+    _tracksMap: Map<any, any>;
+    _tracks: any;
     /**
      * 初始化歌曲列表
      * @param {object} params 参数
@@ -7,11 +9,7 @@ export class Tracks {
      * @param {Array} params.tracks 歌曲列表
      * @param {object} params.params 额外参数
      */
-    constructor({
-        url = '/playlist/tracks/all',
-        tracks = [],
-        params = {},
-    }) {
+    constructor({ url, tracks, params, }: { url: string; tracks: Array<any>; params: any; }) {
         this._tracksMap = new Map();
         this._tracks = tracks.map((item, index) => {
             let resultTrack = {
@@ -43,23 +41,24 @@ export class Tracks {
                 lyrics: [
                     '',
                 ],
-                h: null,
-                l: null,
-                sq: null,
-                hr: null,
-                jyeffect: null,
-                sky: null,
-                jymaster: null,
+                h: null as any,
+                l: null as any,
+                sq: null as any,
+                hr: null as any,
+                jyeffect: null as any,
+                sky: null as any,
+                jymaster: null as any,
+                originalIndex: null as any,
             }
             if (item !== null) {
-                let track = null;
+                let track: any = null;
                 if (url === '/user/record') {
                     track = item.song;
                 } else if (url === '/cloudsearch?type=1' || url === '/cloudsearch?type=1006') {
                     track = item;
                 } else if (url === '/artist/songs') {
                     track = item;
-                    let index = params.albums.findIndex((album) => album.id === track.al.id);
+                    let index = params.albums.findIndex((album: any) => album.id === track.al.id);
                     if (index === -1) {
                         track.al.picUrl = require('@/assets/song.svg');
                     } else {
@@ -74,7 +73,7 @@ export class Tracks {
                         picUrl: track.album.picUrl,
                         tns: '',
                     }
-                    track.ar = track.artists.map((ar) => {
+                    track.ar = track.artists.map((ar: any) => {
                         return {
                             id: ar.id,
                             name: ar.name,
@@ -93,8 +92,8 @@ export class Tracks {
                         }
                     }
                     if (params.reels) {
-                        params.reels.forEach((reel, reelIndex) => {
-                            reel.songList.forEach((song, songIndex) => {
+                        params.reels.forEach((reel: any, reelIndex: any) => {
+                            reel.songList.forEach((song: any, songIndex: any) => {
                                 if (song.songId == track.id) {
                                     track.reelName = song.songName;
                                     resultTrack.reelIndex = reelIndex;
@@ -125,7 +124,7 @@ export class Tracks {
                 resultTrack._picUrl = track.al.picUrl + '?param=80y80';
                 resultTrack.cd = track.cd ?? 1;
                 resultTrack.no = track.no ?? 1;
-                resultTrack.ar = track.ar.map((ar) => {
+                resultTrack.ar = track.ar.map((ar: any) => {
                     return {
                         id: ar.id,
                         name: ar.name,
@@ -155,25 +154,21 @@ export class Tracks {
     get tracks() {
         return this._tracks;
     }
-    /**
-     * 获取 tracks 的 Map 形式
-     * @returns {Map} 返回基于 track.id 的 Map
-     */
-    get tracksMap() {
-        return this._tracksMap;
-    }
 
     /**
      * 使用 id 获取单个 track
      * @param {number} id 要获取的 track 的 id
      * @returns {object|null} 返回对应 id 的 track 对象或 null
      */
-    getTrackById(id) {
+    getTrackById(id: number): object | null {
         return this._tracksMap.get(id) || null;
     }
 }
 
 export class Track {
+    _track: object;
+    _url: string;
+    _params: object;
     /**
      * 初始化歌曲信息
      * @param {object} params 参数
@@ -188,7 +183,7 @@ export class Track {
             type: 'local',
             path: 'C:/',
         },
-    }) {
+    }: { url: string; track: object; params: any; }) {
         this._track = track;
         this._url = url;
         this._params = params;

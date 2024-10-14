@@ -1,10 +1,13 @@
 
 export class YPageC {
+    _current: number;
+    _total: number;
+    _onPageChange: null | Function;
     /**
      * 分类类，用于YPage.vue
      * @param {number} totalPage 总页数
      */
-    constructor(totalPage) {
+    constructor(totalPage: number) {
         this._current = 1;
         this._total = totalPage;
         this._onPageChange = null;

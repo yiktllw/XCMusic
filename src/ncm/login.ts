@@ -1,9 +1,19 @@
 import { Subscriber } from "@/tools/subscribe";
 import { useApi } from "./api";
-import { ref, reactive, markRaw, shallowReactive } from 'vue'; // eslint-disable-line
+import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue'; // eslint-disable-line
 import i18n from "@/i18n";
 
 export class Login {
+    _cookie: string | null;
+    _status: Ref<boolean> | boolean;
+    _userId: Ref<number | string | null> | number | string | null;
+    _userName: Ref<string | null> | string | null;
+    _likelist: Raw<any[]>;
+    _avatar: Ref<string | null> | string | null;
+    _userPlaylists: Reactive<any[]>;
+    _userSubscribes: Reactive<any[]>;
+    subscriber: Subscriber;
+    interval: NodeJS.Timeout;
     constructor() {
         this._cookie = ((localStorage.getItem('login_cookie') ?? null));
         this._status = ref(localStorage.getItem('login_cookie') ? true : false);
@@ -32,7 +42,7 @@ export class Login {
         id,
         type,
         func,
-    }) {
+    }: { id: string; type: string; func: Function; }) {
         this.subscriber.on({
             id: id,
             func: func,
@@ -40,8 +50,11 @@ export class Login {
         });
     }
     unSubscribe({
-        id = '',
-        type = '',
+        id,
+        type,
+    } : {
+        id: string;
+        type: string;
     }) {
         this.subscriber.off({
             id: id,
@@ -57,7 +70,7 @@ export class Login {
         }
     }
     async updateInfo() {
-        console.log('updateInfo');
+        // console.log('updateInfo');
         await useApi('/user/account', {
             cookie: this._cookie
         }).then(res => {
@@ -95,13 +108,13 @@ export class Login {
         this._avatar = null;
         this._userPlaylists = markRaw([]);
         this._userSubscribes = markRaw([]);
-        this.subscriber = markRaw(new Subscriber());
+        this.subscriber = markRaw(new Subscriber(['userPlaylists']));
     }
     get cookie() {
         return this._cookie;
     }
     set cookie(value) {
-        localStorage.setItem('login_cookie', value);
+        localStorage.setItem('login_cookie', value ?? '');
         this._cookie = value;
         this._status = true;
         this.updateInfo();
@@ -156,7 +169,7 @@ export class Login {
         }).then(res => {
             this._userPlaylists = [];
             this._userSubscribes = [];
-            res.playlist.forEach(playlist => {
+            res.playlist.forEach((playlist: any) => {
                 if (!playlist.subscribed) {
                     this._userPlaylists.push({
                         name: playlist.name,

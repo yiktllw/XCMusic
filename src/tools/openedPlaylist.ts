@@ -1,5 +1,7 @@
 
 export class OpenedPlaylist {
+    _id: number;
+    _onIdChange: { func: (() => void) | null; id: any; }[];
     constructor(){
         this._id = 0;
         this._onIdChange = [{
@@ -14,7 +16,7 @@ export class OpenedPlaylist {
         this._id = id;
         this.execCallbacks();
     }
-    Subscribe(callback, identifier){
+    Subscribe(callback: any, identifier: null){
         if(typeof callback !== 'function'){
             console.log('openedPlaylist.js error: callback is not a function: ', callback);
         }

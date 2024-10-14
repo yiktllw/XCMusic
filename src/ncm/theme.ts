@@ -1,4 +1,12 @@
-export var themes = [
+/* eslint-disable no-undef */
+interface Theme {
+    value: string,
+    display: string,
+    type?: 'dark' | 'light',
+    background?: string,
+}
+
+export var themes: Theme[] = [
     {
         // value 是theme.scss里的class名的后半部分，比如 `theme-${value}`
         value: 'dark',

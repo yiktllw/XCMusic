@@ -1,5 +1,10 @@
 
 export class YContextMenuItemC {
+    _label: string;
+    _role: string;
+    _icon: string;
+    _showSeparator: boolean;
+    _display: boolean;
     /**
      * @param {Object} params
      * @param {string} params.label 显示的文字
@@ -14,7 +19,7 @@ export class YContextMenuItemC {
         icon = '@/assets/play.png',
         showSeparator = false,
         display = false,
-    }) {
+    }: { label: string; role: string; icon: string; showSeparator: boolean; display: boolean; }) {
         this._label = label;
         this._role = role;
         this._icon = icon;
@@ -118,7 +123,6 @@ export var songItems = [
         icon: require('@/assets/delete.svg'),
         role: 'song-delete',
         showSeparator: false,
-        from: -1,
         display: false,
     })
 ]

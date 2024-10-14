@@ -34,7 +34,7 @@ apiClient.interceptors.request.use(
  * @param {Object} params 剩余参数对象
  * @returns {Promise<any>} 返回一个Promise对象
  */
-export async function useApi(relativePath, params) {
+export async function useApi(relativePath: string, params: Object): Promise<any> {
     try {
         const response = await apiClient.get(relativePath, { params });
         return response.data;
@@ -50,7 +50,7 @@ export async function useApi(relativePath, params) {
  * @param {*} cookie 登录cookie
  * @returns 
  */
-export async function setLike(id, like, cookie) {
+export async function setLike(id: number | string, like: boolean, cookie: string) {
     let result = await useApi('/like', {
         id: id,
         like: like,
@@ -66,10 +66,10 @@ export async function setLike(id, like, cookie) {
  * @param {number} id 歌曲id
  * @param {*} status 当前状态
  */
-export async function toogleLike(id, status) {
+export async function toogleLike(id: number | string, status: boolean) {
     if (status) {
-        await setLike(id, false, localStorage.getItem('login_cookie'));
+        await setLike(id, false, localStorage.getItem('login_cookie') ?? '');
     } else {
-        await setLike(id, true, localStorage.getItem('login_cookie'));
+        await setLike(id, true, localStorage.getItem('login_cookie') ?? '');
     }
 }

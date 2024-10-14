@@ -1,19 +1,39 @@
 import { reactive, markRaw } from 'vue'; // eslint-disable-line 
+/* eslint-disable no-undef */
+
+interface SubscriberOptions {
+    id?: string;
+    func?: Function;
+    type?: string;
+}
+
+interface SubscriberItem {
+    globalIndex: number;
+    id: number | string;
+    func: Function;
+    type: string;
+}
 
 export class Subscriber {
-    _subscribes = markRaw([]);
-    globalIndex = markRaw(0);
+    _subscribes: any | Array<SubscriberItem> = markRaw([]);
+    globalIndex = 0;
+    allowedEvents: string[];
+    arrayWithId: any;
     /**
      * 订阅事件类   
      * @param {Array<string>} allowedEvents 允许订阅的事件类型
      */
-    constructor(allowedEvents) {
+    constructor(allowedEvents: Array<string>) {
         this.allowedEvents = allowedEvents;
     }
     #push({
-        id = '',
-        func = () => { },
-        type = ''
+        id,
+        func,
+        type,
+    }: {
+        id: string | number,
+        func: Function,
+        type: string,
     }) {
         this._subscribes.push({
             globalIndex: this.globalIndex,
@@ -23,8 +43,8 @@ export class Subscriber {
         });
         this.globalIndex++;
     }
-    #updateSubscribe(globalIndex, func) {
-        let index = this._subscribes.findIndex(item => item.index === globalIndex);
+    #updateSubscribe(globalIndex: string | number, func: Function) {
+        let index = this._subscribes.findIndex((item: { index: string | number; }) => item.index === globalIndex);
         if (index !== -1) {
             this._subscribes[index].func = func;
         }
@@ -40,7 +60,7 @@ export class Subscriber {
         id,
         type,
         func = () => { },
-    }) {
+    }: { id?: string; func?: Function; type?: string; }) {
         if (typeof func !== 'function') {
             console.log('func is not a function: ', func);
             return;
@@ -49,28 +69,28 @@ export class Subscriber {
             console.log('id is empty');
             return;
         }
-        if (!this.allowedEvents?.includes(type)) {
+        if (!this.allowedEvents?.includes(type as string)) {
             console.log('type is not in allowedEvents: ', type);
             return;
         }
-        let arrayWithId = this._subscribes.filter(item => item.id === id);
+        let arrayWithId = this._subscribes.filter((item: { id: string | undefined; }) => item.id === id);
         if (arrayWithId.length === 0) {
             // 如果没有这个id的订阅，则直接添加到订阅列表。
             this.#push({
-                id: id,
+                id: id as string,
                 func: func,
-                type: type
+                type: type as string
             });
         }
         // 如果有这个id的订阅
         else {
-            let index = arrayWithId.findIndex(_item => _item.type === type);
+            let index = arrayWithId.findIndex((_item: { type: string | undefined; }) => _item.type === type);
             if (index === -1) {
                 // 如果有这个id的订阅，但是没有这个type的订阅，则直接添加到订阅列表。
                 this.#push({
-                    id: id,
+                    id: id as string,
                     func: func,
-                    type: type
+                    type: type as string
                 });
             } else {
                 // 如果有这个id的订阅，而且也有这个type的订阅，则更新这个订阅。
@@ -89,12 +109,12 @@ export class Subscriber {
     off({
         id = '',
         type = '',
-    }) {
-        let arrayWithId = this._subscribes.filter(item => item.id === id);
+    }: { id?: string; type?: string; }) {
+        let arrayWithId = this._subscribes.filter((item: { id: string; }) => item.id === id);
         if (arrayWithId.length !== 0) {
-            arrayWithId.forEach(item => {
+            arrayWithId.forEach((item: { type: string; globalIndex: any; }) => {
                 if (item.type === type) {
-                    let index = this._subscribes.findIndex(_item => _item.globalIndex === item.globalIndex);
+                    let index = this._subscribes.findIndex((_item: { globalIndex: any; }) => _item.globalIndex === item.globalIndex);
                     this._subscribes.splice(index, 1);
                 }
             })
@@ -104,8 +124,8 @@ export class Subscriber {
      * 执行某种事件
      * @param {string} type - 要执行的事件类型
      */
-    exec(type) {
-        this._subscribes.forEach(item => {
+    exec(type: string) {
+        this._subscribes.forEach((item: { type: string; func: () => void; }) => {
             if (item.type === type) {
                 item.func();
             }

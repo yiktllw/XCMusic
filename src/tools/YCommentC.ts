@@ -1,14 +1,24 @@
+/* eslint-disable no-undef */
 import { useApi } from "@/ncm/api";
 import { YPageC } from "./YPageC";
+type Types = 'song' | 'playlist' | 'album';
 
 export class YCommentC {
+    _type: Types;
+    _id: string | number;
+    _commentsTitle: string;
+    _comments: any[];
+    _sortType: string;
+    page: YPageC;
+    _count: number;
+    _onCommentUpdate: any;
     /**
      * 
      * @param {'song'|'playlist'|'album'} type 评论资源的类型
      * @param {number|string} id 评论资源的id
      */
-    constructor(type = 'song', id = null) {
-        this._type = null;
+    constructor(type: Types, id: number | string) {
+        this._type = 'album';
         // 0: song, 2: playlist, 3: album
         this.type = type;
         // id
@@ -32,7 +42,7 @@ export class YCommentC {
      * 初始化评论数据
      * @param {boolean} newPageInstance 是否创建新的分页实例，创建则会重置页码
      */
-    async #initData(newPageInstance = false) {
+    async #initData(newPageInstance: boolean = false) {
         await useApi('/comment/new', {
             id: this._id,
             type: this.typeId,
@@ -60,7 +70,7 @@ export class YCommentC {
     get type() {
         return this._type;
     }
-    set type(type) {
+    set type(type: Types) {
         if (type === 'song' || type === 'album' || type === 'playlist') {
             this._type = type;
         } else {

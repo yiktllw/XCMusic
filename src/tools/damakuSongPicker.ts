@@ -4,6 +4,13 @@ import { Subscriber } from './subscribe';
 import { markRaw } from 'vue';
 
 export class SongPicker {
+    homeDir: string;
+    damakuPath: string;
+    filePath: string;
+    subscriber: Subscriber;
+    song: null | { type: string; data: number | string; };
+    _track: null | Object;
+    timer: NodeJS.Timeout;
     constructor() {
         this.homeDir = window.api.homeDir();
         this.damakuPath = window.api.pathJoin(this.homeDir, 'Documents', '弹幕姬', 'Plugins', 'xcmusic');
@@ -36,7 +43,7 @@ export class SongPicker {
      * @param {string} [options.type=''] - 订阅的事件类型
      * @param {Function} [options.func=()=>{}] - 事件处理函数
      */
-    subscribe({ id, func, type, }) {
+    subscribe({ id, func, type, }: { id?: string; type?: string; func?: Function; }) {
         this.subscriber.on({ id, func, type });
     }
     /**
@@ -45,7 +52,7 @@ export class SongPicker {
      * @param {string} [options.id=''] - 用来标识订阅者的唯一id
      * @param {string} [options.type=''] - 订阅的事件类型
      */
-    unSubscribe({ id, type, }) {
+    unSubscribe({ id, type, }: { id?: string; type?: string; }) {
         this.subscriber.off({ id, type });
     }
     /**
@@ -53,8 +60,8 @@ export class SongPicker {
      */
     async #clearFile() {
         try {
-            await window.api.writeFile(this.filePath, '');
-            console.log('文件已清空');
+            window.api.writeFile(this.filePath, '');
+            // console.log('文件已清空');
         } catch (err) {
             console.error('清空文件失败', err);
         }
@@ -63,20 +70,20 @@ export class SongPicker {
      * 读取文件内容
      * @returns {Promise<string[]>} 返回每一行的内容
      */
-    async #readFile() {
-        let result = await window.api.readFile(this.filePath);
-        let lines = result.split('\n').map(line => line.trim()).filter(Boolean);
+    async #readFile(): Promise<string[]> {
+        let result = window.api.readFile(this.filePath);
+        let lines = result.toString().split('\n').map(line => line.trim()).filter(Boolean);
         return lines;
     }
     /**
      * 删除文件中的指定行
      * @param {string} line - 要删除的行
      */
-    async #deleteLine(line) {
+    async #deleteLine(line: string) {
         try {
             // 读取文件内容
             const data = await window.api.readFile(this.filePath);
-            const lines = data.split('\n'); // 按行分割
+            const lines = data.toString().split('\n'); // 按行分割
 
             // 删除指定行
             const updatedLines = lines.filter(l => !l.includes(line));
@@ -111,7 +118,7 @@ export class SongPicker {
                 console.log(`提取的内容: ${contentBetween}`);
 
                 // 去除首尾空格
-                let trimmedContent = contentBetween.trim();
+                let trimmedContent: number | string = contentBetween.trim();
 
                 if (!trimmedContent) return;
 
@@ -125,7 +132,7 @@ export class SongPicker {
                             type: 'id',
                             data: trimmedContent,
                         })
-                        let track = markRaw(new YTrackC(this.song.data));
+                        let track = markRaw(new YTrackC(trimmedContent));
                         track.onTrackLoaded = () => {
                             this._track = track.track;
                             this.subscriber.exec('track');
@@ -135,7 +142,7 @@ export class SongPicker {
                             type: 'id',
                             data: trimmedContent,
                         })
-                        let track = markRaw(new YTrackC(this.song.data));
+                        let track = markRaw(new YTrackC(trimmedContent));
                         track.onTrackLoaded = () => {
                             this._track = track.track;
                             this.subscriber.exec('nextTrack');
@@ -156,7 +163,7 @@ export class SongPicker {
      * 获取搜索到的歌曲
      * @param {boolean} playNow - 是否立即播放
      */
-    async getSearchedSong(playNow) {
+    async getSearchedSong(playNow: boolean) {
         if (this.song && this.song.type === 'keyword') {
             await useApi('/cloudsearch', {
                 keywords: this.song.data,
@@ -176,7 +183,7 @@ export class SongPicker {
      * 获取当前歌曲
      * @returns {Object} 返回当前歌曲
      */
-    get track() {
+    get track(): object | null {
         return this._track;
     }
 }
