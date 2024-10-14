@@ -98,7 +98,7 @@ export class YColor {
      * @param {COLOR_THEME_TYPE} colorThemeType 颜色主题类型，'dark' 或 'light'
      * @param {string} themeBackground 主题的背景颜色，HEX，默认为 '#131319'
      */
-    static setBkColorFromImg(imgSrc: string, document: Document, colorThemeType: COLOR_THEME_TYPE, themeBackground: string = '#131319') {
+    static setBkColorFromImg(imgSrc: string, document: Document, colorThemeType: COLOR_THEME_TYPE | undefined, themeBackground: string = '#131319') {
         getColorFromImg(imgSrc, document).then((color) => {
             if (color) {
                 if (colorThemeType === 'dark') {

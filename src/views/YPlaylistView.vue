@@ -467,7 +467,7 @@ export default defineComponent({
             if (!theme) { return; }
             const themeType = theme.type;
             const themeBackground = theme.background;
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType ?? 'dark', themeBackground);
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType ?? undefined, themeBackground);
         },
         // 处理搜索
         handleSearch(input: string, fromEnter: boolean) {
