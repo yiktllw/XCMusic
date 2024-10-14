@@ -1,5 +1,5 @@
 <script setup lang="js">
-let page = defineModel(); // eslint-disable-line
+let page = defineModel();
 </script>
 
 <template>

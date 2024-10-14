@@ -34,7 +34,7 @@ export default {
         'update:modelValue',
         'set-progress-end'
     ],
-    setup(props) { // eslint-disable-line
+    setup(props) { 
         // progress 的本地状态
         const progress = ref(props.modelValue);
 

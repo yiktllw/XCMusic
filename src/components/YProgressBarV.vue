@@ -1,6 +1,6 @@
 <script setup lang="js">
-const progress = defineModel();    // eslint-disable-line
-const emits = defineEmits(['update:modelValue', 'set-progress-end']); //eslint-disable-line
+const progress = defineModel();   
+const emits = defineEmits(['update:modelValue', 'set-progress-end']); 
 </script>
 
 <template>

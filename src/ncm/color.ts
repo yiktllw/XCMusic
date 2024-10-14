@@ -1,7 +1,6 @@
 import Color from "color";
 import { themes } from "./theme";
 
-/* eslint-disable no-undef */
 
 type COLOR = {
     r: number,
@@ -11,7 +10,7 @@ type COLOR = {
 
 type COLOR_THEME_TYPE = ('dark' | 'light');
 
-const darkThemeColors = [ // eslint-disable-line
+const darkThemeColors = [
     '#1d2932',
     '#3c4871',
     '#405772',
@@ -178,7 +177,7 @@ export function setBackgroundColorTheme() {
  * @param {number} b 蓝色值
  * @returns {COLOR} 对象: { r: number, g: number, b: number }
  */
-function increaseSaturation(r: number, g: number, b: number,): COLOR { // eslint-disable-line
+function increaseSaturation(r: number, g: number, b: number,): COLOR { 
     // 创建一个 Color 对象
     const color = Color.rgb(r, g, b);
 

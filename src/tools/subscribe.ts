@@ -1,5 +1,4 @@
-import { reactive, markRaw } from 'vue'; // eslint-disable-line 
-/* eslint-disable no-undef */
+import { reactive, markRaw } from 'vue'; 
 
 interface SubscriberOptions {
     id?: string;

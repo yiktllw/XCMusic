@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 interface Theme {
     value: string,
     display: string,

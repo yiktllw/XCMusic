@@ -9,7 +9,7 @@ import { ref, watch } from 'vue';
 
 export default {
     name: 'YSearchLyrics',
-    setup(props) { // eslint-disable-line
+    setup(props) { 
         // progress 的本地状态
         const listWithLyrics = ref(props.modelValue);
 

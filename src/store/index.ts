@@ -4,7 +4,6 @@ import { Login } from '../ncm/login';
 import { Setting } from '../ncm/setting';
 import { OpenedPlaylist } from '../tools/openedPlaylist';
 import { markRaw } from 'vue';
-/* eslint-disable no-undef */
 
 export interface State {
     player: Player;  // player 属性的类型为 Player

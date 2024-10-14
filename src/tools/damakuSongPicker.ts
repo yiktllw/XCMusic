@@ -1,4 +1,4 @@
-import { YTrackC } from './YTrackC'; //eslint-disable-line
+import { YTrackC } from './YTrackC'; 
 import { useApi } from '@/ncm/api';
 import { Subscriber } from './subscribe';
 import { markRaw } from 'vue';

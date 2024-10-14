@@ -237,7 +237,7 @@ import updownArrow from '../assets/updown-arrow.svg';
 
 export default {
     name: 'YSongsTable',
-    setup(props) { // eslint-disable-line
+    setup(props) { 
         const tracks = ref(props.modelValue);
         watch(() => props.modelValue, (newValue) => {
             tracks.value = newValue;

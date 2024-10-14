@@ -1,6 +1,6 @@
 import { Subscriber } from "@/tools/subscribe";
 import { useApi } from "./api";
-import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue'; // eslint-disable-line
+import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue'; 
 import i18n from "@/i18n";
 
 export class Login {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 type QualityInfo = {
     name: string;
     size: number;

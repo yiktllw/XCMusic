@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 
 interface YrcItem {
     startTime: number;

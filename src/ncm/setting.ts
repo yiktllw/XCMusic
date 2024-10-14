@@ -1,6 +1,5 @@
 import { themes } from "./theme";
 
-/* eslint-disable no-undef */
 
 type SettingCatagory = {
     [key: string]: {

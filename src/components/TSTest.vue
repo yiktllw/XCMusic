@@ -1,13 +1,15 @@
 <template>
     <div>
+        <YPanel ref="panel">
 
+        </YPanel>
     </div>
 </template>
 
 <script lang="ts">
-// import { mapState } from 'vuex';
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
+import YPanel from '@/components/YPanel.vue';
 
 export default defineComponent({
     setup() {
@@ -22,6 +24,15 @@ export default defineComponent({
             player,
             increment,
         };
+    },
+    methods: {
+        test(val: string) {
+            console.log('test', val);
+            console.log('panel', this.$refs.panel)
+        },
+    },
+    components: {
+        YPanel,
     },
     mounted() {
         console.log('TSTest mounted');

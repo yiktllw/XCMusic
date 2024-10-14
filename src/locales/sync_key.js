@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 const sourceFileName = './src/locales/en.json';
 const targetFileName = './src/locales/zh.json';
 

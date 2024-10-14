@@ -1,5 +1,5 @@
 <script setup>
-let items = defineModel() //eslint-disable-line
+let items = defineModel() 
 </script>
 
 <template>

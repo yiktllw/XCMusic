@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { Setting } from "./ncm/setting";
 import fs from "fs";
 import path from "path";

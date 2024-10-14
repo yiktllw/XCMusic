@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { useApi } from "@/ncm/api";
 import { YPageC } from "./YPageC";
 type Types = 'song' | 'playlist' | 'album';
