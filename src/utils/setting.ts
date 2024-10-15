@@ -1,4 +1,7 @@
 import { themes } from "./theme";
+const fs = window.api.fs;
+const path = window.api.path;
+const os = window.api.os;
 
 
 type SettingCatagory = {
@@ -23,6 +26,10 @@ export interface Settings {
         mode: string,
         quality: string,
     },
+    download: {
+        path: string,
+        quality: string,
+    }
     display: {
         language: 'zh' | 'en',
         theme: string,
@@ -85,6 +92,30 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             },
+        },
+        quality: {
+            value: localStorage.getItem('setting.play.quality') ?? 'standard',
+            default: 'standard',
+            validation: (value) => {
+                let valid = typeof value === 'string' && qualities.includes(value);
+                if (valid) {
+                    localStorage.setItem('setting.play.quality', value);
+                }
+                return valid;
+            },
+        },
+    },
+    download: {
+        path: {
+            value: localStorage.getItem('setting.download.path') ?? getDownloadDirectory(),
+            default: getDownloadDirectory(),
+            validation: (value) => {
+                let valid = typeof value === 'string' && isValidDirectory(value);
+                if (valid) {
+                    localStorage.setItem('setting.download.path', value);
+                }
+                return valid;
+            }
         },
         quality: {
             value: localStorage.getItem('setting.play.quality') ?? 'standard',
@@ -286,5 +317,38 @@ export class Setting {
             }
         }
         return instance;
+    }
+}
+
+/**
+ * 获取默认下载目录
+ */
+function getDownloadDirectory(): string {
+    const homeDir = os.homedir();  // 获取用户主目录
+    let downloadDir: string;
+
+    switch (os.platform()) {
+        case 'win32':  // Windows 平台
+            downloadDir = path.join(homeDir, 'Downloads');
+            break;
+        case 'darwin':  // macOS 平台
+        case 'linux':   // Linux 平台
+            downloadDir = path.join(homeDir, 'Downloads');
+            break;
+        default:
+            throw new Error('Unsupported platform');
+    }
+
+    return downloadDir;
+}
+
+/** 
+ * 检查目录是否有效
+ */
+function isValidDirectory(directoryPath: string): boolean {
+    try {
+        return fs.existsSync(directoryPath);
+    } catch (err) {
+        return false;  // 如果出现错误，说明目录无效
     }
 }

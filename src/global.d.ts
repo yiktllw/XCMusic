@@ -1,18 +1,21 @@
 import { Setting } from "./utils/setting";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 interface electron {
     ipcRenderer: {
         send(channel: string, data?: any): void;
         on(channel: string, listener: (event: any, ...args: any[]) => void): void;
         once(channel: string, listener: (event: any, ...args: any[]) => void): void;
+        invoke(channel: string, data?: any): Promise<any>;
     };
     isElectron: boolean;
 }
 
 interface api {
     fs: fs;
+    os: os;
     path: path;
     pathJoin: (...args: string[]) => string;
     readFile: (path: string, options?: { encoding?: null; flag?: string; }) => Buffer;

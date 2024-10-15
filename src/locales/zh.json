@@ -43,6 +43,9 @@
 			"scrolled_to_current_track": "已滚动到当前歌曲"
 		},
 		"setting_view": {
+			"download": {
+				"only_desktop": "下载功能仅在桌面端有效"
+			},
 			"only_desktop": "缩放功能仅在桌面端有效",
 			"zoom_applied": "缩放已应用",
 			"zoom_range_50_200": "请输入50到200之间的数字"
@@ -157,6 +160,11 @@
 			"version": "版本"
 		},
 		"apply": "应用",
+		"download": {
+			"path": "下载路径",
+			"quality": "下载音质",
+			"select": "选择路径"
+		},
 		"language": "语言",
 		"play": {
 			"dbclick": "播放列表",

@@ -43,6 +43,9 @@
 			"scrolled_to_current_track": "Scrolled to current track"
 		},
 		"setting_view": {
+			"download": {
+				"only_desktop": "The download feature is only effective on desktop"
+			},
 			"only_desktop": "The zoom feature is only effective on desktop",
 			"zoom_applied": "Zoom applied",
 			"zoom_range_50_200": "Please enter a number between 50 and 200"
@@ -157,6 +160,11 @@
 			"version": "Version"
 		},
 		"apply": "Apply",
+		"download": {
+			"path": "Path",
+			"quality": "Quality",
+			"select": "Select"
+		},
 		"language": "Language",
 		"play": {
 			"dbclick": "Playlist",

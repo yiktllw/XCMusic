@@ -110,6 +110,19 @@
                 <div class="download-title item-title">
                     {{ $t('header.setting_view.download') }}
                 </div>
+                <div class="download-content item-content">
+                    <div class="content-item item-download-path">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.download.path') }}
+                        </div>
+                        <div class="content-item-content download-path-content">
+                            <input type="text" v-model="downloadPath" />
+                            <div class="select-file" @click="selectFile">
+                                {{ $t('setting_view.download.select') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="about item">
                 <div class="about-title item-title">
@@ -131,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, version } from 'vue';
+import { defineComponent } from 'vue';
 import { setBackgroundColorTheme } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
@@ -191,6 +204,7 @@ export default defineComponent({
             zoom: 100,
             volume_leveling: false,
             dbclick: 'all',
+            downloadPath: '',
         }
     },
     methods: {
@@ -230,6 +244,18 @@ export default defineComponent({
             this.volume_leveling = bool;
             this.setting.play.volume_leveling = this.volume_leveling;
             this.player.volumeLeveling = bool;
+        },
+        async selectFile() {
+            if (window.electron?.isElectron) {
+                const path = await window.electron.ipcRenderer.invoke('select-folder');
+                console.log(path);
+                if (path && typeof path === 'string') {
+                    this.setting.download.path = path;
+                    this.downloadPath = this.setting.download.path;
+                }
+            } else {
+                Message.post('info', this.$t('message.setting_view.download.only_desktop'));
+            }
         }
     },
     mounted() {
@@ -239,6 +265,7 @@ export default defineComponent({
         this.language = this.setting.display.language;
         this.volume_leveling = this.setting.play.volume_leveling;
         this.dbclick = this.setting.play.dbclick;
+        this.downloadPath = this.setting.download.path;
     },
 })
 </script>
@@ -293,6 +320,39 @@ export default defineComponent({
                 display: flex;
                 flex-direction: column;
                 margin: 10px 43.21px 10px 23px;
+                
+                .download-path-content{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    
+                    .select-file{
+                        cursor: pointer;
+                        margin-left: 10px;
+                        color: var(--font-color-high);
+                        
+                        &:hover{
+                            color: var(--font-color-main);
+                        }
+                    }
+                    
+                    input{
+                        width: 210px;
+                        height: 30px;
+                        border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
+                        background-color: transparent;
+                        color: var(--font-color-high);
+                        font-size: 16px;
+                        border-radius: 5px;
+                        padding: 0 10px;
+                        margin-right: 10px;
+                        
+                        &:focus {
+                            outline: none;
+                        }
+                        
+                    }
+                }
 
                 .content-item {
                     display: flex;
@@ -392,6 +452,11 @@ export default defineComponent({
                             .zoom-apply {
                                 cursor: pointer;
                                 margin-left: 10px;
+                                color: var(--font-color-high);
+                                
+                                &:hover{
+                                    color: var(--font-color-main);
+                                }
                             }
                         }
                     }

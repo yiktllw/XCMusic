@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain, BrowserWindow, dialog } from 'electron';
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -42,4 +42,16 @@ ipcMain.on('clear-cache', () => {
             console.error('Error clearing cache:', err);
         });
     });
+});
+
+// 监听渲染进程的请求，打开选择文件夹对话框
+ipcMain.handle('select-folder', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openDirectory'] // 只允许选择文件夹
+    });
+    if (canceled) {
+        return null;
+    } else {
+        return filePaths[0]; // 返回选中的文件夹路径
+    }
 });

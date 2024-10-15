@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('api', {
     homeDir: () => os.homedir(), // 获取用户主目录
     fs: fs,
     path: path,
+    os: os,
 });
 contextBridge.exposeInMainWorld(
     'electron',
@@ -24,7 +25,8 @@ contextBridge.exposeInMainWorld(
         ipcRenderer: {
             send: (channel, data) => ipcRenderer.send(channel, data),
             on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
-            once: (channel, func) => ipcRenderer.once(channel, (event, ...args) => func(...args))
+            once: (channel, func) => ipcRenderer.once(channel, (event, ...args) => func(...args)),
+            invoke: (channel, data) => ipcRenderer.invoke(channel, data),
         },
         isElectron: true,
     }
