@@ -329,6 +329,10 @@ export default defineComponent({
             this.search(event.target.value);
         },
         search(text: string) {
+            if (text === '') {
+                console.log('search text is empty');
+                return;
+            }
             this.$router.push({ path: `/search/${text}/default` });
             this.search_panel?.closePanel();
             const SEARCH_HISTORY_LENGTH = 10;
