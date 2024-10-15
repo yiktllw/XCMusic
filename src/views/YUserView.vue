@@ -2,7 +2,7 @@
     <!-- 滚动容器 -->
     <YScroll style="max-height: 100%;">
         <!-- 用户/歌手界面 -->
-        <div class="container font-color-main">
+        <div class="container font-color-main" v-if="user">
             <!-- 用户信息 -->
             <div class="user-info">
                 <!-- 头像 -->
