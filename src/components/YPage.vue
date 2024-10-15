@@ -1,36 +1,43 @@
 <template>
-    <div class="page-main font-color-main" v-if="page.total > 1">
-        <div class="previous" @click="page.previous">
-            <img src="@/assets/backarrow.svg" class="arrow-img g-icon">
-        </div>
-        <div class="all" v-if="page.total < 8">
-            <div class="pages" v-for="i in page.total" :key="i" @click="page.current = i"
-                :class="page.current === i ? 'currentPage' : ''">
-                {{ i }}
+    <div>
+        <div class="page-main font-color-main" v-if="page.total > 1">
+            <div class="previous" @click="page.previous">
+                <img src="@/assets/backarrow.svg" class="arrow-img g-icon">
+            </div>
+            <div class="all" v-if="page.total < 8">
+                <div class="pages" v-for="i in page.total" :key="i" @click="page.current = i"
+                    :class="page.current === i ? 'currentPage' : ''">
+                    {{ i }}
+                </div>
+            </div>
+            <div class="omit" v-else>
+                <div class="pages" v-for="i in page.leftPage" :key="i" @click="page.current = i"
+                    :class="page.current === i ? 'currentPage' : ''">
+                    {{ i }}
+                </div>
+                <div class="pages">
+                    ...
+                </div>
+                <div class="pages" v-for="i in page.middlePage" :key="i" @click="page.current = i"
+                    :class="page.current === i ? 'currentPage' : ''">
+                    {{ i }}
+                </div>
+                <div class="pages" v-if="page.current > 2 && page.current < page.total - 1">
+                    ...
+                </div>
+                <div class="pages" v-for="i in page.rightPage" :key="i" @click="page.current = i"
+                    :class="page.current === i ? 'currentPage' : ''">
+                    {{ i }}
+                </div>
+            </div>
+            <div class="next" @click="page.next">
+                <img src="@/assets/forwardarrow.svg" class="arrow-img g-icon">
             </div>
         </div>
-        <div class="omit" v-else>
-            <div class="pages" v-for="i in page.leftPage" :key="i" @click="page.current = i"
-                :class="page.current === i ? 'currentPage' : ''">
-                {{ i }}
-            </div>
-            <div class="pages">
-                ...
-            </div>
-            <div class="pages" v-for="i in page.middlePage" :key="i" @click="page.current = i"
-                :class="page.current === i ? 'currentPage' : ''">
-                {{ i }}
-            </div>
-            <div class="pages" v-if="page.current > 2 && page.current < page.total - 1">
-                ...
-            </div>
-            <div class="pages" v-for="i in page.rightPage" :key="i" @click="page.current = i"
-                :class="page.current === i ? 'currentPage' : ''">
-                {{ i }}
-            </div>
-        </div>
-        <div class="next" @click="page.next">
-            <img src="@/assets/forwardarrow.svg" class="arrow-img g-icon">
+        <div class="page-goto" v-if="page.total > 8">
+            <input type="number" :min="1" :max="page.total" v-model="tempPage">
+            <span>/ &nbsp;{{ page.total }} &nbsp;</span>
+            <button @click="goto()">跳转</button>
         </div>
     </div>
 </template>
@@ -42,7 +49,7 @@ export default defineComponent({
     name: 'YPage',
     data() {
         return {
-
+            tempPage: 1,
         };
     },
     props: {
@@ -51,6 +58,11 @@ export default defineComponent({
             default: new YPageC(1),
         },
     },
+    watch: {
+        'page.current'(newVal) {
+            this.page.current = newVal;
+        }
+    },
     setup(props) {
         const page = ref(props.modelValue);
 
@@ -58,12 +70,20 @@ export default defineComponent({
         watch(() => props.modelValue, (newValue) => {
             page.value = newValue;
         });
-        
+
         return {
             page,
         };
     },
     methods: {
+        goto() {
+            if (this.tempPage < 1) {
+                this.tempPage = 1;
+            } else if (this.tempPage > this.page.total) {
+                this.tempPage = this.page.total;
+            }
+            this.page.current = this.tempPage;
+        },
     },
 })
 
@@ -122,6 +142,37 @@ export default defineComponent({
     .arrow-img {
         width: 14px;
         height: 14px;
+    }
+}
+
+.page-goto {
+    color: var(--font-color-main);
+    font-size: 15px;
+
+    input {
+        width: 16px;
+        background-color: transparent;
+        border: none;
+        text-decoration: underline;
+        color: var(--font-color-main);
+        font-size: inherit;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    button {
+        background-color: transparent;
+        border: none;
+        font-size: 16px;
+        color: var(--font-color-main);
     }
 }
 </style>
