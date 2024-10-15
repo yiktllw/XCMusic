@@ -71,6 +71,17 @@
                     {{ $t('header.setting_view.play') }}
                 </div>
                 <div class="play-content item-content">
+                    <div class="content-item item-play-volume_leveling">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.play.volume_leveling') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="checkbox" id="volume_leveling" name="volume_leveling" v-model="volume_leveling" @change="setVolumeLeveling(volume_leveling)">
+                            <label for="volume_leveling" @click="setVolumeLeveling(volume_leveling)">
+                                {{ $t('setting_view.play.volume_leveling_content') }}
+                            </label>
+                        </div>
+                    </div>
                     <div class="content-item item-play-dbclick">
                         <div class="content-item-title">
                             {{ $t('setting_view.play.dbclick') }}
@@ -116,6 +127,7 @@ export default defineComponent({
 
         return {
             setting: store.state.setting,
+            player: store.state.player,
         }
     },
     computed: {
@@ -152,6 +164,7 @@ export default defineComponent({
             themes: themes,
             theme: 'dark',
             zoom: 100,
+            volume_leveling: false,
             dbclick: 'all',
         }
     },
@@ -179,7 +192,7 @@ export default defineComponent({
                 Message.post('error', this.$t('message.setting_view.zoom_range_50_200'));
             }
         },
-        switchToLanguage(language: string) {
+        switchToLanguage(language: 'zh' | 'en') {
             this.language = language;
             this.setting.display.language = language;
             this.$i18n.locale = this.language;
@@ -187,6 +200,11 @@ export default defineComponent({
         setDbClick(behavior: 'all' | 'single') {
             this.dbclick = behavior;
             this.setting.play.dbclick = behavior;
+        },
+        setVolumeLeveling(bool: boolean) {
+            this.volume_leveling = bool;
+            this.setting.play.volume_leveling = this.volume_leveling;
+            this.player.volumeLeveling = bool;
         }
     },
     mounted() {
@@ -194,6 +212,7 @@ export default defineComponent({
         this.theme = this.setting.display.theme;
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
+        this.volume_leveling = this.setting.play.volume_leveling;
         this.dbclick = this.setting.play.dbclick;
     },
 })

@@ -158,7 +158,9 @@
 		"play": {
 			"dbclick": "Playlist",
 			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
-			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist."
+			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
+			"volume_leveling": "Volume",
+			"volume_leveling_content": "Balance the volume of different tracks."
 		},
 		"theme": "Theme",
 		"theme_name": {

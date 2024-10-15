@@ -34,6 +34,7 @@ export class Player {
     _progress: number | string;
     _duration: number | string;
     _quality: 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster';
+    _volume_leveling: boolean;
     songPicker: SongPicker | undefined;
     _updateTime: any;
     subscriber: Subscriber;
@@ -58,6 +59,8 @@ export class Player {
                 await this.reloadUrl();
             }
         };
+        let localVolumeLeveling = localStorage.getItem('setting.play.volume_leveling') ?? 'true';
+        this._volume_leveling = localVolumeLeveling === 'true' ? true : false;
         /**
          * 音频上下文，用于设置增益
          * @type {AudioContext}
@@ -239,7 +242,7 @@ export class Player {
 
         this._mediaSessionInit = false;
         this.initMediaSession();
-
+        
         setTimeout(() => {
             this.Execute({ type: 'playerReady' });
         }, 500);
@@ -433,10 +436,12 @@ export class Player {
             if (this.currentTrack?.id) {
                 await this.scrobble(this.currentTrack.id)
             }
+
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
             // 触发 track 的回调函数
             this.Execute({ type: 'track' });
+
             // 获取歌曲播放信息
             let nourl = false;
             let result = await this.getUrl(track.id).catch(error => {
@@ -447,31 +452,10 @@ export class Player {
             let url = result.url;
             this._audio.src = url;
             this._audio.onended = () => this.next();
-            // 获取当前歌曲的所有音质的数据(音量均衡数据)
-            await this.setAllQuality(this.currentTrack.id);
-            let gain: any = null;
-            let peak: any = null;
-            let gainData = [], peakData = [];
-            // 因为所有音质的文件峰值是相同的，也是就说能够混用音量均衡数据
-            // 所以，在所有音质的音量均衡数据中，查找音量最大的数据。
-            const prop = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
-            for (let i = 0; i < prop.length; i++) {
-                gainData.push(this.currentTrack[prop[i]]?.gain);
-                peakData.push(this.currentTrack[prop[i]]?.peak);
-            }
-            gainData.forEach(value => {
-                if (gain === null || (value && value > gain)) {
-                    gain = value;
-                }
-            });
-            peakData.forEach(value => {
-                if (peak === null || (value && value < peak && value !== 0)) {
-                    peak = value;
-                }
-            });
-            // 设置音量均衡
-            let gainMsg = this.setGain(gain, peak);
+
             let autoPlayMsg = 'Not autoplay';
+            const gainMsg = await this.gainTrack(track.id);
+
             if (autoPlay) {
                 try {
                     // 更新播放状态
@@ -486,15 +470,43 @@ export class Player {
             console.log(
                 'Playing', { id: track.id, name: track.name, }, '\n',
                 'track url:', url, '\n',
-                'track gain:', gainData, '\n',
-                'track peak:', peakData, '\n',
-                'gain message:', gainMsg, '\n',
+                'gain message: \n', gainMsg, '\n',
                 autoPlayMsg,
             );
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
         }
     }
+    async gainTrack(id: number): Promise<string> {
+        // 获取当前歌曲的所有音质的数据(音量均衡数据)
+        await this.setAllQuality(id);
+        let gain: any = null;
+        let peak: any = null;
+        let gainData = [], peakData = [];
+        // 因为所有音质的文件峰值是相同的，也是就说能够混用音量均衡数据
+        // 所以，在所有音质的音量均衡数据中，查找音量最大的数据。
+        const prop = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
+        for (let i = 0; i < prop.length; i++) {
+            gainData.push(this.currentTrack[prop[i]]?.gain);
+            peakData.push(this.currentTrack[prop[i]]?.peak);
+        }
+        gainData.forEach(value => {
+            if (gain === null || (value && value > gain)) {
+                gain = value;
+            }
+        });
+        peakData.forEach(value => {
+            if (peak === null || (value && value < peak && value !== 0)) {
+                peak = value;
+            }
+        });
+        // 设置音量均衡
+        let gainMsg = this.setGain(gain, peak);
+        return 'track gain:' + gainData.toString() + '\n' +
+            ' track peak:' + peakData.toString() + '\n' + gainMsg;
+
+    }
+
     /**
      * 获取所有音质的信息，并添加到 currentTrack
      * @param {Number} id 歌曲ID
@@ -1074,9 +1086,12 @@ export class Player {
      * @returns {String} 返回设置增益的信息
      */
     setGain(gain: number, peak: number): string {
+        if (!this._volume_leveling) {
+            gain = 1, peak = 1;
+        };
         // 将分贝转换为线性
         let gain_linear = this.dBToGain(gain);
-        // 如果增益大于1或小于0.9且不为0
+        // 如果新的贬值大于1且峰值不为0
         if ((peak * gain_linear > 1) && peak !== 0) {
             // 重新计算增益
             gain_linear = 1 / peak;
@@ -1088,14 +1103,19 @@ export class Player {
             gain_linear = 4;
         }
         // 设置增益
+        let setGainNodeMsg = 'gainNode not found';
         try {
             if (this._gainNode) {
                 this._gainNode.gain.value = gain_linear;
+                setGainNodeMsg = ' gainNode set to ' + gain_linear;
             }
         } catch (error) {
             console.error(error);
         }
-        return '\n Required Gain: ' + this.dBToGain(gain).toFixed(3) + ', Gain set to ' + gain_linear.toFixed(3) + '\n Original Peak: ' + peak.toFixed(3) + ', Peak set to ' + (peak * gain_linear).toFixed(3);
+        if (!this._volume_leveling) {
+            return '\n Volume leveling is off, gain set to 1';
+        }
+        return '\n Required Gain: ' + this.dBToGain(gain).toFixed(3) + ', Gain set to ' + gain_linear.toFixed(3) + '\n Original Peak: ' + peak.toFixed(3) + ', Peak set to ' + (peak * gain_linear).toFixed(3) + '\n' + setGainNodeMsg;
     }
     /**
      * 获取当前播放时间
@@ -1246,5 +1266,15 @@ export class Player {
             });
         }
         return result;
+    }
+    get volumeLeveling() {
+        return this._volume_leveling;
+    }
+    set volumeLeveling(value: boolean) {
+        this._volume_leveling = value;
+        if (!this.currentTrack) return;
+        this.gainTrack(this.currentTrack?.id).then((msg) => {
+            console.log('Volume leveling:', msg);
+        })
     }
 }

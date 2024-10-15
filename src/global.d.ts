@@ -38,5 +38,6 @@ declare global {
         electron: electron;
         api: api;
         savedPositions: savedPositions;
+        test: any;
     }
 }

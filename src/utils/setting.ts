@@ -17,13 +17,14 @@ export type SettingGroup = {
 
 export interface Settings {
     play: {
+        dbclick: 'all' | 'single',
+        volume_leveling: boolean,
         volume: number,
         mode: string,
         quality: string,
-        dbclick: string,
     },
     display: {
-        language: string,
+        language: 'zh' | 'en',
         theme: string,
         zoom: number,
         sidebarWidth: number,
@@ -43,6 +44,21 @@ export const settingGroup: SettingGroup = {
                 let valid = ['all', 'single'].includes(value);
                 if (valid) {
                     localStorage.setItem('setting.play.dbclick', value);
+                }
+                return valid;
+            }
+        },
+        volume_leveling: {
+            value: localStorage.getItem('setting.play.volume_leveling') ?? true,
+            default: true,
+            validation: (value) => {
+                let valid = typeof value === 'boolean';
+                let valid2 = typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase());
+                if (valid) {
+                    localStorage.setItem('setting.play.volume_leveling', value);
+                } else if (valid2) {
+                    localStorage.setItem('setting.play.volume_leveling', value);
+                    valid = true;
                 }
                 return valid;
             }
