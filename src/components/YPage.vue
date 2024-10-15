@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { YPageC } from '@/tools/YPageC';
+import { YPageC } from '@/dual/YPageC';
 import { defineComponent, ref, watch } from 'vue';
 export default defineComponent({
     name: 'YPage',

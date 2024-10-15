@@ -132,11 +132,11 @@ import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YPage from '@/components/YPage.vue';
-import { Tracks } from '@/ncm/tracks';
-import { useApi } from '@/ncm/api';
-import { YColor } from '@/ncm/color';
+import { Tracks } from '@/utils/tracks';
+import { useApi } from '@/utils/api';
+import { YColor } from '@/utils/color';
 import { mapState, useStore } from 'vuex';
-import { YPageC } from '@/tools/YPageC';
+import { YPageC } from '@/dual/YPageC';
 import { markRaw, ref, defineComponent } from 'vue';
 
 export default defineComponent({

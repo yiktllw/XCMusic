@@ -70,11 +70,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { setBackgroundColorTheme } from '@/ncm/color';
+import { setBackgroundColorTheme } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
-import { Message } from '@/tools/YMessageC';
+import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
-import { themes } from '@/ncm/theme';
+import { themes } from '@/utils/theme';
 
 export default defineComponent({
     name: 'YSettingView',

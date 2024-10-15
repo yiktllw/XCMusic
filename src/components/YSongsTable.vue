@@ -222,12 +222,12 @@
 </template>
 
 <script lang="ts">
-import { formatDuration_mmss } from '@/ncm/time';
+import { formatDuration_mmss } from '@/utils/time';
 import { useStore } from 'vuex';
 import YPlaying from './YPlaying.vue';
 import YPage from './YPage.vue';
-import { YPageC } from '@/tools/YPageC';
-import { Message } from '@/tools/YMessageC';
+import { YPageC } from '@/dual/YPageC';
+import { Message } from '@/dual/YMessageC';
 import { ref, watch, defineComponent } from 'vue';
 import upArrow from '../assets/up-arrow.svg';
 import downArrow from '../assets/down-arrow.svg';

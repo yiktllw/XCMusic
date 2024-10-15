@@ -15,7 +15,7 @@
 import { defineComponent } from 'vue';
 import YMultiSelect from '../components/YMultiSelect.vue';
 import { useStore } from 'vuex';
-import { Setting } from '../ncm/setting';
+import { Setting } from '../utils/setting';
 import TSTest from '../components/TSTest.vue';
 
 export default defineComponent({

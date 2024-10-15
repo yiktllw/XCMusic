@@ -29,8 +29,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import YComment from '@/components/YComment.vue';
-import { YTrackC } from '@/tools/YTrackC';
-import { YColor } from '@/ncm/color';
+import { YTrackC } from '@/dual/YTrackC';
+import { YColor } from '@/utils/color';
 import { mapState, useStore } from 'vuex';
 
 export default defineComponent({

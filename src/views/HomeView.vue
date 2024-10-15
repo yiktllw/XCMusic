@@ -58,9 +58,9 @@ import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
 import YPlayUI from '@/components/YPlayUI.vue';
-import { Message } from '@/tools/YMessageC';
-import { songItems } from '@/tools/YContextMenuItemC';
-import { useApi } from '@/ncm/api';
+import { Message } from '@/dual/YMessageC';
+import { songItems } from '@/dual/YContextMenuItemC';
+import { useApi } from '@/utils/api';
 
 export default defineComponent({
     name: 'App',

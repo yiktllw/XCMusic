@@ -4,7 +4,7 @@ const path = window.api.path;
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const NodeID3 = require('node-id3');
-import indexDB from '@/ncm/indexDB';
+import indexDB from '@/utils/indexDB';
 
 ffmpeg.setFfmpegPath(ffmpegPath);  // 设置ffmpeg路径
 

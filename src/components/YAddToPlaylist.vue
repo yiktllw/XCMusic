@@ -23,8 +23,8 @@
 import YWindow from '@/components/YWindow.vue';
 import YScroll from '@/components/YScroll.vue';
 import { defineComponent, ref } from 'vue';
-import { Message } from '@/tools/YMessageC';
-import { useApi } from '@/ncm/api';
+import { Message } from '@/dual/YMessageC';
+import { useApi } from '@/utils/api';
 import { mapState, useStore } from 'vuex';
 
 export default defineComponent({

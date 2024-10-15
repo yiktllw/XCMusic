@@ -158,5 +158,5 @@ if (isDevelopment) {
         })
     }
 }
-import './ncm/titlebarEvent';
+import './utils/titlebarEvent';
 

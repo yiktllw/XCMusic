@@ -143,7 +143,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { useApi } from '@/ncm/api';
+import { useApi } from '@/utils/api';
 import { mapActions, useStore } from 'vuex';
 import YPanel from './YPanel.vue';
 

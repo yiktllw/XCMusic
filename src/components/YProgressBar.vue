@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { formatDuration_mmss } from '@/ncm/time';
+import { formatDuration_mmss } from '@/utils/time';
 import { ref, watch } from 'vue';
 
 export default defineComponent({

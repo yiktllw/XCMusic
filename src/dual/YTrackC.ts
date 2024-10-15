@@ -1,4 +1,4 @@
-import { useApi } from "@/ncm/api";
+import { useApi } from "@/utils/api";
 
 export class YTrackC {
     _id: string | number | null;

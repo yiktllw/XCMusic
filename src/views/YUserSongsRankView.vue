@@ -9,8 +9,8 @@
 import { defineComponent } from 'vue';
 import YHeader from '@/components/YHeader.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
-import { Tracks } from '@/ncm/tracks';
-import { useApi } from '@/ncm/api';
+import { Tracks } from '@/utils/tracks';
+import { useApi } from '@/utils/api';
 import { useStore } from 'vuex';
 import { markRaw } from 'vue';
 

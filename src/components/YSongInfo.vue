@@ -100,7 +100,7 @@
 import { defineComponent, ref } from 'vue';
 import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
-import { Message } from '@/tools/YMessageC';
+import { Message } from '@/dual/YMessageC';
 
 export default defineComponent({
     name: 'YSongInfo',

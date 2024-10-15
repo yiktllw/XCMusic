@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { formatDate_yyyymmdd } from '@/ncm/time';
+import { formatDate_yyyymmdd } from '@/utils/time';
 export default defineComponent({
     name: 'YPlaylistList',
     props: {

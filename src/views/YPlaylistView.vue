@@ -176,14 +176,14 @@
 import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YComment from '@/components/YComment.vue';
-import { Message } from '@/tools/YMessageC';
-import { Tracks } from '@/ncm/tracks';
-import { useApi } from '@/ncm/api';
-import { formatDate_yyyymmdd } from '@/ncm/time';
-import { YColor } from '@/ncm/color'
-import { themes } from '@/ncm/theme';
+import { Message } from '@/dual/YMessageC';
+import { Tracks } from '@/utils/tracks';
+import { useApi } from '@/utils/api';
+import { formatDate_yyyymmdd } from '@/utils/time';
+import { YColor } from '@/utils/color'
+import { themes } from '@/utils/theme';
 import { useStore } from 'vuex';
-import { preparePlaylist } from '@/tools/playlist';
+import { preparePlaylist } from '@/utils/playlist';
 import { markRaw, ref, defineComponent } from 'vue';
 
 export default defineComponent({

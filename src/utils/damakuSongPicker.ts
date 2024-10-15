@@ -1,5 +1,5 @@
-import { YTrackC } from './YTrackC';
-import { useApi } from '@/ncm/api';
+import { YTrackC } from '../dual/YTrackC';
+import { useApi } from '@/utils/api';
 import { Subscriber, SubscribeOptions, UnsubscribeOptions } from './subscribe';
 import { markRaw } from 'vue';
 

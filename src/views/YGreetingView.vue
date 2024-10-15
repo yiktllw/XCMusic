@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { setBackgroundColorTheme } from '@/ncm/color';
+import { setBackgroundColorTheme } from '@/utils/color';
 export default defineComponent({
     name: 'YGreetingView',
     mounted() {

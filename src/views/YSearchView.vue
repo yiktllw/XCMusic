@@ -87,10 +87,10 @@ import YArtistList from '@/components/YArtistList.vue';
 import YSearchLyrics from '@/components/YSearchLyrics.vue';
 import YScroll from '@/components/YScroll.vue';
 import YPage from '@/components/YPage.vue';
-import { Tracks } from '@/ncm/tracks';
-import { YPageC } from '@/tools/YPageC';
-import { setBackgroundColorTheme } from '@/ncm/color';
-import { useApi } from '../ncm/api';
+import { Tracks } from '@/utils/tracks';
+import { YPageC } from '@/dual/YPageC';
+import { setBackgroundColorTheme } from '@/utils/color';
+import { useApi } from '../utils/api';
 import { markRaw, ref, defineComponent } from 'vue';
 
 export default defineComponent({

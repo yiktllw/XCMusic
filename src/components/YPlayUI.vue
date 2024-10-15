@@ -167,10 +167,10 @@ import YPlaybar from './YPlaybar.vue';
 import YTitlebar from './YTitlebar.vue';
 import YScroll from './YScroll.vue';
 import { defineComponent, ref } from 'vue';
-import { Lyrics } from '@/ncm/lyric';
+import { Lyrics } from '@/utils/lyric';
 import { useStore } from 'vuex';
-import { useApi } from '@/ncm/api';
-import { getColorFromImg } from '@/ncm/color';
+import { useApi } from '@/utils/api';
+import { getColorFromImg } from '@/utils/color';
 
 export default defineComponent({
     name: 'YPlayUI',

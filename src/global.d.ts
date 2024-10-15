@@ -1,4 +1,4 @@
-import { Setting } from "./ncm/setting";
+import { Setting } from "./utils/setting";
 import fs from "fs";
 import path from "path";
 

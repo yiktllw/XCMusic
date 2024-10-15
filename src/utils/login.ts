@@ -1,4 +1,4 @@
-import { Subscriber } from "@/tools/subscribe";
+import { Subscriber } from "@/utils/subscribe";
 import { useApi } from "./api";
 import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue'; 
 import i18n from "@/i18n";

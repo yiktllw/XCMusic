@@ -1,4 +1,4 @@
-import { useApi } from "@/ncm/api";
+import { useApi } from "@/utils/api";
 import { YPageC } from "./YPageC";
 export type Types = 'song' | 'playlist' | 'album';
 

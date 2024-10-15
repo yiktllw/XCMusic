@@ -7,10 +7,10 @@ type QualityInfo = {
 
 import { markRaw } from "vue";
 import { useApi } from "./api";
-import { Subscriber } from "@/tools/subscribe";
-import { SongPicker } from "@/tools/damakuSongPicker";
-import { Message } from "@/tools/YMessageC";
-import indexDB from "@/ncm/indexDB";
+import { Subscriber } from "@/utils/subscribe";
+import { SongPicker } from "@/utils/damakuSongPicker";
+import { Message } from "@/dual/YMessageC";
+import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 
 export class Player {

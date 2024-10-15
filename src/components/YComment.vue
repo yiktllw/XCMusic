@@ -59,8 +59,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import YPage from './YPage.vue';
-import { YCommentC, Types } from '@/tools/YCommentC';
-import { formatDate_yyyymmdd } from '../ncm/time';
+import { YCommentC, Types } from '@/dual/YCommentC';
+import { formatDate_yyyymmdd } from '../utils/time';
 
 export default defineComponent({
     name: 'YComment',

@@ -241,7 +241,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { toogleLike, useApi } from '@/ncm/api';
+import { toogleLike, useApi } from '@/utils/api';
 import { useStore } from 'vuex';
 import YSongsTable from './YSongsTable.vue';
 import YPanel from './YPanel.vue';

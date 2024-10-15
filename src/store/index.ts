@@ -1,8 +1,8 @@
 import { createStore } from 'vuex';  // 使用 createStore 创建 Vuex store
-import { Player } from '../ncm/player';  // 引入 Player 类
-import { Login } from '../ncm/login';
-import { Setting, Settings } from '../ncm/setting';
-import { OpenedPlaylist } from '../tools/openedPlaylist';
+import { Player } from '../utils/player';  // 引入 Player 类
+import { Login } from '../utils/login';
+import { Setting, Settings } from '../utils/setting';
+import { OpenedPlaylist } from '../utils/openedPlaylist';
 import { markRaw } from 'vue';
 
 export interface State {
