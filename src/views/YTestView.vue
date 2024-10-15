@@ -15,8 +15,8 @@
 import { defineComponent } from 'vue';
 import YMultiSelect from '../components/YMultiSelect.vue';
 import { useStore } from 'vuex';
-import { Setting } from '../utils/setting';
 import TSTest from '../components/TSTest.vue';
+import { ipcRenderer } from 'electron';
 
 export default defineComponent({
     name: 'YTestView',
@@ -69,7 +69,9 @@ export default defineComponent({
             type: 'playlist',
         })
         window.setting = this.setting;
-        window.Setting = Setting;
+        window.test = (url: string) => {
+            window.electron.ipcRenderer.send('download-song', url, this.player.currentTrack, 'C:/Users/yiktllw/Downloads');
+        }
     },
     beforeUnmount() {
         this.player.UnSubscribe({

@@ -158,5 +158,5 @@ if (isDevelopment) {
         })
     }
 }
-import './utils/titlebarEvent';
+import './utils/rendererEvents';
 

@@ -50,8 +50,7 @@
                         :title="$t('context.download')">
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
-                            :title="$t('context.view_comment')"
-                            @click="handleCommentClick(currentTrack?.id)">
+                            :title="$t('context.view_comment')" @click="handleCommentClick(currentTrack?.id)">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
                         </div>
@@ -105,18 +104,15 @@
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="play_mode_panel_trigger"
                     :slide-direction="5" :hide-mode="'show'" :slide-distance="8" :animation-time="0.1">
                     <div class="playMode-switcher">
-                        <div class="playMode-item"
-                            @click="tooglePlayMode('order'); play_mode_panel?.tooglePanel()">
+                        <div class="playMode-item" @click="tooglePlayMode('order'); play_mode_panel?.tooglePanel()">
                             <img class="img-order img g-icon playMode-img" src="../assets/order.svg">
                             {{ $t('playbar.order') }}
                         </div>
-                        <div class="playMode-item"
-                            @click="tooglePlayMode('listloop'); play_mode_panel?.tooglePanel()">
+                        <div class="playMode-item" @click="tooglePlayMode('listloop'); play_mode_panel?.tooglePanel()">
                             <img class="img-listloop img playMode-img g-icon" src="../assets/listloop.svg">
                             {{ $t('playbar.listloop') }}
                         </div>
-                        <div class="playMode-item"
-                            @click="tooglePlayMode('random'); play_mode_panel?.tooglePanel()">
+                        <div class="playMode-item" @click="tooglePlayMode('random'); play_mode_panel?.tooglePanel()">
                             <img class="img-random img playMode-img g-icon" src="../assets/random.svg">
                             {{ $t('playbar.random') }}
                         </div>
@@ -125,8 +121,7 @@
                             <img class="img-random img playMode-img" src="../assets/listrandom.svg">
                             {{ $t('playbar.listrandom') }}
                         </div>
-                        <div class="playMode-item"
-                            @click="tooglePlayMode('loop'); play_mode_panel?.tooglePanel()">
+                        <div class="playMode-item" @click="tooglePlayMode('loop'); play_mode_panel?.tooglePanel()">
                             <img class="img-loop img playMode-img g-icon" src="../assets/loop.svg">
                             {{ $t('playbar.loop') }}
                         </div>
@@ -155,15 +150,16 @@
                     {{ $t(qualityDisplay) }}
                 </div>
                 <!-- 选择音质面板 -->
-                <YPanel ref="quality_panel" :trigger="quality_panel_trigger" :slide-direction="4"
-                    :default-show="false" :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
+                <YPanel ref="quality_panel" :trigger="quality_panel_trigger" :slide-direction="4" :default-show="false"
+                    :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
                     <div class="quality-panel">
                         <div class="quality-title font-color-main">
                             {{ $t('playbar.sound_quality') }}
                         </div>
                         <div class="quality-switcher">
                             <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
-                                @click="setQuality(quality.name as 'jymaster' | 'sky' | 'jyeffect' | 'hires' | 'lossless' | 'exhigh' | 'standard')" :style="{ 'opacity': quality.available ? 1 : .4 }">
+                                @click="setQuality(quality.name as 'jymaster' | 'sky' | 'jyeffect' | 'hires' | 'lossless' | 'exhigh' | 'standard')"
+                                :style="{ 'opacity': quality.available ? 1 : .4 }">
                                 <div class="quality-item-title font-color-high">
                                     {{ $t(quality.display) }}
                                 </div>
@@ -177,11 +173,10 @@
                 <!-- 音量按钮 -->
                 <img class="img g-icon" src="../assets/volume.svg"
                     style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;"
-                    :title="$t('playbar.volume')" ref="volume_panel_trigger"
-                    @click="volume_panel?.tooglePanel()">
+                    :title="$t('playbar.volume')" ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
-                <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5"
-                    :animation-time="0.1" :slide-distance="10">
+                <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5" :animation-time="0.1"
+                    :slide-distance="10">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
@@ -194,8 +189,7 @@
                 <!-- 播放列表按钮 -->
                 <img class="img g-icon" src="../assets/playlist.svg"
                     style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
-                    @click="playlist_panel?.tooglePanel" :title="$t('playbar.playlist')"
-                    ref="playlist_panel_trigger">
+                    @click="playlist_panel?.tooglePanel" :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger" :slide-direction="4"
                     :default-show="false" @show-panel="scrollToCurrentTrack">
@@ -268,9 +262,9 @@ export default defineComponent({
         const volume_panel_trigger = ref<HTMLElement>();
         const playlist_panel = ref<InstanceType<typeof YPanel>>();
         const playlist_panel_trigger = ref<HTMLElement>();
-        
+
         const progressBarNoTrack = ref<InstanceType<typeof YProgressBar>>();
-        
+
         return {
             quality_panel,
             songstable,

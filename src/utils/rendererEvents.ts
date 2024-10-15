@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow, dialog } from 'electron';
+import { Download } from './download';
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -53,5 +54,15 @@ ipcMain.handle('select-folder', async () => {
         return null;
     } else {
         return filePaths[0]; // 返回选中的文件夹路径
+    }
+});
+
+ipcMain.on('download-song', async (event, songUrl, track, downloadDir) => {
+    try {
+        // 下载歌曲文件
+        const filePath = await Download.song(songUrl, track, downloadDir);
+        event.reply('download-song-reply', filePath);
+    } catch (err: any) {
+        event.reply('download-song-reply', err.toString());
     }
 });

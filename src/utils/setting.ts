@@ -1,7 +1,11 @@
 import { themes } from "./theme";
-const fs = window.api.fs;
-const path = window.api.path;
-const os = window.api.os;
+let fs: any, path: any, os: any;
+
+if (window.electron.isElectron) {
+    fs = window.api.fs;
+    path = window.api.path;
+    os = window.api.os;
+}
 
 
 type SettingCatagory = {
@@ -324,6 +328,9 @@ export class Setting {
  * 获取默认下载目录
  */
 function getDownloadDirectory(): string {
+    if (!window.electron.isElectron) {
+        throw new Error('Not running in electron');
+    }
     const homeDir = os.homedir();  // 获取用户主目录
     let downloadDir: string;
 

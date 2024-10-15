@@ -1,26 +1,22 @@
-const axios = require('axios');
-const fs = window.api.fs;
-const path = window.api.path;
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('ffmpeg-static');
+import axios from 'axios';
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const tmpDir = os.tmpdir();
+// const ffmpeg = window.api.ffmpeg;
 const NodeID3 = require('node-id3');
 import indexDB from '@/utils/indexDB';
-
-ffmpeg.setFfmpegPath(ffmpegPath);  // 设置ffmpeg路径
 
 export class Download {
     /**
      * 下载歌曲文件并保存到本地
-     * @param {String} songUrl 歌曲文件 URL
-     * @param {Object} track 歌曲信息对象
-     * @param {String} track.name 歌曲名称
-     * @param {Array<Object>} track.ar 艺术家
-     * @param {Object} track.al 专辑
-     * @param {String} track.al.name 专辑名称
-     * @param {String} track.al.picUrl 封面 URL
+     * @returns 下载的文件路径
      */
-    static async song(songUrl: string, track: { name: string; ar: Array<object>; al: { name: string; picUrl: string; }; }) {
-        const name = track.name;
+    static async song(songUrl: string, track: { name: string; ar: Array<object>; al: { name: string; picUrl: string; }; }, downloadDir: string): Promise<string> {
+        if (!fs.existsSync(downloadDir)) {
+            // throw new Error('Invalid download directory');
+        }
+        const name = sanitizeFileName(track.name);
         const artist = track.ar.map((ar: any) => ar.name).join('; ');
         const album = track.al.name;
         const coverUrl = track.al.picUrl;
@@ -33,8 +29,8 @@ export class Download {
         }
 
         // 创建一个临时文件路径
-        const tempFilePath = path.join(__dirname, `temp_song.${fileExtension}`);
-        const outputFilePath = path.join(__dirname, `${name}.${fileExtension}`);
+        let tempFilePath = path.join(downloadDir, `${name}-temp.${fileExtension}`);
+        let outputFilePath = path.join(downloadDir, `${name}.${fileExtension}`);
 
         // 下载歌曲文件
         const writer = fs.createWriteStream(tempFilePath);
@@ -43,7 +39,7 @@ export class Download {
             method: 'GET',
             responseType: 'stream',
             family: 4, // 使用 IPv4
-            timeout: 10000 // 设置超时时间为30秒
+            timeout: 30000 // 设置超时时间为30秒
         });
 
         response.data.pipe(writer);
@@ -112,4 +108,14 @@ export class Download {
     //     await db.openDatabase();
     //     return await db.getDownloadedSongs();
     // }
+}
+
+/**
+ * 对文件名进行合法化处理，替换掉 Windows 不允许的字符
+ * @param fileName 原始文件名
+ * @returns 合法的文件名
+ */
+function sanitizeFileName(fileName: string): string {
+    // 替换掉 Windows 系统不允许的字符，如 \ / : * ? " < > |
+    return fileName.replace(/[\\/:*?"<>|]/g, '-');
 }

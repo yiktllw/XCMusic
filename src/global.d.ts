@@ -1,11 +1,12 @@
 import { Setting } from "./utils/setting";
-import fs from "fs";
-import path from "path";
-import os from "os";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
+import https from "https";
 
 interface electron {
     ipcRenderer: {
-        send(channel: string, data?: any): void;
+        send(channel: string, ...data?: any): void;
         on(channel: string, listener: (event: any, ...args: any[]) => void): void;
         once(channel: string, listener: (event: any, ...args: any[]) => void): void;
         invoke(channel: string, data?: any): Promise<any>;
@@ -14,9 +15,10 @@ interface electron {
 }
 
 interface api {
-    fs: fs;
-    os: os;
-    path: path;
+    fs: typeof fs;
+    os: typeof os;
+    path: typeof path;
+    NodeID3: typeof NodeID3;
     pathJoin: (...args: string[]) => string;
     readFile: (path: string, options?: { encoding?: null; flag?: string; }) => Buffer;
     writeFile: (path: string, data: any, options?: { encoding?: string; flag?: string; }) => void;
