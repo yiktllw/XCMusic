@@ -1,13 +1,11 @@
+import { Subscriber, SubscribeOptions, UnsubscribeOptions } from "./subscribe";
 
 export class OpenedPlaylist {
     _id: number;
-    _onIdChange: { func: (() => void) | null; id: any; }[];
+    subscriber: Subscriber;
     constructor(){
         this._id = 0;
-        this._onIdChange = [{
-            func: null,
-            id: null,
-        }];
+        this.subscriber = new Subscriber(['id']);
     }
     get id(){
         return this._id;
@@ -16,24 +14,27 @@ export class OpenedPlaylist {
         this._id = id;
         this.execCallbacks();
     }
-    Subscribe(callback: any, identifier: null){
-        if(typeof callback !== 'function'){
-            console.log('openedPlaylist.js error: callback is not a function: ', callback);
-        }
-        if(this._onIdChange.find((element) => element.id === identifier)){
-            console.log('openedPlaylist.js error: identifier already exists: ', identifier);
-            return;
-        }
-        this._onIdChange.push({
-            func: callback,
-            id: identifier,
-        });
+    Subscribe({
+        id,
+        type,
+        func,
+    } : SubscribeOptions ){
+        this.subscriber.on({
+            id,
+            type,
+            func,
+        })
+    }
+    Unsubscribe({
+        id,
+        type,
+    } : UnsubscribeOptions){
+        this.subscriber.off({
+            id,
+            type,
+        })
     }
     execCallbacks(){
-        this._onIdChange.forEach((element) => {
-            if(element.func){
-                element.func();
-            }
-        });
+        this.subscriber.exec('id');
     }
 }

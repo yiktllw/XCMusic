@@ -255,6 +255,9 @@ export default defineComponent({
                 this.fetchPlaylist(newVal);
                 this.isLoading = true;
                 this.orient = 'songs';
+                if (this.type === 'playlist') {
+                    this.openedPlaylist.id = newVal;
+                }
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色

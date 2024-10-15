@@ -1,6 +1,6 @@
-import { YTrackC } from './YTrackC'; 
+import { YTrackC } from './YTrackC';
 import { useApi } from '@/ncm/api';
-import { Subscriber } from './subscribe';
+import { Subscriber, SubscribeOptions, UnsubscribeOptions } from './subscribe';
 import { markRaw } from 'vue';
 
 export class SongPicker {
@@ -43,7 +43,7 @@ export class SongPicker {
      * @param {string} [options.type=''] - 订阅的事件类型
      * @param {Function} [options.func=()=>{}] - 事件处理函数
      */
-    subscribe({ id, func, type, }: { id?: string; type?: string; func?: Function; }) {
+    subscribe({ id, func, type, }: SubscribeOptions) {
         this.subscriber.on({ id, func, type });
     }
     /**
@@ -52,7 +52,7 @@ export class SongPicker {
      * @param {string} [options.id=''] - 用来标识订阅者的唯一id
      * @param {string} [options.type=''] - 订阅的事件类型
      */
-    unSubscribe({ id, type, }: { id?: string; type?: string; }) {
+    unSubscribe({ id, type, }: UnsubscribeOptions) {
         this.subscriber.off({ id, type });
     }
     /**

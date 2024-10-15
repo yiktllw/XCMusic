@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { mapState, useStore } from 'vuex';
+import { useStore } from 'vuex';
 
 export default defineComponent({
     name: 'YSidebar',
@@ -75,7 +75,7 @@ export default defineComponent({
         setting() {
             return useStore().state.setting;
         },
-        activeButtonId() {
+        OpenedPlaylist() {
             return useStore().state.openedPlaylist;
         },
     },
@@ -86,6 +86,7 @@ export default defineComponent({
             showMySubscribedPlaylist: true,
             sidebarWidth: 200,
             newWidth: 0,
+            activeButtonId: 0,
             timeout: null as any,
             userSubscribes: [] as any[],
             userPlaylists: [] as any[],
@@ -128,7 +129,7 @@ export default defineComponent({
             window.removeEventListener('mouseup', this.stopResize);
         },
     },
-    async mounted() {
+    mounted() {
         this.sidebarWidth = this.setting.display.sidebarWidth;
         this.userPlaylists = this.login.userPlaylists;
         this.userSubscribes = this.login.userSubscribes;
@@ -138,6 +139,13 @@ export default defineComponent({
             func: () => {
                 this.userPlaylists = this.login.userPlaylists;
                 this.userSubscribes = this.login.userSubscribes;
+            },
+        });
+        this.OpenedPlaylist.Subscribe({
+            id: 'YSidebar',
+            type: 'id',
+            func: () => {
+                this.activeButtonId = this.OpenedPlaylist.id;
             },
         })
     },
