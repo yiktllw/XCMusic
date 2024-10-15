@@ -153,6 +153,9 @@
 		"users": "个用户"
 	},
 	"setting_view": {
+		"about": {
+			"version": "版本"
+		},
 		"apply": "应用",
 		"language": "语言",
 		"play": {

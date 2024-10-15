@@ -170,7 +170,7 @@
                                 <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.view_comment')" @click="openSongComment(track.id)">
                                 <img src="@/assets/detail.svg" class="track-menu-icon g-icon"
-                                    title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
+                                    :title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
                             </div>
                             <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
                                 :style="{ 'width': `${alWidth}px` }">

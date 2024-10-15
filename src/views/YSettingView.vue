@@ -76,7 +76,8 @@
                             {{ $t('setting_view.play.volume_leveling') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="checkbox" id="volume_leveling" name="volume_leveling" v-model="volume_leveling" @change="setVolumeLeveling(volume_leveling)">
+                            <input type="checkbox" id="volume_leveling" name="volume_leveling" v-model="volume_leveling"
+                                @change="setVolumeLeveling(volume_leveling)">
                             <label for="volume_leveling" @click="setVolumeLeveling(volume_leveling)">
                                 {{ $t('setting_view.play.volume_leveling_content') }}
                             </label>
@@ -105,17 +106,38 @@
                     </div>
                 </div>
             </div>
+            <div class="download item">
+                <div class="download-title item-title">
+                    {{ $t('header.setting_view.download') }}
+                </div>
+            </div>
+            <div class="about item">
+                <div class="about-title item-title">
+                    {{ $t('header.setting_view.about') }}
+                </div>
+                <div class="about-content item-content">
+                    <div class="content-item item-about-version">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.version') }}
+                        </div>
+                        <div class="content-item-content">
+                            {{ version }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, version } from 'vue';
 import { setBackgroundColorTheme } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
 import { themes } from '@/utils/theme';
+import packageJson from '../../package.json';
 
 export default defineComponent({
     name: 'YSettingView',
@@ -131,6 +153,9 @@ export default defineComponent({
         }
     },
     computed: {
+        version() {
+            return packageJson.version;
+        }
     },
     data() {
         return {

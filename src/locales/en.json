@@ -153,6 +153,9 @@
 		"users": "users"
 	},
 	"setting_view": {
+		"about": {
+			"version": "Version"
+		},
 		"apply": "Apply",
 		"language": "Language",
 		"play": {
