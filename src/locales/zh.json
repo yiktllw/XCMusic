@@ -155,6 +155,11 @@
 	"setting_view": {
 		"apply": "应用",
 		"language": "语言",
+		"play": {
+			"dbclick": "播放列表",
+			"dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",
+			"dbclick_playsingle": "双击歌单时，仅将当前歌曲添加到播放列表"
+		},
 		"theme": "主题",
 		"theme_name": {
 			"dark": "暗色",

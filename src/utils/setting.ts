@@ -20,6 +20,7 @@ export interface Settings {
         volume: number,
         mode: string,
         quality: string,
+        dbclick: string,
     },
     display: {
         language: string,
@@ -35,6 +36,17 @@ export interface Settings {
 
 export const settingGroup: SettingGroup = {
     play: {
+        dbclick: {
+            value: localStorage.getItem('setting.play.dbclick') ?? 'all',
+            default: 'all',
+            validation: (value) => {
+                let valid = ['all', 'single'].includes(value);
+                if (valid) {
+                    localStorage.setItem('setting.play.dbclick', value);
+                }
+                return valid;
+            }
+        },
         volume: {
             value: localStorage.getItem('setting.play.volume') ?? 1,
             default: 1,

@@ -17,11 +17,13 @@
                             {{ $t('setting_view.language') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="radio" id="zh" name="language" value="zh" v-model="language">
+                            <input type="radio" id="zh" name="language" value="zh" v-model="language"
+                                @change="switchToLanguage('zh')">
                             <label for="zh" @click="switchToLanguage('zh')">
                                 简体中文
                             </label>
-                            <input type="radio" id="en" name="language" value="en" v-model="language">
+                            <input type="radio" id="en" name="language" value="en" v-model="language"
+                                @change="switchToLanguage('en')">
                             <label for="en" @click="switchToLanguage('en')">
                                 English
                             </label>
@@ -59,6 +61,34 @@
                                 <div class="zoom-apply" @click="handleZoom">
                                     {{ $t('setting_view.apply') }}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="play item">
+                <div class="play-title item-title">
+                    {{ $t('header.setting_view.play') }}
+                </div>
+                <div class="play-content item-content">
+                    <div class="content-item item-play-dbclick">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.play.dbclick') }}
+                        </div>
+                        <div class="content-item-content item-play-dbclick-content">
+                            <div class="dbclick-item1">
+                                <input type="radio" id="play-dbclick" name="play" value="all" v-model="dbclick"
+                                    @change="setDbClick('all')">
+                                <label for="play-dbclick" @click="setDbClick('all')">
+                                    {{ $t('setting_view.play.dbclick_playall') }}
+                                </label>
+                            </div>
+                            <div class="dbclick-item2">
+                                <input type="radio" id="play-click" name="play" value="single" v-model="dbclick"
+                                    @change="setDbClick('single')">
+                                <label for="play-click" @click="setDbClick('single')">
+                                    {{ $t('setting_view.play.dbclick_playsingle') }}
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -122,6 +152,7 @@ export default defineComponent({
             themes: themes,
             theme: 'dark',
             zoom: 100,
+            dbclick: 'all',
         }
     },
     methods: {
@@ -153,12 +184,17 @@ export default defineComponent({
             this.setting.display.language = language;
             this.$i18n.locale = this.language;
         },
+        setDbClick(behavior: 'all' | 'single') {
+            this.dbclick = behavior;
+            this.setting.play.dbclick = behavior;
+        }
     },
     mounted() {
         setBackgroundColorTheme();
         this.theme = this.setting.display.theme;
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
+        this.dbclick = this.setting.play.dbclick;
     },
 })
 </script>
@@ -237,6 +273,13 @@ export default defineComponent({
                         label {
                             cursor: pointer;
                         }
+                    }
+
+                    .item-play-dbclick-content {
+                        display: flex;
+                        flex-direction: column;
+                        line-height: 32.1px;
+                        align-items: start;
                     }
                 }
 

@@ -333,18 +333,18 @@ export default defineComponent({
     },
     name: 'YSongsTable',
     setup(props: { modelValue: Array<any> }) {
-        const tracks = ref < Array < any >> (props.modelValue);
+        const tracks = ref<Array<any>>(props.modelValue);
         watch(() => props.modelValue, (newValue) => {
             tracks.value = newValue;
         });
 
-        const main = ref < HTMLElement | null > (null);
-        const songs_album_ref = ref < HTMLElement | null > (null);
-        const songs_name_ref = ref < HTMLElement | null > (null);
-        const track_item_ref = ref < HTMLElement[] | null > (null);
-        const track_name_ref = ref < HTMLElement[] | null > (null);
-        const trackInfo = ref < HTMLElement[] | null > (null);
-        const track_album_ref = ref < HTMLElement[] | null > (null);
+        const main = ref<HTMLElement | null>(null);
+        const songs_album_ref = ref<HTMLElement | null>(null);
+        const songs_name_ref = ref<HTMLElement | null>(null);
+        const track_item_ref = ref<HTMLElement[] | null>(null);
+        const track_name_ref = ref<HTMLElement[] | null>(null);
+        const trackInfo = ref<HTMLElement[] | null>(null);
+        const track_album_ref = ref<HTMLElement[] | null>(null);
 
         return {
             tracks,
@@ -452,12 +452,9 @@ export default defineComponent({
         },
         async playSongAndPlaylist(track: any) {
             console.log('Play Song And Playlist:', track.id);
-            if (this.canSendPlaylist) {
-                this.$emit('play-song-and-playlist', JSON.stringify(track));
-            } else {
+            if (!this.canSendPlaylist || this.setting.play.dbclick === 'single') {
                 await this.player.playTrack(track);
-            }
-            if (this.localPlay) {
+            } else if (this.setting.play.dbclick === 'all') {
                 this.player.playlist = this.tracks;
                 await this.player.playTrack(track);
                 this.player.playState = 'play';

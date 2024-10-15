@@ -155,6 +155,11 @@
 	"setting_view": {
 		"apply": "Apply",
 		"language": "Language",
+		"play": {
+			"dbclick": "Playlist",
+			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
+			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist."
+		},
 		"theme": "Theme",
 		"theme_name": {
 			"dark": "Dark",
