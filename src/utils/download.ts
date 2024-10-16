@@ -114,6 +114,10 @@ export class Download {
                     reader.pipe(processor).pipe(writer);
 
                     writer.on('finish', () => {
+                        // 如果目标文件存在，先删除
+                        if (fs.existsSync(outputFilePath)) {
+                            fs.unlinkSync(outputFilePath);
+                        }
                         // 替换原始文件为更新后的文件
                         fs.renameSync(outputFilePath.replace('.flac', '-updated.flac'), outputFilePath);
                         resolve(outputFilePath);

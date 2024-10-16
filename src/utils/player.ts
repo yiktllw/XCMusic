@@ -1169,9 +1169,11 @@ export class Player {
     }
     /** 
      * 获取音质显示
-     * @returns {'quality.standard'|'quality.higher'|'quality.exhigh'|'quality.lossless'|'quality.hires'|'quality.jyeffect'|'quality.sky'|'quality.jymaster'}
      */
-    get qualityDisplay(): 'quality.standard' | 'quality.higher' | 'quality.exhigh' | 'quality.lossless' | 'quality.hires' | 'quality.jyeffect' | 'quality.sky' | 'quality.jymaster' | 'quality.default' {
+    get qualityDisplay(): 'quality.standard' | 'quality.higher' | 'quality.exhigh' | 'quality.lossless' | 'quality.hires' | 'quality.jyeffect' | 'quality.sky' | 'quality.jymaster' | 'quality.default' | 'quality.local' {
+        if (store.state.download.downloadedSongs.some((song: any) => song.id == this.currentTrack?.id)) {
+            return 'quality.local';
+        }
         switch (this.quality) {
             case 'standard':
                 return 'quality.standard';

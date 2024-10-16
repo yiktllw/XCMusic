@@ -47,7 +47,7 @@
                     <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg"
                         :title="$t('context.subscribe')" @click="handleSubscribe">
                     <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg"
-                        :title="$t('context.download')">
+                        :title="$t('context.download')" v-if="!downloadedSongIds.includes(currentTrack?.id)">
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
                             :title="$t('context.view_comment')" @click="handleCommentClick(currentTrack?.id)">
@@ -264,6 +264,8 @@ export default defineComponent({
         const playlist_panel_trigger = ref<HTMLElement>();
 
         const progressBarNoTrack = ref<InstanceType<typeof YProgressBar>>();
+        
+        const store = useStore();
 
         return {
             quality_panel,
@@ -276,6 +278,10 @@ export default defineComponent({
             playlist_panel,
             playlist_panel_trigger,
             progressBarNoTrack,
+            player: store.state.player,
+            setting: store.state.setting,
+            login: store.state.login,
+            download: store.state.download,
         }
     },
     props: {
@@ -360,6 +366,7 @@ export default defineComponent({
             progressInterval: null,
             volume: 0,
             qualityDisplay: 'quality.standard',
+            downloadedSongIds: [] as any[],
         }
     },
     watch: {
@@ -368,15 +375,6 @@ export default defineComponent({
         }
     },
     computed: {
-        player() {
-            return useStore().state.player;
-        },
-        login() {
-            return useStore().state.login;
-        },
-        setting() {
-            return useStore().state.setting;
-        },
         likelist() {
             return this.login.likelist ?? [];
         },
@@ -521,6 +519,7 @@ export default defineComponent({
                         }
                     });
                 });
+                this.qualityDisplay = this.player.qualityDisplay;
             },
             type: 'trackReady',
         })
@@ -585,6 +584,14 @@ export default defineComponent({
                 this.qualityDisplay = this.player.qualityDisplay;
             },
             type: 'quality',
+        })
+        this.downloadedSongIds = this.download.downloadedSongIds;
+        this.download.Subscribe({
+            id: 'YPlaybar' + `${this.type}`,
+            func: () => {
+                this.downloadedSongIds = this.download.downloadedSongIds;
+            },
+            type: 'downloaded-songs',
         })
     },
     beforeUnmount() {

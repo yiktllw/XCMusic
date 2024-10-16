@@ -144,6 +144,7 @@
                                 </div>
                                 <!-- 6 歌手名称 -->
                                 <div class="track-artist font-color-standard" v-if="showTrackArtist">
+                                    <img src="@/assets/success.svg" class="track-artist-download-icon" v-if="downloadedSongIds.includes(track.id)">
                                     <span v-for="(artist, index) in track.ar" :key="artist.id">
                                         <!-- 7 歌手按钮 -->
                                         <span @click="handleArtistClick(artist.id)"
@@ -164,7 +165,7 @@
                             <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
                                 <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.download')" @click="downloadSong(track)">
+                                    :title="$t('context.download')" @click="downloadSong(track)" v-if="!downloadedSongIds.includes(track.id)">
                                 <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
                                 <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
@@ -405,6 +406,7 @@ export default defineComponent({
             alWidth: 230,
             page: new YPageC(Math.ceil(this.tracks.length / this.limit)),
             nowPlaying: 0,
+            downloadedSongIds: [] as any[],
         }
     },
     async mounted() {
@@ -420,6 +422,14 @@ export default defineComponent({
             type: 'track',
             func: () => {
                 this.nowPlaying = this.player.currentTrack?.id ?? 0;
+            }
+        })
+        this.downloadedSongIds = this.download.downloadedSongIds;
+        this.player.Subscribe({
+            id: this.id,
+            type: 'downloaded-songs',
+            func: () => {
+                this.downloadedSongIds = this.download.downloadedSongIds;
             }
         })
     },
@@ -921,10 +931,17 @@ ul {
                 }
 
                 .track-artist {
+                    display: inline-block;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     text-align: left;
+                    
+                    .track-artist-download-icon {
+                        width: 14px;
+                        height: 14px;
+                        margin-bottom: -2px;
+                    }
 
                     .artist-button {
                         overflow: hidden;

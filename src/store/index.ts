@@ -17,7 +17,6 @@ export interface State {
 export default createStore({
     state() {
         const download = new Download();
-        download.init();
         return {
             player: markRaw(new Player()), // 初始化 player 为一个 Player 实例
             login: new Login(), // 初始化 login 为一个 Login 实例
@@ -27,9 +26,6 @@ export default createStore({
         };
     },
     getters: {
-        getDownloadedSongs(state: any) {
-            return state.download.downloadedSongs;
-        }
     },
     mutations: {
     },
