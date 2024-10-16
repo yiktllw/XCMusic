@@ -719,7 +719,6 @@ export default defineComponent({
                 cookie: this.login.cookie ?? undefined,
             }).then((res) => res.data[0].url);
             this.download.add(url, track, this.setting.download.path);
-            console.log('All Downloads:', this.download.downloadedSongs);
         }
     },
 })

@@ -47,7 +47,8 @@
                     <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg"
                         :title="$t('context.subscribe')" @click="handleSubscribe">
                     <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg"
-                        :title="$t('context.download')" v-if="!downloadedSongIds.includes(currentTrack?.id)">
+                        :title="$t('context.download')" v-if="!downloadedSongIds.includes(currentTrack?.id)"
+                        @click="downloadCurrentTrack">
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
                             :title="$t('context.view_comment')" @click="handleCommentClick(currentTrack?.id)">
@@ -264,7 +265,7 @@ export default defineComponent({
         const playlist_panel_trigger = ref<HTMLElement>();
 
         const progressBarNoTrack = ref<InstanceType<typeof YProgressBar>>();
-        
+
         const store = useStore();
 
         return {
@@ -496,7 +497,18 @@ export default defineComponent({
                     }
                 }, 300);
             })
-        }
+        },
+        async downloadCurrentTrack() {
+            if (!this.currentTrack) {
+                return;
+            }
+            const url = await useApi('/song/url/v1', {
+                id: this.currentTrack.id,
+                level: this.setting.download.quality,
+                cookie: this.login.cookie ?? undefined,
+            }).then((res) => res.data[0].url);
+            this.download.add(url, this.player.currentTrack, this.setting.download.path);
+        },
     },
     async mounted() {
         if (this.login.status) {
