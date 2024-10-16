@@ -30,6 +30,7 @@ export default defineComponent({
         return {
             player: store.state.player,
             setting: store.state.setting,
+            download: store.state.download,
         }
     },
     computed: {
@@ -60,18 +61,11 @@ export default defineComponent({
         }
     },
     mounted() {
-        this.tracks = this.player.playlist
-        this.player.Subscribe({
-            id: 'YTestView',
-            func: () => {
-                this.tracks = this.player.playlist;
-            },
-            type: 'playlist',
-        })
         window.setting = this.setting;
         window.test = (url: string) => {
             window.electron.ipcRenderer.send('download-song', url, this.player.currentTrack, 'C:/Users/yiktllw/Downloads');
         }
+        console.log('download', this.download);
     },
     beforeUnmount() {
         this.player.UnSubscribe({

@@ -6,6 +6,7 @@ const tmpDir = os.tmpdir();
 // const ffmpeg = window.api.ffmpeg;
 const NodeID3 = require('node-id3');
 import indexDB from '@/utils/indexDB';
+import flac from 'flac-metadata';
 
 export class Download {
     /**
@@ -48,7 +49,7 @@ export class Download {
             writer.on('finish', async () => {
                 fs.renameSync(tempFilePath, outputFilePath);
                 // 如果文件是 mp3 或 flac，嵌入歌曲元数据
-                if (fileExtension === 'mp3' || fileExtension === 'flac') {
+                if (fileExtension === 'mp3') {
                     let coverBuffer = null;
                     if (coverUrl) {
                         const coverResponse = await axios({
@@ -74,6 +75,53 @@ export class Download {
                     };
 
                     NodeID3.write(tags, outputFilePath);
+                    resolve(outputFilePath);
+                }
+                // 如果文件是 flac，嵌入歌曲元数据
+                else if (fileExtension === 'flac') {
+                    const vendor = "reference libFLAC 1.2.1 20070917"; // 可选的供应商信息
+                    const comments = [
+                        `ARTIST=${artist}`,
+                        `TITLE=${name}`,
+                        `ALBUM=${album}`,
+                    ];
+
+                    const reader = fs.createReadStream(outputFilePath);
+                    const writer = fs.createWriteStream(outputFilePath.replace('.flac', '-updated.flac'));
+                    const processor = new flac.Processor();
+
+                    let mdbVorbis: any;
+
+                    processor.on("preprocess", function (mdb) {
+                        // 移除现有的 VORBIS_COMMENT 块（如果存在）
+                        if (mdb.type === flac.Processor.MDB_TYPE_VORBIS_COMMENT) {
+                            mdb.remove();
+                        }
+                        // 准备将新的 VORBIS_COMMENT 块作为最后一个元数据块添加
+                        if (mdb.isLast) {
+                            mdb.isLast = false;
+                            mdbVorbis = flac.data.MetaDataBlockVorbisComment.create(true, vendor, comments);
+                        }
+                    });
+
+                    processor.on("postprocess", function (this: flac.Processor, mdb) {
+                        if (mdbVorbis) {
+                            // 将新的 VORBIS_COMMENT 块作为最后一个元数据块添加
+                            this.push(mdbVorbis.publish());
+                        }
+                    });
+
+                    reader.pipe(processor).pipe(writer);
+
+                    writer.on('finish', () => {
+                        // 替换原始文件为更新后的文件
+                        fs.renameSync(outputFilePath.replace('.flac', '-updated.flac'), outputFilePath);
+                        resolve(outputFilePath);
+                    });
+
+                    writer.on('error', (err: any) => {
+                        console.error('Error writing FLAC metadata:', err);
+                    });
                 }
 
                 resolve(outputFilePath);
@@ -81,33 +129,6 @@ export class Download {
             writer.on('error', reject);
         });
     }
-
-    /**
-     * 在indexDB中保存已下载的歌曲信息
-     * 
-     * 
-     */
-    static async #saveSongInfo(track: any, filePath: string) {
-        const db = new indexDB('ncm', 'downloaded_songs');
-        await db.openDatabase();
-        await db.storePlaylist([{
-            id: track.id,
-            name: track.name,
-            artist: track.ar.map((ar: any) => ar.name).join('; '),
-            album: track.al.name,
-            filePath: filePath,
-        }]);
-    }
-
-    /**
-     * 获取已下载的歌曲信息
-     * 
-     */
-    // async getDownloadedSongs() {
-    //     const db = new indexDB('ncm', 'downloaded_songs');
-    //     await db.openDatabase();
-    //     return await db.getDownloadedSongs();
-    // }
 }
 
 /**

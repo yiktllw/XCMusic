@@ -27,6 +27,7 @@ async function createWindow() {
             nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION === 'true',
             contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
             webviewTag: true,
+            webSecurity: false, // 允许加载本地资源
             backgroundThrottling: false, // 禁止后台时限制性能
         },
         frame: false,

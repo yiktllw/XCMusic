@@ -154,12 +154,12 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" v-model="filteredTracks"
-                :showTrackPopularity="false" @send-playlist="sendPlaylist" 
-                :id="'YPlaylist.vue-playlist'" :from="playlistId" ref="playlist_songstable" />
+                :showTrackPopularity="false" :id="'YPlaylist.vue-playlist'" :from="playlistId"
+                ref="playlist_songstable" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" v-model="filteredTracks"
                 :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels"
-                @send-playlist="sendPlaylist"  :id="'YPlaylist.vue-album'"
-                :type="'album'" :show-header="false" :resortable="false" ref="album_songstable" />
+                :id="'YPlaylist.vue-album'" :type="'album'" :show-header="false" :resortable="false"
+                ref="album_songstable" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <!-- 2 滚动按钮 -->
@@ -209,7 +209,7 @@ export default defineComponent({
         const store = useStore();
         const playlist_songstable = ref<typeof YSongsTable | null>(null);
         const album_songstable = ref<typeof YSongsTable | null>(null);
-        
+
         return {
             player: store.state.player,
             login: store.state.login,
@@ -531,31 +531,6 @@ export default defineComponent({
             await this.player.playTrack(track);
             this.player.playState = 'play';
             if (this.type === 'playlist') {
-                await this.updatePlayCount();
-            }
-        },
-        // 替换歌单
-        async sendPlaylist() {
-            // 发送歌单
-            let playlist = preparePlaylist(this.playlist.tracks);
-            console.log('sendPlaylist');
-            this.player.playlist = playlist;
-            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
-            if (this.type === 'playlist') {
-                await this.updatePlayCount();
-            }
-        },
-        // 播放歌曲并发送歌单
-        async playSongAndPlaylist(track: any) {
-            console.log('playSongAndPlaylist');
-            // 准备歌单
-            let playlist = preparePlaylist(this.playlist.tracks);
-            this.player.playlist = playlist;
-            Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
-            await this.player.playTrack(JSON.parse(track));
-            this.player.playState = 'play';
-            if (this.type === 'playlist') {
-                // 更新歌单播放次数
                 await this.updatePlayCount();
             }
         },

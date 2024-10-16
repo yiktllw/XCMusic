@@ -24,7 +24,11 @@ class IndexedDB {
 
             request.onupgradeneeded = (event) => {
                 const db = (event.target as IDBOpenDBRequest).result;
-                db.createObjectStore(this.storeName, { keyPath: 'id' });
+                // 创建对象存储
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName, { keyPath: 'id' });
+                    console.log(`Object store "${this.storeName}" created.`);
+                }
             };
 
             request.onsuccess = (event) => {
@@ -39,7 +43,7 @@ class IndexedDB {
     }
 
     /**
-     * 存储数组
+     * 存储播放列表
      * @param {Array} array
      * @returns {Promise<string>}
      */
@@ -47,15 +51,15 @@ class IndexedDB {
         return new Promise((resolve, reject) => {
             const transaction = this.db?.transaction(this.storeName, 'readwrite');
             const store = transaction?.objectStore(this.storeName);
-            
-            if(!store) {
+
+            if (!store) {
                 reject('Store is null');
                 return;
             }
 
             // 清空当前对象存储
             const clearRequest = store?.clear();
-            
+
             if (!clearRequest) {
                 reject('Clear request is null');
                 return;
@@ -98,7 +102,7 @@ class IndexedDB {
     }
 
     /**
-     * 获取数组
+     * 获取播放列表
      * @returns {Promise<Array>}
      */
     fetchPlaylist(): Promise<Array<any>> {
@@ -110,7 +114,7 @@ class IndexedDB {
                 return;
             }
             const getAllRequest = store.getAll();
-            
+
             if (!getAllRequest) {
                 reject('Get all request is null');
                 return;
@@ -125,6 +129,96 @@ class IndexedDB {
             getAllRequest.onerror = (event: Event) => {
                 const target = event.target as IDBRequest;
                 reject('Get error: ' + (target.error?.message || 'Unknown error'));
+            };
+        });
+    }
+
+    /**
+     * 获取所有存储的歌曲信息
+     * @returns {Promise<Array<object>>}
+     */
+    getAllSongs(): Promise<Array<object>> {
+        return new Promise((resolve, reject) => {
+            if (!this.db) return reject('Database not open');
+
+            const transaction = this.db.transaction([this.storeName], 'readonly');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.getAll();
+
+            request.onsuccess = (event) => {
+                resolve((event.target as IDBRequest).result);
+            };
+
+            request.onerror = (event) => {
+                reject('Get all songs error: ' + (event.target as IDBRequest).error);
+            };
+        });
+    }
+
+    /**
+     * 添加歌曲信息到数据库
+     * @param {object} song
+     * @returns {Promise<void>}
+     */
+    addDownloadedSong(song: { id: string, name: string, path: string }): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (!this.db) return reject('Database not open');
+
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.add(song);
+
+            request.onsuccess = () => {
+                resolve();
+            };
+
+            request.onerror = (event) => {
+                reject('Add song error: ' + (event.target as IDBRequest).error);
+            };
+        });
+    }
+
+    /**
+     * 删除数据库中的歌曲
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
+    deleteDownloadedSong(id: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (!this.db) return reject('Database not open');
+
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.delete(id);
+
+            request.onsuccess = () => {
+                resolve();
+            };
+
+            request.onerror = (event) => {
+                reject('Delete song error: ' + (event.target as IDBRequest).error);
+            };
+        });
+    }
+
+    /**
+     * 清除歌曲存储库
+     * @returns {Promise<void>}
+     */
+    clearDownloadStore(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (!this.db) return reject('Database not open');
+
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.clear();
+
+            request.onsuccess = () => {
+                resolve();
+            };
+
+            request.onerror = (event) => {
+                reject('Clear store error: ' + (event.target as IDBRequest).error);
             };
         });
     }

@@ -164,7 +164,7 @@
                             <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
                                 <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.download')">
+                                    :title="$t('context.download')" @click="downloadSong(track)">
                                 <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
                                 <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
@@ -229,6 +229,7 @@ import YPage from './YPage.vue';
 import { YPageC } from '@/dual/YPageC';
 import { Message } from '@/dual/YMessageC';
 import { ref, watch, defineComponent } from 'vue';
+import { useApi } from '@/utils/api';
 import upArrow from '../assets/up-arrow.svg';
 import downArrow from '../assets/down-arrow.svg';
 import updownArrow from '../assets/updown-arrow.svg';
@@ -306,10 +307,6 @@ export default defineComponent({
             type: Boolean,
             default: true,
         },
-        localPlay: {
-            type: Boolean,
-            default: false,
-        },
         stickyTop: {
             type: String,
             default: '0px',
@@ -346,6 +343,8 @@ export default defineComponent({
         const trackInfo = ref<HTMLElement[] | null>(null);
         const track_album_ref = ref<HTMLElement[] | null>(null);
 
+        const store = useStore();
+
         return {
             tracks,
             songs_album_ref,
@@ -355,6 +354,10 @@ export default defineComponent({
             trackInfo,
             track_album_ref,
             main,
+            download: store.state.download,
+            player: store.state.player,
+            login: store.state.login,
+            setting: store.state.setting,
         };
     },
     components: {
@@ -362,20 +365,10 @@ export default defineComponent({
         YPage,
     },
     emits: [
-        'send-playlist',
         'update-display',
         'play-song-and-playlist',
     ],
     computed: {
-        player() {
-            return useStore().state.player;
-        },
-        login() {
-            return useStore().state.login;
-        },
-        setting() {
-            return useStore().state.setting;
-        },
         likelist() {
             return this.login.likelist ?? [];
         },
@@ -437,27 +430,20 @@ export default defineComponent({
         });
     },
     watch: {
-        tracks(newVal) {
+        tracks(newVal, oldVal) {
             this.alWidth = this.setting.display.albumWidth;
             this.page = new YPageC(Math.ceil(newVal.length / this.limit));
+            console.log('Tracks Changed:', newVal);
         },
     },
     methods: {
-        sendPlaylist() {
-            if (!this.localPlay) {
-                this.$emit('send-playlist');
-            } else {
-                this.player.playlist = this.tracks;
-            }
-        },
         async playSongAndPlaylist(track: any) {
             console.log('Play Song And Playlist:', track.id);
             if (!this.canSendPlaylist || this.setting.play.dbclick === 'single') {
                 await this.player.playTrack(track);
-            } else if (this.setting.play.dbclick === 'all') {
-                this.player.playlist = this.tracks;
+            } else {
+                this.player.playlist = this.tracks.slice();
                 await this.player.playTrack(track);
-                this.player.playState = 'play';
             }
         },
         formatDuration(duration: number) {
@@ -716,6 +702,15 @@ export default defineComponent({
                 })
             }
         },
+        async downloadSong(track: any) {
+            const url = await useApi('/song/url/v1', {
+                id: track.id,
+                level: this.setting.download.quality,
+                cookie: this.login.cookie ?? undefined,
+            }).then((res) => res.data[0].url);
+            this.download.add(url, track, this.setting.download.path);
+            console.log('All Downloads:', this.download.downloadedSongs);
+        }
     },
 })
 

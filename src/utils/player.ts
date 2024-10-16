@@ -10,6 +10,7 @@ import { useApi } from "./api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { Message } from "@/dual/YMessageC";
+import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 
@@ -19,32 +20,85 @@ export class Player {
      * @type {Number}
      */
     #lastloadTrack: number = 0;
+    /**
+     * 音频对象
+     */
     _audio: HTMLAudioElement;
+    /**
+     * 音频上下文，用于设置增益
+     */
     _audioContext: AudioContext | null;
+    /**
+     * 增益节点，用于设置音量均衡
+     */
     _gainNode: GainNode | null;
+    /**
+     * 播放列表
+     */
     _playlist: any[];
+    /**
+     * 歌单ID
+     */
     _playlistId: number | string;
+    /**
+     * 当前播放的歌曲索引
+     */
     _current: number;
+    /**
+     * 播放模式
+     */
     _mode: 'order' | 'listloop' | 'random' | 'loop' | 'listrandom';
+    /**
+     * 播放历史
+     */
     _history: any[];
+    /**
+     * 播放历史索引
+     */
     _historyIndex: number;
+    /**
+     * 播放状态
+     */
     _playState: 'play' | 'pause';
+    /**
+     * 音量
+     */
     _volume: number;
+    /**
+     * 当前播放时间
+     */
     _currentTime: number | string;
+    /**
+     * 播放进度
+     */
     _progress: number | string;
+    /**
+     * 歌曲总时长
+     */
     _duration: number | string;
+    /**
+     * 音质
+     */
     _quality: 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster';
     _volume_leveling: boolean;
+    /**
+     * 点歌功能
+     */
     songPicker: SongPicker | undefined;
+    /**
+     * 更新时间的定时器
+     */
     _updateTime: any;
+    /**
+     * 订阅事件
+     */
     subscriber: Subscriber;
+    /**
+     * IndexDB, 用于存储播放列表
+     */
     db: indexDB;
     _mediaSessionInit: boolean;
     constructor() {
-        /**
-         * 音频对象
-         * @type {HTMLAudioElement}
-         */
         this._audio = new Audio('');
         this._audio.onerror = async () => {
             if (this.#lastloadTrack === this.currentTrack?.id) {
@@ -61,92 +115,32 @@ export class Player {
         };
         let localVolumeLeveling = localStorage.getItem('setting.play.volume_leveling') ?? 'true';
         this._volume_leveling = localVolumeLeveling === 'true' ? true : false;
-        /**
-         * 音频上下文，用于设置增益
-         * @type {AudioContext}
-         */
         this._audioContext = null;
-        /**
-         * 增益节点，用于设置音量均衡
-         * @type {GainNode}
-         */
         this._gainNode = null;
         // 初始化音量均衡控件
         this.initAudioContext();
 
-        /**
-         * 播放列表
-         * @type {Array}
-         */
         this._playlist = [];
-        /**
-         * 歌单ID
-         * @type {Number}
-         */
         this._playlistId = 0;
-        /**
-         * 当前播放的歌曲索引
-         * @type {Number}
-         */
         this._current = 0;
 
-        /**
-         * 播放模式
-         * @type {'order'|'listloop'|'random'|'loop'|'listrandom'}
-         */
         this._mode = 'order';
 
-        /**
-         * 播放历史
-         * @type {Array<tracks>}
-         */
         this._history = [];
-        /**
-         * 播放历史索引
-         * @type {Number}
-         */
         this._historyIndex = 0;
 
-        /**
-         * 播放状态
-         * @type {'play'|'pause'}
-         */
         this._playState = 'pause';
 
-        /**
-         * 音量
-         * @type {Number} 0-1
-         */
         this._volume = 1;
 
-        /**
-         * 当前播放时间
-         * @type {Number} 秒
-         */
         this._currentTime = 0;
-        /**
-         * 播放进度
-         * @type {Number} 0-1
-         */
         this._progress = 0;
-        /**
-         * 歌曲总时长
-         * @type {Number} 秒
-         */
         this._duration = 0;
 
-        /**
-         * 音质
-         * @type {'standard'|'exhigh'|'lossless'|'hires'|'jyeffect'|'sky'|'jymaster'}
-         */
         this._quality = 'exhigh';
 
         // 点歌功能
         if (window.electron?.isElectron) {
-            /**
-             * 点歌功能
-             * @type {SongPicker}
-             */
             this.songPicker = markRaw(new SongPicker());
             this.songPicker.subscribe({
                 id: 'player.js',
@@ -166,16 +160,8 @@ export class Player {
             });
         }
 
-        /**
-         * 更新时间的定时器
-         * @type {Number}
-         */
         this._updateTime = null;
 
-        /**
-         * 订阅事件
-         * @type {Subscriber}
-         */
         this.subscriber = markRaw(new Subscriber([
             'playState',
             'playlist',
@@ -190,10 +176,6 @@ export class Player {
             'playerReady',
         ]));
 
-        /**
-         * IndexDB, 用于存储播放列表
-         * @type {indexDB}
-         */
         this.db = new indexDB('ncm', 'playlist');
         this.db.openDatabase().then(() => {
             // console.log('Database opened');
@@ -242,7 +224,7 @@ export class Player {
 
         this._mediaSessionInit = false;
         this.initMediaSession();
-        
+
         setTimeout(() => {
             this.Execute({ type: 'playerReady' });
         }, 500);
@@ -1031,6 +1013,14 @@ export class Player {
      */
     async getUrl(id: number) {
         let response = null;
+        const downloads = store.state.download.downloadedSongs;
+        if (downloads.some((song: any) => song.id === id)) {
+            let song = downloads.find((song: any) => song.id === id); 
+            const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
+            return {
+                url: fileUrl,
+            }
+        }
         if (localStorage.getItem('login_cookie')) {
             response = await useApi('/song/url/v1', {
                 id: id,

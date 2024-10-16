@@ -451,8 +451,11 @@ export default defineComponent({
             }
         },
         async setCommentCount() {
+            if (!this.currentTrack?.id) {
+                return;
+            }
             await useApi(`/comment/music`, {
-                id: this.currentTrack?.id ?? null,
+                id: this.currentTrack?.id,
                 limit: 0,
             }).then(res => {
                 let count = res.total;
