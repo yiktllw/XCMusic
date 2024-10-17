@@ -111,6 +111,20 @@
                     {{ $t('header.setting_view.download') }}
                 </div>
                 <div class="download-content item-content">
+                    <div class="content-item item-download-quality">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.download.quality') }}
+                        </div>
+                        <div class="content-item-content download-quality-item">
+                            <div v-for="quality_item in qualities" :id="quality_item">
+                                <input type="radio" :id="quality_item" name="quality" :value="quality_item" v-model="quality"
+                                    @change="setQuality(quality_item)">
+                                <label for="quality" @click="setQuality(quality_item)">
+                                    {{ $t(`quality.${quality_item}`) }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="content-item item-download-path">
                         <div class="content-item-title">
                             {{ $t('setting_view.download.path') }}
@@ -151,6 +165,7 @@ import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
 import { themes } from '@/utils/theme';
 import packageJson from '../../package.json';
+import { qualities } from '@/utils/setting';
 
 export default defineComponent({
     name: 'YSettingView',
@@ -205,6 +220,8 @@ export default defineComponent({
             volume_leveling: false,
             dbclick: 'all',
             downloadPath: '',
+            quality: 'standard',
+            qualities: qualities,
         }
     },
     methods: {
@@ -256,6 +273,10 @@ export default defineComponent({
             } else {
                 Message.post('info', this.$t('message.setting_view.download.only_desktop'));
             }
+        },
+        setQuality(quality: string) {
+            this.quality = quality;
+            this.setting.download.quality = quality;
         }
     },
     mounted() {
@@ -266,6 +287,7 @@ export default defineComponent({
         this.volume_leveling = this.setting.play.volume_leveling;
         this.dbclick = this.setting.play.dbclick;
         this.downloadPath = this.setting.download.path;
+        this.quality = this.setting.download.quality;
     },
 })
 </script>
@@ -320,23 +342,23 @@ export default defineComponent({
                 display: flex;
                 flex-direction: column;
                 margin: 10px 43.21px 10px 23px;
-                
-                .download-path-content{
+
+                .download-path-content {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
-                    
-                    .select-file{
+
+                    .select-file {
                         cursor: pointer;
                         margin-left: 10px;
                         color: var(--font-color-high);
-                        
-                        &:hover{
+
+                        &:hover {
                             color: var(--font-color-main);
                         }
                     }
-                    
-                    input{
+
+                    input {
                         width: 210px;
                         height: 30px;
                         border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
@@ -346,11 +368,11 @@ export default defineComponent({
                         border-radius: 5px;
                         padding: 0 10px;
                         margin-right: 10px;
-                        
+
                         &:focus {
                             outline: none;
                         }
-                        
+
                     }
                 }
 
@@ -376,6 +398,17 @@ export default defineComponent({
 
                         label {
                             cursor: pointer;
+                        }
+                    }
+                    
+                    .download-quality-item{
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: first baseline;
+                        line-height: 32.1px;
+
+                        div {
+                            margin-right: 10px;
                         }
                     }
 
@@ -453,8 +486,8 @@ export default defineComponent({
                                 cursor: pointer;
                                 margin-left: 10px;
                                 color: var(--font-color-high);
-                                
-                                &:hover{
+
+                                &:hover {
                                     color: var(--font-color-main);
                                 }
                             }

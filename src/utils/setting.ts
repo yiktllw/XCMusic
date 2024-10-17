@@ -222,7 +222,7 @@ const modes = [
     'loop'
 ]
 
-const qualities = [
+export const qualities = [
     'standard',
     'higher',
     'exhigh',

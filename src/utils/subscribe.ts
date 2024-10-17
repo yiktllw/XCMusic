@@ -73,8 +73,8 @@ export class Subscriber {
             console.log('id is empty');
             return;
         }
-        if (!this.allowedEvents?.includes(type as string)) {
-            console.log('type is not in allowedEvents: ', type);
+        if (!this.allowedEvents?.includes(type)) {
+            console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
         let arrayWithId = this._subscribes.filter((item: { id: string | undefined; }) => item.id === id);
@@ -114,6 +114,10 @@ export class Subscriber {
         id,
         type,
     }: UnsubscribeOptions) {
+        if (!this.allowedEvents?.includes(type)) {
+            console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
+            return;
+        }
         let arrayWithId = this._subscribes.filter((item: { id: string; }) => item.id === id);
         if (arrayWithId.length !== 0) {
             arrayWithId.forEach((item: { type: string; globalIndex: any; }) => {
@@ -129,6 +133,10 @@ export class Subscriber {
      * @param {string} type - 要执行的事件类型
      */
     exec(type: string) {
+        if (!this.allowedEvents?.includes(type)) {
+            console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
+            return;
+        }
         this._subscribes.forEach((item: { type: string; func: () => void; }) => {
             if (item.type === type) {
                 item.func();

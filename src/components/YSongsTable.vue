@@ -425,7 +425,7 @@ export default defineComponent({
             }
         })
         this.downloadedSongIds = this.download.downloadedSongIds;
-        this.player.Subscribe({
+        this.download.Subscribe({
             id: this.id,
             type: 'downloaded-songs',
             func: () => {
@@ -437,6 +437,10 @@ export default defineComponent({
         this.player.UnSubscribe({
             id: this.id,
             type: 'track',
+        });
+        this.download.UnSubscribe({
+            id: this.id,
+            type: 'downloaded-songs',
         });
     },
     watch: {

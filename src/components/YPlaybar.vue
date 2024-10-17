@@ -639,6 +639,10 @@ export default defineComponent({
             id: 'YPlaybar' + `${this.type}`,
             type: 'quality',
         })
+        this.download.UnSubscribe({
+            id: 'YPlaybar' + `${this.type}`,
+            type: 'downloaded-songs',
+        })
     },
 })
 

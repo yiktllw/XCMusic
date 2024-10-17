@@ -102,7 +102,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="user-info-item" @click="$router.push({ path: '/setting' })">
+                    <div class="user-info-item" @click="$router.push({ path: '/setting' }); user_info_panel?.closePanel();">
                         {{ $t('titlebar.settings') }}
                     </div>
                     <div class="user-info-item">
@@ -118,7 +118,7 @@
                     <div class="user-info-item">
                         {{ $t('titlebar.about') }}
                     </div>
-                    <div class="user-info-item" @click="login.logout()">
+                    <div class="user-info-item" @click="login.logout(); user_info_panel ? user_info_panel.showPanel = false : '';">
                         {{ $t('titlebar.logout') }}
                     </div>
                 </div>
@@ -421,9 +421,11 @@ export default defineComponent({
         },
         openTestPage() {
             this.$router.push({ path: '/test' });
+            this.user_info_panel?.closePanel();
         },
         openListenRank() {
             this.$router.push({ path: `/user_songs_rank/${this.login.userId}` })
+            this.user_info_panel?.closePanel();
         }
     },
     async mounted() {
