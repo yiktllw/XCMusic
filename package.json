@@ -19,8 +19,6 @@
     },
     "main": "background.js",
     "dependencies": {
-        "@ffmpeg/ffmpeg": "^0.12.10",
-        "@ffmpeg/util": "^0.12.1",
         "@yiktllw/ncm-api": "^4.22.0",
         "axios": "^1.7.3",
         "cli-color": "^2.0.4",

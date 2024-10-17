@@ -1,11 +1,7 @@
 import axios from 'axios';
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
-const tmpDir = os.tmpdir();
-// const ffmpeg = window.api.ffmpeg;
 const NodeID3 = require('node-id3');
-import indexDB from '@/utils/indexDB';
 import flac from 'flac-metadata';
 
 export class Download {
