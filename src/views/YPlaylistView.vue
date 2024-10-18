@@ -557,10 +557,10 @@ export default defineComponent({
             }
         },
         downloadPlaylist() {
-            console.log('downloadPlaylist');
+            Message.post('info', '功能暂未实现');
         },
         multiChoice() {
-            console.log('multiChoice');
+            Message.post('info', '功能暂未实现');
         },
     },
     beforeUnmount() {
