@@ -6,6 +6,16 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import { startNeteaseMusicApi } from './electron/services';
 import * as path from 'path';
+import Store from 'electron-store'
+
+interface WindowState {
+    width: number;
+    height: number;
+}
+
+const store = new Store<WindowState>();
+// 从 store 中获取窗口的大小和位置
+const windowState: WindowState = store.get('windowState', { width: 1200, height: 750 });
 
 protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -18,8 +28,8 @@ let tray: Tray | null = null;
 async function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 1200,
-        height: 750,
+        width: windowState.width,
+        height: windowState.height,
         minWidth: 1000,
         minHeight: 700,
         webPreferences: {
@@ -33,6 +43,16 @@ async function createWindow() {
         frame: false,
         icon: path.join(__dirname, '../src/assets/icons/icon.png'),
     })
+    win.on('close', () => {
+        if (!win) return;
+        const bounds = win.getBounds();
+        store.set('windowState', bounds);
+    });
+    win.on('hide', () => {
+        if (!win) return;
+        const bounds = win.getBounds();
+        store.set('windowState', bounds);
+    });
     win.menuBarVisible = false;
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
