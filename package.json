@@ -24,7 +24,7 @@
         "cli-color": "^2.0.4",
         "color": "^4.2.3",
         "core-js": "^3.8.3",
-        "electron-store": "^8.2.0",
+        "electron-store": "8.2.0",
         "flac-metadata": "^0.1.1",
         "node-id3": "^0.2.6",
         "vue": "^3.2.13",
