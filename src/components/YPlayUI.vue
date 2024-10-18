@@ -51,7 +51,7 @@
                                 <div class="before-lyric" />
                                 <div class="lyric-lrc-line" v-for="(line, index) in lyrics" :key="line"
                                     :class="lineClass(index)"
-                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `all 0.5s ease` }">
+                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `color, font-size 0.5s ease` }">
                                     <span v-if="line.content">
                                         <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
@@ -139,7 +139,8 @@
                         </div>
                         <div class="sheet font-color-main" v-else-if="position === 'sheet'">
                             <div class="sheet-list" v-if="sheets">
-                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index" @click="openSheet(sheet)">
+                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index"
+                                    @click="openSheet(sheet)">
                                     <div class="sheet-item-img">
                                         <img class="sheet-preview-img" :src="sheet.coverImageUrl + '?param=80y100'" />
                                     </div>
@@ -292,6 +293,7 @@ export default defineComponent({
             sheets: null as any,
             currentTime: 0,
             currentLine: 0,
+            startTime: null as any,
             timeInterval: null as any,
             scrollAnimationFrame: null as any,
         };
@@ -414,21 +416,18 @@ export default defineComponent({
 
                 // 动画参数
                 const duration = 600; // 动画持续时间
-                const startTime = performance.now(); // 动画开始时间
-
-                // 缓动函数 (三次缓动)
-                const easeInOutCubic = (t: number) => {
-                    return t < 0.5
-                        ? 4 * t * t * t
-                        : 1 - Math.pow(-2 * t + 2, 3) / 2;
-                };
 
                 // 动画循环
                 const animateScroll = (currentTime: number) => {
+                    // 如果是第一次调用，设置 startTime
+                    if (!this.startTime) {
+                        this.startTime = currentTime; // 将当前时间设置为 startTime
+                    }
+
                     // 计算已经过的时间
-                    const elapsed = currentTime - startTime;
+                    const elapsed = currentTime - this.startTime;
                     const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
-                    const easeT = easeInOutCubic(t); // 应用缓动
+                    const easeT = this.ease(t); // 应用缓动
 
                     // 计算当前的 scrollTop 值
                     const currentScrollTop = scrollTopNow + (scrollTop - scrollTopNow) * easeT;
@@ -439,12 +438,22 @@ export default defineComponent({
                         this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
                     } else {
                         this.scrollAnimationFrame = null; // 动画完成后重置动画 ID
+                        this.startTime = null; // 重置 startTime
                     }
                 };
 
                 // 启动动画
                 this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
             }
+        },
+        ease(t: number): number {
+            let res = t < 0.5
+                ? 4 * t * t * t
+                : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            res = Math.max(0, Math.min(1, res));
+            // console.log(res);
+            return res;
         },
         async setBackgroundColor() {
             if (!this.track?.al?.picUrl) {
@@ -700,7 +709,7 @@ export default defineComponent({
                 width: 43.21vw;
 
                 .lyric-lrc {
-                    transition: all 0.3s;
+                    transition: color, opacity 0.3s;
 
                     .before-lyric {
                         height: 25vh;
@@ -916,7 +925,7 @@ export default defineComponent({
                     }
                 }
 
-                .no-sheet{
+                .no-sheet {
                     font-size: 20px;
                     font-weight: bold;
                 }

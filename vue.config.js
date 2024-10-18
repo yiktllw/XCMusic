@@ -16,6 +16,12 @@ module.exports = defineConfig({
                 },
                 linux: {
                     icon: 'src/assets/icons/icon.png'
+                },
+                nsis: {
+                    oneClick: false, // 禁用一键安装
+                    allowToChangeInstallationDirectory: true, // 允许用户选择安装路径
+                    createDesktopShortcut: true, // 创建桌面快捷方式
+                    shortcutName: "XCMusic" // 快捷方式名称
                 }
             },
         },
