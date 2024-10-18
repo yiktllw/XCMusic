@@ -456,7 +456,6 @@ export default defineComponent({
         tracks(newVal, oldVal) {
             this.alWidth = this.setting.display.albumWidth;
             this.page = new YPageC(Math.ceil(newVal.length / this.limit));
-            console.log('Tracks Changed:', newVal);
         },
     },
     methods: {

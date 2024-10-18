@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, shell } = require('electron');
 
 const fs = require('fs');
 const path = require('path');
@@ -29,5 +29,6 @@ contextBridge.exposeInMainWorld(
             invoke: (channel, data) => ipcRenderer.invoke(channel, data),
         },
         isElectron: true,
+        shell: shell,
     }
 );

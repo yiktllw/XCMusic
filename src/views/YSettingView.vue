@@ -1,13 +1,13 @@
 <template>
-    <div class="setting">
+    <div class="setting" ref="main">
         <div class="header">
             <div class="title font-color-main">{{ $t('settings') }}</div>
             <div class="switcher">
-                <YHeader :switcher="switcher" @new-position="handleSwitcher"></YHeader>
+                <YHeader :switcher="switcher" @new-position="handleSwitcher" ref="header"></YHeader>
             </div>
         </div>
         <div class="main font-color-main">
-            <div class="normal item">
+            <div class="normal item" id="normal">
                 <div class="normal-title item-title">
                     {{ $t('header.setting_view.normal') }}
                 </div>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="play item">
+            <div class="play item" id="play">
                 <div class="play-title item-title">
                     {{ $t('header.setting_view.play') }}
                 </div>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
             </div>
-            <div class="download item">
+            <div class="download item" id="download">
                 <div class="download-title item-title">
                     {{ $t('header.setting_view.download') }}
                 </div>
@@ -117,8 +117,8 @@
                         </div>
                         <div class="content-item-content download-quality-item">
                             <div v-for="quality_item in qualities" :id="quality_item">
-                                <input type="radio" :id="quality_item" name="quality" :value="quality_item" v-model="quality"
-                                    @change="setQuality(quality_item)">
+                                <input type="radio" :id="quality_item" name="quality" :value="quality_item"
+                                    v-model="quality" @change="setQuality(quality_item)">
                                 <label for="quality" @click="setQuality(quality_item)">
                                     {{ $t(`quality.${quality_item}`) }}
                                 </label>
@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            <div class="about item">
+            <div class="about item" id="about">
                 <div class="about-title item-title">
                     {{ $t('header.setting_view.about') }}
                 </div>
@@ -151,6 +151,24 @@
                             {{ version }}
                         </div>
                     </div>
+                    <div class="content-item item-about-author">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.author') }}
+                        </div>
+                        <div class="content-item-content">
+                            YiktLLW
+                        </div>
+                    </div>
+                    <div class="content-item item-about-github">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.source_code') }}
+                        </div>
+                        <div class="content-item-content">
+                            <div class="github-link" @click="openGitRepo">
+                                GitHub
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -158,7 +176,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { setBackgroundColorTheme } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
@@ -174,8 +192,12 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const main = ref<HTMLElement | null>(null);
+        const header = ref<typeof YHeader | null>(null);
 
         return {
+            main,
+            header,
             setting: store.state.setting,
             player: store.state.player,
         }
@@ -226,7 +248,13 @@ export default defineComponent({
     },
     methods: {
         handleSwitcher(position: string) {
-            console.log(position);
+            const scroll = document.querySelector(`#yscroll-display-area`);
+            const dom = this.main?.querySelector(`#${position}`);
+            const firstDom = this.main?.querySelector('#normal');
+            if (!dom || !scroll || !firstDom) return;
+            const scrollTop = (dom as HTMLElement).offsetTop - (firstDom as HTMLElement).offsetTop;
+            scroll.scrollTo({ top: scrollTop, behavior: 'smooth' });
+
         },
         handleTheme(e: any) {
             this.switchToTheme(e.target.value);
@@ -277,7 +305,13 @@ export default defineComponent({
         setQuality(quality: string) {
             this.quality = quality;
             this.setting.download.quality = quality;
-        }
+        },
+        openGitRepo() {
+            if (!window.electron?.isElectron) {
+                return;
+            }
+            window.electron.shell.openExternal('https://github.com/yiktllw/XCMusic');
+        },
     },
     mounted() {
         setBackgroundColorTheme();
@@ -296,7 +330,6 @@ export default defineComponent({
 .setting {
     display: flex;
     width: inherit;
-    height: inherit;
     padding: 10px;
 
     .header {
@@ -392,6 +425,16 @@ export default defineComponent({
 
                     .content-item-content {
 
+                        .github-link {
+                            cursor: pointer;
+                            color: var(--font-color-high);
+                            text-decoration: underline;
+
+                            &:hover {
+                                color: var(--font-color-main);
+                            }
+                        }
+
                         input[type="radio"] {
                             cursor: pointer;
                         }
@@ -400,8 +443,8 @@ export default defineComponent({
                             cursor: pointer;
                         }
                     }
-                    
-                    .download-quality-item{
+
+                    .download-quality-item {
                         display: flex;
                         flex-wrap: wrap;
                         align-items: first baseline;

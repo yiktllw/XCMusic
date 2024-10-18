@@ -53,6 +53,9 @@ export default defineComponent({
             this.position = position;
             this.$emit('new-position', position);
         },
+        setPosition(position: string) {
+            this.position = position;
+        },
     },
     mounted() {
         this.position = (this.switcher as SwitcherItem[])[0].position;

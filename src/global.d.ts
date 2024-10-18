@@ -1,4 +1,5 @@
 import { Setting } from "./utils/setting";
+import { shell } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
@@ -12,6 +13,7 @@ interface electron {
         invoke(channel: string, data?: any): Promise<any>;
     };
     isElectron: boolean;
+    shell: shell;
 }
 
 interface api {

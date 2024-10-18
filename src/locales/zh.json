@@ -159,6 +159,8 @@
 	},
 	"setting_view": {
 		"about": {
+			"author": "作者",
+			"source_code": "源代码",
 			"version": "版本"
 		},
 		"apply": "应用",

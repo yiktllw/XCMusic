@@ -159,6 +159,8 @@
 	},
 	"setting_view": {
 		"about": {
+			"author": "Author",
+			"source_code": "Source Code",
 			"version": "Version"
 		},
 		"apply": "Apply",

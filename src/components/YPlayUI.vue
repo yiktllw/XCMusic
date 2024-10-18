@@ -139,7 +139,7 @@
                         </div>
                         <div class="sheet font-color-main" v-else-if="position === 'sheet'">
                             <div class="sheet-list" v-if="sheets">
-                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index">
+                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index" @click="openSheet(sheet)">
                                     <div class="sheet-item-img">
                                         <img class="sheet-preview-img" :src="sheet.coverImageUrl + '?param=80y100'" />
                                     </div>
@@ -171,6 +171,7 @@ import { Lyrics } from '@/utils/lyric';
 import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import { getColorFromImg } from '@/utils/color';
+import { Message } from '@/dual/YMessageC';
 
 export default defineComponent({
     name: 'YPlayUI',
@@ -496,7 +497,12 @@ export default defineComponent({
                     this.sheets = null;
                 }
             })
-        }
+        },
+        openSheet(sheet: any) {
+            Message.post('info', '暂未实现查看曲谱');
+            // this.$router.push({ path: `/sheet/${sheet.id}` });
+            // this.show = false;
+        },
     },
     async mounted() {
         if (this.player.currentTrack) {
