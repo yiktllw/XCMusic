@@ -30,9 +30,14 @@
                             {{ $t('titlebar.searchHistory') }}
                         </div>
                         <div class="search-history-items">
-                            <div v-for="item in searchHistory" :key="item" @click="search(item)"
-                                class="search-history-item font-color-standard">
-                                {{ item }}
+                            <div v-for="item in searchHistory" :key="item" class="item-container">
+                                <span class="search-history-item font-color-standard" @click="search(item)">
+                                    {{ item }}
+                                </span>
+                                <div class="delete-button">
+                                    <img class="img-delete g-icon" src="../assets/close.svg"
+                                        @click="deleteSearchHistory(item)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -102,7 +107,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="user-info-item" @click="$router.push({ path: '/setting' }); user_info_panel?.closePanel();">
+                    <div class="user-info-item"
+                        @click="$router.push({ path: '/setting' }); user_info_panel?.closePanel();">
                         {{ $t('titlebar.settings') }}
                     </div>
                     <div class="user-info-item">
@@ -118,7 +124,8 @@
                     <div class="user-info-item">
                         {{ $t('titlebar.about') }}
                     </div>
-                    <div class="user-info-item" @click="login.logout(); user_info_panel ? user_info_panel.showPanel = false : '';">
+                    <div class="user-info-item"
+                        @click="login.logout(); user_info_panel ? user_info_panel.showPanel = false : '';">
                         {{ $t('titlebar.logout') }}
                     </div>
                 </div>
@@ -168,11 +175,11 @@ export default defineComponent({
         const dropdownMenu = ref<HTMLElement | null>(null);
         const user_info_panel = ref<typeof YPanel | null>(null);
         const user_info_menu_trigger = ref<HTMLElement | null>(null);
-        
+
         const store = useStore();
         const login = store.state.login;
         const setting = store.state.setting;
-        
+
         return {
             search_panel,
             search_panel_trigger,
@@ -426,7 +433,10 @@ export default defineComponent({
         openListenRank() {
             this.$router.push({ path: `/user_songs_rank/${this.login.userId}` })
             this.user_info_panel?.closePanel();
-        }
+        },
+        deleteSearchHistory(item: string) {
+            this.searchHistory = this.searchHistory.filter((history) => history !== item);
+        },
     },
     async mounted() {
         // 添加外部点击处理器
@@ -604,16 +614,49 @@ export default defineComponent({
                     flex-wrap: wrap;
                     align-items: baseline;
 
-                    .search-history-item {
-                        border-radius: 5px;
-                        text-align: left;
-                        cursor: pointer;
-                        padding: 6px;
-                        white-space: nowrap;
+                    .item-container {
+                        display: flex;
+                        flex-direction: row;
+
+                        .search-history-item {
+                            border-radius: 5px;
+                            text-align: left;
+                            cursor: pointer;
+                            padding: 6px;
+                            white-space: nowrap;
+
+                            &:hover {
+                                background-color: rgba(var(--foreground-color-rgb), .1);
+                                color: var(--font-color-main);
+
+                            }
+                        }
+
+                        .delete-button {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 16px;
+                            width: 16px;
+                            margin-left: 2px;
+                            border-radius: 50%;
+                            cursor: pointer;
+
+                            .img-delete {
+                                width: 8px;
+                                height: 8px;
+                                opacity: 0;
+                            }
+                        }
 
                         &:hover {
-                            background-color: rgba(var(--foreground-color-rgb), .1);
-                            color: var(--font-color-main);
+                            .img-delete {
+                                opacity: 1;
+                            }
+                            
+                            .delete-button{
+                                background-color: rgba(var(--foreground-color-rgb), .1);
+                            }
                         }
                     }
                 }
@@ -754,7 +797,7 @@ export default defineComponent({
                 &:hover {
                     color: var(--font-color-main);
                 }
-                
+
                 &:not(:last-child) {
                     border-bottom: 1px solid rgba(var(--foreground-color-rgb), .1);
                 }
