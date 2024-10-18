@@ -117,9 +117,11 @@ export default defineComponent({
             const panelDom = this.panel?.querySelector('#panel');
 
             if (this.trigger && panelDom) {
-                const { top, left, right, bottom } = panelDom.getBoundingClientRect();
+                let { top, left, right, bottom } = panelDom.getBoundingClientRect();
+                let { top: top2, left: left2, right: right2, bottom: bottom2 } = this.trigger.getBoundingClientRect();
                 const isContained = panelDom?.contains(event.target) || (top <= event.clientY && event.clientY <= bottom && left <= event.clientX && event.clientX <= right);
-                if (this.panel && !isContained && !this.trigger.contains(event.target) && this.showPanel) {
+                const isTriggerContained = this.trigger.contains(event.target) || (top2 <= event.clientY && event.clientY <= bottom2 && left2 <= event.clientX && event.clientX <= right2);
+                if (this.panel && !isContained && !isTriggerContained && this.showPanel) {
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }

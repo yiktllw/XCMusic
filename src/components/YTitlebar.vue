@@ -20,7 +20,7 @@
                     @click="search_panel?._showPanel()" spellcheck="false" ref="search_input" />
                 <img class="img-search g-icon" src="../assets/search.svg" />
                 <img v-if="searchInput !== ''" class="img-clear g-icon" src="../assets/clear2.svg"
-                    @click="searchInput = ''" />
+                    @click="searchInput = ''; search_panel?._showPanel();" />
             </div>
             <YPanel ref="search_panel" :trigger="search_panel_trigger ?? undefined" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
