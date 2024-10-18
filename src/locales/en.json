@@ -54,6 +54,7 @@
 	"playbar": {
 		"cancel_like": "Unlike",
 		"clear_playlist": "Clear Playlist",
+		"delete_from_playlist": "Remove from Playlist",
 		"like": "Like",
 		"listloop": "List Loop",
 		"listrandom": "List Random",

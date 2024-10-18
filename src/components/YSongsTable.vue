@@ -144,7 +144,8 @@
                                 </div>
                                 <!-- 6 歌手名称 -->
                                 <div class="track-artist font-color-standard" v-if="showTrackArtist">
-                                    <img src="@/assets/success.svg" class="track-artist-download-icon" v-if="downloadedSongIds.includes(track.id)">
+                                    <img src="@/assets/success.svg" class="track-artist-download-icon"
+                                        v-if="downloadedSongIds.includes(track.id)">
                                     <span v-for="(artist, index) in track.ar" :key="artist.id">
                                         <!-- 7 歌手按钮 -->
                                         <span @click="handleArtistClick(artist.id)"
@@ -165,7 +166,8 @@
                             <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
                                 <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.download')" @click="downloadSong(track)" v-if="!downloadedSongIds.includes(track.id)">
+                                    :title="$t('context.download')" @click="downloadSong(track)"
+                                    v-if="!downloadedSongIds.includes(track.id)">
                                 <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
                                 <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
@@ -183,10 +185,16 @@
                             </div>
                             <!-- 5 喜欢 -->
                             <div class="likes" style="text-align: left;" v-if="showTrackLikes">
-                                <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
-                                    style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
-                                <img v-else src="../assets/unlikes.svg"
-                                    style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
+                                <img v-if="id === 'YPlaybar.vue'" src="../assets/delete.svg" class="g-icon"
+                                    style="display: none; width: 16.8px; height: 16.8px; padding-left:10px; cursor: pointer; -webkit-user-drag: none; "
+                                    :id="`track-menu-${track.id}`" :title="$t('playbar.delete_from_playlist')" @click="deletaFromPlaylist(track.id)">
+                                <div :id="`track-menu-2-${track.id}`" style="display: block;">
+                                    <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
+                                        style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
+                                    <img v-else src="../assets/unlikes.svg"
+                                        style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
+
+                                </div>
                             </div>
                             <!-- 5 时长 -->
                             <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
@@ -639,16 +647,34 @@ export default defineComponent({
         },
         trackMouseEnter(id: number | string) {
             // console.log('trackMouseEnter', id);
-            let dom = this.main?.querySelector(`#track-menu-${id}`);
-            if (dom) {
-                (dom as HTMLElement).style.display = 'flex';
+            let doms = this.main?.querySelectorAll(`#track-menu-${id}`);
+            if (doms) {
+                doms.forEach((dom) => {
+                    (dom as HTMLElement).style.display = 'flex';
+                });
+            }
+            if (this.id !== 'YPlaybar.vue') {
+                return;
+            }
+            let domToBeHidden = this.main?.querySelector(`#track-menu-2-${id}`);
+            if (domToBeHidden) {
+                (domToBeHidden as HTMLElement).style.display = 'none';
             }
         },
         trackMouseLeave(id: number | string) {
             // console.log('trackMouseLeave', id);
-            let dom = this.main?.querySelector(`#track-menu-${id}`);
-            if (dom) {
-                (dom as HTMLElement).style.display = 'none';
+            let doms = this.main?.querySelectorAll(`#track-menu-${id}`);
+            if (doms) {
+                doms.forEach((dom) => {
+                    (dom as HTMLElement).style.display = 'none';
+                })
+            }
+            if (this.id !== 'YPlaybar.vue') {
+                return;
+            }
+            let domToBeShown = this.main?.querySelector(`#track-menu-2-${id}`);
+            if (domToBeShown) {
+                (domToBeShown as HTMLElement).style.display = 'block';
             }
         },
         trackAlTns(name: string, tns: string | string[]) {
@@ -723,7 +749,14 @@ export default defineComponent({
                 cookie: this.login.cookie ?? undefined,
             }).then((res) => res.data[0].url);
             this.download.add(url, track, this.setting.download.path);
-        }
+        },
+        deletaFromPlaylist(id: number | string) {
+            if (this.id !== 'YPlaybar.vue') {
+                return;
+            }
+            this.tracks = this.tracks.filter((track: any) => track.id !== id);
+            this.player.deleteTrack(id);
+        },
     },
 })
 
@@ -939,7 +972,7 @@ ul {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     text-align: left;
-                    
+
                     .track-artist-download-icon {
                         width: 14px;
                         height: 14px;

@@ -1,16 +1,19 @@
 <template>
     <YPanel :slide-direction="0" :default-show="false" :animation-time="0.1" :hideMode="'show'" ref="panel">
-        <div class="container" id="contextMenu-main"
-            v-bind:style="{ '--transform': _transform, '--top': posY, '--left': posX }" ref="container">
-            <div class="item font-color-main" v-for="item in items" :key="item.label" @click="handleClick(item.role)">
-                <div class="item-content" v-if="item.display">
-                    <img class="item-icon g-icon" :src="item.icon" v-if="item.icon" />
-                    <div class="item-label">
-                        {{ item.label.includes('查看评论') || item.label.includes('View Comment') ? item.label :
-                        $t(item.label) }}
+        <div id="panel">
+            <div class="container" id="contextMenu-main"
+                v-bind:style="{ '--transform': _transform, '--top': posY, '--left': posX }" ref="container">
+                <div class="item font-color-main" v-for="item in items" :key="item.label"
+                    @click="handleClick(item.role)">
+                    <div class="item-content" v-if="item.display">
+                        <img class="item-icon g-icon" :src="item.icon" v-if="item.icon" />
+                        <div class="item-label">
+                            {{ item.label.includes('查看评论') || item.label.includes('View Comment') ? item.label :
+                                $t(item.label) }}
+                        </div>
                     </div>
+                    <div class="separator" v-if="item.showSeparator" />
                 </div>
-                <div class="separator" v-if="item.showSeparator" />
             </div>
         </div>
     </YPanel>
@@ -31,7 +34,7 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array,
+            type: Array<any>,
             required: true,
             validator: function (value: any[]) {
                 return value.every(item => item instanceof YContextMenuItemC)

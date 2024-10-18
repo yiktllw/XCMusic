@@ -104,7 +104,7 @@
                 <!-- 选择播放模式面板 -->
                 <YPanel :default-show="false" ref="play_mode_panel" :trigger="play_mode_panel_trigger"
                     :slide-direction="5" :hide-mode="'show'" :slide-distance="8" :animation-time="0.1">
-                    <div class="playMode-switcher">
+                    <div class="playMode-switcher" id="panel">
                         <div class="playMode-item" @click="tooglePlayMode('order'); play_mode_panel?.tooglePanel()">
                             <img class="img-order img g-icon playMode-img" src="../assets/order.svg">
                             {{ $t('playbar.order') }}
@@ -153,7 +153,7 @@
                 <!-- 选择音质面板 -->
                 <YPanel ref="quality_panel" :trigger="quality_panel_trigger" :slide-direction="4" :default-show="false"
                     :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
-                    <div class="quality-panel">
+                    <div class="quality-panel" id="panel">
                         <div class="quality-title font-color-main">
                             {{ $t('playbar.sound_quality') }}
                         </div>
@@ -177,7 +177,7 @@
                     :title="$t('playbar.volume')" ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5" :animation-time="0.1"
-                    :slide-distance="10">
+                    :slide-distance="10" id="panel">
                     <div class="volume-container">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
@@ -194,7 +194,7 @@
                 <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger" :slide-direction="4"
                     :default-show="false" @show-panel="scrollToCurrentTrack">
-                    <div class="playlist-container">
+                    <div class="playlist-container" id="panel">
                         <div class="playlist-title">
                             <div class="title-left font-color-main">
                                 <span>

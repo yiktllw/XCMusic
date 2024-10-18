@@ -24,7 +24,7 @@
             </div>
             <YPanel ref="search_panel" :trigger="search_panel_trigger ?? undefined" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
-                <div class="search-panel">
+                <div class="search-panel" id="panel">
                     <div class="search-history" v-if="searchHistory.length > 0">
                         <div class="search-history-title">
                             {{ $t('titlebar.searchHistory') }}
@@ -82,7 +82,7 @@
             <!-- 用户名下拉菜单 -->
             <YPanel class="userInfoPanel" :trigger="user_info_menu_trigger ?? undefined" ref="user_info_panel"
                 :default-show="false" :slide-direction="1">
-                <div class="user-info-menu">
+                <div class="user-info-menu" id="panel">
                     <div class="user-info-item follows">
                         <div class="follows-container follows-container-left">
                             <div class="follows-number font-color-main">

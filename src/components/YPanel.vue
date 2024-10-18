@@ -114,8 +114,9 @@ export default defineComponent({
             this.showPanel = false;
         },
         handleClickOutside(event: any) {
+            const panelDom = this.panel?.querySelector('#panel');
             if (this.trigger) {
-                if (this.panel && !this.panel?.contains(event.target) && !this.trigger.contains(event.target) && this.showPanel) {
+                if (this.panel && !panelDom?.contains(event.target) && !this.trigger.contains(event.target) && this.showPanel) {
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }

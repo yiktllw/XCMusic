@@ -685,6 +685,15 @@ export class Player {
         }
         this.Execute({ type: 'playlist' });
     }
+    deleteTrack(id: string | number) {
+        let index = this._playlist.findIndex(track => track.id === id);
+        if (index === -1) return;
+        this._playlist.splice(index, 1);
+        if (index === this._current) {
+            this.playTrack(this.currentTrack);
+        }
+        this.Execute({ type: 'playlist' });
+    }
     /** 
      * 添加列表到播放列表
      */
@@ -1015,7 +1024,7 @@ export class Player {
         let response = null;
         const downloads = store.state.download.downloadedSongs;
         if (downloads.some((song: any) => song.id === id)) {
-            let song = downloads.find((song: any) => song.id === id); 
+            let song = downloads.find((song: any) => song.id === id);
             const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
             return {
                 url: fileUrl,

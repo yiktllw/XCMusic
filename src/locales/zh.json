@@ -54,6 +54,7 @@
 	"playbar": {
 		"cancel_like": "取消喜欢",
 		"clear_playlist": "清空播放列表",
+		"delete_from_playlist": "从播放列表中删除",
 		"like": "喜欢",
 		"listloop": "列表循环",
 		"listrandom": "列表随机",
