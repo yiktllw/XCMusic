@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/yiktllw/XCMusic/compare/v0.1.2...v0.1.3) (2024-10-18)
+
+
+### Features
+
+* 当页数大于8时，可以跳转到指定页 ([8e0fa66](https://github.com/yiktllw/XCMusic/commit/8e0fa66cf6d2dfdcbfe62cd233c1f04615e3ba25))
+* 根据已下载的歌曲调整界面 ([f312711](https://github.com/yiktllw/XCMusic/commit/f312711e78534ea3bb101a4e8ef1639e22e7b95b))
+* 可以在设置中选择下载路径 ([f212a4e](https://github.com/yiktllw/XCMusic/commit/f212a4e198418f9e77c9bb2d8b280844f33d4951))
+* 能够删除播放列表的歌曲，重写panel逻辑 ([f54c9fa](https://github.com/yiktllw/XCMusic/commit/f54c9fa3e56333fcf211beaa9687ea19e5644e70))
+* 删除搜索内容后自动打开搜索面板 ([5d97d14](https://github.com/yiktllw/XCMusic/commit/5d97d141df08716538ddadb0ac9c9f40e1f30a55))
+* 设置界面: 新增下载音质选项 ([090a9b4](https://github.com/yiktllw/XCMusic/commit/090a9b440f53d486f8cee9bc2205c7fec0b8fb2b))
+* 实现记忆窗口大小 ([00e08d6](https://github.com/yiktllw/XCMusic/commit/00e08d699fb86087b4073bc475f2f594c6350ba0))
+* 实现下载音乐，可以播放下载的音乐 ([bba5778](https://github.com/yiktllw/XCMusic/commit/bba5778e236a26f079b0bc43ab15d14fa7489f9f))
+* 实装播放栏的下载按钮 ([b650be6](https://github.com/yiktllw/XCMusic/commit/b650be63459c95519b5257827dd786b4c1d5b805))
+* 新增: 设置-关于-版本 ([ae76581](https://github.com/yiktllw/XCMusic/commit/ae76581ea963b2e7a4f7cd475b09806c94b493af))
+* 新增设置-关于-源代码 ([260c295](https://github.com/yiktllw/XCMusic/commit/260c295263e9a02574353329c1048bad44ad4bf4))
+* 新增设置项: 双击歌单歌曲的行为 ([679aa92](https://github.com/yiktllw/XCMusic/commit/679aa92ff47fb302c0601a2137425fa33c9413eb))
+* 在后端实现下载功能 ([edbcd7f](https://github.com/yiktllw/XCMusic/commit/edbcd7ff7e84a441363dab2789cf571b9f3635b6))
+* 在设置中实现音量均衡 ([2f6cc65](https://github.com/yiktllw/XCMusic/commit/2f6cc654b4a2240fc5523e47b472bfd11547c2b4))
+* 支持删除搜索历史 ([b72abed](https://github.com/yiktllw/XCMusic/commit/b72abed7724404dadd1c2e900196fc998b20dce4))
+
+
+### Bug Fixes
+
+* 修复侧边栏打开的歌单显示错误 ([8d6bab6](https://github.com/yiktllw/XCMusic/commit/8d6bab6800e894603ea14101049c2da399c8c5b1))
+* 修复空白搜索内容引起的错误 ([d88b3bb](https://github.com/yiktllw/XCMusic/commit/d88b3bbae5dd8c79c60ebd66cffe73f763eb322c))
+* 修复删除播放列表时自动关闭列表的bug ([4072ead](https://github.com/yiktllw/XCMusic/commit/4072ead2a6306d3f2b4fb42fb5d925885721c343))
+* 修复文本错误 ([95ac379](https://github.com/yiktllw/XCMusic/commit/95ac3793984bcf3203b538dda722c5d5372e4b8f))
+* 修复用户界面错误 ([d297130](https://github.com/yiktllw/XCMusic/commit/d297130a16eea68222108c01ed096f01fddc62c6))
+
 ### [0.1.2](https://github.com/yiktllw/XCMusic/compare/v0.1.1...v0.1.2) (2024-10-14)
 
 
