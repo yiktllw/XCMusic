@@ -159,6 +159,26 @@
                             YiktLLW
                         </div>
                     </div>
+                    <div class="content-item item-about-readme">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.readme') }}
+                        </div>
+                        <div class="content-item-content">
+                            <div class="github-link" >
+                                README
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-item item-about-changelog">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.changelog') }}
+                        </div>
+                        <div class="content-item-content">
+                            <div class="github-link" >
+                                CHANGELOG
+                            </div>
+                        </div>
+                    </div>
                     <div class="content-item item-about-github">
                         <div class="content-item-title">
                             {{ $t('setting_view.about.source_code') }}

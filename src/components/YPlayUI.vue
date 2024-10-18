@@ -47,11 +47,14 @@
                     </div>
                     <YScroll style="height: calc(100vh - 350px); margin-left: 5px; " ref="lyricContainer">
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
-                            <div class="lyric-lrc">
+                            <div class="lyric">
                                 <div class="before-lyric" />
-                                <div class="lyric-lrc-line" v-for="(line, index) in lyrics" :key="line"
-                                    :class="lineClass(index)"
-                                    :style="{ 'font-size': index === currentLine ? '22px' : '16px', 'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)', 'transition': `color, font-size 0.5s ease` }">
+                                <div class="lyric-line" v-for="(line, index) in lyrics" :key="line"
+                                    :class="lineClass(index)" :style="{
+                                        'transform': index === currentLine ? 'scale(1.375)' : 'scale(1)',
+                                        'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)',
+                                        'transition': `color, transform 0.5s ease`
+                                    }">
                                     <span v-if="line.content">
                                         <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
@@ -415,7 +418,7 @@ export default defineComponent({
                 }
 
                 // 动画参数
-                const duration = 600; // 动画持续时间
+                const duration = 500; // 动画持续时间
 
                 // 动画循环
                 const animateScroll = (currentTime: number) => {
@@ -708,7 +711,7 @@ export default defineComponent({
             .lyric {
                 width: 43.21vw;
 
-                .lyric-lrc {
+                .lyric {
                     transition: color, opacity 0.3s;
 
                     .before-lyric {
@@ -719,12 +722,12 @@ export default defineComponent({
                         height: 25vh;
                     }
 
-                    .lyric-lrc-line {
+                    .lyric-line {
                         cursor: pointer;
                         font-size: 16px;
                         font-weight: bold;
-                        padding: 5px 0;
-                        width: 100%;
+                        padding: 5px 0 5px 0;
+                        width: 72%;
                         text-align: left;
                         transform-origin: left;
                         line-height: 1.5;
@@ -756,7 +759,7 @@ export default defineComponent({
                     }
 
                     .current-line {
-                        padding: 10px 0;
+                        padding: 10px 0 15px 0;
                         line-height: 1.5;
                     }
 

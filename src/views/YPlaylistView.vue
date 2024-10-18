@@ -157,9 +157,8 @@
                 :showTrackPopularity="false" :id="'YPlaylist.vue-playlist'" :from="playlistId"
                 ref="playlist_songstable" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" v-model="filteredTracks"
-                :likelist="likelist" :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels"
-                :id="'YPlaylist.vue-album'" :type="'album'" :show-header="false" :resortable="false"
-                ref="album_songstable" />
+                :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" :id="'YPlaylist.vue-album'"
+                :type="'album'" :show-header="false" :resortable="false" ref="album_songstable" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
             <!-- 2 滚动按钮 -->
@@ -258,6 +257,7 @@ export default defineComponent({
                 if (this.type === 'playlist') {
                     this.openedPlaylist.id = newVal;
                 }
+                this.searchQuery = '';
             }
         },
         // 监听 playlist.coverImgUrl 的变化，当 coverImgUrl 变化时重新设置背景颜色
