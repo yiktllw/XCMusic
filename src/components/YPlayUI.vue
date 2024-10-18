@@ -53,7 +53,7 @@
                                     :class="lineClass(index)" :style="{
                                         'transform': index === currentLine ? 'scale(1.375)' : 'scale(1)',
                                         'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)',
-                                        'transition': `color, transform 0.5s ease`
+                                        'transition': ` color, transform 0.5s ease`
                                     }">
                                     <span v-if="line.content">
                                         <span v-if="typeof line.content !== 'string'">
@@ -73,12 +73,13 @@
                                             <span class="item-ori">
                                                 {{ word.text }}
                                             </span>
-                                            <span class="item-standard font-color-standard">
+                                            <span class="item-standard font-color-standard" v-if="index >= currentLine">
                                                 {{ word.text }}
                                             </span>
                                             <span class="item-white font-color-main" :style="{
-                                                'transition': `clip-path ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s linear`,
-                                                clipPath: (word.startTime <= currentTime && index === currentLine) ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)'
+                                                'transition': `clip-path ${((word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime) ? ((word.duration ?? 0) / 1000) : 0}s linear, color 0.5s ease`,
+                                                clipPath: (word.startTime <= currentTime) ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+                                                'color': (index === currentLine) ? 'var(--font-color-main)' : 'var(--font-color-standard)',
                                             }">
                                                 {{ word.text }}
                                             </span>
@@ -449,10 +450,12 @@ export default defineComponent({
                 this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
             }
         },
+        cubicBezier(t: number, p0: number, p1: number, p2: number, p3: number): number {
+            const u = 1 - t;
+            return 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t;
+        },
         ease(t: number): number {
-            let res = t < 0.5
-                ? 4 * t * t * t
-                : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            let res = this.cubicBezier(t, 0.0, 0.0, 0.58, 1.0);
 
             res = Math.max(0, Math.min(1, res));
             // console.log(res);
@@ -726,7 +729,7 @@ export default defineComponent({
                         cursor: pointer;
                         font-size: 16px;
                         font-weight: bold;
-                        padding: 5px 0 5px 0;
+                        padding: 7px 0 7px 0;
                         width: 72%;
                         text-align: left;
                         transform-origin: left;
@@ -759,8 +762,7 @@ export default defineComponent({
                     }
 
                     .current-line {
-                        padding: 10px 0 15px 0;
-                        line-height: 1.5;
+                        opacity: 1;
                     }
 
                     .near-line-1 {
