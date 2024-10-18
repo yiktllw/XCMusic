@@ -187,7 +187,8 @@
                             <div class="likes" style="text-align: left;" v-if="showTrackLikes">
                                 <img v-if="id === 'YPlaybar.vue'" src="../assets/delete.svg" class="g-icon"
                                     style="display: none; width: 16.8px; height: 16.8px; padding-left:10px; cursor: pointer; -webkit-user-drag: none; "
-                                    :id="`track-menu-${track.id}`" :title="$t('playbar.delete_from_playlist')" @click="deletaFromPlaylist(track.id)">
+                                    :id="`track-menu-${track.id}`" :title="$t('playbar.delete_from_playlist')"
+                                    @click="deletaFromPlaylist(track.id)">
                                 <div :id="`track-menu-2-${track.id}`" style="display: block;">
                                     <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
                                         style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />

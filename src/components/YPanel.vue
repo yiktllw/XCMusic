@@ -115,8 +115,11 @@ export default defineComponent({
         },
         handleClickOutside(event: any) {
             const panelDom = this.panel?.querySelector('#panel');
-            if (this.trigger) {
-                if (this.panel && !panelDom?.contains(event.target) && !this.trigger.contains(event.target) && this.showPanel) {
+
+            if (this.trigger && panelDom) {
+                const { top, left, right, bottom } = panelDom.getBoundingClientRect();
+                const isContained = panelDom?.contains(event.target) || (top <= event.clientY && event.clientY <= bottom && left <= event.clientX && event.clientX <= right);
+                if (this.panel && !isContained && !this.trigger.contains(event.target) && this.showPanel) {
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }
