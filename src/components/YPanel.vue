@@ -125,7 +125,7 @@ export default defineComponent({
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }
-            } else {
+            } else if (panelDom) {
                 if (this.panel && !this.panel.contains(event.target) && this.showPanel) {
                     this.showPanel = false;
                     console.log('No trigger, handleClickOutside and close panel');

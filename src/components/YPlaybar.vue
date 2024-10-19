@@ -178,7 +178,7 @@
                 <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5" :animation-time="0.1"
                     :slide-distance="10" id="panel">
-                    <div class="volume-container">
+                    <div class="volume-container" id="panel">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"
                             @set-progress-end="updateVolumeInSetting" />
