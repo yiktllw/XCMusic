@@ -329,7 +329,8 @@ export class Setting {
  */
 function getDownloadDirectory(): string {
     if (!window.electron?.isElectron) {
-        throw new Error('Not running in electron');
+        console.error('Not running in electron');
+        return '';
     }
     const homeDir = os.homedir();  // 获取用户主目录
     let downloadDir: string;
@@ -354,7 +355,8 @@ function getDownloadDirectory(): string {
  */
 function isValidDirectory(directoryPath: string): boolean {
     if (!window.electron?.isElectron) {
-        throw new Error('Not running in electron');
+        console.error('Not running in electron');
+        return false;
     }
     try {
         return fs.existsSync(directoryPath);
