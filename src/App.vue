@@ -19,7 +19,7 @@ export default defineComponent({
     mounted() {
         this.$router.push({ path: '/greeting' });
         // 初始化缩放
-        if (window.electron.isElectron) {
+        if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom.toString()));
         }
         // 初始化主题

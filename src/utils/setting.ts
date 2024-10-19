@@ -1,7 +1,7 @@
 import { themes } from "./theme";
 let fs: any, path: any, os: any;
 
-if (window.electron.isElectron) {
+if (window.electron?.isElectron) {
     fs = window.api.fs;
     path = window.api.path;
     os = window.api.os;
@@ -164,7 +164,7 @@ export const settingGroup: SettingGroup = {
                 let valid = typeof value === 'number' && value >= 0.5 && value <= 2;
                 if (valid) {
                     localStorage.setItem('setting.display.zoom', value);
-                    if (window.electron.isElectron) {
+                    if (window.electron?.isElectron) {
                         window.electron.ipcRenderer.send('zoom', value);
                     }
                 }
@@ -328,7 +328,7 @@ export class Setting {
  * 获取默认下载目录
  */
 function getDownloadDirectory(): string {
-    if (!window.electron.isElectron) {
+    if (!window.electron?.isElectron) {
         throw new Error('Not running in electron');
     }
     const homeDir = os.homedir();  // 获取用户主目录
@@ -353,6 +353,9 @@ function getDownloadDirectory(): string {
  * 检查目录是否有效
  */
 function isValidDirectory(directoryPath: string): boolean {
+    if (!window.electron?.isElectron) {
+        throw new Error('Not running in electron');
+    }
     try {
         return fs.existsSync(directoryPath);
     } catch (err) {
