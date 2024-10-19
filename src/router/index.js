@@ -115,6 +115,14 @@ const routes = [
                     file: route.params.file,
                 }),
             },
+            {
+                path: 'sheet/:id',
+                name: 'Sheet',
+                component: () => import('../views/YSheetView.vue'),
+                props: route => ({
+                    sheetId: Number(route.params.id),
+                }),
+            },
         ],
     },
 ]

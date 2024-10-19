@@ -189,6 +189,15 @@
 		"zoom": "Zoom"
 	},
 	"settings": "Settings",
+	"sheet_view": {
+		"current_page_left": "Page ",
+		"current_page_right": "",
+		"next_page": "Next Page: ",
+		"prev_page": "Previous Page: ",
+		"scroll": "Scroll: ",
+		"total_page_left": "Total ",
+		"total_page_right": " Pages"
+	},
 	"sidebar": {
 		"created_playlist": "Created Playlists",
 		"subscribed_playlist": "Subscribed Playlists"

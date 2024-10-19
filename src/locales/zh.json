@@ -189,6 +189,15 @@
 		"zoom": "缩放"
 	},
 	"settings": "设置",
+	"sheet_view": {
+		"current_page_left": "第 ",
+		"current_page_right": " 页",
+		"next_page": "下一页: ",
+		"prev_page": "上一页: ",
+		"scroll": "滚动: ",
+		"total_page_left": "共 ",
+		"total_page_right": " 页"
+	},
 	"sidebar": {
 		"created_playlist": "创建的歌单",
 		"subscribed_playlist": "收藏的歌单"

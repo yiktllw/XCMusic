@@ -412,7 +412,7 @@ export default defineComponent({
                 const lineTopOffset = currentLineElement.offsetTop;
 
                 // 设置滚动条位置，使当前行居中显示
-                let scrollTop = lineTopOffset - (containerHeight) + (lineHeight / 2);
+                let scrollTop = lineTopOffset - (containerHeight) + (lineHeight);
                 let scrollTopNow = container.scrollTop;
 
                 // 如果已有动画在进行，取消当前动画
@@ -516,9 +516,8 @@ export default defineComponent({
             })
         },
         openSheet(sheet: any) {
-            Message.post('info', '暂未实现查看曲谱');
-            // this.$router.push({ path: `/sheet/${sheet.id}` });
-            // this.show = false;
+            this.$router.push({ path: `/sheet/${sheet.id}` });
+            this.closePanel();
         },
     },
     async mounted() {
