@@ -107,6 +107,14 @@ const routes = [
                 name: 'Setting',
                 component: () => import('../views/YSettingView.vue')
             },
+            {
+                path: 'markdown/:file',
+                name: 'Markdown',
+                component: () => import('../views/YMarkdownView.vue'),
+                props: route => ({
+                    file: route.params.file,
+                }),
+            },
         ],
     },
 ]

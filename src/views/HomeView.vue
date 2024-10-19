@@ -329,6 +329,7 @@ export default defineComponent({
             display: flex;
             left: 0;
             flex: 1;
+            height: 100vh;
             right: 0;
             margin-right: 5px;
             overflow: hidden;
@@ -340,7 +341,7 @@ export default defineComponent({
                 z-index: 0;
 
                 .content {
-                    height: calc(100vh - 140px);
+                    height: calc(100vh - 142px);
                     background-color: transparent;
                     width: 100%;
 

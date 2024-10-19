@@ -163,8 +163,8 @@
                         <div class="content-item-title">
                             {{ $t('setting_view.about.readme') }}
                         </div>
-                        <div class="content-item-content">
-                            <div class="github-link" >
+                        <div class="content-item-content" @click="openReadme">
+                            <div class="github-link">
                                 README
                             </div>
                         </div>
@@ -173,8 +173,8 @@
                         <div class="content-item-title">
                             {{ $t('setting_view.about.changelog') }}
                         </div>
-                        <div class="content-item-content">
-                            <div class="github-link" >
+                        <div class="content-item-content" @click="openChangelog">
+                            <div class="github-link">
                                 CHANGELOG
                             </div>
                         </div>
@@ -332,6 +332,18 @@ export default defineComponent({
             }
             window.electron.shell.openExternal('https://github.com/yiktllw/XCMusic');
         },
+        openReadme() {
+            if (!window.electron?.isElectron) {
+                return;
+            }
+            this.$router.push({ path: '/markdown/README' });
+        },
+        openChangelog() {
+            if (!window.electron?.isElectron) {
+                return;
+            }
+            this.$router.push({ path: '/markdown/CHANGELOG' });
+        }
     },
     mounted() {
         setBackgroundColorTheme();

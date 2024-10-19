@@ -28,6 +28,7 @@
             "vuex",
             "shims-svg",
             "shims-vue",
+            "md",
         ]
     },
     "include": [

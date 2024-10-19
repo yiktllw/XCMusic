@@ -121,7 +121,7 @@
                     <div class="user-info-item" @click="openTestPage">
                         {{ $t('titlebar.testPage') }}
                     </div>
-                    <div class="user-info-item">
+                    <div class="user-info-item" @click="openAboutPage">
                         {{ $t('titlebar.about') }}
                     </div>
                     <div class="user-info-item"
@@ -436,6 +436,10 @@ export default defineComponent({
         },
         deleteSearchHistory(item: string) {
             this.searchHistory = this.searchHistory.filter((history) => history !== item);
+        },
+        openAboutPage() {
+            this.$router.push({ path: '/markdown/README' });
+            this.user_info_panel?.closePanel();
         },
     },
     async mounted() {
