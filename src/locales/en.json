@@ -160,7 +160,9 @@
 	"setting_view": {
 		"about": {
 			"author": "Author",
-			"source_code": "Source Code",
+			"changelog": "Changelog",
+			"readme": "Readme",
+			"source_code": "Source",
 			"version": "Version"
 		},
 		"apply": "Apply",

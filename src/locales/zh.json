@@ -160,6 +160,8 @@
 	"setting_view": {
 		"about": {
 			"author": "作者",
+			"changelog": "变更日志",
+			"readme": "介绍",
 			"source_code": "源代码",
 			"version": "版本"
 		},

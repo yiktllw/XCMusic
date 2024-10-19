@@ -16,20 +16,22 @@ export class Download {
             this.downloadedSongs = await this.db.getAllSongs();
             this.Exec('downloaded-songs');
         });
-        window.electron.ipcRenderer.on('download-song-reply', async (event, data, nouse) => {
-            const { filePath, track } = data;
-            await this.db.addDownloadedSong({
-                id: track.id,
-                name: track.name,
-                path: filePath
+        if (window.electron?.isElectron) {
+            window.electron.ipcRenderer.on('download-song-reply', async (event, data, nouse) => {
+                const { filePath, track } = data;
+                await this.db.addDownloadedSong({
+                    id: track.id,
+                    name: track.name,
+                    path: filePath
+                });
+                this.downloadedSongs.push({
+                    id: track.id,
+                    name: track.name,
+                    path: filePath
+                });
+                this.Exec('downloaded-songs');
             });
-            this.downloadedSongs.push({
-                id: track.id,
-                name: track.name,
-                path: filePath
-            });
-            this.Exec('downloaded-songs');
-        });
+        }
     }
 
     Subscribe(options: {
@@ -60,14 +62,16 @@ export class Download {
 
     add(url: string, track: any, downloadDir: string) {
         if (!window.electron?.isElectron) {
-            throw new Error('Not in Electron environment');
+            console.error('Not in Electron environment');
+            return;
         }
         window.electron.ipcRenderer.send('download-song', url, track, downloadDir);
     }
 
     async delete(id: string) {
         if (!window.electron?.isElectron) {
-            throw new Error('Not in Electron environment');
+            console.error('Not in Electron environment');
+            return;
         }
         await this.db.deleteDownloadedSong(id);
         this.downloadedSongs = this.downloadedSongs.filter(song => song.id !== id);
@@ -76,7 +80,8 @@ export class Download {
 
     async clear() {
         if (!window.electron?.isElectron) {
-            throw new Error('Not in Electron environment');
+            console.error('Not in Electron environment');
+            return;
         }
         await this.db.clearDownloadStore();
         this.downloadedSongs = [];
