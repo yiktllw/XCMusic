@@ -52,10 +52,12 @@
                                 <div class="lyric-line" v-for="(line, index) in lyrics" :key="line"
                                     :class="lineClass(index)" :style="{
                                         'transform': index === currentLine ? 'scale(1.375)' : 'scale(1)',
-                                        'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)',
                                         'transition': ` color, transform 0.5s ease`
                                     }">
-                                    <span v-if="line.content">
+                                    <span v-if="line.content" :style="{
+                                        'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)',
+                                        'transition': `color 0.5s ease`
+                                    }">
                                         <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
                                                 <img v-if="content.li" :src="content.li + '?param=22y22'"
