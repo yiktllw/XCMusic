@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { marked } from 'marked';
+// import { marked } from 'marked';
 
 export default defineComponent({
     name: 'YMarkdownView',
@@ -17,7 +17,7 @@ export default defineComponent({
     },
     computed: {
         markdownContent() {
-            return marked.parse(this.filePath);
+            // return marked.parse(this.filePath);
         },
     },
     setup(props) {
