@@ -362,7 +362,7 @@ export default defineComponent({
 .setting {
     display: flex;
     width: inherit;
-    padding: 10px;
+    padding: 0 10px 10px 10px;
 
     .header {
         display: flex;

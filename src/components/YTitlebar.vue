@@ -34,9 +34,8 @@
                                 <span class="search-history-item font-color-standard" @click="search(item)">
                                     {{ item }}
                                 </span>
-                                <div class="delete-button">
-                                    <img class="img-delete g-icon" src="../assets/close.svg"
-                                        @click="deleteSearchHistory(item)">
+                                <div class="delete-button" @click="deleteSearchHistory(item)">
+                                    <img class="img-delete g-icon" src="../assets/close.svg">
                                 </div>
                             </div>
                         </div>
@@ -657,8 +656,8 @@ export default defineComponent({
                             .img-delete {
                                 opacity: 1;
                             }
-                            
-                            .delete-button{
+
+                            .delete-button {
                                 background-color: rgba(var(--foreground-color-rgb), .1);
                             }
                         }

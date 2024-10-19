@@ -1,5 +1,5 @@
 <template>
-    <div class="progress-bigframe" ref="big_frame" @mousemove="handleMousemove" @mouseleave="HideInfo" @click="onClick">
+    <div class="progress-bigframe ani" ref="big_frame" @mousemove="handleMousemove" @mouseleave="HideInfo" @click="onClick">
         <div class="progress-bar" ref="progress_bar" v-if="true">
             <div :class="showTrack ? 'progress-fill' : 'progress-no-track'"
                 :style="{ clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)` }"
@@ -73,6 +73,18 @@ export default defineComponent({
             noSelect,
         };
     },
+    watch: {
+        progress(newValue, oldValue) {
+            if (newValue === 0) {
+                this.big_frame?.classList.remove('ani');
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        this.big_frame?.classList.add('ani');
+                    }, 500);
+                });
+            }
+        }
+    },
     methods: {
         updateProgress(x: number) {
             let rect = null;
@@ -93,8 +105,14 @@ export default defineComponent({
             this.updateProgress(e.clientX);
         },
         onClick(e: MouseEvent) {
+            this.big_frame?.classList.remove('ani');
             this.updateProgress(e.clientX);
             this.$emit('set-progress-end');
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    this.big_frame?.classList.add('ani');
+                }, 500);
+            });
         },
         startSetProgress() {
             window.addEventListener('mousemove', this.updateProgressEvent);
@@ -121,6 +139,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.ani {
+    --transition-track-time: 1s;
+}
+            
 .progress-bigframe {
     display: flex;
     width: 100%;
@@ -155,7 +177,7 @@ export default defineComponent({
             height: 75%;
             background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
             border-radius: 10px;
-            transition: clip-path 1s linear, height 0.3s ease, transform 0.3s ease;
+            transition: clip-path var(--transition-track-time) linear, height 0.3s ease, transform 0.3s ease;
         }
 
         .progress-pointer {

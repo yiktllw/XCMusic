@@ -61,7 +61,7 @@
                                         <span v-if="typeof line.content !== 'string'">
                                             <span v-for="(content, cindex) in line.content" :key="cindex">
                                                 <img v-if="content.li" :src="content.li + '?param=22y22'"
-                                                    style="border-radius: 10px;">
+                                                    style="border-radius: 10px; margin: 0 2px -4px 8px;">
                                                 {{ content.tx }}
                                             </span>
                                         </span>
@@ -479,7 +479,7 @@ export default defineComponent({
                 }
                 let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
                 if (progressDOM) {
-                    progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .1), rgb(${color.r}, ${color.g}, ${color.b} ))`;
+                    progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .4321), rgb(${color.r}, ${color.g}, ${color.b} ))`;
                 }
             });
         },
@@ -734,7 +734,7 @@ export default defineComponent({
                         padding: 7px 0 7px 0;
                         width: 72%;
                         text-align: left;
-                        transform-origin: left;
+                        transform-origin: left center;
                         line-height: 1.5;
 
                         .yrc-line {

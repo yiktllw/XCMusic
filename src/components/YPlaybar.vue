@@ -652,7 +652,7 @@ export default defineComponent({
 .big-progress {
     position: absolute;
     width: 100%;
-    bottom: 69px;
+    bottom: 71px;
 }
 
 .playbar {
