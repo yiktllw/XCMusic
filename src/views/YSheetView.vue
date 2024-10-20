@@ -90,18 +90,22 @@ export default defineComponent({
             switch (e.key) {
                 case 'h':
                 case 'H':
+                case 'ArrowLeft':
                     this.page.previous();
                     break;
                 case 'l':
                 case 'L':
+                case 'ArrowRight':
                     this.page.next();
                     break;
                 case 'j':
                 case 'J':
+                case 'ArrowDown':
                     this.startScrolling('DOWN');
                     break;
                 case 'k':
                 case 'K':
+                case 'ArrowUp':
                     this.startScrolling('UP');
                     break;
             }
@@ -112,6 +116,8 @@ export default defineComponent({
                 case 'J':
                 case 'k':
                 case 'K':
+                case 'ArrowUp':
+                case 'ArrowDown':
                     this.stopScrolling();
                     break;
             }
