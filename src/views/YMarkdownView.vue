@@ -8,6 +8,8 @@ import { defineComponent, ref } from 'vue';
 import { marked } from 'marked';
 import README from '../../README.md';
 import CHANGELOG from '../../CHANGELOG.md';
+import { YColor } from '@/utils/color';
+
 let path: null | any = null;
 if (window.electron?.isElectron) {
     path = window.api.path;
@@ -44,6 +46,9 @@ export default defineComponent({
                 return marked.parse(CHANGELOG);
             }
         },
+    },
+    mounted() {
+        YColor.setBackgroundColorTheme();
     },
 });
 </script>

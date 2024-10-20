@@ -121,6 +121,15 @@ export class YColor {
             }
         });
     }
+    /**
+     * 设置背景颜色为主题色
+     */
+    static setBackgroundColorTheme() {
+        const DOM = document.querySelector('.mainContainer');
+        if (!DOM) return;
+        (DOM as HTMLElement).style.background = 'var(--background-color)';
+    }
+
 }
 
 /**
@@ -177,7 +186,7 @@ export function setBackgroundColorTheme() {
  * @param {number} b 蓝色值
  * @returns {COLOR} 对象: { r: number, g: number, b: number }
  */
-function increaseSaturation(r: number, g: number, b: number,): COLOR { 
+function increaseSaturation(r: number, g: number, b: number,): COLOR {
     // 创建一个 Color 对象
     const color = Color.rgb(r, g, b);
 

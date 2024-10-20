@@ -45,9 +45,10 @@
                             {{ $t('playui.sheet') }}
                         </div>
                     </div>
-                    <YScroll style="height: calc(100vh - 350px); margin-left: 5px; " ref="lyricContainer">
+                    <YScroll class="yscroll" style="height: calc(100vh - 350px); margin-left: 5px; "
+                        ref="lyricContainer">
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
-                            <div class="lyric">
+                            <div class="lyric-a">
                                 <div class="before-lyric" />
                                 <div class="lyric-line" v-for="(line, index) in lyrics" :key="line"
                                     :class="lineClass(index)" :style="{
@@ -384,14 +385,6 @@ export default defineComponent({
         lineClass(index: number) {
             if (index === this.currentLine) {
                 return 'current-line';
-            } else if (index === this.currentLine - 1 || index === this.currentLine + 1) {
-                return 'near-line-1';
-            } else if (index === this.currentLine - 2 || index === this.currentLine + 2) {
-                return 'near-line-2';
-            } else if (index === this.currentLine - 3 || index === this.currentLine + 3) {
-                return 'near-line-3';
-            } else if (index === this.currentLine - 4 || index === this.currentLine + 4) {
-                return 'near-line-4';
             } else {
                 return 'far-line';
             }
@@ -408,11 +401,11 @@ export default defineComponent({
             if (currentLineElement) {
                 // 计算当前行在容器中的位置
                 const containerHeight = container.clientHeight;
-                const lineHeight = currentLineElement.clientHeight;
+                const lineHeight = 38;
                 const lineTopOffset = currentLineElement.offsetTop;
 
                 // 设置滚动条位置，使当前行居中显示
-                let scrollTop = lineTopOffset - (containerHeight) + (lineHeight);
+                let scrollTop = lineTopOffset - 0.5 * containerHeight - 4 * lineHeight;
                 let scrollTopNow = container.scrollTop;
 
                 // 如果已有动画在进行，取消当前动画
@@ -712,18 +705,32 @@ export default defineComponent({
                 }
             }
 
+            .yscroll {
+                mask-image: linear-gradient(to bottom,
+                        rgba(0, 0, 0, 0.1) 0%,
+                        rgba(0, 0, 0, 0.2) 10%,
+                        rgba(0, 0, 0, 0.4) 20%,
+                        rgba(0, 0, 0, 0.6) 30%,
+                        rgba(0, 0, 0, 1) 50%,
+                        rgba(0, 0, 0, 0.6) 70%,
+                        rgba(0, 0, 0, 0.4) 80%,
+                        rgba(0, 0, 0, 0.2) 90%,
+                        rgba(0, 0, 0, 0.1) 100%);
+            }
+
             .lyric {
                 width: 43.21vw;
 
-                .lyric {
+                .lyric-a {
                     transition: color, opacity 0.3s;
 
+
                     .before-lyric {
-                        height: 25vh;
+                        height: calc(25vh - 16px);
                     }
 
                     .after-lyric {
-                        height: 25vh;
+                        height: calc(25vh - 16px);
                     }
 
                     .lyric-line {
@@ -766,24 +773,8 @@ export default defineComponent({
                         opacity: 1;
                     }
 
-                    .near-line-1 {
-                        opacity: 1;
-                    }
-
-                    .near-line-2 {
-                        opacity: .8;
-                    }
-
-                    .near-line-3 {
-                        opacity: .6;
-                    }
-
-                    .near-line-4 {
-                        opacity: .4;
-                    }
-
                     .far-line {
-                        opacity: .2;
+                        opacity: 1;
                     }
                 }
             }

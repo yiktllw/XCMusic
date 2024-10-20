@@ -33,6 +33,7 @@ import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import YPage from '@/components/YPage.vue';
 import { YPageC } from '@/dual/YPageC';
+import { YColor } from '@/utils/color';
 
 export default defineComponent({
     name: 'YSheetView',
@@ -61,6 +62,15 @@ export default defineComponent({
     watch: {
         sheetId() {
             this.getSheet();
+        },
+        'page.current'() {
+            this.$nextTick(() => {
+               const scrollDom = document.getElementById('yscroll-display-area');
+                scrollDom?.scrollTo({
+                     top: 0,
+                     behavior: 'auto',
+                });
+            });
         }
     },
     methods: {
@@ -130,6 +140,7 @@ export default defineComponent({
         this.getSheet();
         window.addEventListener('keydown', this.handleKeydown);
         window.addEventListener('keyup', this.handleKeyup);
+        YColor.setBackgroundColorTheme();
     },
     beforeUnmount() {
         window.removeEventListener('keydown', this.handleKeydown);
@@ -149,6 +160,7 @@ export default defineComponent({
     padding: 10px;
     align-items: first baseline;
     height: calc(100% - 50px);
+    width: 100%;
 
     .sheet-titlebar {
         display: flex;
@@ -171,6 +183,7 @@ export default defineComponent({
 
     .sheet-item {
         margin: 10px;
+        width: 100%;
 
         .sheet-img {
             width: 90%;
