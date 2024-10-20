@@ -31,14 +31,14 @@
                     </div>
                     <!-- 关注/粉丝 -->
                     <div class="user-follow font-color-high" v-if="type === 'user'">
-                        <div>
+                        <div style="cursor: pointer;" @click="openUserFollow(userId, 'follow')">
                             {{ $t('titlebar.follows') }}:
                             {{ user.follows }}
                         </div>
                         <div
                             style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
                         </div>
-                        <div>
+                        <div style="cursor: pointer;" @click="openUserFollow(userId, 'follower')">
                             {{ $t('titlebar.followers') }}:
                             {{ user.followeds }}
                         </div>
@@ -453,6 +453,9 @@ export default defineComponent({
                 .catch(err => {
                     console.log('fetch artist intro error:', err);
                 });
+        },
+        openUserFollow(id: number, type: string) {
+            this.$router.push({ path: `/${type}/${id}` });
         },
     },
     async mounted() {

@@ -89,7 +89,7 @@
                 <div class="user-info-menu" id="panel">
                     <div class="user-info-item follows">
                         <div class="follows-container follows-container-left">
-                            <div class="follows-number font-color-main">
+                            <div class="follows-number font-color-main" @click="openFollow('follow')">
                                 {{ userProfile?.follows ?? 0 }}
                             </div>
                             <div class="follows-text font-color-low">
@@ -98,7 +98,7 @@
                         </div>
                         <div class="follows-splitline" />
                         <div class="follows-container follows-container-right">
-                            <div class="follows-number font-color-main">
+                            <div class="follows-number font-color-main" @click="openFollow('follower')">
                                 {{ userProfile?.followeds ?? 0 }}
                             </div>
                             <div class="follows-text font-color-low">
@@ -438,6 +438,10 @@ export default defineComponent({
         },
         openAboutPage() {
             this.$router.push({ path: '/markdown/README' });
+            this.user_info_panel?.closePanel();
+        },
+        openFollow(type: 'follow' | 'follower') {
+            this.$router.push({ path: `/${type}/${this.login.userId}` });
             this.user_info_panel?.closePanel();
         },
     },

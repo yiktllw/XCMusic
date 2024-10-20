@@ -123,6 +123,24 @@ const routes = [
                     sheetId: Number(route.params.id),
                 }),
             },
+            {
+                path: 'follow/:id',
+                name: 'Follow',
+                component: () => import('../views/YFollowView.vue'),
+                props: route => ({
+                    uid: Number(route.params.id),
+                    type: 'follows',
+                }),
+            },
+            {
+                path: 'follower/:id',
+                name: 'Follower',
+                component: () => import('../views/YFollowView.vue'),
+                props: route => ({
+                    uid: Number(route.params.id),
+                    type: 'followers',
+                }),
+            },
         ],
     },
 ]

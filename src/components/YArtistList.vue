@@ -3,8 +3,8 @@
     <div class="artists-list ">
         <div class="artists-item" v-for="(artist) in artists" :key="type === 'artist' ? artist.id : artist.userId">
             <!-- 歌手信息 -->
-            <div class="artists-info" @click="openUserPage(type === 'artist' ? artist.id : artist.userId, type)"
-                :title="artist.name">
+            <div class="artists-info" @click="openUserPage(type === 'artist' ? artist.id : artist.userId)"
+                :title="artist.name ?? artist.nickname">
                 <!-- 头像 -->
                 <img :src="artist._picUrl" class="artists-avatar">
                 <!-- 歌手名 -->
@@ -29,7 +29,7 @@ export default defineComponent({
     props: {
         // 歌手列表
         artists: {
-            type: Array,
+            type: Array as () => any[],
             default: () => [],
         },
         // 类型
