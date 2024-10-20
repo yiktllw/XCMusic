@@ -45,8 +45,8 @@
                             {{ $t('playui.sheet') }}
                         </div>
                     </div>
-                    <YScroll class="yscroll" style="height: calc(100vh - 350px); margin-left: 5px; "
-                        ref="lyricContainer">
+                    <YScroll class="yscroll" v-if="position === 'lyric'"
+                        style="height: calc(100vh - 350px); margin-left: 5px; " ref="lyricContainer">
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
                             <div class="lyric-a">
                                 <div class="before-lyric" />
@@ -92,7 +92,9 @@
                                 <div class="after-lyric" />
                             </div>
                         </div>
-                        <div class="wiki font-color-main" v-else-if="position === 'wiki'">
+                    </YScroll>
+                    <YScroll v-else style="height: calc(100vh - 350px); margin-left: 5px; ">
+                        <div class="wiki font-color-main" v-if="position === 'wiki'">
                             <div class="wiki-content">
                                 <div class="wiki-first-listen" v-if="firstListen?.creatives?.length > 0">
                                     <div class="first-listen-main-title">
