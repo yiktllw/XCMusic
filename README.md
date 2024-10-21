@@ -22,6 +22,7 @@
 - 可以使用媒体快捷键控制播放
 - 可以在系统通知中控制播放
 - 支持音量均衡功能
+- 支持选择输出设备
 - 类手机端的专辑界面
 - 背景颜色随显示内容改变
 - 支持使用弹幕姬点歌。(需要在弹幕姬安装[DMPlugin_XCMusic](https://github.com/yiktllw/DMPlugin_XCMusic)插件)
