@@ -122,6 +122,12 @@ npm run electron:build
 
 ![image](https://github.com/user-attachments/assets/97cfc4f3-3dfa-4305-8476-076cf2b75b3a)
 
+![image](https://github.com/user-attachments/assets/07d9be0a-c8d4-4ce8-b2fc-9ab9f312e63e)
+
+![image](https://github.com/user-attachments/assets/5ce78c42-dc6e-4291-8121-90783345cd23)
+
+![image](https://github.com/user-attachments/assets/3b4752e2-40c1-44e1-8d36-1daafdc95a35)
+
 ![image](https://github.com/user-attachments/assets/ab8c65c3-9ba6-4187-b3c0-1d7ee229171f)
 
 ![image](https://github.com/user-attachments/assets/c73aadfa-7106-4057-b1f2-d3de46843c9c)
