@@ -146,7 +146,7 @@
         <div class="align-right">
             <div class="buttons" style="margin-right: 10px;">
                 <!-- 音质按钮 -->
-                <div class="quality-button font-color-standard" ref="quality_panel_trigger"
+                <div class="quality-button font-color-main" ref="quality_panel_trigger"
                     @click="quality_panel?.tooglePanel()" :title="$t('playbar.select_sound_quality')">
                     {{ $t(qualityDisplay) }}
                 </div>
@@ -172,9 +172,9 @@
                     </div>
                 </YPanel>
                 <!-- 音量按钮 -->
-                <img class="img g-icon" src="../assets/volume.svg"
-                    style="width: 22px; height: 22px;margin-right:10px; cursor: pointer; opacity: 0.9;"
-                    :title="$t('playbar.volume')" ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
+                <img class="img volume-img g-icon" src="../assets/volume.svg"
+                    style="width: 22px; height: 22px;margin-right:10px; " :title="$t('playbar.volume')"
+                    ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
                 <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5" :animation-time="0.1"
                     :slide-distance="10" id="panel">
@@ -188,9 +188,9 @@
                     </div>
                 </YPanel>
                 <!-- 播放列表按钮 -->
-                <img class="img g-icon" src="../assets/playlist.svg"
-                    style="width: 20px; height: 20px; margin-left:10px; cursor: pointer; opacity: 0.8;"
-                    @click="playlist_panel?.tooglePanel" :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
+                <img class="img playlist-img g-icon" src="../assets/playlist.svg"
+                    style="width: 20px; height: 20px; margin-left:10px; " @click="playlist_panel?.tooglePanel"
+                    :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
                 <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger" :slide-direction="4"
                     :default-show="false" @show-panel="scrollToCurrentTrack">
@@ -668,8 +668,18 @@ export default defineComponent({
 
     .img {
         user-select: none;
-        opacity: 0.9;
         -webkit-user-drag: none;
+        cursor: pointer;
+    }
+
+    .volume-img,
+    .playlist-img {
+        opacity: 0.7;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 
     .align-left {
@@ -1006,11 +1016,16 @@ export default defineComponent({
                 font-size: 14px;
                 font-weight: bold;
                 margin-right: 20px;
-                border: 1.5px solid rgba(var(--foreground-color-rgb), 0.4);
+                border: 1.5px solid rgba(var(--foreground-color-rgb), 0.5);
                 padding: 3px 6px;
                 align-items: center;
                 justify-content: center;
-                border-radius: 10px;
+                border-radius: 13px;
+                opacity: 0.7;
+
+                &:hover {
+                    opacity: 1;
+                }
             }
 
             .quality-panel {
