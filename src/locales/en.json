@@ -176,6 +176,7 @@
 			"dbclick": "Playlist",
 			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
 			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
+			"device": "Device",
 			"volume_leveling": "Volume",
 			"volume_leveling_content": "Balance the volume of different tracks."
 		},

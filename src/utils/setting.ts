@@ -29,6 +29,7 @@ export interface Settings {
         volume: number,
         mode: string,
         quality: string,
+        device: string,
     },
     download: {
         path: string,
@@ -108,6 +109,17 @@ export const settingGroup: SettingGroup = {
                 return valid;
             },
         },
+        device: {
+            value: localStorage.getItem('setting.play.device') ?? 'default',
+            default: 'default',
+            validation: (value) => {
+                let valid = typeof value === 'string';
+                if (valid) {
+                    localStorage.setItem('setting.play.device', value);
+                }
+                return valid;
+            }
+        }
     },
     download: {
         path: {

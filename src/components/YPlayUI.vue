@@ -483,6 +483,7 @@ export default defineComponent({
                 id: this.track.id,
                 cookie: this.login.cookie,
             }).then((res) => {
+                if (!res) return;
                 this.firstListen = res.data.blocks[0];
                 this.songWiki = res.data.blocks[1];
             });

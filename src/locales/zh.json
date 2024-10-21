@@ -176,6 +176,7 @@
 			"dbclick": "播放列表",
 			"dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",
 			"dbclick_playsingle": "双击歌单时，仅将当前歌曲添加到播放列表",
+			"device": "输出设备",
 			"volume_leveling": "音量",
 			"volume_leveling_content": "平衡不同作品的音量"
 		},

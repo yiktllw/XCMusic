@@ -33,11 +33,9 @@
                         <div class="content-item-title item-theme-title ">
                             {{ $t('setting_view.theme') }}
                         </div>
-                        <div class="theme-item">
-                            <div v-for="item in themes" :key="item.value" class="item-theme-content">
-                                <input type="radio" :id="item.value" name="theme" :value="item.value" v-model="theme"
-                                    @change="handleTheme">
-                                <label :for="item.value" @click="switchToTheme(item.value)">
+                        <div class="content-item-content">
+                            <select v-model="theme" @change="handleTheme">
+                                <option v-for="item in themes" :key="item.value" :value="item.value">
                                     {{
                                         [
                                             'setting_view.theme_name.dark',
@@ -47,8 +45,8 @@
                                         ].includes(item.display) ?
                                             $t(item.display) : item.display
                                     }}
-                                </label>
-                            </div>
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="content-item item-zoom">
@@ -102,6 +100,18 @@
                                     {{ $t('setting_view.play.dbclick_playsingle') }}
                                 </label>
                             </div>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.play.device') }}
+                        </div>
+                        <div class="content-item-content">
+                            <select v-model="selectedDevice" @change="selectAudioOutputDevice(selectedDevice)">
+                                <option v-for="device in devices" :key="device.deviceId" :value="device.deviceId">
+                                    {{ device.label }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -264,6 +274,8 @@ export default defineComponent({
             downloadPath: '',
             quality: 'standard',
             qualities: qualities,
+            devices: [] as MediaDeviceInfo[],
+            selectedDevice: '' as any,
         }
     },
     methods: {
@@ -343,6 +355,38 @@ export default defineComponent({
                 return;
             }
             this.$router.push({ path: '/markdown/CHANGELOG' });
+        },
+        async getDevices() {
+            window.test = this.player;
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                this.devices = devices.filter(device => device.kind === 'audiooutput');
+                this.selectedDevice = this.player.device;
+                // console.log('Audio device Ids:', this.devices.map(device => device.deviceId));
+
+            } catch (err) {
+                console.error('Error fetching audio devices:', err);
+            }
+        },
+        async selectAudioOutputDevice(deviceId: string) {
+            const audioElement = this.player._audio;
+            if (!audioElement) return;
+
+            try {
+                // 检查是否支持 setSinkId 方法
+                if (typeof audioElement.setSinkId === 'function') {
+                    await this.player.setDevice(deviceId).then(() => {
+                        this.selectedDevice = deviceId;
+                        this.setting.play.device = deviceId;
+                    });
+                    // this.selectedDevice = audioElement.sinkId;
+                    console.log(`Audio output set to device: ${deviceId}`);
+                } else {
+                    console.error('Browser does not support setSinkId.');
+                }
+            } catch (err) {
+                console.error('Error setting audio output device:', err);
+            }
         }
     },
     mounted() {
@@ -354,6 +398,7 @@ export default defineComponent({
         this.dbclick = this.setting.play.dbclick;
         this.downloadPath = this.setting.download.path;
         this.quality = this.setting.download.quality;
+        this.getDevices();
     },
 })
 </script>
@@ -457,6 +502,27 @@ export default defineComponent({
 
                     .content-item-content {
 
+                        select {
+                            // width: 210px;
+                            padding: 2px 2px !important;
+                            border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
+                            background-color: transparent;
+                            color: var(--font-color-high);
+                            font-size: 16px;
+                            border-radius: 5px;
+                            padding: 0 10px;
+                            margin-right: 10px;
+
+                            option {
+                                color: var(--font-color-high);
+                                background-color: var(--background-color);
+                            }
+
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+
                         .github-link {
                             cursor: pointer;
                             color: var(--font-color-high);
@@ -496,36 +562,12 @@ export default defineComponent({
                 }
 
                 .item-theme {
-
                     .item-theme-title {
                         font-weight: bold;
-                    }
-
-                    .theme-item {
-                        display: flex;
-                        flex-wrap: wrap;
-                        align-items: first baseline;
-                        line-height: 32.1px;
-
-                        .item-theme-content {
-                            align-items: center;
-                            margin-right: 10px;
-                            cursor: pointer;
-
-                            input[type="radio"] {
-                                cursor: pointer;
-                            }
-
-                            label {
-                                cursor: pointer;
-                                min-width: 70px;
-                            }
-                        }
                     }
                 }
 
                 .item-zoom {
-
                     .item-zoom-title {
                         font-weight: bold;
                     }
