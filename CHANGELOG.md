@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/yiktllw/XCMusic/compare/v0.1.3...v0.1.4) (2024-10-21)
+
+
+### Features
+
+* 可以使用方向键滚动曲谱 ([0a68861](https://github.com/yiktllw/XCMusic/commit/0a68861570a4482f42db0d0b9d425669de07ada8))
+* 实现查看曲谱 ([e3fbd5a](https://github.com/yiktllw/XCMusic/commit/e3fbd5a8df83739cfbbdc6d953effe2c872735ca))
+* 实现查看用户关注、粉丝 ([eeb6bc7](https://github.com/yiktllw/XCMusic/commit/eeb6bc71a3eefbcce5c3cedf7f87f2da529112e5))
+* 实现选择输出设备(与音量均衡功能有冲突) ([537584b](https://github.com/yiktllw/XCMusic/commit/537584b61366f69b8ed3ba121debb453fedfdecf))
+* 新增: 设置-关于-变更日志；设置-关于-介绍 ([22a32e2](https://github.com/yiktllw/XCMusic/commit/22a32e218c3105b22b46704576afb308e023e49c))
+* 新增关注/粉丝界面分页功能 ([2fcc859](https://github.com/yiktllw/XCMusic/commit/2fcc859bf1a1908d50ae639511dd147dd6f10e9b))
+* 优化播放栏图标显示效果 ([f6d6cfc](https://github.com/yiktllw/XCMusic/commit/f6d6cfcf380a8d9caeb5dcf6d6e4036bd73d7486))
+
+
+### Bug Fixes
+
+* 尝试修复部署错误 ([0314a5c](https://github.com/yiktllw/XCMusic/commit/0314a5cc1306177d01eb513498825ca1d4108caa))
+* 修复播放界面进度条颜色过浅的问题；修复进度条动画延迟问题 ([3f22bb3](https://github.com/yiktllw/XCMusic/commit/3f22bb310dafb26ed27b19bdbafece1b8c66c43a))
+* 修复歌曲滚动动画错误 ([e8b99ec](https://github.com/yiktllw/XCMusic/commit/e8b99ecc96fbb9b3a43af73521d113824779b70f))
+* 修复滚动歌词位置错误 ([6c9eb74](https://github.com/yiktllw/XCMusic/commit/6c9eb747311bccbed259d8b30fb0a9dcfc081caa))
+* 修复曲谱和百科透明度错误 ([7d99dc8](https://github.com/yiktllw/XCMusic/commit/7d99dc845d81b2fd6080d5f782f7378e3901998d))
+* 修复网页端下载功能问题 ([9d03bf0](https://github.com/yiktllw/XCMusic/commit/9d03bf051928ed803264542d903da8c0daf56cb7))
+* 修复音量均衡与选择输出设备功能的冲突。 ([25b8fbe](https://github.com/yiktllw/XCMusic/commit/25b8fbec88680ba22299171e966a3c9408822ef0))
+* 修复音量面板无法打开的问题 ([648e1ee](https://github.com/yiktllw/XCMusic/commit/648e1eeafe24547b930c4a0a33bf589fe9da8599))
+* 修复vercel错误 ([5685c68](https://github.com/yiktllw/XCMusic/commit/5685c683f5a90e0f72c47d5e20e2e9fbe625fe43))
+* 修复vercel未捕获错误 ([1197fef](https://github.com/yiktllw/XCMusic/commit/1197fef478d4fcd56d1e22533bac469b6651c124))
+* 优化歌词动画 ([b8b7251](https://github.com/yiktllw/XCMusic/commit/b8b7251425d3bea26106c509e16c5c594328e6b3))
+* 优化歌词动画，修复歌单搜索bug ([940f541](https://github.com/yiktllw/XCMusic/commit/940f54173a37a1286cc24e0945b05c6e1a86ce7e))
+* 优化歌曲动画 ([5bcd86e](https://github.com/yiktllw/XCMusic/commit/5bcd86e989efd82a0150c8c6934e43ff1157fbac))
+
 ### [0.1.3](https://github.com/yiktllw/XCMusic/compare/v0.1.2...v0.1.3) (2024-10-18)
 
 
