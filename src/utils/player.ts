@@ -25,6 +25,10 @@ export class Player {
      */
     _audio: HTMLAudioElement;
     /**
+     * 因为_audio连接到了_audioContext，无法直接设置_audio的输出设备，所以需要一个新的音频对象来设置输出设备
+     */
+    _outputAudio: HTMLAudioElement;
+    /**
      * 音频上下文，用于设置增益
      */
     _audioContext: AudioContext | null;
@@ -102,8 +106,11 @@ export class Player {
      * 是否初始化设备
      */
     deviceInit: boolean = false;
+    _sourceNode: MediaElementAudioSourceNode | undefined;
+    _destination: MediaStreamAudioDestinationNode | undefined;
     constructor() {
         this._audio = new Audio('');
+        this._outputAudio = new Audio('');
         this._audio.addEventListener('error', this.handleAudioError);
         let localVolumeLeveling = localStorage.getItem('setting.play.volume_leveling') ?? 'true';
         this._volume_leveling = localVolumeLeveling === 'true' ? true : false;
@@ -460,11 +467,11 @@ export class Player {
                 'gain message: \n', gainMsg, '\n',
                 autoPlayMsg,
             );
-            if (localStorage.getItem('setting.play.device') && this.deviceInit === false) {
-                await this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
-                this.deviceInit = true;
-                console.log('Device initialized');
-            }
+            // if (localStorage.getItem('setting.play.device') && this.deviceInit === false) {
+            //     await this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
+            //     this.deviceInit = true;
+            //     console.log('Device initialized');
+            // }
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
         }
@@ -597,17 +604,36 @@ export class Player {
             // 创建一个新的 AudioContext
             this._audioContext = new window.AudioContext();
 
+            // 创建一个新的音频源
+            this._sourceNode = this._audioContext.createMediaElementSource(this._audio);
+
             // 创建一个增益节点
             this._gainNode = this._audioContext.createGain();
 
+            // 创建一个新的音频目标，用来输出音频
+            this._destination = this._audioContext.createMediaStreamDestination();
+
+            this._sourceNode.connect(this._gainNode);
+            this._gainNode.connect(this._destination);
+
+            this._outputAudio.srcObject = this._destination.stream;
+            this._outputAudio.play();
+            
+            if (localStorage.getItem('setting.play.device')) {
+                this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
+            }
+
+            // 创建一个增益节点
+            // this._gainNode = this._audioContext.createGain();
+
             // 连接增益节点到 AudioContext 的目标
-            this._gainNode.connect(this._audioContext.destination);
-            var audioElement = this._audio;
-            audioElement.crossOrigin = 'anonymous';
+            // this._gainNode.connect(this._audioContext.destination);
+            // var audioElement = this._audio;
+            // audioElement.crossOrigin = 'anonymous';
 
             // 创建一个新的音频源
-            var source = this._audioContext.createMediaElementSource(audioElement);
-            source.connect(this._gainNode);
+            // var source = this._audioContext.createMediaElementSource(audioElement);
+            // source.connect(this._gainNode);
         }
     }
     /** 
@@ -1289,19 +1315,12 @@ export class Player {
         })
     }
     get device() {
-        return this._audio.sinkId;
+        return this._outputAudio.sinkId;
     }
     async setDevice(value: string) {
-        const src = this._audio.src;
-        this.clearAudio();
-        this._audio = new Audio(src);
-        this._audio.addEventListener('error', this.handleAudioError);
-        this._audio.addEventListener('ended', () => this.next());
-        await this._audio.setSinkId(value).catch((error) => {
+        await this._outputAudio.setSinkId(value).catch((error) => {
             console.error(error);
         });
-        // this.initAudioContext();
-        this._audio.currentTime = this._currentTime as number;
         if (this.playState === 'play') {
             await this._audio.play();
         }
