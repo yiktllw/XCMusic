@@ -1,6 +1,7 @@
 <template>
     <div>
         <YArtistList :artists="users" type="user" />
+        <YPage v-model="page" />
     </div>
 </template>
 
@@ -9,6 +10,8 @@ import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import YArtistList from '@/components/YArtistList.vue';
+import YPage from '@/components/YPage.vue';
+import { YPageC } from '@/dual/YPageC';
 
 export default defineComponent({
     name: 'YFollowView',
@@ -24,12 +27,21 @@ export default defineComponent({
     },
     components: {
         YArtistList,
+        YPage,
     },
     watch: {
         uid() {
+            this.page = new YPageC(0);
+            this.page.onPageChange = () => {
+                this.fetchData(this.page.current);
+            };
             this.fetchData();
         },
         type() {
+            this.page = new YPageC(0);
+            this.page.onPageChange = () => {
+                this.fetchData(this.page.current);
+            };
             this.fetchData();
         },
     },
@@ -43,17 +55,23 @@ export default defineComponent({
     data() {
         return {
             users: [] as any[],
+            page: new YPageC(0),
         };
     },
     methods: {
-        async fetchData() {
+        async fetchData(page: number = 1) {
             if (!this.uid) return;
             const path = '/user/' + (this.type === 'follows' ? 'follows' : 'followeds');
+            const LIMIT = 30;
+            const offset = (page - 1) * LIMIT;
             await useApi(path, {
                 uid: this.uid,
                 cookie: this.login.cookie,
+                limit: LIMIT,
+                offset: offset,
             }).then(res => {
                 if (!res) return;
+                if (!res.more) this.page._allow_page_increase = false;
                 if (this.type === 'follows') {
                     this.users = res.follow?.map((item: any) => {
                         return {
@@ -69,11 +87,14 @@ export default defineComponent({
                         };
                     }) ?? [];
                 }
-                console.log(this.users);
+                // console.log('users: ', this.users, 'has more: ', res.more);
             })
         },
     },
     mounted() {
+        this.page.onPageChange = () => {
+            this.fetchData(this.page.current);
+        };
         this.fetchData();
     },
 });

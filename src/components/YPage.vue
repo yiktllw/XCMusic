@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="page-main font-color-main" v-if="page.total > 1">
+        <div class="page-main font-color-main" v-if="page.total > 1 || page._unknown_page">
             <div class="previous" @click="page.previous">
                 <img src="@/assets/backarrow.svg" class="arrow-img g-icon">
             </div>
