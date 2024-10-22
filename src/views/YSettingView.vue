@@ -102,6 +102,17 @@
                             </label>
                         </div>
                     </div>
+                    <div class="content-item item-playui">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.play.playui') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="checkbox" id="spectrum" name="spectrum" v-model="spectrum">
+                            <label for="spectrum" @click="setSpectrum(spectrum)">
+                                {{ $t('setting_view.play.show_spectrum') }}
+                            </label>
+                        </div>
+                    </div>
                     <div class="content-item item-play-dbclick">
                         <div class="content-item-title">
                             {{ $t('setting_view.play.dbclick') }}
@@ -258,6 +269,11 @@ export default defineComponent({
             return packageJson.version;
         }
     },
+    watch: {
+        spectrum(val) {
+            this.setSpectrum(val);
+        },
+    },
     data() {
         return {
             switcher: [
@@ -292,6 +308,7 @@ export default defineComponent({
             zoom: 100,
             closeBehavior: 'minimize',
             volume_leveling: false,
+            spectrum: false,
             dbclick: 'all',
             downloadPath: '',
             quality: 'standard',
@@ -347,6 +364,10 @@ export default defineComponent({
             this.volume_leveling = bool;
             this.setting.play.volume_leveling = this.volume_leveling;
             this.player.volumeLeveling = bool;
+        },
+        setSpectrum(bool: boolean) {
+            this.spectrum = bool;
+            this.setting.playui.spectrum = this.spectrum;
         },
         async selectFile() {
             if (window.electron?.isElectron) {
@@ -422,6 +443,7 @@ export default defineComponent({
         this.language = this.setting.display.language;
         this.closeBehavior = this.setting.titleBar.closeButton;
         this.volume_leveling = this.setting.play.volume_leveling;
+        this.spectrum = this.setting.playui.spectrum;
         this.dbclick = this.setting.play.dbclick;
         this.downloadPath = this.setting.download.path;
         this.quality = this.setting.download.quality;

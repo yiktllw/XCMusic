@@ -1,5 +1,5 @@
 <template>
-    <canvas ref="canvas" class="canvas"></canvas>
+    <canvas ref="canvas" class="canvas" v-if="showSpectrum"></canvas>
 </template>
 
 <script lang="ts">
@@ -21,9 +21,11 @@ export default defineComponent({
         return {
             interval: null as any,
             dataArray: null as null | Uint8Array,
+            showSpectrum: true,
         };
     },
     mounted() {
+        this.showSpectrum = this.setting.playui.spectrum;
         if (this.player._analyserNode) {
             this.dataArray = new Uint8Array(this.player._analyserNode.frequencyBinCount);
             this.setupCanvas();

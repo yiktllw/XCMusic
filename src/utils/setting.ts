@@ -31,6 +31,9 @@ export interface Settings {
         quality: string,
         device: string,
     },
+    playui: {
+        spectrum: boolean,
+    }
     download: {
         path: string,
         quality: string,
@@ -117,6 +120,23 @@ export const settingGroup: SettingGroup = {
                 let valid = typeof value === 'string';
                 if (valid) {
                     localStorage.setItem('setting.play.device', value);
+                }
+                return valid;
+            }
+        }
+    },
+    playui: {
+        spectrum: {
+            value: localStorage.getItem('setting.playui.spectrum') ?? false,
+            default: false,
+            validation: (value) => {
+                let valid = typeof value === 'boolean';
+                let valid2 = typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase());
+                if (valid) {
+                    localStorage.setItem('setting.playui.spectrum', value);
+                } else if (valid2) {
+                    localStorage.setItem('setting.playui.spectrum', value);
+                    valid = true;
                 }
                 return valid;
             }
