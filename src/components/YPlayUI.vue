@@ -168,6 +168,9 @@
             <div class="play-bar">
                 <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" />
             </div>
+            <div class="spectrum-canvas">
+                <YSpecCanvas />
+            </div>
         </div>
     </transition>
 </template>
@@ -182,6 +185,7 @@ import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import { getColorFromImg } from '@/utils/color';
 import { Message } from '@/dual/YMessageC';
+import YSpecCanvas from './YSpecCanvas.vue';
 
 export default defineComponent({
     name: 'YPlayUI',
@@ -189,6 +193,7 @@ export default defineComponent({
         YTitlebar,
         YPlaybar,
         YScroll,
+        YSpecCanvas,
     },
     setup() {
         const lyricContainer = ref<InstanceType<typeof YScroll>>();
@@ -937,6 +942,18 @@ export default defineComponent({
         width: 100%;
         height: 85px;
         background-color: rgba(var(--foreground-color-rgb), .03);
+    }
+
+    .spectrum-canvas {
+        position: absolute;
+        width: 100%;
+        height: 100px;
+        bottom: 89px;
+        pointer-events: none;
+        mask-image: linear-gradient(to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 0.6) 70%,
+                rgba(0, 0, 0, 0.1) 100%);
     }
 }
 </style>

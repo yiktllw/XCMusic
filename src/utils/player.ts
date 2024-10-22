@@ -103,6 +103,7 @@ export class Player {
     deviceInit: boolean = false;
     _sourceNode: MediaElementAudioSourceNode | undefined;
     _destination: MediaStreamAudioDestinationNode | undefined;
+    _analyserNode: AnalyserNode | undefined;
     constructor() {
         this._audio = new Audio('');
         this._outputAudio = new Audio('');
@@ -597,8 +598,13 @@ export class Player {
             // 创建一个新的音频目标，用来输出音频
             this._destination = this._audioContext.createMediaStreamDestination();
 
+            // 创建 AnalyserNode
+            this._analyserNode = this._audioContext.createAnalyser();
+            this._analyserNode.fftSize = 1024; // 设置 FFT 大小
+
             this._sourceNode.connect(this._gainNode);
-            this._gainNode.connect(this._destination);
+            this._gainNode.connect(this._analyserNode);
+            this._analyserNode.connect(this._destination);
 
             this._outputAudio.srcObject = this._destination.stream;
             this._outputAudio.play();

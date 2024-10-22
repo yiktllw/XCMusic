@@ -64,8 +64,7 @@
                     </div>
                     <div class="content-item close-item">
                         <div class="content-item-title">
-                            <!-- {{ $t('setting_view.close') }} -->
-                            关闭
+                            {{ $t('setting_view.close') }}
                         </div>
                         <div class="content-item-content item-content-close">
                             <div class="close-item1">
@@ -540,6 +539,7 @@ export default defineComponent({
                             border-radius: 5px;
                             padding: 0 10px;
                             margin-right: 10px;
+                            cursor: pointer;
 
                             option {
                                 color: var(--font-color-high);

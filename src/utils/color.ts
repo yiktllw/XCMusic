@@ -299,7 +299,7 @@ export async function getColorFromImg(imgSrc: string, document: Document): Promi
             reject(error); // 处理图片加载错误
         };
     }).catch((error) => {
-        console.error('get color from image error: ', error, ', return null'); // 捕获错误
+        console.log('get color from image error: ', error, ', return null'); // 捕获错误
         return null; // 返回 null
     }) ?? null;
 
