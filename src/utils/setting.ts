@@ -44,6 +44,7 @@ export interface Settings {
     },
     titleBar: {
         searchHistory: string[],
+        closeButton: 'quit' | 'minimize',
     }
 }
 
@@ -219,6 +220,17 @@ export const settingGroup: SettingGroup = {
                 let valid = Array.isArray(value);
                 if (valid) {
                     localStorage.setItem('setting.searchHistory', JSON.stringify(value));
+                }
+                return valid;
+            }
+        },
+        closeButton: {
+            value: localStorage.getItem('setting.titleBar.closeButton') ?? 'minimize',
+            default: 'minimize',
+            validation: (value) => {
+                let valid = typeof value === 'string' && ['quit', 'minimize'].includes(value);
+                if (valid) {
+                    localStorage.setItem('setting.titleBar.closeButton', value);
                 }
                 return valid;
             }

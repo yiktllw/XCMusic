@@ -62,6 +62,28 @@
                             </div>
                         </div>
                     </div>
+                    <div class="content-item close-item">
+                        <div class="content-item-title">
+                            <!-- {{ $t('setting_view.close') }} -->
+                            关闭
+                        </div>
+                        <div class="content-item-content item-content-close">
+                            <div class="close-item1">
+                                <input type="radio" name="close" value="minimize" v-model="closeBehavior"
+                                    @change="setClose('minimize')">
+                                <label @click="setClose('minimize')">
+                                    {{ $t('setting_view.close_to_minimize') }}
+                                </label>
+                            </div>
+                            <div class="close-item2">
+                                <input type="radio" name="close" value="quit" v-model="closeBehavior"
+                                    @change="setClose('quit')">
+                                <label @click="setClose('quit')">
+                                    {{ $t('setting_view.close_to_quit') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="play item" id="play">
@@ -269,6 +291,7 @@ export default defineComponent({
             themes: themes,
             theme: 'dark',
             zoom: 100,
+            closeBehavior: 'minimize',
             volume_leveling: false,
             dbclick: 'all',
             downloadPath: '',
@@ -295,6 +318,10 @@ export default defineComponent({
             this.theme = theme;
             document.body.className = `theme-${this.theme}`;
             this.setting.display.theme = this.theme;
+        },
+        setClose(behavior: 'minimize' | 'quit') {
+            this.closeBehavior = behavior;
+            this.setting.titleBar.closeButton = behavior;
         },
         handleZoom() {
             try {
@@ -357,7 +384,7 @@ export default defineComponent({
             this.$router.push({ path: '/markdown/CHANGELOG' });
         },
         async getDevices() {
-            window.test = this.player;
+            // window.test = this.player;
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 this.devices = devices.filter(device => device.kind === 'audiooutput');
@@ -394,6 +421,7 @@ export default defineComponent({
         this.theme = this.setting.display.theme;
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
+        this.closeBehavior = this.setting.titleBar.closeButton;
         this.volume_leveling = this.setting.play.volume_leveling;
         this.dbclick = this.setting.play.dbclick;
         this.downloadPath = this.setting.download.path;
@@ -553,6 +581,7 @@ export default defineComponent({
                         }
                     }
 
+                    .item-content-close,
                     .item-play-dbclick-content {
                         display: flex;
                         flex-direction: column;

@@ -130,9 +130,8 @@
                 </div>
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
-            <button class="settings" @click="settings" :title="$t('titlebar.settings')" v-if="type === 'default'">
-                <img class="img settings g-icon" @click="$router.push({ path: '/setting' })"
-                    src="../assets/settings.svg" alt="Settings" />
+            <button class="settings" @click="$router.push({ path: '/setting' })" :title="$t('titlebar.settings')" v-if="type === 'default'">
+                <img class="img settings g-icon" src="../assets/settings.svg" alt="Settings" />
             </button>
             <button class="minimize " @click="minimize" :title="$t('titlebar.minimize')">
                 <img class="img minimize g-icon" src="../assets/min.svg" alt="Minimize" />
@@ -302,13 +301,6 @@ export default defineComponent({
             this.showDropdown = !this.showDropdown;
         },
         // 设置、最小化、最大化和关闭
-        settings() {
-            if (window.electron?.isElectron) {
-                window.electron.ipcRenderer.send('open-settings');
-            } else {
-                console.log('not in electron, cannot open settings');
-            }
-        },
         minimize() {
             if (window.electron?.isElectron) {
                 window.electron.ipcRenderer.send('minimize');
@@ -325,7 +317,12 @@ export default defineComponent({
         },
         close() {
             if (window.electron?.isElectron) {
-                window.electron.ipcRenderer.send('close');
+                const closeBehavior = this.setting.titleBar.closeButton;
+                if (closeBehavior === 'minimize') {
+                    window.electron.ipcRenderer.send('close');
+                } else if (closeBehavior === 'quit') {
+                    window.electron.ipcRenderer.send('quit');
+                }
             } else {
                 console.log('not in electron, cannot close');
             }

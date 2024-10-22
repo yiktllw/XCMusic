@@ -166,6 +166,9 @@
 			"version": "Version"
 		},
 		"apply": "Apply",
+		"close": "Close",
+		"close_to_minimize": "Close to Hide.",
+		"close_to_quit": "Close to Quit.",
 		"download": {
 			"path": "Path",
 			"quality": "Quality",

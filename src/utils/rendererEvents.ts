@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, dialog } from 'electron';
+import { ipcMain, BrowserWindow, dialog, app } from 'electron';
 import { Download } from './download';
 
 // 获取当前窗口
@@ -30,6 +30,14 @@ ipcMain.on('close', () => {
     const win = getCurrentWindow();
     if (win) {
         win.hide();
+    }
+});
+
+ipcMain.on('quit', () => {
+    const win = getCurrentWindow();
+    if (win) {
+        win.close();
+        app.quit();
     }
 });
 
