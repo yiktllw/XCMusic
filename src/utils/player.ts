@@ -16,11 +16,6 @@ import i18n from "@/i18n";
 
 export class Player {
     /**
-     * 当音频错误时，最后一次加载的歌曲ID
-     * @type {Number}
-     */
-    lastloadTrack: number = 0;
-    /**
      * 音频对象
      */
     _audio: HTMLAudioElement;
@@ -111,7 +106,7 @@ export class Player {
     constructor() {
         this._audio = new Audio('');
         this._outputAudio = new Audio('');
-        this._audio.addEventListener('error', this.handleAudioError);
+        this._audio.onerror = () => this.handleAudioError(this._audio.error);
         let localVolumeLeveling = localStorage.getItem('setting.play.volume_leveling') ?? 'true';
         this._volume_leveling = localVolumeLeveling === 'true' ? true : false;
         this._audioContext = null;
@@ -338,16 +333,10 @@ export class Player {
             }
         })
     }
-    async handleAudioError() {
-        if (this.lastloadTrack === this.currentTrack?.id) {
-            console.warn('Already Loading Track', this.currentTrack);
-            return;
-        } else {
-            if (!this.currentTrack?.id) return;
-            this.lastloadTrack = this.currentTrack?.id;
-            setTimeout(() => {
-                this.lastloadTrack = 0;
-            }, 1000 * 2)
+    async handleAudioError(error: any) {
+        console.log('Audio Error', error);
+        if (!this.currentTrack) return;
+        if (navigator.onLine) {
             await this.reloadUrl();
         }
     }
@@ -467,11 +456,6 @@ export class Player {
                 'gain message: \n', gainMsg, '\n',
                 autoPlayMsg,
             );
-            // if (localStorage.getItem('setting.play.device') && this.deviceInit === false) {
-            //     await this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
-            //     this.deviceInit = true;
-            //     console.log('Device initialized');
-            // }
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.Execute({ type: 'trackReady' });
         }
@@ -618,22 +602,8 @@ export class Player {
 
             this._outputAudio.srcObject = this._destination.stream;
             this._outputAudio.play();
-            
-            if (localStorage.getItem('setting.play.device')) {
-                this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
-            }
 
-            // 创建一个增益节点
-            // this._gainNode = this._audioContext.createGain();
-
-            // 连接增益节点到 AudioContext 的目标
-            // this._gainNode.connect(this._audioContext.destination);
-            // var audioElement = this._audio;
-            // audioElement.crossOrigin = 'anonymous';
-
-            // 创建一个新的音频源
-            // var source = this._audioContext.createMediaElementSource(audioElement);
-            // source.connect(this._gainNode);
+            this.setDevice(localStorage.getItem('setting.play.device') ?? 'default');
         }
     }
     /** 
@@ -1304,9 +1274,15 @@ export class Player {
         }
         return result;
     }
+    /**
+     * 获取音量均衡状态
+     */
     get volumeLeveling() {
         return this._volume_leveling;
     }
+    /**
+     * 设置音量均衡状态
+     */
     set volumeLeveling(value: boolean) {
         this._volume_leveling = value;
         if (!this.currentTrack) return;
@@ -1314,9 +1290,15 @@ export class Player {
             console.log('Volume leveling:', msg);
         })
     }
+    /**
+     * 获取输出设备
+     */
     get device() {
         return this._outputAudio.sinkId;
     }
+    /**
+     * 设置输出设备
+     */
     async setDevice(value: string) {
         await this._outputAudio.setSinkId(value).catch((error) => {
             console.error(error);
@@ -1324,12 +1306,5 @@ export class Player {
         if (this.playState === 'play') {
             await this._audio.play();
         }
-    }
-    clearAudio() {
-        this._audio.pause();
-        this._audio.currentTime = 0;
-        this._audio.src = '';
-        this._audio.removeEventListener('ended', this.next);
-        this._audio.removeEventListener('error', this.handleAudioError);
     }
 }
