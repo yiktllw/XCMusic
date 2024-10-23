@@ -282,9 +282,6 @@ export default defineComponent({
     watch: {
         spectrum(val) {
             this.setSpectrum(val);
-            if (val) {
-                Message.post('info', 'setting_view.work_after_reload_window', true);
-            }
         },
     },
     data() {
@@ -321,7 +318,7 @@ export default defineComponent({
             zoom: 100,
             closeBehavior: 'minimize',
             volume_leveling: false,
-            spectrum: true,
+            spectrum: false,
             dbclick: 'all',
             downloadPath: '',
             quality: 'standard',
@@ -380,7 +377,12 @@ export default defineComponent({
         },
         setSpectrum(bool: boolean) {
             this.spectrum = bool;
-            this.setting.playui.spectrum = this.spectrum;
+            if (this.setting.playui.spectrum !== bool) {
+                this.setting.playui.spectrum = this.spectrum;
+                if (bool) {
+                    Message.post('info', 'setting_view.work_after_reload_window', true);
+                }
+            }
         },
         async selectFile() {
             if (window.electron?.isElectron) {
@@ -566,8 +568,8 @@ export default defineComponent({
                     }
 
                     .content-item-content {
-                        
-                        .reload-item{
+
+                        .reload-item {
                             cursor: pointer;
                         }
 

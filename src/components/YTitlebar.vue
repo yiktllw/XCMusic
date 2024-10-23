@@ -18,7 +18,7 @@
                 <input type="text" class="search-input font-color-main" @keydown.enter="handleSearch"
                     v-model="searchInput" @input="getSearchSuggestions" :placeholder="$t('titlebar.search') + '...'"
                     @click="search_panel?._showPanel()" spellcheck="false" ref="search_input" />
-                <img class="img-search g-icon" src="../assets/search.svg" />
+                <img class="img-search g-icon" src="../assets/search.svg" @click="search(searchInput)" />
                 <img v-if="searchInput !== ''" class="img-clear g-icon" src="../assets/clear2.svg"
                     @click="searchInput = ''; search_panel?._showPanel();" />
             </div>
@@ -549,6 +549,11 @@ export default defineComponent({
                 height: 17px;
                 opacity: 0.5;
                 -webkit-user-drag: none;
+                
+                &:hover{
+                    cursor: pointer;
+                    opacity: 1;
+                }
             }
 
             .img-clear {
