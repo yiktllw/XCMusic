@@ -104,6 +104,7 @@ export class Player {
     _sourceNode: MediaElementAudioSourceNode | undefined;
     _destination: MediaStreamAudioDestinationNode | undefined;
     _analyserNode: AnalyserNode | undefined;
+    noUrlCount: number = 0;
     constructor() {
         this._audio = new Audio('');
         this._outputAudio = new Audio('');
@@ -429,13 +430,16 @@ export class Player {
             // 获取歌曲播放信息
             let nourl = false;
             let result = await this.getUrl(track.id).catch(error => {
-                this.next();
-                nourl = true;
+                if (navigator.onLine && this.noUrlCount < 10) {
+                    this.next();
+                    nourl = true;
+                    this.noUrlCount++;
+                }
             });
             if (nourl) return;
             let url = result.url;
             this._audio.src = url;
-            this._audio.addEventListener('ended', () => this.next());
+            this._audio.onended = () => this.next();
 
             let autoPlayMsg = 'Not autoplay';
             const gainMsg = await this.gainTrack(track.id);
@@ -458,6 +462,7 @@ export class Player {
                 autoPlayMsg,
             );
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
+            this.noUrlCount = 0;
             this.Execute({ type: 'trackReady' });
         }
     }
@@ -603,8 +608,8 @@ export class Player {
             this._analyserNode.fftSize = 1024; // 设置 FFT 大小
 
             this._sourceNode.connect(this._gainNode);
+            this._gainNode.connect(this._destination);
             this._gainNode.connect(this._analyserNode);
-            this._analyserNode.connect(this._destination);
 
             this._outputAudio.srcObject = this._destination.stream;
             this._outputAudio.play();

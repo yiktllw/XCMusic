@@ -1,25 +1,24 @@
 interface Theme {
+    // value 是theme.scss里的class名的后半部分，比如 `theme-${value}`
     value: string,
+    // display 是显示在设置界面的名字
     display: string,
+    // 可选项，type和background二选一。
+    // 'dark' / 'light'，暗色类主题，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
     type?: 'dark' | 'light',
+    // background是填在theme.scss的背景颜色，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
     background?: string,
 }
 
 export var themes: Theme[] = [
     {
-        // value 是theme.scss里的class名的后半部分，比如 `theme-${value}`
         value: 'dark',
-        // display 是显示在设置界面的名字
         display: 'setting_view.theme_name.dark',
-        // 可选项，type和background二选一。
-        // 'dark' / 'light'，暗色类主题，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
         type: 'dark',
     },
     {
         value: 'dark-high-contrast',
         display: 'setting_view.theme_name.dark_high_contrast',
-        // 可选项，type和background二选一。
-        // background是填在theme.scss的背景颜色，当进入歌单界面等时，会改变背景颜色，此选项会影响到改变的背景颜色
         background: '#000000',
     },
     {

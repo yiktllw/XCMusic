@@ -19,7 +19,6 @@ export default defineComponent({
     },
     data() {
         return {
-            interval: null as any,
             dataArray: null as null | Uint8Array,
             showSpectrum: true,
         };
@@ -30,9 +29,6 @@ export default defineComponent({
             this.dataArray = new Uint8Array(this.player._analyserNode.frequencyBinCount);
             this.setupCanvas();
         }
-    },
-    beforeUnmount() {
-        clearInterval(this.interval);
     },
     methods: {
         setupCanvas() {
