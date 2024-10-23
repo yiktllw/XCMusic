@@ -480,12 +480,12 @@ export class Player {
             peakData.push(this.currentTrack[prop[i]]?.peak);
         }
         gainData.forEach(value => {
-            if (gain === null || (value && value > gain)) {
+            if (gain === null || (value && value > gain) || gain === undefined) {
                 gain = value;
             }
         });
         peakData.forEach(value => {
-            if (peak === null || (value && value < peak && value !== 0)) {
+            if (peak === null || (value && value < peak && value !== 0) || peak === undefined) {
                 peak = value;
             }
         });
