@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 
 type Msg = {
     message: string,
@@ -43,11 +44,15 @@ export class Message {
      * @param {'info'|'success'|'warning'|'error'} type 消息类型
      * @param {string} message 消息内容
      */
-    static post(type: 'info' | 'success' | 'warning' | 'error', message: string) {
+    static post(type: 'info' | 'success' | 'warning' | 'error', message: string, needTrans: boolean = false) {
         if (['info', 'success', 'warning', 'error'].includes(type)) {
+            let transMsg = message;
+            if (needTrans) {
+                transMsg = i18n.global.t(message);
+            }
             const msg = new YMessageC({
                 type: type,
-                message: message,
+                message: transMsg,
             });
             window.postMessage({
                 type: 'message-show',

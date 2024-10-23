@@ -166,6 +166,7 @@
 			"version": "版本"
 		},
 		"apply": "应用",
+		"click_to_reload": "点击重新加载窗口",
 		"close": "关闭",
 		"close_to_minimize": "点击关闭按钮时，最小化到托盘",
 		"close_to_quit": "点击关闭按钮时，退出程序",
@@ -185,6 +186,7 @@
 			"volume_leveling": "音量",
 			"volume_leveling_content": "平衡不同作品的音量"
 		},
+		"reload": "重载窗口",
 		"theme": "主题",
 		"theme_name": {
 			"dark": "暗色",
@@ -192,6 +194,7 @@
 			"light": "亮色",
 			"light_high_contrast": "亮色高对比度"
 		},
+		"work_after_reload_window": "重新加载窗口后生效",
 		"zoom": "缩放"
 	},
 	"settings": "设置",

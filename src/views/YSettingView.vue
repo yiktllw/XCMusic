@@ -83,6 +83,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="content-item">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.reload') }}
+                        </div>
+                        <div class="content-item-content">
+                            <div class="reload-item" @click="reloadWindow">
+                                {{ $t('setting_view.click_to_reload') }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="play item" id="play">
@@ -272,6 +282,9 @@ export default defineComponent({
     watch: {
         spectrum(val) {
             this.setSpectrum(val);
+            if (val) {
+                Message.post('info', 'setting_view.work_after_reload_window', true);
+            }
         },
     },
     data() {
@@ -308,7 +321,7 @@ export default defineComponent({
             zoom: 100,
             closeBehavior: 'minimize',
             volume_leveling: false,
-            spectrum: false,
+            spectrum: true,
             dbclick: 'all',
             downloadPath: '',
             quality: 'standard',
@@ -434,6 +447,9 @@ export default defineComponent({
             } catch (err) {
                 console.error('Error setting audio output device:', err);
             }
+        },
+        reloadWindow() {
+            window.location.reload();
         }
     },
     mounted() {
@@ -550,6 +566,10 @@ export default defineComponent({
                     }
 
                     .content-item-content {
+                        
+                        .reload-item{
+                            cursor: pointer;
+                        }
 
                         select {
                             // width: 210px;

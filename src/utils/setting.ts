@@ -1,3 +1,4 @@
+import { Message } from "@/dual/YMessageC";
 import { themes } from "./theme";
 let fs: any, path: any, os: any;
 

@@ -603,25 +603,27 @@ export class Player {
             // 创建一个新的音频目标，用来输出音频
             this._destination = this._audioContext.createMediaStreamDestination();
 
-            // 创建 AnalyserNode
-            this._analyserNode = this._audioContext.createAnalyser();
-            this._analyserNode.fftSize = 1024; // 设置 FFT 大小
-
-            // 创建高通和低通滤波器
-            const highpassFilter = this._audioContext.createBiquadFilter();
-            highpassFilter.type = 'highpass';
-            highpassFilter.frequency.value = 20; 
-
-            const lowpassFilter = this._audioContext.createBiquadFilter();
-            lowpassFilter.type = 'lowpass';
-            lowpassFilter.frequency.value = 4400; 
-
             this._sourceNode.connect(this._gainNode);
             this._gainNode.connect(this._destination);
-            this._gainNode.connect(highpassFilter);
-            highpassFilter.connect(lowpassFilter);
-            lowpassFilter.connect(this._analyserNode);
-            // this._gainNode.connect(this._analyserNode);
+
+            if (localStorage.getItem('setting.playui.spectrum') === 'true') {
+                // 创建 AnalyserNode
+                this._analyserNode = this._audioContext.createAnalyser();
+                this._analyserNode.fftSize = 1024; // 设置 FFT 大小
+
+                // 创建高通和低通滤波器
+                const highpassFilter = this._audioContext.createBiquadFilter();
+                highpassFilter.type = 'highpass';
+                highpassFilter.frequency.value = 20;
+
+                const lowpassFilter = this._audioContext.createBiquadFilter();
+                lowpassFilter.type = 'lowpass';
+                lowpassFilter.frequency.value = 4400;
+
+                this._gainNode.connect(highpassFilter);
+                highpassFilter.connect(lowpassFilter);
+                lowpassFilter.connect(this._analyserNode);
+            }
 
             this._outputAudio.srcObject = this._destination.stream;
             this._outputAudio.play();
