@@ -54,7 +54,7 @@ export default defineComponent({
 
             const spacing = 5; // 条形图间距
             // 起始频率和截止频率（单位：赫兹 Hz）
-            const minFreq = 100;   // 起始频率
+            const minFreq = 20;   // 起始频率
             const maxFreq = 12000;  // 截止频率
 
             const draw = () => {
