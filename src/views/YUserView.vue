@@ -1,128 +1,125 @@
 <template>
-    <!-- 滚动容器 -->
-    <YScroll style="max-height: 100%;">
-        <!-- 用户/歌手界面 -->
-        <div class="container font-color-main" v-if="user">
-            <!-- 用户信息 -->
-            <div class="user-info">
-                <!-- 头像 -->
-                <div class="avatar">
-                    <img class="avatar-img" :src="user.picUrl" v-if="user.picUrl">
-                    <!-- 如果没有头像，显示默认头像 -->
-                    <div class="avatar-img" style="background-color: #333;" v-if="!user.picUrl"></div>
+    <!-- 用户/歌手界面 -->
+    <div class="container font-color-main" v-if="user">
+        <!-- 用户信息 -->
+        <div class="user-info">
+            <!-- 头像 -->
+            <div class="avatar">
+                <img class="avatar-img" :src="user.picUrl" v-if="user.picUrl">
+                <!-- 如果没有头像，显示默认头像 -->
+                <div class="avatar-img" style="background-color: #333;" v-if="!user.picUrl"></div>
+            </div>
+            <!-- 用户信息-文本 -->
+            <div class="user-info-text">
+                <!-- 用户名 -->
+                <div class="user-name">
+                    {{ user.name }}
                 </div>
-                <!-- 用户信息-文本 -->
-                <div class="user-info-text">
-                    <!-- 用户名 -->
-                    <div class="user-name">
-                        {{ user.name }}
+                <!-- 用户等级 -->
+                <div class="user-level font-color-high" v-if="type === 'user'">
+                    LV.{{ user.level }}
+                </div>
+                <!-- 歌手翻译名 -->
+                <div class="trans-name font-color-high" v-if="type === 'artist' && user.transName">
+                    {{ user.transName }}
+                </div>
+                <!-- 歌手身份 -->
+                <div class="artist-identity font-color-high" v-if="type === 'artist' && user.identity">
+                    {{ user.identity }}
+                </div>
+                <!-- 关注/粉丝 -->
+                <div class="user-follow font-color-high" v-if="type === 'user'">
+                    <div style="cursor: pointer;" @click="openUserFollow(userId, 'follow')">
+                        {{ $t('titlebar.follows') }}:
+                        {{ user.follows }}
                     </div>
-                    <!-- 用户等级 -->
-                    <div class="user-level font-color-high" v-if="type === 'user'">
-                        LV.{{ user.level }}
+                    <div
+                        style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
                     </div>
-                    <!-- 歌手翻译名 -->
-                    <div class="trans-name font-color-high" v-if="type === 'artist' && user.transName">
-                        {{ user.transName }}
-                    </div>
-                    <!-- 歌手身份 -->
-                    <div class="artist-identity font-color-high" v-if="type === 'artist' && user.identity">
-                        {{ user.identity }}
-                    </div>
-                    <!-- 关注/粉丝 -->
-                    <div class="user-follow font-color-high" v-if="type === 'user'">
-                        <div style="cursor: pointer;" @click="openUserFollow(userId, 'follow')">
-                            {{ $t('titlebar.follows') }}:
-                            {{ user.follows }}
-                        </div>
-                        <div
-                            style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
-                        </div>
-                        <div style="cursor: pointer;" @click="openUserFollow(userId, 'follower')">
-                            {{ $t('titlebar.followers') }}:
-                            {{ user.followeds }}
-                        </div>
+                    <div style="cursor: pointer;" @click="openUserFollow(userId, 'follower')">
+                        {{ $t('titlebar.followers') }}:
+                        {{ user.followeds }}
                     </div>
                 </div>
             </div>
-            <!-- 导航 -->
-            <div class="switcher font-color-standard">
-                <!-- 导航元素 -->
-                <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher" :key="index"
-                    @click="handleSwitcher(item.position)">
-                    <span :class="{ 'choosed-text': item.position === user.position }"
-                        style="font-size: 16px; color:var(--font-color-main);"
-                        :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
-                        {{ $t(item.display) }}
-                    </span>
-                    <!-- 选中效果 -->
-                    <div class="choosed"
-                        style="transform: translate(7px,4px); width: calc(100% - 15px); height: 4px; border-radius: 2px;"
-                        v-if="item.position === user.position">
-                    </div>
-                </button>
-                <!-- 右侧切换视图 -->
-                <div v-if="showRightSwitcher" class="right-switcher"
-                    style="display: flex;flex: 1;justify-content: flex-end; margin-right: 30px;">
-                    <img src="@/assets/biglist.svg" class="list-icon g-icon" @click="user.listType = false"
-                        :style="{ opacity: user.listType ? .6 : 1 }">
-                    <img src="@/assets/smalllist.svg" class="list-icon g-icon" @click="user.listType = true"
-                        :style="{ opacity: user.listType ? 1 : .6 }">
+        </div>
+        <!-- 导航 -->
+        <div class="switcher font-color-standard">
+            <!-- 导航元素 -->
+            <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher" :key="index"
+                @click="handleSwitcher(item.position)">
+                <span :class="{ 'choosed-text': item.position === user.position }"
+                    style="font-size: 16px; color:var(--font-color-main);"
+                    :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
+                    {{ $t(item.display) }}
+                </span>
+                <!-- 选中效果 -->
+                <div class="choosed"
+                    style="transform: translate(7px,4px); width: calc(100% - 15px); height: 4px; border-radius: 2px;"
+                    v-if="item.position === user.position">
+                </div>
+            </button>
+            <!-- 右侧切换视图 -->
+            <div v-if="showRightSwitcher" class="right-switcher"
+                style="display: flex;flex: 1;justify-content: flex-end; margin-right: 30px;">
+                <img src="@/assets/biglist.svg" class="list-icon g-icon" @click="user.listType = false"
+                    :style="{ opacity: user.listType ? .6 : 1 }">
+                <img src="@/assets/smalllist.svg" class="list-icon g-icon" @click="user.listType = true"
+                    :style="{ opacity: user.listType ? 1 : .6 }">
+            </div>
+        </div>
+        <!-- 用户/歌手主界面 -->
+        <div class="content">
+            <!-- 用户主界面 -->
+            <div class="content-user" v-if="type === 'user'">
+                <!-- 歌单界面 -->
+                <div class="playlist-list" v-if="user.listType">
+                    <YPlaylistList
+                        :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
+                </div>
+                <!-- 大歌单界面 -->
+                <div class="playlist-biglist" v-else>
+                    <YPlaylistBiglist
+                        :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
                 </div>
             </div>
-            <!-- 用户/歌手主界面 -->
-            <div class="content">
-                <!-- 用户主界面 -->
-                <div class="content-user" v-if="type === 'user'">
-                    <!-- 歌单界面 -->
-                    <div class="playlist-list" v-if="user.listType">
-                        <YPlaylistList
-                            :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
-                    </div>
-                    <!-- 大歌单界面 -->
-                    <div class="playlist-biglist" v-else>
-                        <YPlaylistBiglist
-                            :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
-                    </div>
+            <!-- 歌手界面 -->
+            <div class="content-artist" v-else-if="type === 'artist'">
+                <!-- 歌手作品 -->
+                <div class="artist-works" v-if="user.position === 'song'">
+                    <!-- 歌曲列表 -->
+                    <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="user.tracks"
+                        v-if="user.tracks" :id="'YUserView.vue'" />
+                    <YPage v-model="page" />
                 </div>
-                <!-- 歌手界面 -->
-                <div class="content-artist" v-else-if="type === 'artist'">
-                    <!-- 歌手作品 -->
-                    <div class="artist-works" v-if="user.position === 'song'">
-                        <!-- 歌曲列表 -->
-                        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
-                            v-model="user.tracks" v-if="user.tracks" :id="'YUserView.vue'" />
-                        <YPage v-model="page" />
-                    </div>
-                    <!-- 加载中 -->
-                    <YLoading v-if="!user.tracks" />
-                    <!-- 歌单界面 -->
-                    <div class="playlist-list" v-if="user.listType && user.position === 'album'">
-                        <!-- 歌手专辑列表 -->
-                        <YPlaylistList type="album" :playlists="user.albums" />
-                    </div>
-                    <!-- 大歌单界面 -->
-                    <div class="playlist-biglist" v-if="!user.listType && user.position === 'album'">
-                        <YPlaylistBiglist type="album" :playlists="user.albums" />
-                    </div>
-                    <!-- 歌手简介 -->
-                    <div class="artist-intro font-color-high" v-if="user.intro && user.position === 'detail'">
-                        <div v-for="(item, index) in user.intro" :key="index">
-                            <!-- 标题 -->
-                            <div v-if="item.ti"
-                                style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: var(--font-color-main);">
-                                {{ item.ti }}
-                            </div>
-                            <!-- 文本 -->
-                            <div v-if="item.txt" style="font-size: 14px; margin: 10px 0px;" v-html="item.txt">
+                <!-- 加载中 -->
+                <YLoading v-if="!user.tracks" />
+                <!-- 歌单界面 -->
+                <div class="playlist-list" v-if="user.listType && user.position === 'album'">
+                    <!-- 歌手专辑列表 -->
+                    <YPlaylistList type="album" :playlists="user.albums" />
+                </div>
+                <!-- 大歌单界面 -->
+                <div class="playlist-biglist" v-if="!user.listType && user.position === 'album'">
+                    <YPlaylistBiglist type="album" :playlists="user.albums" />
+                </div>
+                <!-- 歌手简介 -->
+                <div class="artist-intro font-color-high" v-if="user.intro && user.position === 'detail'">
+                    <div v-for="(item, index) in user.intro" :key="index">
+                        <!-- 标题 -->
+                        <div v-if="item.ti"
+                            style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: var(--font-color-main);">
+                            {{ item.ti }}
+                        </div>
+                        <!-- 文本 -->
+                        <div v-if="item.txt" style="font-size: 14px; margin: 10px 0px;" v-html="item.txt">
 
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </YScroll>
+    </div>
 </template>
 
 <script lang="ts">

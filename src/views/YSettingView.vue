@@ -168,13 +168,11 @@
                             {{ $t('setting_view.download.quality') }}
                         </div>
                         <div class="content-item-content download-quality-item">
-                            <div v-for="quality_item in qualities" :id="quality_item">
-                                <input type="radio" :id="quality_item" name="quality" :value="quality_item"
-                                    v-model="quality" @change="setQuality(quality_item)">
-                                <label for="quality" @click="setQuality(quality_item)">
+                            <select v-model="quality" @change="setQuality(($event.target as HTMLSelectElement).value)">
+                                <option v-for="quality_item in qualities" :key="quality_item" :value="quality_item">
                                     {{ $t(`quality.${quality_item}`) }}
-                                </label>
-                            </div>
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="content-item item-download-path">
