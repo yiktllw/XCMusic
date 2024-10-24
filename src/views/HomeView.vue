@@ -307,6 +307,7 @@ export default defineComponent({
     left: 0;
     right: 0;
     bottom: 0;
+    user-select: none;
 
     .align-up {
         display: flex;

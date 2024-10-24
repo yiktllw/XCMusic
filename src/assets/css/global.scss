@@ -26,6 +26,7 @@ html {
 
 .g-icon {
     filter: var(--icon-invert);
+    -webkit-user-drag: none;
 }
 
 .font-color-main {

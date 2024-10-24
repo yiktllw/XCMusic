@@ -597,6 +597,7 @@ export default defineComponent({
     width: 100%;
     height: 100%;
     background-color: #131319;
+    user-select: none;
 
     .title-bar {
         width: 100%;
