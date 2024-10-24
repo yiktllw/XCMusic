@@ -141,6 +141,11 @@ const routes = [
                     type: 'followers',
                 }),
             },
+            {
+                path: 'subscribe/album',
+                name: 'SubscribeAlbum',
+                component: () => import('../views/YSubscribedAlbumView.vue'),
+            },
         ],
     },
 ]
