@@ -4,6 +4,25 @@
             <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
         </div>
         <div class="scrollable">
+            <button class="big-button font-color-standard" @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })">
+                <img src="@/assets/like2.svg" class="g-icon big-button-icon" />
+                <div class="big-button-text">
+                    {{ $t('playlist_view.my_favorite_musics') }}
+                </div>
+            </button>
+            <button class="big-button font-color-standard" @click="$router.push({ path: '/subscribe/album' })">
+                <img src="@/assets/subscribe2.svg" class="g-icon big-button-icon" />
+                <div class="big-button-text">
+                    {{ $t('subscribed_album') }}
+                </div>
+            </button>
+            <button class="big-button font-color-standard" @click="$router.push({ path: '/subscribe/album' })">
+                <img src="@/assets/download.svg" class="g-icon big-button-icon" />
+                <div class="big-button-text">
+                    {{ $t('local_music') }}
+                </div>
+            </button>
+            <div class="split-line"></div>
             <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
                 <span style="margin-right: 5px;">
                     {{ $t('sidebar.created_playlist') }}
@@ -198,6 +217,7 @@ export default defineComponent({
         flex-direction: column;
         overflow-y: auto;
         max-height: 100%;
+        overflow-x: hidden;
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -224,6 +244,44 @@ export default defineComponent({
             margin-bottom: 5px;
         }
 
+        .big-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background-color: transparent;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 10px;
+            width: 100%;
+
+            &:hover {
+                background-color: rgba(var(--foreground-color-rgb), 0.1);
+                cursor: pointer;
+
+                .big-button-icon {
+                    opacity: 1;
+                }
+            }
+
+            .big-button-icon {
+                width: 20px;
+                height: 20px;
+                opacity: 0.7;
+            }
+
+            .big-button-text {
+                font-size: 16px;
+                margin-left: 8px;
+            }
+        }
+        
+        .split-line {
+            min-height: 1px;
+            width: calc(100% - 20px);
+            background-color: rgba(var(--foreground-color-rgb), 0.1);
+            margin: 5px 10px;
+        }
+
         .switch-user-playlist {
             display: inline-flex;
             align-items: center;
@@ -231,7 +289,7 @@ export default defineComponent({
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            padding: 6px 0px 6px 5px;
+            padding: 6px 0px 6px 8px;
             transition: all 0.3s ease;
             user-select: none;
             white-space: nowrap;

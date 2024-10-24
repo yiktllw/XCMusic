@@ -27,6 +27,7 @@
 			"play": "播放"
 		}
 	},
+	"local_music": "本地音乐",
 	"login": "登录",
 	"logout": "退出",
 	"message": {
@@ -248,6 +249,7 @@
 		"unknown_artist": "未知歌手",
 		"unknown_name": "未知名称"
 	},
+	"subscribed_album": "收藏的专辑",
 	"titlebar": {
 		"about": "关于XCMusic",
 		"back": "后退",

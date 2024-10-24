@@ -14,6 +14,7 @@ export class Login {
     _userSubscribes: Reactive<any[]>;
     subscriber: Subscriber;
     interval: NodeJS.Timeout;
+    _userFavoriteId: number = 0;
     constructor() {
         this._cookie = ((localStorage.getItem('login_cookie') ?? null));
         this._status = ref(localStorage.getItem('login_cookie') ? true : false);
@@ -155,6 +156,9 @@ export class Login {
     get userSubscribes() {
         return this._userSubscribes;
     }
+    get userFavoriteId() {
+        return this._userFavoriteId;
+    }
     async refreshUserPlaylists() {
         if (!this._cookie) {
             return;
@@ -190,7 +194,8 @@ export class Login {
             console.error('Failed to get user playlist:', error);
         });
         if (this.userPlaylists.length > 0) {
-            this.userPlaylists[0].label = i18n.global.t('playlist_view.my_favorite_musics');
+            this._userFavoriteId = this.userPlaylists[0].id;
+            this.userPlaylists.splice(0,1);
         }
         this.subscriber.exec('userPlaylists');
     }
