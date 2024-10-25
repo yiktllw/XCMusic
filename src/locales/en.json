@@ -95,6 +95,7 @@
 		"volume": "Volume"
 	},
 	"player": {
+		"local_file_not_found": "Local File Not Found",
 		"noUrlError": "Failed to get the song link, automatically playing the next track."
 	},
 	"playlist_biglist": {

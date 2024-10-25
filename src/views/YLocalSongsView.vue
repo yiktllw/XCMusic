@@ -1,17 +1,21 @@
 <template>
-    <div>
+    <div class="main">
 
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useStore } from 'vuex';
+import YSongsTable from '@/components/YSongsTable.vue';
 
 export default defineComponent({
     name: 'YLocalSongsView',
-    props: {
+    components: {
+        YSongsTable,
     },
     setup(){
+        const store = useStore();
         return {
         }
     },

@@ -13,6 +13,8 @@ import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
+const fs = window.api.fs;
+const path = window.api.path;
 
 export class Player {
     /**
@@ -1049,16 +1051,18 @@ export class Player {
     }
     /** 
      * 获取歌曲url
-     * @param {Number} id 歌曲ID
      */
     async getUrl(id: number) {
         let response = null;
         const downloads = store.state.download.downloadedSongs;
         if (downloads.some((song: any) => song.id === id)) {
             let song = downloads.find((song: any) => song.id === id);
-            const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
-            return {
-                url: fileUrl,
+            if (fs.existsSync(song.path)) {
+                const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
+                return { url: fileUrl, };
+            } else {
+                Message.post('error', 'player.local_file_not_found');
+                store.state.download.delete(song.id);
             }
         }
         if (localStorage.getItem('login_cookie')) {

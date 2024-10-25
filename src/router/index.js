@@ -146,6 +146,11 @@ const routes = [
                 name: 'SubscribeAlbum',
                 component: () => import('../views/YSubscribedAlbumView.vue'),
             },
+            {
+                path: 'local',
+                name: 'Local',
+                component: () => import('../views/YLocalSongsView.vue'),
+            },
         ],
     },
 ]
