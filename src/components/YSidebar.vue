@@ -4,7 +4,8 @@
             <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
         </div>
         <div class="scrollable">
-            <button class="big-button font-color-standard" @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })">
+            <button class="big-button font-color-standard"
+                @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })">
                 <img src="@/assets/like2.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('playlist_view.my_favorite_musics') }}
@@ -16,27 +17,32 @@
                     {{ $t('subscribed_album') }}
                 </div>
             </button>
-            <button class="big-button font-color-standard" @click="$router.push({ path: '/subscribe/album' })">
+            <button class="big-button font-color-standard" @click="$router.push({ path: '/local' })">
                 <img src="@/assets/download.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('local_music') }}
                 </div>
             </button>
             <div class="split-line"></div>
-            <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
-                <span style="margin-right: 5px;">
-                    {{ $t('sidebar.created_playlist') }}
-                    ({{ userPlaylists.length }})
-                </span>
-                <div class="switch-user-playlist-icon-container">
-                    <transition name="rotate">
-                        <img class="switch-user-playlist-icon g-icon" v-if="showMyPlaylist" src="@/assets/less.svg" />
-                    </transition>
-                    <transition name="rotate2">
-                        <img class=" switch-user-playlist-icon g-icon" v-if="!showMyPlaylist" src="@/assets/more.svg" />
-                    </transition>
-                </div>
-            </button>
+            <div class="created-playlist">
+                <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
+                    <span style="margin-right: 5px;">
+                        {{ $t('sidebar.created_playlist') }}
+                        ({{ userPlaylists.length }})
+                    </span>
+                    <div class="switch-user-playlist-icon-container">
+                        <transition name="rotate">
+                            <img class="switch-user-playlist-icon g-icon" v-if="showMyPlaylist"
+                                src="@/assets/less.svg" />
+                        </transition>
+                        <transition name="rotate2">
+                            <img class=" switch-user-playlist-icon g-icon" v-if="!showMyPlaylist"
+                                src="@/assets/more.svg" />
+                        </transition>
+                    </div>
+                </button>
+                <img class="add-img g-icon" src="../assets/add.svg" @click="createPlaylist">
+            </div>
             <transition name="slide-fade">
                 <div class="fade-container" v-if="showMyPlaylist" :key="userPlaylists.length">
                     <button class="playlist-button font-color-main" v-for="button in userPlaylists" :key="button.id"
@@ -82,6 +88,7 @@
 </template>
 
 <script lang="ts">
+import { Message } from '@/dual/YMessageC';
 import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
 
@@ -147,6 +154,9 @@ export default defineComponent({
             window.removeEventListener('mousemove', this.resize);
             window.removeEventListener('mouseup', this.stopResize);
         },
+        createPlaylist() {
+            Message.post('info', '功能暂未实现')
+        }
     },
     mounted() {
         this.sidebarWidth = this.setting.display.sidebarWidth;
@@ -274,12 +284,31 @@ export default defineComponent({
                 margin-left: 8px;
             }
         }
-        
+
         .split-line {
             min-height: 1px;
             width: calc(100% - 20px);
             background-color: rgba(var(--foreground-color-rgb), 0.1);
             margin: 5px 10px;
+        }
+
+        .created-playlist {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            .add-img {
+                width: 12px;
+                height: 12px;
+                margin-right: 10px;
+                opacity: .7;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
         }
 
         .switch-user-playlist {
