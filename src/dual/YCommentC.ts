@@ -54,7 +54,7 @@ export class YCommentC {
             this.title = res.data?.commentsTitle;
             this._count = res.data?.totalCount;
             if (newPageInstance) {
-                this.page = new YPageC(Math.ceil(res.data?.totalCount / 100));
+                this.page = new YPageC(Math.ceil(res.data?.totalCount / 100) || 1);
                 // console.log('new page instance: ', this.page);
             } else {
                 this.page.total = Math.ceil(res.data?.totalCount / 100);
