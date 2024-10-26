@@ -1,3 +1,4 @@
+import { useApi } from "./api";
 
 export class Tracks {
     _tracksMap: Map<any, any>;
@@ -162,6 +163,29 @@ export class Tracks {
      */
     getTrackById(id: number): object | null {
         return this._tracksMap.get(id) || null;
+    }
+}
+
+export class TrackIds {
+    _ids: Array<number>;
+    result: any[] = [];
+    constructor(ids: Array<number>) {
+        this._ids = ids;
+    }
+    async initData() {
+        await useApi('/song/detail', {
+            ids: this._ids.join(',')
+        }).then(res => {
+            this.result = res.songs.map((item: any) => {
+                return {
+                    ...item,
+                    _picUrl: item.al.picUrl + '?param=80y80',
+                }
+            });
+        })
+    }
+    get tracks() {
+        return this.result;
     }
 }
 

@@ -20,6 +20,10 @@
 	"default": "默认",
 	"fans": "粉丝",
 	"header": {
+		"local_music": {
+			"downloaded_songs": "下载的音乐",
+			"local_songs": "本地音乐"
+		},
 		"setting_view": {
 			"about": "关于",
 			"download": "下载",

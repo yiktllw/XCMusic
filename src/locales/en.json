@@ -20,6 +20,10 @@
 	"default": "Default",
 	"fans": "Fans",
 	"header": {
+		"local_music": {
+			"downloaded_songs": "Downloaded Songs",
+			"local_songs": "Local Songs"
+		},
 		"setting_view": {
 			"about": "About",
 			"download": "Download",

@@ -454,7 +454,7 @@ export default defineComponent({
     watch: {
         tracks(newVal, oldVal) {
             this.alWidth = this.setting.display.albumWidth;
-            this.page = new YPageC(Math.ceil(newVal.length / this.limit));
+            this.page = new YPageC(Math.ceil(newVal.length / this.limit) || 1);
         },
     },
     methods: {
