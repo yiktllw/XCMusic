@@ -63,6 +63,7 @@
 			"zoom_range_50_200": "Please enter a number between 50 and 200"
 		}
 	},
+	"need_login": "Please login first",
 	"playbar": {
 		"cancel_like": "Unlike",
 		"clear_playlist": "Clear Playlist",

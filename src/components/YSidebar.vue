@@ -157,7 +157,10 @@ export default defineComponent({
             window.removeEventListener('mouseup', this.stopResize);
         },
         createPlaylist() {
-            // Message.post('info', '功能暂未实现')
+            if (!this.login.status) {
+                Message.post('error', this.$t('need_login'));
+                return;
+            }
             this.globalMsg.post('create-playlist', 'hello')
         }
     },

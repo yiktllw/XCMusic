@@ -63,6 +63,7 @@
 			"zoom_range_50_200": "请输入50到200之间的数字"
 		}
 	},
+	"need_login": "请先登录",
 	"playbar": {
 		"cancel_like": "取消喜欢",
 		"clear_playlist": "清空播放列表",
