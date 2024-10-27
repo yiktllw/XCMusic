@@ -7,7 +7,7 @@
                 </span>
             </template>
             <div class="main">
-                <textarea class="input" v-model="inputValue" @input="handleInput" :maxlength="40"
+                <textarea class="input" v-model="inputValue" :maxlength="40"
                     :placeholder="$t('create_playlist.input_playlist_name')" rows="3"></textarea>
                 <div class="check">
                     <input type="checkbox" v-model="isPrivate" />
@@ -54,9 +54,6 @@ export default defineComponent({
         'new-window-state'
     ],
     methods: {
-        handleInput(e: Event) {
-            // this.inputValue = (e.target as HTMLInputElement).value;
-        },
         switchPrivate() {
             this.isPrivate = !this.isPrivate;
         },
@@ -75,11 +72,18 @@ export default defineComponent({
                 timestamp: new Date().getTime(),
             }).then((res) => {
                 console.log(res);
+                if (res.code !== 200) {
+                    Message.post('error', this.$t('create_playlist.error'));
+                    return;
+                } else {
+                    Message.post('success', this.$t('create_playlist.success'));
+                }
                 this.login.refreshUserPlaylists();
             }).catch((err) => {
                 console.error(err);
                 Message.post('error', this.$t('create_playlist.error'));
             });
+            this.window?.closeWindow();
         },
     },
 });

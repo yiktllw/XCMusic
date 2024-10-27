@@ -161,7 +161,7 @@ export default defineComponent({
                 Message.post('error', this.$t('need_login'));
                 return;
             }
-            this.globalMsg.post('create-playlist', 'hello')
+            this.globalMsg.post('create-playlist')
         }
     },
     mounted() {
