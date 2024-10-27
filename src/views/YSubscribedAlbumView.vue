@@ -61,7 +61,9 @@ export default defineComponent({
                         size: album.size,
                     };
                 });
-            })
+            }).catch(err => {
+                console.error('getUserSubscribedAlbums', err);
+            });
         },
     },
 });

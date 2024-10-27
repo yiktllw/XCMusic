@@ -91,6 +91,8 @@ export class Login {
         if (this._cookie) {
             await useApi('/logout', {
                 cookie: this._cookie
+            }).catch(error => {
+                console.error('Failed to logout:', error);
             });
         }
         this.clear();
@@ -142,6 +144,8 @@ export class Login {
             uid: this._userId
         }).then((res) => {
             this._likelist = markRaw(res.ids);
+        }).catch((error) => {
+            console.error('Failed to get likelist:', error);
         });
     }
     get status() {

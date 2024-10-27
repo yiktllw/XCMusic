@@ -182,7 +182,9 @@ export class TrackIds {
                     _picUrl: item.al.picUrl + '?param=80y80',
                 }
             });
-        })
+        }).catch(err => {
+            console.error(err);
+        });
     }
     get tracks() {
         return this.result;

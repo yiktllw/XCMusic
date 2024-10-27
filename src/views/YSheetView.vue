@@ -82,7 +82,9 @@ export default defineComponent({
                 this.sheet = res.data;
                 this.sheet = this.sheet.sort((a: any, b: any) => a.id - b.id);
                 this.page = new YPageC(this.sheet.length > 0 ? this.sheet.length : 1);
-            })
+            }).catch((err: any) => {
+                console.error('getSheet', err);
+            });
         },
         handleKeydown(e: KeyboardEvent) {
             if (this.scrollInterval) return;

@@ -387,6 +387,8 @@ export default defineComponent({
                 } else {
                     this.lyrics = null;
                 }
+            }).catch((error) => {
+                console.error('Failed to get lyrics:', error);
             });
         },
         lineClass(index: number) {
@@ -491,6 +493,8 @@ export default defineComponent({
                 if (!res) return;
                 this.firstListen = res.data.blocks[0];
                 this.songWiki = res.data.blocks[1];
+            }).catch((error) => {
+                console.error('Failed to get wiki:', error);
             });
         },
         formatDuration(duration: number) {
@@ -514,7 +518,9 @@ export default defineComponent({
                 } else {
                     this.sheets = null;
                 }
-            })
+            }).catch((error) => {
+                console.error('Failed to get sheets:', error);
+            });
         },
         openSheet(sheet: any) {
             this.$router.push({ path: `/sheet/${sheet.id}` });

@@ -234,7 +234,9 @@ export default defineComponent({
                     let num = Math.floor(count / 100000);
                     result = `${num}0w+`
                 }
-            })
+            }).catch(err => {
+                console.error('Error when get comment count:', err);
+            });
             return result;
         },
         setDirection(x: number, y: number, menuWidth: number, menuHeight: number) {

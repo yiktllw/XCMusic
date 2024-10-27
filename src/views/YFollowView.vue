@@ -88,7 +88,9 @@ export default defineComponent({
                     }) ?? [];
                 }
                 // console.log('users: ', this.users, 'has more: ', res.more);
-            })
+            }).catch(err => {
+                console.error('fetchData error: ', err);
+            });
         },
     },
     mounted() {

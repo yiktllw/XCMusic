@@ -506,7 +506,10 @@ export default defineComponent({
                 id: this.currentTrack.id,
                 level: this.setting.download.quality,
                 cookie: this.login.cookie ?? undefined,
-            }).then((res) => res.data[0].url);
+            }).then((res) => res.data[0].url).catch((err) => {
+                console.error('Failed to get download URL:', err);
+                return '';
+            });
             this.download.add(url, this.player.currentTrack, this.setting.download.path);
         },
     },

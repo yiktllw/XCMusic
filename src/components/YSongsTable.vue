@@ -746,7 +746,10 @@ export default defineComponent({
                 id: track.id,
                 level: this.setting.download.quality,
                 cookie: this.login.cookie ?? undefined,
-            }).then((res) => res.data[0].url);
+            }).then((res) => res.data[0].url).catch((err) => {
+                console.error(err);
+                return '';
+            });
             this.download.add(url, track, this.setting.download.path);
         },
         deletaFromPlaylist(id: number | string) {
