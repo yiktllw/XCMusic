@@ -126,9 +126,11 @@ export default defineComponent({
     },
     setup() {
         const sidebar_component = ref<HTMLElement | null>(null);
+        const store = useStore();
 
         return {
             sidebar_component,
+            globalMsg: store.state.globalMsg,
         };
     },
     methods: {
@@ -155,7 +157,8 @@ export default defineComponent({
             window.removeEventListener('mouseup', this.stopResize);
         },
         createPlaylist() {
-            Message.post('info', '功能暂未实现')
+            // Message.post('info', '功能暂未实现')
+            this.globalMsg.post('create-playlist', 'hello')
         }
     },
     mounted() {
@@ -180,10 +183,8 @@ export default defineComponent({
     },
     beforeUnmount() {
         clearTimeout(this.timeout);
-        this.login.unSubscribe({
-            id: 'YSidebar',
-            type: 'userPlaylists',
-        });
+        this.login.subscriber.offAll('YSidebar');
+        this.OpenedPlaylist.subscriber.offAll('YSidebar');
     },
 });
 </script>

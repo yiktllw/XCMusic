@@ -1,19 +1,20 @@
 <template>
     <div class="display">
-        <YSubscribedAlbumView />
+        <YCreatePlaylist />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
-import { ipcRenderer } from 'electron';
-import YSubscribedAlbumView from './YSubscribedAlbumView.vue';
+import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
+import YLoginWindow from '@/components/YLoginWindow.vue';
 
 export default defineComponent({
     name: 'YTestView',
     components: {
-        YSubscribedAlbumView,
+        YCreatePlaylist,
+        YLoginWindow,
     },
     setup(){
         const store = useStore();

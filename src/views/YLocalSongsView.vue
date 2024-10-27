@@ -12,6 +12,7 @@ import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YHeader from '@/components/YHeader.vue';
 import { TrackIds } from '@/utils/tracks';
+import { YColor } from '@/utils/color';
 
 export default defineComponent({
     name: 'YLocalSongsView',
@@ -62,6 +63,7 @@ export default defineComponent({
         },
     },
     mounted() {
+        YColor.setBackgroundColorTheme();
         this.getDownloadedTracks();
         this.download.Subscribe({
             id: 'YLocalSongsView',

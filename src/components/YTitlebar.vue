@@ -77,12 +77,12 @@
                 <img class="img-userInfo g-icon" src="../assets/more.svg" />
             </button>
             <!-- 扫码登录 -->
-            <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
+            <!-- <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
                 <div class="login_text">
                     {{ $t('titlebar.scanQRCodeToLogin') }}
                 </div>
                 <img :src="base64Image" />
-            </div>
+            </div> -->
             <!-- 用户名下拉菜单 -->
             <YPanel class="userInfoPanel" :trigger="user_info_menu_trigger ?? undefined" ref="user_info_panel"
                 :default-show="false" :slide-direction="1">
@@ -187,6 +187,7 @@ export default defineComponent({
             user_info_menu_trigger,
             login,
             setting,
+            globalMsg: store.state.globalMsg,
         };
     },
     components: {
@@ -259,6 +260,7 @@ export default defineComponent({
                     console.error('Failed to get QR code:', error);
                 });
                 this.base64Image = qrCode.data.qrimg;
+                this.globalMsg.post('open-login-window', this.base64Image);
                 this.toggleDropdown(); // 切换下拉菜单显示
                 this.pollQRCodeStatus(); // 轮询二维码状态
             }
@@ -275,6 +277,7 @@ export default defineComponent({
                 if (checkResponse.code === 803) {
                     // 关闭扫码窗口
                     this.showDropdown = false;
+                    this.globalMsg.post('close-login-window');
                     clearInterval(interval);
                     // console.log('登录成功，cookie:', checkResponse.cookie);
                     this.$emit('user-login');
@@ -449,10 +452,18 @@ export default defineComponent({
             await this.getHotSearches();
             this.searchHistory = this.setting.titleBar.searchHistory;
         }
+        this.globalMsg.Subscribe({
+            id: 'YTitlebar',
+            type: 'close-login-window-from-homeview',
+            func: () => {
+                this.showDropdown = false;
+            },
+        })
     },
     beforeUnmount() {
         // 移除外部点击处理器
         document.removeEventListener('click', this.handleOutsideClick);
+        this.globalMsg.subscriber.offAll('YTitlebar');
     },
 })
 </script>

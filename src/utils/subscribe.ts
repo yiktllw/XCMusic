@@ -128,6 +128,13 @@ export class Subscriber {
             })
         }
     }
+    offAll(id: string) {
+        let arrayWithId = this._subscribes.filter((item: { id: string; }) => item.id === id);
+        arrayWithId.forEach((item: { globalIndex: any; }) => {
+            let index = this._subscribes.findIndex((_item: { globalIndex: any; }) => _item.globalIndex === item.globalIndex);
+            this._subscribes.splice(index, 1);
+        })
+    }
     /**
      * 执行某种事件
      * @param {string} type - 要执行的事件类型

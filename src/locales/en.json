@@ -17,6 +17,13 @@
 		"subscribe": "Add to Playlist",
 		"view_comment": "View Comments"
 	},
+	"create_playlist": {
+		"create": "Create",
+		"input_playlist_name": "Playlist Name",
+		"no_name": "Please enter a name",
+		"private": "Private",
+		"title": "Create Playlist"
+	},
 	"default": "Default",
 	"fans": "Fans",
 	"header": {

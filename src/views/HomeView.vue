@@ -33,6 +33,8 @@
         <div class="prevent-action-container" ref="prevent_container" v-if="showPreventContainer">
             <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" v-if="showAddToPlaylist" />
             <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" v-if="showSongInfo" />
+            <YLoginWindow :base64-image="base64Image" v-if="showLoginWindow" @new-window-state="handleNewWindowState_loginWindow" />
+            <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
         </div>
         <div class="message-container">
             <div></div>
@@ -58,6 +60,8 @@ import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
 import YPlayUI from '@/components/YPlayUI.vue';
+import YLoginWindow from '@/components/YLoginWindow.vue';
+import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import { Message } from '@/dual/YMessageC';
 import { songItems } from '@/dual/YContextMenuItemC';
 import { useApi } from '@/utils/api';
@@ -78,6 +82,9 @@ export default defineComponent({
             trackIds: [] as any[],
             trackOfInfo: null as any,
             showSongInfo: false,
+            showLoginWindow: false,
+            base64Image: '',
+            showCreatePlaylist: false,
             msg: {
                 type: 'none',
                 message: '',
@@ -96,6 +103,8 @@ export default defineComponent({
         YSongInfo,
         YMessage,
         YPlayUI,
+        YLoginWindow,
+        YCreatePlaylist,
     },
     computed: {
     },
@@ -119,13 +128,40 @@ export default defineComponent({
             YSidebar_ref,
             YDisplayArea_ref,
             prevent_container,
+            globalMsg: store.state.globalMsg,
         };
     },
     mounted() {
         window.addEventListener('message', this.handleMessage);
         this.player.quality = this.setting.play.quality as "jymaster" | "sky" | "jyeffect" | "hires" | "lossless" | "exhigh" | "standard" | "higher";
+        this.globalMsg.Subscribe({
+            id: 'HomeView',
+            type: 'create-playlist',
+            func: () => {
+                this.showCreatePlaylist = true;
+                this.showPreventContainer = true;
+            },
+        });
+        this.globalMsg.Subscribe({
+            id: 'HomeView',
+            type: 'open-login-window',
+            func: () => {
+                this.showLoginWindow = true;
+                this.showPreventContainer = true;
+                this.base64Image = this.globalMsg.dataTemp;
+            },
+        });
+        this.globalMsg.Subscribe({
+            id: 'HomeView',
+            type: 'close-login-window',
+            func: () => {
+                this.showLoginWindow = false;
+                this.showPreventContainer = false;
+            },
+        });
     },
     beforeUnmount() {
+        this.globalMsg.subscriber.offAll('HomeView');
         window.removeEventListener('message', this.handleMessage);
     },
     methods: {
@@ -286,6 +322,19 @@ export default defineComponent({
         handleNewWindowState_songInfo(val: boolean) {
             if (val === false) {
                 this.showSongInfo = false;
+                this.showPreventContainer = false;
+            }
+        },
+        handleNewWindowState_loginWindow(val: boolean) {
+            if (val === false) {
+                this.showLoginWindow = false;
+                this.showPreventContainer = false;
+                this.globalMsg.post('close-login-window-from-homeview');
+            }
+        },
+        handleNewWindowState_createPlaylist(val: boolean) {
+            if (val === false) {
+                this.showCreatePlaylist = false;
                 this.showPreventContainer = false;
             }
         },

@@ -30,7 +30,7 @@ export class Login {
             if (this._cookie && this._userId) {
                 this.refreshUserPlaylists();
             }
-        }, 1000 * 60);
+        }, 1000 * 100);
     }
     /**
      * 订阅事件

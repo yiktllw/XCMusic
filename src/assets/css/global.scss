@@ -2,6 +2,48 @@
 
 html {
     font-size: 16px;
+    input {
+        background-color: transparent;
+        border-radius: 5px;
+        padding: 2px 5px;
+        color: var(--font-color-main);
+        border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.2);
+        font-size: 16px;
+        
+        &:focus {
+            outline: none;
+        }
+        
+        &::placeholder{
+            color: var(--font-color-low)
+        }
+    }
+    textarea{
+        background-color: transparent;
+        border-radius: 5px;
+        padding: 2px 5px;
+        color: var(--font-color-main);
+        border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.2);
+        font-size: 16px;
+        
+        &:focus {
+            outline: none;
+        }
+        
+        &::placeholder{
+            color: var(--font-color-low)
+        }
+    }
+    button{
+        color: var(--font-color-high);
+        background-color: transparent;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        &:hover {
+            background-color: rgba(var(--foreground-color-rgb), 0.1);
+        }
+    }
 }
 
 // 使用 CSS 变量

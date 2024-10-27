@@ -17,6 +17,13 @@
 		"subscribe": "收藏到歌单",
 		"view_comment": "查看评论"
 	},
+	"create_playlist": {
+		"create": "创建",
+		"input_playlist_name": "请输入歌单名称",
+		"no_name": "请输入歌单名称",
+		"private": "设为隐私歌单",
+		"title": "创建歌单"
+	},
 	"default": "默认",
 	"fans": "粉丝",
 	"header": {

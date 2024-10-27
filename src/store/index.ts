@@ -5,6 +5,7 @@ import { Setting, Settings } from '../utils/setting';
 import { OpenedPlaylist } from '../utils/openedPlaylist';
 import { markRaw, Raw } from 'vue';
 import { Download } from '@/utils/download_renderer';
+import { GlobalMsg } from '@/utils/globalMsg';
 
 export interface State {
     player: Player;  // player 属性的类型为 Player
@@ -12,6 +13,7 @@ export interface State {
     setting: Settings;
     openedPlaylist: OpenedPlaylist;
     download: Download;
+    globalMsg: GlobalMsg;
 }
 
 export default createStore({
@@ -23,6 +25,7 @@ export default createStore({
             setting: new Setting(), // 初始化 setting 为一个 Setting 实例
             openedPlaylist: new OpenedPlaylist(), // 初始化 OpenedPlaylist 为一个 OpenedPlaylist 实例
             download: download, // 初始化 download 为一个 Download 实例
+            globalMsg: new GlobalMsg(),
         };
     },
     getters: {

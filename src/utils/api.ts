@@ -39,7 +39,8 @@ export async function useApi(relativePath: string, params?: Object): Promise<any
         const response = await apiClient.get(relativePath, { params });
         return response.data;
     } catch (error) {
-        console.error(error);
+        console.error('use api error: ', error);
+        throw error;
     }
 }
 
@@ -56,7 +57,8 @@ export async function setLike(id: number | string, like: boolean, cookie: string
         like: like,
         cookie: cookie
     }).catch(error => {
-        console.error(error);
+        console.error('use api error: a', error);
+        throw error;
     });
     return result;
 }
