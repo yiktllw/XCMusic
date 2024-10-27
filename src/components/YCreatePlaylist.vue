@@ -67,7 +67,7 @@ export default defineComponent({
             }
             await useApi('/playlist/create', {
                 name: this.inputValue,
-                ...(this.isPrivate ? { privacy: 10 } : {}),
+                privacy: this.isPrivate ? 10 : 0,
                 cookie: this.login.cookie,
                 timestamp: new Date().getTime(),
             }).then((res) => {

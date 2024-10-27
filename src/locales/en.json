@@ -19,9 +19,11 @@
 	},
 	"create_playlist": {
 		"create": "Create",
+		"error": "Failed to create playlist",
 		"input_playlist_name": "Playlist Name",
 		"no_name": "Please enter a name",
 		"private": "Private",
+		"success": "Successfully created playlist",
 		"title": "Create Playlist"
 	},
 	"default": "Default",

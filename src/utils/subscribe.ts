@@ -97,10 +97,10 @@ export class Subscriber {
                     type: type as string
                 });
             } else {
+                if (!this.arrayWithId) return;
                 // 如果有这个id的订阅，而且也有这个type的订阅，则更新这个订阅。
-                this.updateSubscribe(this.arrayWithId[index].globalIndex, func);
+                this.updateSubscribe(this.arrayWithId[index]?.globalIndex, func);
             }
-
         }
     }
 

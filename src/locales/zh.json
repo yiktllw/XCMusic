@@ -19,9 +19,11 @@
 	},
 	"create_playlist": {
 		"create": "创建",
+		"error": "创建歌单失败",
 		"input_playlist_name": "请输入歌单名称",
 		"no_name": "请输入歌单名称",
 		"private": "设为隐私歌单",
+		"success": "创建歌单成功",
 		"title": "创建歌单"
 	},
 	"default": "默认",

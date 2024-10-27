@@ -162,11 +162,6 @@ module.exports = [
         module: require('@yiktllw/ncm-api/module/song_url_v1'),
     },
     {
-        identifier: 'song_url',
-        route: '/song/url',
-        module: require('@yiktllw/ncm-api/module/song_url'),
-    },
-    {
         identifier: 'song_download_url',
         route: '/song/download/url',
         module: require('@yiktllw/ncm-api/module/song_download_url'),
