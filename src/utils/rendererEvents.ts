@@ -79,7 +79,6 @@ ipcMain.on('download-song', async (event, songUrl, track, downloadDir) => {
     try {
         // 下载歌曲文件
         const filePath = await Download.song(songUrl, track, downloadDir);
-        console.log('Downloaded song:', filePath);
         event.reply('download-song-reply', filePath, {
             filePath: filePath,
             track: track

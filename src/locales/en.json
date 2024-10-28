@@ -239,6 +239,7 @@
 		"song_info": "Song Information",
 		"song_link": "Song Link",
 		"song_name": "Song Name",
+		"song_path": "File Path",
 		"song_tns": "Song Translation"
 	},
 	"songs_table": {

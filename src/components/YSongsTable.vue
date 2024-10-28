@@ -163,7 +163,6 @@
                         </div>
                         <!-- 4 右侧对齐 -->
                         <div class="align-right">
-                            <!-- 5 专辑名称 -->
                             <div class="track-menu" :id="`track-menu-${track.id}`">
                                 <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
                                     :title="$t('context.download')" @click="downloadSong(track)"
@@ -175,6 +174,7 @@
                                 <img src="@/assets/detail.svg" class="track-menu-icon g-icon"
                                     :title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
                             </div>
+                            <!-- 5 专辑名称 -->
                             <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
                                 :style="{ 'width': `${alWidth}px` }">
                                 <!-- 6 专辑按钮 -->
@@ -939,7 +939,7 @@ ul {
     align-items: center;
     justify-content: space-between;
     margin: 0px;
-    padding: 7px 0px 7px 0px;
+    padding: 8px 0px 8px 0px;
     border-radius: 10px;
 
     &:hover {
@@ -958,7 +958,7 @@ ul {
 
         .align-left {
             display: flex;
-            margin-right: 10px;
+            margin-right: 25px;
             flex: 1;
             align-items: center;
             overflow: hidden;
@@ -1055,8 +1055,8 @@ ul {
                 padding-right: 10px;
 
                 .track-menu-icon {
-                    width: 24px;
-                    height: 24px;
+                    width: 21px;
+                    height: 21px;
                     opacity: .6;
                     margin: 0px 5px;
                     cursor: pointer;

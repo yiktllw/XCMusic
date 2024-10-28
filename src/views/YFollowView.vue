@@ -12,6 +12,7 @@ import { useApi } from '@/utils/api';
 import YArtistList from '@/components/YArtistList.vue';
 import YPage from '@/components/YPage.vue';
 import { YPageC } from '@/dual/YPageC';
+import { YColor } from '@/utils/color';
 
 export default defineComponent({
     name: 'YFollowView',
@@ -94,6 +95,7 @@ export default defineComponent({
         },
     },
     mounted() {
+        YColor.setBackgroundColorTheme();
         this.page.onPageChange = () => {
             this.fetchData(this.page.current);
         };

@@ -90,6 +90,18 @@
                         <img class="img-copy g-icon" @click="copy(`https://music.163.com/song?id=${track.id}`)"
                             src="@/assets/copy.svg" :title="$t('song_info.click_to_copy')">
                     </div>
+                    <div class="song-info-item" v-if="isLocal(track.id)">
+                        <div class="left">
+                            <span class="song-info-item-title">
+                                {{ $t('song_info.song_path') }} ：
+                            </span>
+                            <span class="song-info-item-content">
+                                {{ track.localPath }}
+                            </span>
+                        </div>
+                        <img class="img-copy g-icon" @click="copy(track.localPath)"
+                            src="@/assets/copy.svg" :title="$t('song_info.click_to_copy')">
+                    </div>
                 </div>
             </YScroll>
         </YWindow>
@@ -111,9 +123,9 @@ export default defineComponent({
             required: true,
         },
     },
-    setup() { 
+    setup() {
         const window = ref<InstanceType<typeof YWindow>>();
-        
+
         return {
             window,
         };

@@ -239,6 +239,7 @@
 		"song_info": "歌曲信息",
 		"song_link": "歌曲链接",
 		"song_name": "歌曲名",
+		"song_path": "文件路径",
 		"song_tns": "歌曲译名"
 	},
 	"songs_table": {
