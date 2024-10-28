@@ -1,8 +1,10 @@
 <template>
     <div class="main">
         <YHeader :switcher="switcher" @new-position="handlePosition" />
-        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks" :showTrackPopularity="false"
-            :id="'YLocalSongsView.vue'" />
+        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
+            :showTrackPopularity="false" :id="'YLocalSongsView.vue'" v-if="position === 'download'" />
+        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
+            :showTrackPopularity="false" :show-track-likes="false" :id="'YLocalSongsView.vue-2'" v-else />
     </div>
 </template>
 
@@ -11,7 +13,7 @@ import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YHeader from '@/components/YHeader.vue';
-import { TrackIds } from '@/utils/tracks';
+import { TrackIds, Tracks } from '@/utils/tracks';
 import { YColor } from '@/utils/color';
 
 export default defineComponent({
@@ -24,6 +26,7 @@ export default defineComponent({
         const store = useStore();
         return {
             download: store.state.download,
+            setting: store.state.setting,
         }
     },
     computed: {
@@ -31,6 +34,7 @@ export default defineComponent({
     data() {
         return {
             tracks: [] as any,
+            position: 'download',
             switcher: [
                 {
                     num: 0,
@@ -54,11 +58,16 @@ export default defineComponent({
             await temp.initData();
             this.tracks = temp.tracks;
         },
-        handlePosition(position: string) {
+        async handlePosition(position: string) {
+            this.position = position;
             if (position === 'download') {
                 this.getDownloadedTracks();
             } else {
-                this.tracks = [];
+                const res = await window.electron.ipcRenderer.invoke('get-local-tracks', this.setting.download.path);
+                this.tracks = (new Tracks({
+                    url: 'local',
+                    tracks: res,
+                })).tracks;
             }
         },
     },

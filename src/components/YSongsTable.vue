@@ -242,6 +242,7 @@ import { useApi } from '@/utils/api';
 import upArrow from '../assets/up-arrow.svg';
 import downArrow from '../assets/down-arrow.svg';
 import updownArrow from '../assets/updown-arrow.svg';
+import { isLocal } from '@/utils/localTracks_renderer';
 
 type AlReels = {
     showreelName: string;
@@ -458,6 +459,9 @@ export default defineComponent({
         },
     },
     methods: {
+        isLocal(id: number | string) {
+            return isLocal(id);
+        },
         async playSongAndPlaylist(track: any) {
             console.log('Play Song And Playlist:', track.id);
             if (!this.canSendPlaylist || this.setting.play.dbclick === 'single') {
@@ -526,11 +530,13 @@ export default defineComponent({
         },
         // 处理歌手点击
         handleArtistClick(artistId: number | string) {
+            if (!artistId || isLocal(artistId)) return;
             this.$router.push(`/artist/${artistId}`);
             console.log('Open Artist with ID:', artistId);
         },
         // 处理专辑点击
         handleAlbumClick(albumId: number | string) {
+            if (!albumId || isLocal(albumId)) return;
             this.$router.push(`/album/${albumId}`);
             console.log('Open Album with ID:', albumId);
         },
@@ -690,6 +696,7 @@ export default defineComponent({
             }
         },
         openSongComment(id: number | string) {
+            if (!id || isLocal(id)) return;
             this.$router.push(`/comment/song/${id}`);
         },
         openContextMenu(event: any, track: any, type = 'show') {
@@ -705,6 +712,7 @@ export default defineComponent({
             // 在HomeView中处理
         },
         openAddToPlaylist(id: number | string) {
+            if (!id || isLocal(id)) return;
             window.postMessage({
                 type: 'song-open-add-to-playlist',
                 data: {
@@ -742,6 +750,7 @@ export default defineComponent({
             }
         },
         async downloadSong(track: any) {
+            if (!track.id || isLocal(track.id)) return;
             const url = await useApi('/song/url/v1', {
                 id: track.id,
                 level: this.setting.download.quality,
@@ -753,6 +762,7 @@ export default defineComponent({
             this.download.add(url, track, this.setting.download.path);
         },
         deletaFromPlaylist(id: number | string) {
+            // if (!id || isLocal(id)) return;
             if (this.id !== 'YPlaybar.vue') {
                 return;
             }

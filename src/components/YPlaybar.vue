@@ -243,6 +243,7 @@ import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
 import YProgressBarV from './YProgressBarV.vue';
 import YTextBanner from './YTextBanner.vue';
+import { isLocal } from '@/utils/localTracks_renderer';
 
 export default defineComponent({
     name: 'YPlaybar',
@@ -406,6 +407,10 @@ export default defineComponent({
             }
             console.log('toogleLike');
             console.log('status:', status);
+            if (isLocal(this.player.currentTrack.id)) {
+                console.log('Local track, cannot like');
+                return;
+            }
             await toogleLike(this.player.currentTrack.id, status);
             if (this.login.status) {
                 this.login.reloadLikelist();
@@ -432,6 +437,7 @@ export default defineComponent({
             this.player.addTrack(track);
         },
         handleArtistClick(artistId: number | string) {
+            if (!artistId || isLocal(artistId)) { return; }
             console.log('Artist ID:', artistId);
             this.$router.push({ path: '/artist/' + artistId });
         },
@@ -450,7 +456,7 @@ export default defineComponent({
             }
         },
         async setCommentCount() {
-            if (!this.currentTrack?.id) {
+            if (!this.currentTrack?.id || isLocal(this.currentTrack?.id)) {
                 return;
             }
             await useApi(`/comment/music`, {
@@ -486,6 +492,7 @@ export default defineComponent({
             })
         },
         handleCommentClick(id: number | string) {
+            if (!id || isLocal(id)) { return; }
             this.$router.push({ path: `/comment/song/${id}` });
             this.$emit('close-panel');
         },
@@ -499,7 +506,7 @@ export default defineComponent({
             })
         },
         async downloadCurrentTrack() {
-            if (!this.currentTrack) {
+            if (!this.currentTrack || isLocal(this.currentTrack.id)) {
                 return;
             }
             const url = await useApi('/song/url/v1', {

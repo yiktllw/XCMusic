@@ -17,9 +17,10 @@ export class Download {
         const artist = track.ar.map((ar: any) => ar.name).join('; ');
         const album = track.al.name;
         const coverUrl = track.al.picUrl;
+        const url = songUrl.replace(/\?.*$/g, '');
 
         // 从 URL 中提取文件格式
-        const fileExtension = path.extname(songUrl).slice(1);  // 获取后缀并去掉前面的"."
+        const fileExtension = path.extname(url).slice(1);  // 获取后缀并去掉前面的"."
 
         if (!['mp3', 'flac'].includes(fileExtension)) {
             throw new Error(`Unsupported file format: ${fileExtension}`);
@@ -32,11 +33,11 @@ export class Download {
         // 下载歌曲文件
         const writer = fs.createWriteStream(tempFilePath);
         const response = await axios({
-            url: songUrl,
+            url: url,
             method: 'GET',
             responseType: 'stream',
             family: 4, // 使用 IPv4
-            timeout: 30000 // 设置超时时间为30秒
+            timeout: 30000, // 设置超时时间为30秒
         });
 
         response.data.pipe(writer);

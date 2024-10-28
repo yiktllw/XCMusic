@@ -50,6 +50,8 @@ export class Tracks {
                 sky: null as any,
                 jymaster: null as any,
                 originalIndex: null as any,
+                local: false,
+                localPath: '',
             }
             if (item !== null) {
                 let track: any = null;
@@ -114,6 +116,31 @@ export class Tracks {
                     if (url === '/album' && params.alPicUrl) {
                         track.al.picUrl = params.alPicUrl;
                     }
+                } else if (url === 'local') {
+                    const path = item.path.replace(/\\/g, '/');
+                    const validId = path
+                        .replace(/\//, '_yikt_') // 替换开头的 '/' 为 '_yikt_'
+                        .replace(/\s/g, '_space_') // 替换空格
+                        .replace(/[^\w-._]/g, '_other_')
+                        .replace(/\./g, '_') 
+                    track = {
+                        id: validId,
+                        name: item.name,
+                        al: {
+                            id: validId,
+                            name: item.album,
+                            picUrl: '/src/assets/song.svg',
+                        },
+                        ar: [
+                            {
+                                id: validId,
+                                name: item.artist,
+                            },
+                        ],
+                        dt: Math.ceil(item.duration * 1000),
+                        pop: 0,
+                        localPath: item.path,
+                    }
                 }
                 resultTrack.id = track.id;
                 resultTrack.name = track.name;
@@ -122,7 +149,11 @@ export class Tracks {
                 resultTrack.al.name = track.al.name;
                 resultTrack.al.picUrl = track.al.picUrl;
                 resultTrack.al.tns = track.al.tns ?? '';
-                resultTrack._picUrl = track.al.picUrl + '?param=80y80';
+                if (url !== 'local') {
+                    resultTrack._picUrl = track.al.picUrl + '?param=80y80';
+                } else {
+                    resultTrack._picUrl = track.al.picUrl;
+                }
                 resultTrack.cd = track.cd ?? 1;
                 resultTrack.no = track.no ?? 1;
                 resultTrack.ar = track.ar.map((ar: any) => {
@@ -142,8 +173,11 @@ export class Tracks {
                     resultTrack.lyrics = track.lyrics;
                 } else if (url === '/user/record') {
                     resultTrack.playCount = item.playCount;
+                } else if (url === 'local') {
+                    resultTrack.local = true;
                 }
                 resultTrack.reelName = track.reelName ?? null;
+                resultTrack.localPath = track.localPath ?? '';
             }
 
             // 将 resultTrack 放入 Map 中，使用 id 作为键
@@ -173,6 +207,9 @@ export class TrackIds {
         this._ids = ids;
     }
     async initData() {
+        if (this._ids.length === 0) {
+            return;
+        }
         await useApi('/song/detail', {
             ids: this._ids.join(',')
         }).then(res => {

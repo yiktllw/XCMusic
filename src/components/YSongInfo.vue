@@ -67,7 +67,7 @@
                         <img class="img-copy g-icon" @click="copy(track.al.tns[0])" src="@/assets/copy.svg"
                             :title="$t('song_info.click_to_copy')">
                     </div>
-                    <div class="song-info-item">
+                    <div class="song-info-item" v-if="!isLocal(track.id)">
                         <div class="left">
                             <span class="song-info-item-title">
                                 {{ $t('song_info.song_id') }} ：
@@ -77,7 +77,7 @@
                         <img class="img-copy g-icon" @click="copy(track.id)" src="@/assets/copy.svg"
                             :title="$t('song_info.click_to_copy')">
                     </div>
-                    <div class="song-info-item">
+                    <div class="song-info-item" v-if="!isLocal(track.id)">
                         <div class="left">
                             <span class="song-info-item-title">
                                 {{ $t('song_info.song_link') }} ：
@@ -101,6 +101,7 @@ import { defineComponent, ref } from 'vue';
 import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
 import { Message } from '@/dual/YMessageC';
+import { isLocal } from '@/utils/localTracks_renderer';
 
 export default defineComponent({
     name: 'YSongInfo',
@@ -141,12 +142,17 @@ export default defineComponent({
             });
         },
         openArtist(id: number | string) {
+            if (!id || isLocal(id)) return;
             this.$router.push(`/artist/${id}`)
             this.window?.closeWindow();
         },
         openAlbum(id: number | string) {
+            if (!id || isLocal(id)) return;
             this.$router.push(`/album/${id}`)
             this.window?.closeWindow();
+        },
+        isLocal(id: number | string) {
+            return isLocal(id);
         },
     },
 });

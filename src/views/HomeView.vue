@@ -33,7 +33,8 @@
         <div class="prevent-action-container" ref="prevent_container" v-if="showPreventContainer">
             <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" v-if="showAddToPlaylist" />
             <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" v-if="showSongInfo" />
-            <YLoginWindow :base64-image="base64Image" v-if="showLoginWindow" @new-window-state="handleNewWindowState_loginWindow" />
+            <YLoginWindow :base64-image="base64Image" v-if="showLoginWindow"
+                @new-window-state="handleNewWindowState_loginWindow" />
             <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
         </div>
         <div class="message-container">
@@ -65,6 +66,7 @@ import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import { Message } from '@/dual/YMessageC';
 import { songItems } from '@/dual/YContextMenuItemC';
 import { useApi } from '@/utils/api';
+import { isLocal } from '@/utils/localTracks_renderer';
 
 export default defineComponent({
     name: 'App',
@@ -190,8 +192,11 @@ export default defineComponent({
                 let commentCount = await this.getCommentCount(this.target.id)
                 this.menu[4].label = this.$t('context.view_comment') + `(${commentCount})`
             } else if (event.data.type === 'song-open-add-to-playlist') {
-                this.trackIds = event.data.data.ids;
+                this.trackIds = event.data.data.ids.filter((id: any) => {
+                    return !isLocal(id);
+                });
                 console.log('ids: ', this.trackIds);
+                if (this.trackIds.length === 0) return;
                 this.showAddToPlaylist = true;
                 this.showPreventContainer = true;
             } else if (event.data.type === 'message-show') {
@@ -213,6 +218,9 @@ export default defineComponent({
             }
         },
         async getCommentCount(id: number | string) {
+            if (isLocal(id)) {
+                return '0';
+            }
             let result = '0';
             if (!id) {
                 return result;
@@ -265,24 +273,32 @@ export default defineComponent({
                     Message.post('success', this.$t('message.homeview.add_to_playlist_success'));
                     break;
                 case 'song-comment':
-                    this.$router.push(`/comment/song/${arg.target.id}`);
+                    if (!isLocal(arg.target.id)) {
+                        this.$router.push(`/comment/song/${arg.target.id}`);
+                    }
                     break;
                 case 'song-delete':
-                    this.deleteFromPlaylist(arg.target.id, arg.from);
+                    if (!isLocal(arg.target.id)) {
+                        this.deleteFromPlaylist(arg.target.id, arg.from);
+                    }
                     break;
                 case 'song-copylink':
-                    navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
-                        .then(() => {
-                            Message.post('success', this.$t('message.homeview.linkCopied') + `: https://music.163.com/song?id=${arg.target.id}`);
-                        })
-                        .catch((error) => {
-                            Message.post('error', `${this.$t('message.homeview.errorToCopyLink')}: ${error}`);
-                        });
+                    if (!isLocal(arg.target.id)) {
+                        navigator.clipboard.writeText(`https://music.163.com/song?id=${arg.target.id}`)
+                            .then(() => {
+                                Message.post('success', this.$t('message.homeview.linkCopied') + `: https://music.163.com/song?id=${arg.target.id}`);
+                            })
+                            .catch((error) => {
+                                Message.post('error', `${this.$t('message.homeview.errorToCopyLink')}: ${error}`);
+                            });
+                    }
                     break;
                 case 'song-subscribe':
-                    this.trackIds = [arg.target.id];
-                    this.showAddToPlaylist = true;
-                    this.showPreventContainer = true;
+                    if (!isLocal(arg.target.id)) {
+                        this.trackIds = [arg.target.id];
+                        this.showAddToPlaylist = true;
+                        this.showPreventContainer = true;
+                    }
                     break;
                 case 'song-infomation':
                     this.trackOfInfo = arg.target;

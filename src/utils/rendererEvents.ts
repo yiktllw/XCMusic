@@ -1,5 +1,6 @@
 import { ipcMain, BrowserWindow, dialog, app } from 'electron';
 import { Download } from './download';
+import { scanMusicDirectory } from './localTracks';
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -65,15 +66,25 @@ ipcMain.handle('select-folder', async () => {
     }
 });
 
+ipcMain.handle('get-local-tracks', async (event, dirPath) => {
+    try {
+        const tracks = await scanMusicDirectory(dirPath);
+        return tracks;
+    } catch (err: any) {
+        return err.toString();
+    }
+});
+
 ipcMain.on('download-song', async (event, songUrl, track, downloadDir) => {
     try {
         // 下载歌曲文件
         const filePath = await Download.song(songUrl, track, downloadDir);
+        console.log('Downloaded song:', filePath);
         event.reply('download-song-reply', filePath, {
             filePath: filePath,
             track: track
         });
     } catch (err: any) {
-        event.reply('download-song-reply', err.toString());
+        console.error('Error downloading song:', err);
     }
 });

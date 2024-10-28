@@ -15,16 +15,14 @@
                         </div>
                         <div class="track-artist font-color-standard">
                             <span v-for="(artist, index) in track.ar" :key="artist.id">
-                                <span class="artist-button"
-                                    @click="$router.push({ path: `/artist/${artist.id}` }); show = false;"
+                                <span class="artist-button" @click="openArtist(artist.id)"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
                                     {{ artist.name }}
                                 </span>
                                 <span v-if="index < track.ar.length - 1"> /&nbsp; </span>
                             </span>
                         </div>
-                        <div class="track-album font-color-standard"
-                            @click="$router.push({ path: `/album/${track?.al.id}` }); show = false"
+                        <div class="track-album font-color-standard" @click="openAlbum(track?.al.id)"
                             :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
                             {{ track.al.name }}
                         </div>
@@ -186,6 +184,7 @@ import { useApi } from '@/utils/api';
 import { getColorFromImg } from '@/utils/color';
 import { Message } from '@/dual/YMessageC';
 import YSpecCanvas from './YSpecCanvas.vue';
+import { isLocal } from '@/utils/localTracks_renderer';
 
 export default defineComponent({
     name: 'YPlayUI',
@@ -283,7 +282,7 @@ export default defineComponent({
         return {
             show: false,
             track: {
-                id: 0,
+                id: 0 as number | string,
                 name: '',
                 tns: '',
                 al: {
@@ -371,6 +370,7 @@ export default defineComponent({
             this.show = !this.show;
         },
         async getLyrics(id: number | string) {
+            if (!id || isLocal(id)) return;
             await useApi('/lyric/new', {
                 id: id,
             }).then((res) => {
@@ -486,6 +486,7 @@ export default defineComponent({
             });
         },
         async getWiki() {
+            if (!this.track.id || isLocal(this.track.id)) return;
             await useApi('/song/wiki/summary', {
                 id: this.track.id,
                 cookie: this.login.cookie,
@@ -505,6 +506,7 @@ export default defineComponent({
             }
         },
         async getSheets() {
+            if (!this.track.id || isLocal(this.track.id)) return;
             await useApi('/sheet/list', {
                 id: this.track.id,
                 cookie: this.login.cookie,
@@ -524,6 +526,16 @@ export default defineComponent({
         },
         openSheet(sheet: any) {
             this.$router.push({ path: `/sheet/${sheet.id}` });
+            this.closePanel();
+        },
+        openArtist(id: number | string) {
+            if (!id || isLocal(id)) return;
+            this.$router.push({ path: `/artist/${id}` });
+            this.closePanel();
+        },
+        openAlbum(id: number | string) {
+            if (!id || isLocal(id)) return;
+            this.$router.push({ path: `/album/${id}` });
             this.closePanel();
         },
     },
@@ -550,7 +562,7 @@ export default defineComponent({
             },
             type: 'track',
         })
-        if (this.player.currentTrack?.id) {
+        if (this.player.currentTrack?.id && isLocal(this.player.currentTrack?.id)) {
             await this.getLyrics(this.player.currentTrack.id);
             await this.getWiki();
         }

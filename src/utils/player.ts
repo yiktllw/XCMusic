@@ -13,6 +13,7 @@ import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
+import { isLocal } from "./localTracks_renderer";
 const fs = window.api.fs;
 const path = window.api.path;
 
@@ -431,13 +432,20 @@ export class Player {
 
             // 获取歌曲播放信息
             let nourl = false;
-            let result = await this.getUrl(track.id).catch(error => {
-                if (navigator.onLine && this.noUrlCount < 10) {
-                    this.next();
-                    nourl = true;
-                    this.noUrlCount++;
-                }
-            });
+            let result = null;
+            if (!isLocal(track.id)) {
+                result = await this.getUrl(track.id).catch(error => {
+                    if (navigator.onLine && this.noUrlCount < 10) {
+                        this.next();
+                        nourl = true;
+                        this.noUrlCount++;
+                    }
+                });
+            } else {
+                const fileUrl = `file://${track.localPath.replace(/\\/g, '/')}`;
+                result = { url: fileUrl };
+            }
+
             if (nourl) return;
             let url = result.url;
             this._audio.src = url;
@@ -468,8 +476,9 @@ export class Player {
             this.Execute({ type: 'trackReady' });
         }
     }
-    async gainTrack(id: number): Promise<string> {
+    async gainTrack(id: number | string): Promise<string> {
         // 获取当前歌曲的所有音质的数据(音量均衡数据)
+        if (isLocal(id)) return 'Local track';
         await this.setAllQuality(id);
         let gain: any = null;
         let peak: any = null;
@@ -502,7 +511,7 @@ export class Player {
      * 获取所有音质的信息，并添加到 currentTrack
      * @param {Number} id 歌曲ID
      */
-    async setAllQuality(id: number) {
+    async setAllQuality(id: number | string) {
         // 异步执行这些请求
         let requests = [
             this.getQuality(id, 'standard').then((res: any) => {
@@ -558,7 +567,8 @@ export class Player {
      * @param {String} quality - 音质
      * @returns {QualityInfo} 返回一个包含音质信息的对象
      */
-    async getQuality(id: number, quality: string): Promise<QualityInfo | null> {
+    async getQuality(id: number | string, quality: string): Promise<QualityInfo | null> {
+        if (isLocal(id)) return null;
         let response = null;
         if (localStorage.getItem('login_cookie')) {
             response = await useApi('/song/url/v1', {
@@ -865,6 +875,8 @@ export class Player {
      * @param {Number} id 歌曲ID
      */
     async scrobble(id: number) {
+        return;
+        // 此接口已弃用
         if (!localStorage.getItem('login_cookie')) return;
         if (this._playlistId as number > 0) {
             await useApi('/scrobble', {
@@ -1052,8 +1064,9 @@ export class Player {
     /** 
      * 获取歌曲url
      */
-    async getUrl(id: number) {
+    async getUrl(id: number | string) {
         let response = null;
+        if (isLocal(id)) return null;
         const downloads = store.state.download.downloadedSongs;
         if (downloads.some((song: any) => song.id === id)) {
             let song = downloads.find((song: any) => song.id === id);

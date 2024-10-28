@@ -1,5 +1,6 @@
 import { useApi } from "@/utils/api";
 import { YPageC } from "./YPageC";
+import { isLocal } from "@/utils/localTracks_renderer";
 export type Types = 'song' | 'playlist' | 'album';
 
 export class YCommentC {
@@ -42,6 +43,7 @@ export class YCommentC {
      * @param {boolean} newPageInstance 是否创建新的分页实例，创建则会重置页码
      */
     async initData(newPageInstance: boolean = false) {
+        if (isLocal(this._id)) return;
         await useApi('/comment/new', {
             id: this._id,
             type: this.typeId,

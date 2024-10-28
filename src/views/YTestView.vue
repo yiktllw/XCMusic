@@ -9,6 +9,8 @@ import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import YLoginWindow from '@/components/YLoginWindow.vue';
+const ipcRenderer = window.electron.ipcRenderer;
+import { Tracks } from '@/utils/tracks';
 
 export default defineComponent({
     name: 'YTestView',
@@ -33,7 +35,13 @@ export default defineComponent({
     },
     methods: {
     },
-    mounted() {
+    async mounted() {
+        const res = await ipcRenderer.invoke('get-local-tracks', this.setting.download.path);
+        const tracks = new Tracks({
+            url: 'local',
+            tracks: res,
+        });
+        console.log('tracks', tracks.tracks);
     },
     beforeUnmount() {
     },
