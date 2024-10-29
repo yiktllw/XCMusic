@@ -83,10 +83,7 @@ export default defineComponent({
         })
     },
     beforeUnmount() {
-        this.download.UnSubscribe({
-            id: 'YLocalSongsView',
-            type: 'downloaded-songs',
-        })
+        this.download.subscriber.offAll('YLocalSongsView');
     },
 })
 </script>

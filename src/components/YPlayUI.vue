@@ -594,14 +594,7 @@ export default defineComponent({
     },
     beforeUnmount() {
         clearInterval(this.timeInterval);
-        this.player.UnSubscribe({
-            id: 'YPlayUI',
-            type: 'track',
-        });
-        this.player.UnSubscribe({
-            id: 'YPlayUI',
-            type: 'allTime',
-        });
+        this.player.subscriber.offAll('YPlayUI');
         this.$emit('close-panel');
     },
 });

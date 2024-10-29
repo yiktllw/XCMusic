@@ -443,14 +443,8 @@ export default defineComponent({
         })
     },
     beforeUnmount() {
-        this.player.UnSubscribe({
-            id: this.id,
-            type: 'track',
-        });
-        this.download.UnSubscribe({
-            id: this.id,
-            type: 'downloaded-songs',
-        });
+        this.player.subscriber.offAll(this.id);
+        this.download.subscriber.offAll(this.id);
     },
     watch: {
         tracks(newVal, oldVal) {

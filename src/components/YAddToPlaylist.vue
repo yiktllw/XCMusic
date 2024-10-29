@@ -100,10 +100,7 @@ export default defineComponent({
         });
     },
     beforeUnmount() {
-        this.login.unSubscribe({
-            id: 'YAddToPlaylist',
-            type: 'userPlaylists',
-        });
+        this.login.subscriber.offAll('YAddToPlaylist');
     },
 })
 

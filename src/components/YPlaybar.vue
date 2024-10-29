@@ -617,42 +617,8 @@ export default defineComponent({
         })
     },
     beforeUnmount() {
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'trackReady',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'playlist',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'playState',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'track',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'time',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'mode',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'volume',
-        })
-        this.player.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'quality',
-        })
-        this.download.UnSubscribe({
-            id: 'YPlaybar' + `${this.type}`,
-            type: 'downloaded-songs',
-        })
+        this.player.subscriber.offAll('YPlaybar' + `${this.type}`);
+        this.download.subscriber.offAll('YPlaybar' + `${this.type}`);
     },
 })
 
