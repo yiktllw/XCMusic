@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar y_sidebar_component" ref="sidebar_component" :style="{ 'width': `${sidebarWidth}px` }">
         <div class="title">
-            <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px;" />
+            <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px; cursor: pointer; -webkit-user-drag: none;" @click="$router.push({path: '/greeting'})" />
         </div>
         <div class="scrollable">
             <button class="big-button font-color-standard"
@@ -221,7 +221,8 @@ export default defineComponent({
         padding: 10px;
         text-align: left;
         margin-bottom: 10px;
-        -webkit-app-region: drag;
+        -webkit-user-drag: none;
+        // -webkit-app-region: drag;
     }
 
     .scrollable {

@@ -1,7 +1,7 @@
 <template>
     <!--欢迎界面-->
     <div class="container">
-        <img src="../assets/xc.svg" alt="XC Logo" class="full-width-image" />
+        <img src="../assets/xc.svg" alt="XC Logo" class="full-width-image g-icon" />
     </div>
 </template>
 
@@ -26,6 +26,7 @@ export default defineComponent({
     height: 100%;
 
     .full-width-image {
+        opacity: .9;
         width: 100%;
         max-width: 100%;
         max-height: 100%;
