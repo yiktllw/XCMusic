@@ -14,8 +14,11 @@ import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 import { isLocal } from "./localTracks_renderer";
-const fs = window.api.fs;
-const path = window.api.path;
+var fs: any, path: any;
+if (window.electron?.isElectron) {
+    fs = window.api.fs;
+    path = window.api.path;
+}
 
 export class Player {
     /**
@@ -1032,7 +1035,7 @@ export class Player {
         let response = null;
         if (isLocal(id)) return null;
         const downloads = store.state.download.downloadedSongs;
-        if (downloads.some((song: any) => song.id === id)) {
+        if (downloads.some((song: any) => song.id === id) && window.electron?.isElectron) {
             let song = downloads.find((song: any) => song.id === id);
             if (fs.existsSync(song.path)) {
                 const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
