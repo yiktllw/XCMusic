@@ -1,4 +1,4 @@
-import { reactive, markRaw } from 'vue';
+import { markRaw } from 'vue';
 
 export interface SubscribeOptions {
     id: string | number;
@@ -19,10 +19,15 @@ interface SubscriberItem {
 }
 
 export class Subscriber {
-    _subscribes: any | Array<SubscriberItem> = markRaw([]);
+    _subscribes: Array<SubscriberItem> = markRaw([]);
+    /**
+     *  单个订阅的全局索引
+     */
     globalIndex = 0;
+    /**
+     * 允许订阅的事件类型
+     */
     allowedEvents: string[];
-    arrayWithId: any;
     /**
      * 订阅事件类   
      * @param {Array<string>} allowedEvents 允许订阅的事件类型
@@ -30,6 +35,9 @@ export class Subscriber {
     constructor(allowedEvents: Array<string>) {
         this.allowedEvents = allowedEvents;
     }
+    /**
+     * 添加订阅，私有函数，请勿在外部调用
+     */
     push({
         id,
         func,
@@ -47,8 +55,11 @@ export class Subscriber {
         });
         this.globalIndex++;
     }
+    /**
+     * 更新订阅，私有函数，请勿在外部调用
+     */
     updateSubscribe(globalIndex: string | number, func: Function) {
-        let index = this._subscribes.findIndex((item: { index: string | number; }) => item.index === globalIndex);
+        let index = this._subscribes.findIndex((item: any) => item.index === globalIndex);
         if (index !== -1) {
             this._subscribes[index].func = func;
         }
@@ -70,14 +81,14 @@ export class Subscriber {
             return;
         }
         if (id === '' || type === '') {
-            console.log('id is empty');
+            console.log('id or type is empty');
             return;
         }
         if (!this.allowedEvents?.includes(type)) {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        let arrayWithId = this._subscribes.filter((item: { id: string | undefined; }) => item.id === id);
+        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
         if (arrayWithId.length === 0) {
             // 如果没有这个id的订阅，则直接添加到订阅列表。
             this.push({
@@ -97,9 +108,8 @@ export class Subscriber {
                     type: type as string
                 });
             } else {
-                if (!this.arrayWithId) return;
                 // 如果有这个id的订阅，而且也有这个type的订阅，则更新这个订阅。
-                this.updateSubscribe(this.arrayWithId[index]?.globalIndex, func);
+                this.updateSubscribe(arrayWithId[index]?.globalIndex, func);
             }
         }
     }
@@ -118,7 +128,7 @@ export class Subscriber {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        let arrayWithId = this._subscribes.filter((item: { id: string; }) => item.id === id);
+        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
         if (arrayWithId.length !== 0) {
             arrayWithId.forEach((item: { type: string; globalIndex: any; }) => {
                 if (item.type === type) {
@@ -128,8 +138,11 @@ export class Subscriber {
             })
         }
     }
+    /**
+     * 取消某个id订阅的所有事件
+     */
     offAll(id: string) {
-        let arrayWithId = this._subscribes.filter((item: { id: string; }) => item.id === id);
+        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
         arrayWithId.forEach((item: { globalIndex: any; }) => {
             let index = this._subscribes.findIndex((_item: { globalIndex: any; }) => _item.globalIndex === item.globalIndex);
             this._subscribes.splice(index, 1);
@@ -139,14 +152,14 @@ export class Subscriber {
      * 执行某种事件
      * @param {string} type - 要执行的事件类型
      */
-    exec(type: string) {
+    exec(type: string, ...args: any[]) {
         if (!this.allowedEvents?.includes(type)) {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        this._subscribes.forEach((item: { type: string; func: () => void; }) => {
+        this._subscribes.forEach((item: any) => {
             if (item.type === type) {
-                item.func();
+                item.func(...args);
             }
         });
     }
