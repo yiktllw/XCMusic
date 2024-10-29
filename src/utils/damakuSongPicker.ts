@@ -37,25 +37,6 @@ export class SongPicker {
     }
 
     /**
-     * 订阅事件
-     * @param {Object} options - 事件处理的参数对象
-     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
-     * @param {string} [options.type=''] - 订阅的事件类型
-     * @param {Function} [options.func=()=>{}] - 事件处理函数
-     */
-    subscribe({ id, func, type, }: SubscribeOptions) {
-        this.subscriber.on({ id, func, type });
-    }
-    /**
-     * 取消订阅事件
-     * @param {Object} options - 事件处理的参数对象
-     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
-     * @param {string} [options.type=''] - 订阅的事件类型
-     */
-    unSubscribe({ id, type, }: UnsubscribeOptions) {
-        this.subscriber.off({ id, type });
-    }
-    /**
      * 清空文件，程序启动时调用
      */
     async #clearFile() {

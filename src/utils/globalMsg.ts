@@ -21,10 +21,4 @@ export class GlobalMsg {
         this.dataTemp = data ?? null;
         this.subscriber.exec(msg);
     }
-    Subscribe(param: {id: string, type: string, func: Function}) {
-        this.subscriber.on({id: param.id, type: param.type, func: param.func});
-    }
-    Unsubscribe(param: {id: string, type: string}) {
-        this.subscriber.off({id: param.id, type: param.type});
-    }
 }

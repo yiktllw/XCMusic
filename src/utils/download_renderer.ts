@@ -14,7 +14,7 @@ export class Download {
         ]);
         this.db.openDatabase().then(async () => {
             this.downloadedSongs = await this.db.getAllSongs();
-            this.Exec('downloaded-songs');
+            this.subscriber.exec('downloaded-songs');
         });
         if (window.electron?.isElectron) {
             window.electron.ipcRenderer.on('download-song-reply', async (event, data, nouse) => {
@@ -29,31 +29,9 @@ export class Download {
                     name: track.name,
                     path: filePath
                 });
-                this.Exec('downloaded-songs');
+                this.subscriber.exec('downloaded-songs');
             });
         }
-    }
-
-    Subscribe(options: {
-        id: string,
-        type: string,
-        func: Function
-    }) {
-        this.subscriber.on({
-            id: options.id,
-            type: options.type,
-            func: options.func,
-        });
-    }
-
-    UnSubscribe(options: {
-        id: string,
-        type: string
-    }) {
-        this.subscriber.off({
-            id: options.id,
-            type: options.type
-        });
     }
 
     Exec(type: string) {
@@ -75,7 +53,7 @@ export class Download {
         }
         await this.db.deleteDownloadedSong(id);
         this.downloadedSongs = this.downloadedSongs.filter(song => song.id !== id);
-        this.Exec('downloaded-songs');
+        this.subscriber.exec('downloaded-songs');
     }
 
     async clear() {
@@ -85,7 +63,7 @@ export class Download {
         }
         await this.db.clearDownloadStore();
         this.downloadedSongs = [];
-        this.Exec('downloaded-songs');
+        this.subscriber.exec('downloaded-songs');
     }
 
     get downloadedSongIds() {

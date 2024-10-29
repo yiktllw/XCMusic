@@ -141,7 +141,7 @@ export class Player {
         // 点歌功能
         if (window.electron?.isElectron) {
             this.songPicker = markRaw(new SongPicker());
-            this.songPicker.subscribe({
+            this.songPicker.subscriber.on({
                 id: 'player.js',
                 func: () => {
                     if (!this.songPicker?.track) return;
@@ -149,7 +149,7 @@ export class Player {
                 },
                 type: 'track',
             });
-            this.songPicker.subscribe({
+            this.songPicker.subscriber.on({
                 id: 'player.js',
                 func: () => {
                     if (!this.songPicker?.track) return;
@@ -178,7 +178,7 @@ export class Player {
         this.db = new indexDB('ncm', 'playlist');
         this.db.openDatabase().then(() => {
             // console.log('Database opened');
-            this.Subscribe({
+            this.subscriber.on({
                 id: 'indexDB',
                 type: 'playlist',
                 func: () => {
@@ -197,7 +197,7 @@ export class Player {
                     }
                     const lastTrack = localStorage.getItem('currentTrack');
                     if (lastTrack) {
-                        this.Subscribe({
+                        this.subscriber.on({
                             id: 'indexDB',
                             type: 'playerReady',
                             func: () => {
@@ -206,14 +206,14 @@ export class Player {
                             }
                         })
                     }
-                    this.Execute({ type: 'playlist' });
+                    this.subscriber.exec('playlist');
                 });
             } catch (error) {
                 console.error(error);
             }
         });
 
-        this.Subscribe({
+        this.subscriber.on({
             id: 'currentTrackStorage',
             type: 'track',
             func: () => {
@@ -225,50 +225,14 @@ export class Player {
         this.initMediaSession();
 
         setTimeout(() => {
-            this.Execute({ type: 'playerReady' });
+            this.subscriber.exec('playerReady');
         }, 500);
-    }
-    // Player类的对象是一个非常大的实例，为了避免vue跟踪此实例时占用大量内存，在store中实例化此对象时声明为一个非响应式的对象(markRaw)
-    // 同时，为了在组件中获取此对象的最新属性，需要提供回调函数接口，在使用最新属性的地方订阅属性发生变动的消息。
-    /**
-     * 订阅属性变动
-     * @param {Object} obj 订阅者的信息
-     * @param {string} obj.id 订阅者的唯一标识
-     * @param {Function} obj.func 订阅者的回调函数
-     * @param {string} obj.type 订阅的属性
-     */
-    Subscribe({ id, func, type }: { id: string; func: Function; type: string; }) {
-        this.subscriber.on({
-            id: id,
-            func: func,
-            type: type,
-        });
-    }
-    /** 
-     * 取消订阅
-     * @param {Object} obj 取消订阅者的信息
-     * @param {string} obj.id 取消订阅者的唯一标识
-     * @param {string} obj.type 取消订阅的属性
-     */
-    UnSubscribe({ id, type }: { id: string; type: string; }) {
-        this.subscriber.off({
-            id: id,
-            type: type,
-        });
-    }
-    /** 
-     * 执行订阅者的回调函数
-     * @param {Object} obj 执行订阅者的信息
-     * @param {string} obj.type 执行订阅的属性
-     */
-    Execute({ type }: { type: string; }) {
-        this.subscriber.exec(type);
     }
     /**
      * 初始化媒体会话
      */
     initMediaSession() {
-        this.Subscribe({
+        this.subscriber.on({
             id: 'mediaSession',
             type: 'track',
             func: () => {
@@ -312,7 +276,7 @@ export class Player {
                 this._mediaSessionInit = true;
             }
         })
-        this.Subscribe({
+        this.subscriber.on({
             id: 'mediaSession',
             type: 'playState',
             func: () => {
@@ -325,7 +289,7 @@ export class Player {
                 }
             },
         })
-        this.Subscribe({
+        this.subscriber.on({
             id: 'mediaSession',
             type: 'time',
             func: () => {
@@ -363,13 +327,13 @@ export class Player {
                 this._currentTime = Math.floor(this._audio.currentTime);
                 this._duration = this._audio.duration;
                 this._progress = Math.max(0, Math.min(1, parseFloat((this._currentTime / this._duration).toFixed(3))));
-                this.Execute({ type: 'time' });
-                this.Execute({ type: 'trackReady' });
+                this.subscriber.exec('time');
+                this.subscriber.exec('trackReady');
             } else if (this.playState === 'play' && this._currentTime !== this._audio.currentTime) {
                 // 如果毫秒数发生了变化
                 this._currentTime = this._audio.currentTime;
                 this._progress = (this._currentTime / (this._duration as number)).toFixed(3);
-                this.Execute({ type: 'allTime' });
+                this.subscriber.exec('allTime');
             }
 
             this._updateTime = setTimeout(update, 50);  // 递归调用 setTimeout
@@ -428,7 +392,7 @@ export class Player {
             // 更新当前播放的歌曲位置
             this._current = trackIndex;
             // 触发 track 的回调函数
-            this.Execute({ type: 'track' });
+            this.subscriber.exec('track');
 
             // 获取歌曲播放信息
             let nourl = false;
@@ -473,7 +437,7 @@ export class Player {
             );
             // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
             this.noUrlCount = 0;
-            this.Execute({ type: 'trackReady' });
+            this.subscriber.exec('trackReady');
         }
     }
     async gainTrack(id: number | string): Promise<string> {
@@ -652,7 +616,7 @@ export class Player {
             // 如果历史记录中有上一首/下一首歌曲
             this._current = this._playlist.findIndex(track => track.id === this._history[this._historyIndex + direction].id);
             this._historyIndex += direction;
-            this.Execute({ type: 'history' });
+            this.subscriber.exec('history');
         } else if (direction === 1) {
             // 如果历史记录中没有下一首歌曲
             // 随机播放下一首
@@ -726,7 +690,7 @@ export class Player {
             // 如果播放模式为其它模式
             this._playlist = list;
         }
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     deleteTrack(id: string | number) {
         let index = this._playlist.findIndex(track => track.id === id);
@@ -735,7 +699,7 @@ export class Player {
         if (index === this._current) {
             this.playTrack(this.currentTrack);
         }
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     /** 
      * 添加列表到播放列表
@@ -783,7 +747,7 @@ export class Player {
         if (playFirst) {
             this.playTrack(this.currentTrack, false);
         }
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     /**
      * 清空播放列表
@@ -795,7 +759,7 @@ export class Player {
         this.playState = 'play';
         this._audio.src = '';
         this.clearHistory();
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     /** 
      * 下一首播放指定歌曲
@@ -813,7 +777,7 @@ export class Player {
             // 如果不在播放列表中，则添加到下一首
             this._playlist.splice(this._current + 1, 0, track);
         }
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     /** 
      * 播放全部
@@ -852,9 +816,9 @@ export class Player {
         if (this._mode === 'random') {
             // 将历史的下一首替换为当前歌曲
             this._history = this._history.splice(this._historyIndex + 1, 0, value);
-            this.Execute({ type: 'history' });
+            this.subscriber.exec('history');
         }
-        this.Execute({ type: 'playlist' });
+        this.subscriber.exec('playlist');
     }
     /** 
      * 更新歌单播放数据
@@ -977,7 +941,7 @@ export class Player {
         this.clearHistory();
         // 设置播放模式
         this._mode = value;
-        this.Execute({ type: 'mode' });
+        this.subscriber.exec('mode');
         // 如果播放模式不为列表随机
         if (value === 'order' || value === 'listloop' || value === 'random' || value === 'loop') {
             // 保存当前歌曲
@@ -1013,7 +977,7 @@ export class Player {
     appendToHistory(track: object) {
         this._history.push(track)
         this._historyIndex = this._history.length - 1;
-        this.Execute({ type: 'history' });
+        this.subscriber.exec('history');
     }
     /** 
      * 插入到历史开头
@@ -1022,7 +986,7 @@ export class Player {
     insertToHistory(track: object) {
         this._history.splice(0, 0, track);
         this._historyIndex = 0;
-        this.Execute({ type: 'history' });
+        this.subscriber.exec('history');
     }
     /**
      * 清空历史
@@ -1030,7 +994,7 @@ export class Player {
     clearHistory() {
         this._history = [];
         this._historyIndex = 0;
-        this.Execute({ type: 'history' });
+        this.subscriber.exec('history');
     }
     /** 
      * 获取播放状态
@@ -1047,7 +1011,7 @@ export class Player {
             if (this._audio && this._audio.readyState) {
                 this._playState = value;
                 this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
-                this.Execute({ type: 'playState' });
+                this.subscriber.exec('playState');
             } else {
                 console.log('Audio not ready');
             }
@@ -1123,7 +1087,7 @@ export class Player {
         if (value >= 0 && value <= 1) {
             this._volume = value;
             this._audio.volume = value;
-            this.Execute({ type: 'volume' });
+            this.subscriber.exec('volume');
         }
     }
     /**
@@ -1179,7 +1143,7 @@ export class Player {
             this._audio.currentTime = value;
             this._currentTime = value;
             this._progress = value / (this._duration as number);
-            this.Execute({ type: 'time' })
+            this.subscriber.exec('time')
         }
     }
     /**
@@ -1219,7 +1183,7 @@ export class Player {
         if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'lossless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
             this._quality = value;
             this.reloadUrl();
-            this.Execute({ type: 'quality' });
+            this.subscriber.exec('quality');
         } else {
             console.log('Quality not supported: ', value);
         }

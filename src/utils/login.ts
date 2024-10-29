@@ -1,6 +1,6 @@
 import { Subscriber } from "@/utils/subscribe";
 import { useApi } from "./api";
-import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue'; 
+import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue';
 import i18n from "@/i18n";
 
 export class Login {
@@ -31,36 +31,6 @@ export class Login {
                 this.refreshUserPlaylists();
             }
         }, 1000 * 100);
-    }
-    /**
-     * 订阅事件
-     * @param {Object} options - 事件处理的参数对象
-     * @param {string} [options.id=''] - 用来标识订阅者的唯一id
-     * @param {string} [options.type=''] - 订阅的事件类型
-     * @param {Function} [options.func=()=>{}] - 事件处理函数
-     */
-    subscribe({
-        id,
-        type,
-        func,
-    }: { id: string; type: string; func: Function; }) {
-        this.subscriber.on({
-            id: id,
-            func: func,
-            type: type
-        });
-    }
-    unSubscribe({
-        id,
-        type,
-    } : {
-        id: string;
-        type: string;
-    }) {
-        this.subscriber.off({
-            id: id,
-            type: type
-        });
     }
     init() {
         if (this._cookie && (!this._userId || !this._userName || this._avatar)) {
@@ -199,7 +169,7 @@ export class Login {
         });
         if (this.userPlaylists.length > 0) {
             this._userFavoriteId = this.userPlaylists[0].id;
-            this.userPlaylists.splice(0,1);
+            this.userPlaylists.splice(0, 1);
         }
         this.subscriber.exec('userPlaylists');
     }

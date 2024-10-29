@@ -12,29 +12,6 @@ export class OpenedPlaylist {
     }
     set id(id){
         this._id = id;
-        this.execCallbacks();
-    }
-    Subscribe({
-        id,
-        type,
-        func,
-    } : SubscribeOptions ){
-        this.subscriber.on({
-            id,
-            type,
-            func,
-        })
-    }
-    Unsubscribe({
-        id,
-        type,
-    } : UnsubscribeOptions){
-        this.subscriber.off({
-            id,
-            type,
-        })
-    }
-    execCallbacks(){
         this.subscriber.exec('id');
     }
 }
