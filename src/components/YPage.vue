@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="page-goto" v-if="page.total > 8">
-            <input type="number" :min="1" :max="page.total" v-model="tempPage">
+            <input type="number" :min="1" :max="page.total" v-model="tempPage" @keydown.enter="goto()" >
             <span>/ &nbsp;{{ page.total }} &nbsp;</span>
             <button @click="goto()">跳转</button>
         </div>
@@ -148,6 +148,7 @@ export default defineComponent({
 .page-goto {
     color: var(--font-color-main);
     font-size: 15px;
+    padding-bottom: 10px;
 
     input {
         width: 16px;

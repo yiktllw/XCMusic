@@ -6,12 +6,13 @@
 </template>
 
 <script lang="ts">
+import { YColor } from '@/utils/color';
 import { defineComponent } from 'vue';
-import { setBackgroundColorTheme } from '@/utils/color';
+
 export default defineComponent({
     name: 'YGreetingView',
     mounted() {
-        setBackgroundColorTheme();
+        YColor.setBackgroundColorTheme();
     }
 });
 </script>

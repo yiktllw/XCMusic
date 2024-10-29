@@ -38,6 +38,10 @@ export class Download {
             responseType: 'stream',
             family: 4, // 使用 IPv4
             timeout: 30000, // 设置超时时间为30秒
+            onDownloadProgress(progressEvent) {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded));
+                console.log(`Downloading ${name}.${fileExtension}: ${percentCompleted}% completed`);
+            },
         });
 
         response.data.pipe(writer);
