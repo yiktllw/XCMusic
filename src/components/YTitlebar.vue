@@ -452,7 +452,7 @@ export default defineComponent({
             await this.getHotSearches();
             this.searchHistory = this.setting.titleBar.searchHistory;
         }
-        this.globalMsg.Subscribe({
+        this.globalMsg.subscriber.on({
             id: 'YTitlebar',
             type: 'close-login-window-from-homeview',
             func: () => {

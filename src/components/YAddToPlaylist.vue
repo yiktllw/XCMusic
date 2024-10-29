@@ -91,13 +91,13 @@ export default defineComponent({
         },
     },
     mounted() {
-        this.login.subscribe({
+        this.login.subscriber.on({
             id: 'YAddToPlaylist',
             type: 'userPlaylists',
             func: () => {
                 this.userPlaylists = this.login.userPlaylists;
             }
-        });
+        })
     },
     beforeUnmount() {
         this.login.subscriber.offAll('YAddToPlaylist');

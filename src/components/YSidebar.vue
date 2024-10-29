@@ -168,7 +168,7 @@ export default defineComponent({
         this.sidebarWidth = this.setting.display.sidebarWidth;
         this.userPlaylists = this.login.userPlaylists;
         this.userSubscribes = this.login.userSubscribes;
-        this.login.subscribe({
+        this.login.subscriber.on({
             id: 'YSidebar',
             type: 'userPlaylists',
             func: () => {
@@ -176,7 +176,7 @@ export default defineComponent({
                 this.userSubscribes = this.login.userSubscribes;
             },
         });
-        this.OpenedPlaylist.Subscribe({
+        this.OpenedPlaylist.subscriber.on({
             id: 'YSidebar',
             type: 'id',
             func: () => {

@@ -526,7 +526,7 @@ export default defineComponent({
         }
         this.player.volume = this.setting.play.volume;
         this.tooglePlayMode(this.setting.play.mode as 'order' | 'listloop' | 'random' | 'listrandom' | 'loop');
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 let avQuality = this.player.availableQuality;
@@ -546,7 +546,7 @@ export default defineComponent({
             type: 'trackReady',
         })
         this.playlist = this.player.playlist;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playlist = this.player.playlist;
@@ -554,7 +554,7 @@ export default defineComponent({
             type: 'playlist',
         })
         this.playState = this.player.playState;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playState = this.player.playState;
@@ -563,7 +563,7 @@ export default defineComponent({
         })
         this.currentTrack = this.player.currentTrack;
         this.setCommentCount();
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: async () => {
                 this.currentTrack = this.player.currentTrack;
@@ -574,7 +574,7 @@ export default defineComponent({
         this.currentTime = this.player.currentTime;
         this.duration = this.player.duration as number;
         this.progress = this.player.progress;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.duration = this.player.duration as number;
@@ -584,7 +584,7 @@ export default defineComponent({
             type: 'time',
         })
         this.playMode = this.player.mode;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.playMode = this.player.mode;
@@ -592,7 +592,7 @@ export default defineComponent({
             type: 'mode',
         })
         this.volume = this.player.volume;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.volume = this.player.volume;
@@ -600,7 +600,7 @@ export default defineComponent({
             type: 'volume',
         })
         this.qualityDisplay = this.player.qualityDisplay;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.qualityDisplay = this.player.qualityDisplay;
@@ -608,7 +608,7 @@ export default defineComponent({
             type: 'quality',
         })
         this.downloadedSongIds = this.download.downloadedSongIds;
-        this.download.Subscribe({
+        this.download.subscriber.on({
             id: 'YPlaybar' + `${this.type}`,
             func: () => {
                 this.downloadedSongIds = this.download.downloadedSongIds;

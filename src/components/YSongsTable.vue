@@ -426,7 +426,7 @@ export default defineComponent({
         }
         this.alWidth = this.setting.display.albumWidth;
         this.nowPlaying = this.player.currentTrack?.id ?? 0;
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: this.id,
             type: 'track',
             func: () => {
@@ -434,7 +434,7 @@ export default defineComponent({
             }
         })
         this.downloadedSongIds = this.download.downloadedSongIds;
-        this.download.Subscribe({
+        this.download.subscriber.on({
             id: this.id,
             type: 'downloaded-songs',
             func: () => {

@@ -543,7 +543,7 @@ export default defineComponent({
         if (this.player.currentTrack) {
             this.track = this.player.currentTrack;
         }
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlayUI',
             func: async () => {
                 this.track = this.player.currentTrack;
@@ -569,7 +569,7 @@ export default defineComponent({
         if (this.player.currentTrack) {
             this.currentTime = parseInt((this.player.currentTime * 1000).toString());
         }
-        this.player.Subscribe({
+        this.player.subscriber.on({
             id: 'YPlayUI',
             func: () => {
                 this.currentTime = parseInt((this.player.currentTime * 1000).toString());

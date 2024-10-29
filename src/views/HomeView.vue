@@ -136,7 +136,7 @@ export default defineComponent({
     mounted() {
         window.addEventListener('message', this.handleMessage);
         this.player.quality = this.setting.play.quality as "jymaster" | "sky" | "jyeffect" | "hires" | "lossless" | "exhigh" | "standard" | "higher";
-        this.globalMsg.Subscribe({
+        this.globalMsg.subscriber.on({
             id: 'HomeView',
             type: 'create-playlist',
             func: () => {
@@ -144,7 +144,7 @@ export default defineComponent({
                 this.showPreventContainer = true;
             },
         });
-        this.globalMsg.Subscribe({
+        this.globalMsg.subscriber.on({
             id: 'HomeView',
             type: 'open-login-window',
             func: () => {
@@ -153,7 +153,7 @@ export default defineComponent({
                 this.base64Image = this.globalMsg.dataTemp;
             },
         });
-        this.globalMsg.Subscribe({
+        this.globalMsg.subscriber.on({
             id: 'HomeView',
             type: 'close-login-window',
             func: () => {

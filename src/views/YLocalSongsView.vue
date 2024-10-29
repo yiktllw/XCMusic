@@ -74,7 +74,7 @@ export default defineComponent({
     mounted() {
         YColor.setBackgroundColorTheme();
         this.getDownloadedTracks();
-        this.download.Subscribe({
+        this.download.subscriber.on({
             id: 'YLocalSongsView',
             type: 'downloaded-songs',
             func: async () => {
