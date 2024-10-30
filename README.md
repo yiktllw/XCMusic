@@ -132,4 +132,6 @@ npm run electron:build
 
 ![image](https://github.com/user-attachments/assets/87a43859-f795-4126-ab5d-a81931411a75)
 
+![image](https://github.com/user-attachments/assets/17159272-990a-4256-9776-b65a17ba23c2)
+
 
