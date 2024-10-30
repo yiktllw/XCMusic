@@ -208,6 +208,7 @@ export default defineComponent({
             playBar,
             player,
             login,
+            setting: store.state.setting,
         };
     },
     computed: {

@@ -1,7 +1,6 @@
 import Color from "color";
 import { themes } from "./theme";
 
-
 type COLOR = {
     r: number,
     g: number,
@@ -11,7 +10,10 @@ type COLOR = {
 type COLOR_THEME_TYPE = ('dark' | 'light');
 
 const darkThemeColors = [
+    '#056706', // YColor.getColorFromThreeLetters('Amadeus'),
+    '#081c30', // YColor.getColorFromThreeLetters('BeHappy'),
     '#1d2932',
+    '#301c5d', // YColor.getColorFromThreeLetters('Hello'),
     '#3c4871',
     '#405772',
     '#425d72',
@@ -129,7 +131,44 @@ export class YColor {
         if (!DOM) return;
         (DOM as HTMLElement).style.background = 'var(--background-color)';
     }
-
+    /**
+     * 设置背景颜色为HEX颜色
+     */
+    static setBackgroundColorHex(hex: string, colorThemeType: COLOR_THEME_TYPE | undefined, themeBackground: string = '#131319') {
+        if (colorThemeType === 'dark') {
+            setBackgroundColor(this.hexToRgb(hex));
+        } else if (colorThemeType === 'light') {
+            let lightColor = this.getLightThemeColor(hex)
+            setBackgroundColor(this.hexToRgb(lightColor ?? '#FFFFFF'));
+        } else {
+            const DOM = document.querySelector('.mainContainer');
+            if (!DOM) return;
+            const themeColorHEX = this.getLightThemeColor(hex, themeBackground);
+            const themeColorRGB = this.hexToRgb(themeColorHEX ?? '#FFFFFF');
+            (DOM as HTMLElement).style.background = `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
+        }
+    }
+    /**
+     * 从三个字母中获取HEX颜色
+     */
+    static getColorFromThreeLetters(letters: string): string {
+        if (letters.length < 3) {
+            console.log('letters length less than 3');
+            return '#FFFFFF';
+        }
+        let i1 = letters.toLocaleLowerCase().charCodeAt(0) - 97;
+        let i2 = letters.toLocaleLowerCase().charCodeAt(1) - 97;
+        let i3 = letters.toLocaleLowerCase().charCodeAt(2) - 97;
+        const group = [
+            2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101
+        ];
+        let r = Math.ceil(group[i1] * 2.5);
+        let g = Math.ceil(group[i2] * 2.5);
+        let b = Math.ceil(group[i3] * 2.5);
+        const result = YColor.rgbToHex(r, g, b);
+        console.log('getColorFromThreeLetters: ', letters, 'color: ', result);
+        return result;
+    }
 }
 
 /**

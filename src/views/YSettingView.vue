@@ -247,7 +247,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { setBackgroundColorTheme } from '@/utils/color';
+import { YColor } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
@@ -453,7 +453,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        setBackgroundColorTheme();
+        YColor.setBackgroundColorTheme();
         this.theme = this.setting.display.theme;
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;

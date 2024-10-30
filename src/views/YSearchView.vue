@@ -89,7 +89,7 @@ import YScroll from '@/components/YScroll.vue';
 import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/utils/tracks';
 import { YPageC } from '@/dual/YPageC';
-import { setBackgroundColorTheme } from '@/utils/color';
+import { YColor } from '@/utils/color';
 import { useApi } from '../utils/api';
 import { markRaw, ref, defineComponent } from 'vue';
 
@@ -372,7 +372,7 @@ export default defineComponent({
     mounted() {
         this.fetchData(this.position);
         // 设置背景颜色
-        setBackgroundColorTheme();
+        YColor.setBackgroundColorTheme();
         // 当前位置为默认位置时, 跳转到上次搜索位置
         this.position === 'default' ? this.$router.push({ path: `/search/${this.search}/${this.lastPosition}` }) : null;
     },
