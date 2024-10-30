@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/yiktllw/XCMusic/compare/v0.1.4...v0.2.0) (2024-10-30)
+
+
+### Features
+
+* 初步实现频谱图 ([5762f94](https://github.com/yiktllw/XCMusic/commit/5762f945a41d726fa2e08b5f740bdd6e3b7bea33))
+* 更新欢迎界面 ([6bc7846](https://github.com/yiktllw/XCMusic/commit/6bc784684fdb1c3e2aa2e6c1ffca596f49e7ca7e))
+* 更新api到4.24.0 ([a8fd4a8](https://github.com/yiktllw/XCMusic/commit/a8fd4a83aa1b6693e2d5c7e2af9bf9b20efa98d5))
+* 可以点击搜索图标搜索 ([3bfc24f](https://github.com/yiktllw/XCMusic/commit/3bfc24fdfe277eb5a8499ae98f11587dcf279d7e))
+* 实现播放本地音乐 ([1615fec](https://github.com/yiktllw/XCMusic/commit/1615fec2b6e232be2bb626bb036450562f18d7ce))
+* 实现创建歌单功能，修改登录窗口样式 ([a741434](https://github.com/yiktllw/XCMusic/commit/a7414345f631f7ea30ddeae74c4c74004fc55a7e))
+* 添加本地音乐页面(未实装) ([5c1a619](https://github.com/yiktllw/XCMusic/commit/5c1a6196cdcdd1f6d9caeadf242b82e61034cd9c))
+* 添加创建歌单按钮(未实装) ([a79beb5](https://github.com/yiktllw/XCMusic/commit/a79beb53ff1965bec98abe2887104b5cdf337ccc))
+* 为频谱图添加高通和低通滤波器 ([71a7e1e](https://github.com/yiktllw/XCMusic/commit/71a7e1ebd64bd4dbd73f2cfc53b8eec031d12477))
+* 新增: 歌曲信息-文件路径； 调整视觉效果 ([128b02e](https://github.com/yiktllw/XCMusic/commit/128b02e5dea6148e8f26a9c22933a0f2f24e629e))
+* 新增: 设置-播放-开关频谱图 ([ffd241e](https://github.com/yiktllw/XCMusic/commit/ffd241ee22c25f7fbc61f002b587919799d4ccf9))
+* 新增: 设置-常规-关闭按钮行为 ([1e7971e](https://github.com/yiktllw/XCMusic/commit/1e7971e1de18c54e25bb90c5e200b7846ddfa028))
+* 新增: 设置-常规-重载窗口 ([915ed50](https://github.com/yiktllw/XCMusic/commit/915ed505e2b0c13b289112f4332de9ca44bb7ff4))
+* 新增本地音乐-下载的音乐 ([fd2a660](https://github.com/yiktllw/XCMusic/commit/fd2a66054c2d41a5fc7b0477bcc44cc7c91bef38))
+* 新增侧边栏-我喜欢的音乐，侧边栏-收藏的专辑，侧边栏-本地音乐(未实现对应页面) ([2f1e146](https://github.com/yiktllw/XCMusic/commit/2f1e14611e3b131cf97c7aa74acd3e44ff3f8c37))
+* 新增收藏的专辑页面 ([806e6d7](https://github.com/yiktllw/XCMusic/commit/806e6d7d769ce3552a1d183da2157f2874a8281d))
+* 修改欢迎页面样式，点击logo跳转到欢迎页面。 ([8a0ce72](https://github.com/yiktllw/XCMusic/commit/8a0ce72e184466423e90596e375243e022960677))
+* 修改音质选择样式 ([690460c](https://github.com/yiktllw/XCMusic/commit/690460c35f491c7d6106b9dad0118eaff11d0ca2))
+* 修改page样式 ([d25e568](https://github.com/yiktllw/XCMusic/commit/d25e5680a02dc197adfbd14ed7ac1abee751c48c))
+
+
+### Bug Fixes
+
+* 尝试修复player无限触发下一首的错误 ([b0dc4f4](https://github.com/yiktllw/XCMusic/commit/b0dc4f44f3eb9eef8f31092bc6760c42659fe502))
+* 修复4.24.0api的歌曲增益为0的问题 ([17f7f24](https://github.com/yiktllw/XCMusic/commit/17f7f24c188867f8543ad37637710eecc863f6d0))
+* 修复部分图标可拖动，部分文本可选中的问题 ([c7bbb50](https://github.com/yiktllw/XCMusic/commit/c7bbb5093acbe0cb7a58402dbfc292e18811a91a))
+* 修复评论界面的分页按钮显示错误 ([cfd3fb9](https://github.com/yiktllw/XCMusic/commit/cfd3fb9c565acd4dbccd153c25b1f9ef19486cc7))
+* 修复音量均衡可能失效的问题 ([873bde4](https://github.com/yiktllw/XCMusic/commit/873bde4d277cce067b5ad20b859662f695e480be))
+* 修复音频链接过期无法自动重新加载的问题 ([e381ac6](https://github.com/yiktllw/XCMusic/commit/e381ac6533a5590ddd90d4aaad1cea76b11852e7))
+* 修复player中的fs和path错误 ([48fce4b](https://github.com/yiktllw/XCMusic/commit/48fce4b80017371b18113c2d7d13ca0c311a97eb))
+
 ### [0.1.4](https://github.com/yiktllw/XCMusic/compare/v0.1.3...v0.1.4) (2024-10-21)
 
 
