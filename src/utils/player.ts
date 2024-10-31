@@ -102,6 +102,7 @@ export class Player {
      * IndexDB, 用于存储播放列表
      */
     db: indexDB;
+    reloadInterval: any = null;
     _mediaSessionInit: boolean;
     /**
      * 是否初始化设备
@@ -1014,6 +1015,18 @@ export class Player {
             if (this._audio && this._audio.readyState) {
                 this._playState = value;
                 this._playState === 'play' ? this._audio?.play() : this._audio?.pause();
+                if (this._playState === 'pause') {
+                    if (this.reloadInterval) {
+                        clearInterval(this.reloadInterval);
+                    }
+                    this.reloadInterval = setInterval(() => {
+                        this.reloadUrl();
+                    }, 1000 * 60 * 20);
+                } else {
+                    if (this.reloadInterval) {
+                        clearInterval(this.reloadInterval);
+                    }
+                }
                 this.subscriber.exec('playState');
             } else {
                 console.log('Audio not ready');
