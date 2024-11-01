@@ -25,6 +25,15 @@ app.commandLine.appendSwitch('js-flags', '--max-new-space-size=256');
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
+
+// 检查是否已经有实例在运行
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+    // 如果已经有实例在运行，则退出新的实例
+    app.quit();
+}
+
 async function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
@@ -65,6 +74,13 @@ async function createWindow() {
         win.loadURL('app://./index.html')
     }
 }
+
+app.on('second-instance', () => {
+    if (win) {
+        if (win.isMinimized()) win.restore();
+        win.focus();
+    }
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
