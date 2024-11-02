@@ -1,4 +1,7 @@
 @import '@/utils/theme.scss';
+@import './font.scss';
+@import './animation.scss';
+@import './layout.scss';
 
 html {
     font-size: 16px;
@@ -57,92 +60,16 @@ html {
     --font-color-high: rgba(var(--font-color-rgb), 0.8);
     --font-color-standard: rgba(var(--font-color-rgb), 0.6);
     --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --font-size-standard: 1rem;
-    --font-size-small: 0.8rem;
-    --font-size-large: 1.2rem;
-    --font-size-smaller: 0.6rem;
-    --font-size-larger: 1.4rem;
-    --font-size-smallest: 0.4rem;
-    --font-size-largest: 1.6rem;
+    --font-size-standard: 16px;
+    --font-size-small: 14px;
+    --font-size-large: 18px;
+    --font-size-smaller: 12px;
+    --font-size-larger: 20px;
+    --font-size-smallest: 10px;
+    --font-size-largest: 22px;
 }
 
 .g-icon {
     filter: var(--icon-invert);
     -webkit-user-drag: none;
-}
-
-.font-color-main {
-    color: var(--font-color-main);
-}
-
-.font-color-high {
-    color: var(--font-color-high);
-}
-
-.font-color-standard {
-    color: var(--font-color-standard);
-}
-
-.font-color-low {
-    color: var(--font-color-low);
-}
-
-.font-size-standard {
-    font-size: var(--font-size-standard);
-}
-
-.font-size-small {
-    font-size: var(--font-size-small);
-}
-
-.font-size-large {
-    font-size: var(--font-size-large);
-}
-
-.font-size-smaller {
-    font-size: var(--font-size-smaller);
-}
-
-.font-size-larger {
-    font-size: var(--font-size-larger);
-}
-
-.font-size-smallest {
-    font-size: var(--font-size-smallest);
-}
-
-.font-size-largest {
-    font-size: var(--font-size-largest);
-}
-
-.font-bold {
-    font-weight: bold;
-}
-
-.rotate-enter-active,
-.rotate2-enter-active {
-    transition: all .3s ease;
-}
-
-.rotate-enter-from {
-    transform: rotate(180deg);
-}
-
-.rotate2-enter-from {
-    transform: rotate(-180deg);
-}
-
-.rotate-enter-to,
-.rotate2-enter-to {
-    transform: rotate(0deg);
-}
-
-.playui-slide-enter-active,
-.playui-slide-leave-active {
-    transition: all .25s ease;
-}
-
-.playui-slide-enter-from,
-.playui-slide-leave-to {
-    transform: translateY(100%);
 }

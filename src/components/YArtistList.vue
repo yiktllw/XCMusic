@@ -12,7 +12,7 @@
                 </div>
             </div>
             <!-- 专辑数/粉丝数 -->
-            <div class="artists-track-count font-color-standard"
+            <div class="artists-track-count font-size-small font-color-standard"
                 :title="type === 'artist' ? artist.albumSize : artist.followeds">
                 <span>{{ type === 'artist' ? ($t('album') + ': ' + artist.albumSize) : ($t('fans') + ': ' +
                     artist.followeds) }}</span>
@@ -88,7 +88,6 @@ export default defineComponent({
             }
 
             .artists-name-text {
-                font-size: 17px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -96,7 +95,6 @@ export default defineComponent({
         }
 
         .artists-track-count {
-            font-size: 14px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;

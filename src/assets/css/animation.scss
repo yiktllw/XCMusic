@@ -1,0 +1,29 @@
+
+
+.rotate-enter-active,
+.rotate2-enter-active {
+    transition: all .3s ease;
+}
+
+.rotate-enter-from {
+    transform: rotate(180deg);
+}
+
+.rotate2-enter-from {
+    transform: rotate(-180deg);
+}
+
+.rotate-enter-to,
+.rotate2-enter-to {
+    transform: rotate(0deg);
+}
+
+.playui-slide-enter-active,
+.playui-slide-leave-active {
+    transition: all .25s ease;
+}
+
+.playui-slide-enter-from,
+.playui-slide-leave-to {
+    transform: translateY(100%);
+}

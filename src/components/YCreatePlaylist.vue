@@ -2,12 +2,12 @@
     <div>
         <YWindow ref="window" @new-window-state="handleNewWindowState">
             <template #header>
-                <span style="font-size: 19px; font-weight: bold;">
+                <span class="window-title">
                     {{ $t('create_playlist.title') }}
                 </span>
             </template>
             <div class="main">
-                <textarea class="input" v-model="inputValue" :maxlength="40"
+                <textarea class="input font-size-large" v-model="inputValue" :maxlength="40"
                     :placeholder="$t('create_playlist.input_playlist_name')" rows="3"></textarea>
                 <div class="check">
                     <input type="checkbox" v-model="isPrivate" />
@@ -15,7 +15,7 @@
                         {{ $t('create_playlist.private') }}
                     </label>
                 </div>
-                <button class="create" @click="createPlaylist">
+                <button class="create font-size-large" @click="createPlaylist">
                     {{ $t('create_playlist.create') }}
                 </button>
             </div>
@@ -100,7 +100,6 @@ export default defineComponent({
 
     .input {
         padding: 5px 10px;
-        font-size: 18px;
         resize: none;
         width: calc(100% - 20px);
     }
@@ -116,7 +115,6 @@ export default defineComponent({
         }
 
         label {
-            font-size: 16px;
             cursor: pointer;
             color: var(--font-color-high);
         }
@@ -124,7 +122,6 @@ export default defineComponent({
 
     .create {
         width: fit-content;
-        font-size: 18px;
         border-radius: 20px;
         padding: 5px 20px 8px 20px;
         background-color: rgb(255, 70, 90);

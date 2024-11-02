@@ -3,9 +3,9 @@
 	"album": "专辑",
 	"comment": {
 		"all_comment": "全部评论",
-		"hot_order": "热度排序",
-		"recommend_order": "推荐排序",
-		"time_order": "时间排序"
+		"hot_order": "热度",
+		"recommend_order": "推荐",
+		"time_order": "时间"
 	},
 	"context": {
 		"copy_link": "复制链接",

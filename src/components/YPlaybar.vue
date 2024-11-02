@@ -201,7 +201,7 @@
                                     {{ $t('playbar.playlist') }}
                                 </span>
                                 <div class="songs-count"
-                                    style="color:var(--font-color-main); margin:0;padding:0 20px 0px 5px;font-size: 13px; font-weight: bold;">
+                                    style="color:var(--font-color-main); margin:0; padding:0 20px 0px 5px; font-size: 13px; font-weight: bold;">
                                     {{ playlist.length }}
                                 </div>
                             </div>

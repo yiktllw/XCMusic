@@ -38,13 +38,13 @@ export class YMessageC {
     }
 }
 
-export class Message {
+export namespace Message {
     /**
      * 发送程序内通知
      * @param {'info'|'success'|'warning'|'error'} type 消息类型
      * @param {string} message 消息内容
      */
-    static post(type: 'info' | 'success' | 'warning' | 'error', message: string, needTrans: boolean = false) {
+    export function post(type: 'info' | 'success' | 'warning' | 'error', message: string, needTrans: boolean = false) {
         if (['info', 'success', 'warning', 'error'].includes(type)) {
             let transMsg = message;
             if (needTrans) {

@@ -97,17 +97,6 @@ import YScroll from './YScroll.vue';
 
 export default defineComponent({
     name: 'YSidebar',
-    computed: {
-        login() {
-            return useStore().state.login;
-        },
-        setting() {
-            return useStore().state.setting;
-        },
-        OpenedPlaylist() {
-            return useStore().state.openedPlaylist;
-        },
-    },
     data() {
         return {
             buttonTextColor: '#ccc', // 统一设置按钮的文字颜色
@@ -134,6 +123,9 @@ export default defineComponent({
         return {
             sidebar_component,
             globalMsg: store.state.globalMsg,
+            login: store.state.login,
+            setting: store.state.setting,
+            OpenedPlaylist: store.state.openedPlaylist,
         };
     },
     components: {

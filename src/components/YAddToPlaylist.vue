@@ -2,7 +2,7 @@
     <div class="add-to-playlist">
         <YWindow ref="window" @new-window-state="handleNewWindowState">
             <template #header>
-                <span style="font-size: 19px; font-weight: bold;">
+                <span class="window-title">
                     {{ $t('add_to_playlist') }}
                 </span>
             </template>
@@ -11,7 +11,7 @@
                     <div class="playlist" v-for="playlist in login.userPlaylists" :key="playlist.id"
                         @click="addToPlaylist(playlist.id)">
                         <img class="img" :src="playlist.img + '?param=100y100'" />
-                        <div class="playlist-name font-color-high">{{ playlist.name }}</div>
+                        <div class="playlist-name font-color-high font-size-std">{{ playlist.name }}</div>
                     </div>
                 </div>
             </YScroll>
@@ -25,7 +25,7 @@ import YScroll from '@/components/YScroll.vue';
 import { defineComponent, ref } from 'vue';
 import { Message } from '@/dual/YMessageC';
 import { useApi } from '@/utils/api';
-import { mapState, useStore } from 'vuex';
+import { useStore } from 'vuex';
 
 export default defineComponent({
     name: 'YAddToPlaylist',
@@ -137,7 +137,6 @@ export default defineComponent({
 
         .playlist-name {
             margin-left: 10px;
-            font-size: 16px;
             font-weight: bold;
         }
 

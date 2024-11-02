@@ -11,7 +11,7 @@
                 </div>
             </div>
             <!-- 数字 -->
-            <div class="number font-color-main" v-if="item.showNum"
+            <div class="number font-size-smaller font-color-main" v-if="item.showNum"
                 :style="{ 'color': item.position === position ? '#fff' : '#bbb' }">{{
                     item.num }}</div>
         </button>
@@ -103,7 +103,6 @@ export default defineComponent({
         .number {
             margin: 0;
             padding: 0px 0px 0px 3px;
-            font-size: 13px;
             font-weight: bold;
             left: 0;
             top: 0;

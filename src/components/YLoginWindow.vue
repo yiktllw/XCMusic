@@ -2,7 +2,7 @@
     <div>
         <YWindow ref="window" @new-window-state="handleNewWindowState">
             <template #header>
-                <span style="font-size: 19px; font-weight: bold;">
+                <span class="window-title">
                     {{ $t('titlebar.scanQRCodeToLogin') }}
                 </span>
             </template>

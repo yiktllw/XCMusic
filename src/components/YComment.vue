@@ -2,10 +2,10 @@
     <div class="comment-main" :key="key">
         <div class="header">
             <div class="header-left">
-                <div class="comment-title" v-if="showHeader">
+                <div class="font-size-larger" v-if="showHeader">
                     {{ $t('comment.all_comment') }}
                 </div>
-                <div class="comment-count" v-if="showHeader && cmt.count > 0">
+                <div class="font-size-small" v-if="showHeader && cmt.count > 0">
                     {{ cmt.count }}
                 </div>
                 <div></div>
@@ -39,10 +39,10 @@
                             {{ comment.content }}
                         </div>
                         <div class="bottom">
-                            <div class="comment-time font-color-low">
+                            <div class="comment-time font-size-small font-color-low">
                                 {{ _formatDate_yyyymmdd(comment.time) }}
                             </div>
-                            <div class="comment-like font-color-standard">
+                            <div class="comment-like font-size-large font-color-standard">
                                 {{ comment.likedCount }}
                                 <img src="@/assets/thumb.svg" class="like-img g-icon" />
                             </div>
@@ -125,14 +125,6 @@ export default defineComponent({
         .header-left {
             display: flex;
             font-weight: bold;
-
-            .comment-title {
-                font-size: 1.2rem;
-            }
-
-            .comment-count {
-                font-size: .8rem;
-            }
         }
 
         .header-right {
@@ -143,10 +135,10 @@ export default defineComponent({
             }
 
             .sort-item {
+                font-size: var(--font-size-small);
                 cursor: pointer;
                 padding: 5px;
                 margin: 5px;
-                font-size: .9rem;
             }
         }
     }
@@ -187,14 +179,12 @@ export default defineComponent({
                 flex-direction: column;
 
                 .comment-user {
-                    font-size: 1rem;
                     color: rgb(106, 110, 213);
                     cursor: pointer;
                     width: 100%;
                 }
 
                 .comment-text {
-                    font-size: 1rem;
                     margin: 5px 0px;
                     width: 100%;
                 }
@@ -207,7 +197,6 @@ export default defineComponent({
 
                     .comment-time {
                         margin-top: 5px;
-                        font-size: 0.9rem;
                         font-weight: bold;
                     }
 
@@ -215,7 +204,6 @@ export default defineComponent({
                         display: flex;
                         flex-direction: row;
                         align-items: center;
-                        font-size: 1.1rem;
                         font-weight: bold;
 
                         .like-img {
