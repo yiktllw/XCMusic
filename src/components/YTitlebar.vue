@@ -25,38 +25,40 @@
             <YPanel ref="search_panel" :trigger="search_panel_trigger ?? undefined" style="position:relative; width:0px"
                 :default-show="false" :slide-direction="1">
                 <div class="search-panel" id="panel">
-                    <div class="search-history" v-if="searchHistory.length > 0">
-                        <div class="search-history-title">
-                            {{ $t('titlebar.searchHistory') }}
-                        </div>
-                        <div class="search-history-items">
-                            <div v-for="item in searchHistory" :key="item" class="item-container">
-                                <span class="search-history-item font-color-standard" @click="search(item)">
-                                    {{ item }}
-                                </span>
-                                <div class="delete-button" @click="deleteSearchHistory(item)">
-                                    <img class="img-delete g-icon" src="../assets/close.svg">
+                    <YScroll>
+                        <div class="search-history" v-if="searchHistory.length > 0">
+                            <div class="search-history-title">
+                                {{ $t('titlebar.searchHistory') }}
+                            </div>
+                            <div class="search-history-items">
+                                <div v-for="item in searchHistory" :key="item" class="item-container">
+                                    <span class="search-history-item font-color-standard" @click="search(item)">
+                                        {{ item }}
+                                    </span>
+                                    <div class="delete-button" @click="deleteSearchHistory(item)">
+                                        <img class="img-delete g-icon" src="../assets/close.svg">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
-                        <div class="search-suggestions-title">
-                            {{ $t('titlebar.suggestedSearches') }}
+                        <div class="search-suggestions" v-if="searchSuggestions?.length > 0">
+                            <div class="search-suggestions-title">
+                                {{ $t('titlebar.suggestedSearches') }}
+                            </div>
+                            <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
+                                :title="suggestion.keyword" @click="search(suggestion.keyword)"
+                                v-html="highlightMatching(suggestion.keyword)">
+                            </div>
                         </div>
-                        <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
-                            :title="suggestion.keyword" @click="search(suggestion.keyword)"
-                            v-html="highlightMatching(suggestion.keyword)">
+                        <div class="search-suggestions" v-else>
+                            <div class="search-suggestions-title">
+                                {{ $t('titlebar.trending') }}
+                            </div>
+                            <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches"
+                                :key="hotSearch" :title="hotSearch.first" @click="search(hotSearch.first)"
+                                v-html="highlightMatching(hotSearch.first)" />
                         </div>
-                    </div>
-                    <div class="search-suggestions" v-else>
-                        <div class="search-suggestions-title">
-                            {{ $t('titlebar.trending') }}
-                        </div>
-                        <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches"
-                            :key="hotSearch" :title="hotSearch.first" @click="search(hotSearch.first)"
-                            v-html="highlightMatching(hotSearch.first)" />
-                    </div>
+                    </YScroll>
                 </div>
             </YPanel>
         </div>
@@ -130,7 +132,8 @@
                 </div>
             </YPanel>
             <!-- 设置、最小化、最大化和关闭按钮 -->
-            <button class="settings" @click="$router.push({ path: '/setting' })" :title="$t('titlebar.settings')" v-if="type === 'default'">
+            <button class="settings" @click="$router.push({ path: '/setting' })" :title="$t('titlebar.settings')"
+                v-if="type === 'default'">
                 <img class="img settings g-icon" src="../assets/settings.svg" alt="Settings" />
             </button>
             <button class="minimize " @click="minimize" :title="$t('titlebar.minimize')">
@@ -151,6 +154,7 @@ import { defineComponent, ref } from 'vue';
 import { useApi } from '@/utils/api';
 import { mapActions, useStore } from 'vuex';
 import YPanel from './YPanel.vue';
+import YScroll from './YScroll.vue';
 
 export default defineComponent({
     name: 'YTitlebar',
@@ -192,6 +196,7 @@ export default defineComponent({
     },
     components: {
         YPanel,
+        YScroll,
     },
     data() {
         return {
@@ -560,8 +565,8 @@ export default defineComponent({
                 height: 17px;
                 opacity: 0.5;
                 -webkit-user-drag: none;
-                
-                &:hover{
+
+                &:hover {
                     cursor: pointer;
                     opacity: 1;
                 }
@@ -588,33 +593,11 @@ export default defineComponent({
             width: 300px;
             height: 400px;
             max-height: 400px;
-            overflow-y: auto;
             transform: translateX(calc(-100% + 0px));
             background-color: var(--panel-background-color);
             border-radius: 5px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             top: 30px;
-
-            &::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: transparent;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: transparent;
-                border-radius: 6px;
-            }
-
-            &:hover::-webkit-scrollbar-thumb {
-                background-color: rgba(var(--foreground-color-rgb), 0.1);
-            }
-
-            &:hover::-webkit-scrollbar-thumb:hover {
-                background-color: rgba(var(--foreground-color-rgb), 0.2);
-            }
 
             .search-history {
                 display: flex;

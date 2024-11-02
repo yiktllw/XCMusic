@@ -221,12 +221,12 @@
                                 {{ $t('playbar.playlist_panel.like') }}
                             </div>
                         </div>
-                        <div class="scrollable">
+                        <YScroll>
                             <YSongsTable class="songs-table" v-model="playlist" :showTrackCounter="false"
                                 :showTrackAlbum="false" :showTrackDuration="false" :showTrackPopularity="false"
                                 :showHeader="false" :resortable="false" :canSendPlaylist="false" :limit="500"
                                 :id="'YPlaybar.vue'" ref="songstable" />
-                        </div>
+                        </YScroll>
                     </div>
                 </YPanel>
             </div>
@@ -243,6 +243,7 @@ import YPanel from './YPanel.vue';
 import YProgressBar from './YProgressBar.vue';
 import YProgressBarV from './YProgressBarV.vue';
 import YTextBanner from './YTextBanner.vue';
+import YScroll from './YScroll.vue';
 import { isLocal } from '@/utils/localTracks_renderer';
 
 export default defineComponent({
@@ -253,6 +254,7 @@ export default defineComponent({
         YProgressBar,
         YProgressBarV,
         YTextBanner,
+        YScroll,
     },
     setup() {
         const quality_panel = ref<InstanceType<typeof YPanel>>();
@@ -1119,36 +1121,6 @@ export default defineComponent({
                 }
             }
         }
-    }
-}
-
-.scrollable {
-    display: block;
-    width: 100%;
-    padding-right: 5px;
-    overflow-y: auto;
-    user-select: none;
-    -webkit-user-drag: none;
-
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: transparent;
-        border-radius: 6px;
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-        background-color: rgba(var(--foreground-color-rgb), 0.1);
-    }
-
-    &:hover::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(var(--foreground-color-rgb), 0.2);
     }
 }
 </style>

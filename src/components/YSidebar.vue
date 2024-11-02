@@ -1,9 +1,11 @@
 <template>
     <div class="sidebar y_sidebar_component" ref="sidebar_component" :style="{ 'width': `${sidebarWidth}px` }">
         <div class="title">
-            <img src="@/assets/logo.svg" style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px; cursor: pointer; -webkit-user-drag: none;" @click="$router.push({path: '/greeting'})" />
+            <img src="@/assets/logo.svg"
+                style="width: 145px; margin-right: 10px; margin-left: 15px;margin-top:10px; cursor: pointer; -webkit-user-drag: none;"
+                @click="$router.push({ path: '/greeting' })" />
         </div>
-        <div class="scrollable">
+        <YScroll class="yscroll">
             <button class="big-button font-color-standard"
                 @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })">
                 <img src="@/assets/like2.svg" class="g-icon big-button-icon" />
@@ -82,7 +84,7 @@
                     </button>
                 </div>
             </transition>
-        </div>
+        </YScroll>
     </div>
     <div class="resizer" @mousedown="initResize"></div>
 </template>
@@ -91,6 +93,7 @@
 import { Message } from '@/dual/YMessageC';
 import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
+import YScroll from './YScroll.vue';
 
 export default defineComponent({
     name: 'YSidebar',
@@ -132,6 +135,9 @@ export default defineComponent({
             sidebar_component,
             globalMsg: store.state.globalMsg,
         };
+    },
+    components: {
+        YScroll,
     },
     methods: {
         handleButtonClick(buttonId: number | string) {
@@ -222,42 +228,13 @@ export default defineComponent({
         text-align: left;
         margin-bottom: 10px;
         -webkit-user-drag: none;
-        // -webkit-app-region: drag;
     }
 
-    .scrollable {
+    .yscroll {
         display: flex;
         padding-left: 15pt;
         padding-right: 15pt;
         flex-direction: column;
-        overflow-y: auto;
-        max-height: 100%;
-        overflow-x: hidden;
-
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: transparent;
-            border-radius: 6px;
-        }
-
-        &:hover::-webkit-scrollbar-thumb {
-            background-color: rgba(var(--foreground-color-rgb), 0.1);
-        }
-
-        &:hover::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(var(--foreground-color-rgb), 0.2);
-        }
-
-        &>* {
-            margin-bottom: 5px;
-        }
 
         .big-button {
             display: flex;
