@@ -87,7 +87,7 @@ import YArtistList from '@/components/YArtistList.vue';
 import YSearchLyrics from '@/components/YSearchLyrics.vue';
 import YScroll from '@/components/YScroll.vue';
 import YPage from '@/components/YPage.vue';
-import { Tracks } from '@/utils/tracks';
+import { Tracks, ITrack } from '@/utils/tracks';
 import { YPageC } from '@/dual/YPageC';
 import { YColor } from '@/utils/color';
 import { useApi } from '../utils/api';
@@ -135,7 +135,7 @@ export default defineComponent({
                 {
                     display: 'search_view.switcher.song',
                     position: 'song',
-                    tracks: [],
+                    tracks: [] as ITrack[],
                     total: 0,
                 },
                 {
@@ -159,7 +159,7 @@ export default defineComponent({
                 {
                     display: 'search_view.switcher.lyric',
                     position: 'lyric',
-                    lyricsList: [],
+                    lyricsList: [] as ITrack[],
                     total: 0,
                 },
                 {

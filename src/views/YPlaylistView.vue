@@ -176,7 +176,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YLoading from '@/components/YLoading.vue';
 import YComment from '@/components/YComment.vue';
 import { Message } from '@/dual/YMessageC';
-import { Tracks } from '@/utils/tracks';
+import { ITrack, Tracks } from '@/utils/tracks';
 import { useApi } from '@/utils/api';
 import { formatDate_yyyymmdd } from '@/utils/time';
 import { YColor } from '@/utils/color'
@@ -237,7 +237,7 @@ export default defineComponent({
                 createrAvatarUrl: '', // 创建者头像 URL
                 trackCount: 0,      // 歌曲数量
                 alReels: [] as any[],        // 专辑信息
-                tracks: [] as any[], // 歌曲列表
+                tracks: [] as ITrack[], // 歌曲列表
             },
             isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字

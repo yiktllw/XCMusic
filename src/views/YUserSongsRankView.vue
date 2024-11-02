@@ -9,10 +9,9 @@
 import { defineComponent } from 'vue';
 import YHeader from '@/components/YHeader.vue';
 import YSongsTable from '@/components/YSongsTable.vue';
-import { Tracks } from '@/utils/tracks';
+import { ITrack, Tracks } from '@/utils/tracks';
 import { useApi } from '@/utils/api';
 import { useStore } from 'vuex';
-import { markRaw } from 'vue';
 
 export default defineComponent({
     name: 'YUserSongsRank',
@@ -54,8 +53,8 @@ export default defineComponent({
                 },
             ],
             position: 'recent',
-            recentTracks: [],
-            alltimeTracks: [],
+            recentTracks: [] as ITrack[],
+            alltimeTracks: [] as ITrack[],
         };
     },
     methods: {
@@ -68,10 +67,10 @@ export default defineComponent({
                 type: 1,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.recentTracks = markRaw((new Tracks({
+                this.recentTracks = (new Tracks({
                     url: '/user/record',
                     tracks: res.weekData,
-                })).tracks);
+                })).tracks;
             }).catch((err) => {
                 console.log(err);
             });
@@ -80,10 +79,10 @@ export default defineComponent({
                 type: 0,
                 cookie: this.login.cookie,
             }).then((res) => {
-                this.alltimeTracks = markRaw((new Tracks({
+                this.alltimeTracks = (new Tracks({
                     url: '/user/record',
                     tracks: res.allData
-                })).tracks);
+                })).tracks;
             }).catch((err) => {
                 console.log(err);
             });

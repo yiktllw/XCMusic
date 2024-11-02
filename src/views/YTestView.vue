@@ -36,12 +36,6 @@ export default defineComponent({
     methods: {
     },
     async mounted() {
-        const res = await ipcRenderer.invoke('get-local-tracks', this.setting.download.path);
-        const tracks = new Tracks({
-            url: 'local',
-            tracks: res,
-        });
-        console.log('tracks', tracks.tracks);
     },
     beforeUnmount() {
     },

@@ -1,8 +1,45 @@
 import { useApi } from "./api";
 
+export interface ITrack {
+    id: number; // 歌曲 id，唯一标识
+    name: string;   // 歌曲名
+    tns: string;    // 歌曲别名
+    al: {   // 专辑信息
+        id: number; // 专辑 id，唯一标识
+        name: string;   // 专辑名
+        picUrl: string; // 专辑封面
+        tns: string;    // 专辑别名
+    };
+    ar: Array<{ // 歌手信息
+        id: number; // 歌手 id，唯一标识
+        name: string;   // 歌手名
+        tns: string;    // 歌手别名
+    }>;
+    _picUrl: string | null; // 专辑封面地址
+    cd: number; // 专辑序号
+    no: number; // 专辑内歌曲序号
+    reelName: string | null;    // 专辑内歌曲简称
+    reelIndex: number;  // 专辑内歌曲reel序号
+    songInReelIndex: number;
+    dt: number; // 歌曲时长
+    pop: number;    // 歌曲流行度, 0-100的整数
+    playCount: number;  // 歌曲播放次数
+    lyrics: Array<string>;  // 歌词
+    h: any; // higher信息
+    l: any; // standard信息
+    sq: any;   // lossless信息 
+    hr: any;    // hi-res信息
+    jyeffect: any;  // 高清环绕声信息
+    sky: any;   // 沉浸环绕声信息
+    jymaster: any;  // 超清母带信息
+    originalIndex: any; // 原始序号, 用于歌单内歌曲排序
+    local: boolean; // 是否为本地歌曲
+    localPath: string;  // 本地歌曲路径
+}
+
 export class Tracks {
     _tracksMap: Map<any, any>;
-    _tracks: any;
+    _tracks: Array<ITrack>;
     /**
      * 初始化歌曲列表
      * @param {object} params 参数
@@ -12,8 +49,8 @@ export class Tracks {
      */
     constructor({ url, tracks, params, }: { url: string; tracks: Array<any>; params?: any; }) {
         this._tracksMap = new Map();
-        this._tracks = tracks.map((item, index) => {
-            let resultTrack = {
+        this._tracks = tracks.map((item, index): ITrack => {
+            let resultTrack: ITrack = {
                 id: 0,
                 name: '',
                 tns: '',
@@ -122,7 +159,7 @@ export class Tracks {
                         .replace(/\//, '_yikt_') // 替换开头的 '/' 为 '_yikt_'
                         .replace(/\s/g, '_space_') // 替换空格
                         .replace(/[^\w-._]/g, '_other_')
-                        .replace(/\./g, '_') 
+                        .replace(/\./g, '_')
                     track = {
                         id: validId,
                         name: item.name,

@@ -13,7 +13,7 @@ import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YHeader from '@/components/YHeader.vue';
-import { TrackIds, Tracks } from '@/utils/tracks';
+import { ITrack, TrackIds, Tracks } from '@/utils/tracks';
 import { YColor } from '@/utils/color';
 
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
     },
     data() {
         return {
-            tracks: [] as any,
+            tracks: [] as ITrack[],
             position: 'download',
             switcher: [
                 {
