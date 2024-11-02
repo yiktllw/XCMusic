@@ -29,39 +29,6 @@
                             </label>
                         </div>
                     </div>
-                    <div class="content-item item-theme ">
-                        <div class="content-item-title item-theme-title ">
-                            {{ $t('setting_view.theme') }}
-                        </div>
-                        <div class="content-item-content">
-                            <select v-model="theme" @change="handleTheme">
-                                <option v-for="item in themes" :key="item.value" :value="item.value">
-                                    {{
-                                        [
-                                            'setting_view.theme_name.dark',
-                                            'setting_view.theme_name.dark_high_contrast',
-                                            'setting_view.theme_name.light',
-                                            'setting_view.theme_name.light_high_contrast',
-                                        ].includes(item.display) ?
-                                            $t(item.display) : item.display
-                                    }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="content-item item-zoom">
-                        <div class="content-item-title item-zoom-title">
-                            {{ $t('setting_view.zoom') }}
-                        </div>
-                        <div class="zoom-item">
-                            <div class="item-zoom-content">
-                                <input type="number" min="50" max="200" step="5" v-model="zoom">
-                                <div class="zoom-apply" @click="handleZoom">
-                                    {{ $t('setting_view.apply') }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="content-item close-item">
                         <div class="content-item-title">
                             {{ $t('setting_view.close') }}
@@ -90,6 +57,56 @@
                         <div class="content-item-content">
                             <div class="reload-item" @click="reloadWindow">
                                 {{ $t('setting_view.click_to_reload') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="appearance item" id="appearance">
+                <div class="appearance-title item-title">
+                    {{ $t('header.setting_view.appearance') }}
+                </div>
+                <div class="appearance-content item-content">
+                    <div class="content-item item-theme ">
+                        <div class="content-item-title item-theme-title ">
+                            {{ $t('setting_view.theme') }}
+                        </div>
+                        <div class="content-item-content">
+                            <select v-model="theme" @change="handleTheme">
+                                <option v-for="item in themes" :key="item.value" :value="item.value">
+                                    {{
+                                        [
+                                            'setting_view.theme_name.dark',
+                                            'setting_view.theme_name.dark_high_contrast',
+                                            'setting_view.theme_name.light',
+                                            'setting_view.theme_name.light_high_contrast',
+                                        ].includes(item.display) ?
+                                            $t(item.display) : item.display
+                                    }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="content-item item-custom">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.appearance.custom') }}
+                        </div>
+                        <div class="content-item-content ">
+                            <div class="custom-text" @click="openCustomWindow">
+                                {{ $t('setting_view.appearance.click_to_create_theme') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-item item-zoom">
+                        <div class="content-item-title item-zoom-title">
+                            {{ $t('setting_view.zoom') }}
+                        </div>
+                        <div class="zoom-item">
+                            <div class="item-zoom-content">
+                                <input type="number" min="50" max="200" step="5" v-model="zoom">
+                                <div class="zoom-apply" @click="handleZoom">
+                                    {{ $t('setting_view.apply') }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -251,7 +268,7 @@ import { YColor } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
-import { themes } from '@/utils/theme';
+import { themes, Theme } from '@/utils/theme';
 import packageJson from '../../package.json';
 import { qualities } from '@/utils/setting';
 
@@ -270,6 +287,7 @@ export default defineComponent({
             header,
             setting: store.state.setting,
             player: store.state.player,
+            globalMsg: store.state.globalMsg,
         }
     },
     computed: {
@@ -290,6 +308,12 @@ export default defineComponent({
                     showNum: false,
                     position: 'normal',
                     display: 'header.setting_view.normal',
+                },
+                {
+                    num: 0,
+                    showNum: false,
+                    position: 'appearance',
+                    display: 'header.setting_view.appearance',
                 },
                 {
                     num: 0,
@@ -450,11 +474,31 @@ export default defineComponent({
         },
         reloadWindow() {
             window.location.reload();
+        },
+        openCustomWindow() {
+            this.globalMsg.post('open-custom-window');
+            this.globalMsg.subscriber.on({
+                id: 'YSettingView',
+                type: 'close-custom-window',
+                func: () => {
+                    this.fetchThemes();
+                }
+            })
+        },
+        fetchThemes() {
+            const userCustomThemes = this.setting.display.userCustomThemes.map((item) => {
+                return item.data;
+            });
+            this.themes = themes.concat(userCustomThemes);
         }
     },
     mounted() {
         YColor.setBackgroundColorTheme();
         this.theme = this.setting.display.theme;
+        const userCustomThemes = this.setting.display.userCustomThemes.map((item) => {
+            return item.data;
+        });
+        this.themes = this.themes.concat(userCustomThemes);
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
         this.closeBehavior = this.setting.titleBar.closeButton;
@@ -464,6 +508,9 @@ export default defineComponent({
         this.downloadPath = this.setting.download.path;
         this.quality = this.setting.download.quality;
         this.getDevices();
+    },
+    beforeUnmount() {
+        this.globalMsg.subscriber.offAll('YSettingView');
     },
 })
 </script>
@@ -566,9 +613,23 @@ export default defineComponent({
                     }
 
                     .content-item-content {
+                        
+                        .custom-text {
+                            cursor: pointer;
+                            color: var(--font-color-high);
+
+                            &:hover {
+                                color: var(--font-color-main);
+                            }
+                        }
 
                         .reload-item {
                             cursor: pointer;
+                            color: var(--font-color-high);
+                            
+                            &:hover {
+                                color: var(--font-color-main);
+                            }
                         }
 
                         select {

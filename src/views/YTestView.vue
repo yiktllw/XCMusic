@@ -1,26 +1,23 @@
 <template>
     <div class="display">
-        <YCreatePlaylist />
+        <YCustomWindow />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
-import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
-import YLoginWindow from '@/components/YLoginWindow.vue';
-const ipcRenderer = window.electron.ipcRenderer;
-import { Tracks } from '@/utils/tracks';
+// import { Theme } from '@/utils/theme';
+import YCustomWindow from '@/components/YCustomWindow.vue';
 
 export default defineComponent({
     name: 'YTestView',
     components: {
-        YCreatePlaylist,
-        YLoginWindow,
+        YCustomWindow,
     },
-    setup(){
+    setup() {
         const store = useStore();
-        
+
         return {
             player: store.state.player,
             setting: store.state.setting,
@@ -36,6 +33,28 @@ export default defineComponent({
     methods: {
     },
     async mounted() {
+        // const theme: Theme.IThemeCSS = {
+        //     autoBackgroundType: 'other',
+        //     background: '#f0f0f0',
+        //     foreground: '#0f0f0f',
+        //     name: 'test',
+        //     type: 'light',
+        //     fontColors: {
+        //         fontColorAll: '#000000',
+        //     },
+        //     panelBackground: '#f0f0f0',
+        // }
+        // const result = Theme.createTheme(theme);
+        // const _theme = result.theme;
+        // const classContent = result.classContent;
+        // const userCustomThemes = this.setting.display.userCustomThemes.slice();
+        // this.setting.display.userCustomThemes = [
+        //     ...userCustomThemes,
+        //     {
+        //         data: _theme,
+        //         classContent: classContent,
+        //     }
+        // ]
     },
     beforeUnmount() {
     },

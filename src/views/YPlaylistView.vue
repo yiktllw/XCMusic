@@ -180,7 +180,7 @@ import { ITrack, Tracks } from '@/utils/tracks';
 import { useApi } from '@/utils/api';
 import { formatDate_yyyymmdd } from '@/utils/time';
 import { YColor } from '@/utils/color'
-import { themes } from '@/utils/theme';
+import { Theme1, Theme2, themes } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { preparePlaylist } from '@/utils/playlist';
 import { markRaw, ref, defineComponent } from 'vue';
@@ -466,11 +466,9 @@ export default defineComponent({
         },
         // 设置背景颜色
         async _setBackgroundColor() {
-            const theme = themes.find(theme => theme.value === this.setting.display.theme)
+            const theme = YColor.findTheme(this.setting.display.theme);
             if (!theme) { return; }
-            const themeType = theme.type;
-            const themeBackground = theme.background;
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, themeType ?? undefined, themeBackground);
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, theme.type, theme.background);
         },
         // 处理搜索
         handleSearch(input: string, fromEnter: boolean) {

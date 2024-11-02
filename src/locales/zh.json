@@ -17,6 +17,27 @@
 		"subscribe": "收藏到歌单",
 		"view_comment": "查看评论"
 	},
+	"create_custom_theme": {
+		"font_color": "字体颜色",
+		"font_color_primary": "主要字体颜色",
+		"font_color_quaternary": "次次要字体颜色",
+		"font_color_secondary": "次主要字体颜色",
+		"font_color_tertiary": "次要字体颜色",
+		"font_color_type": "字体颜色类型",
+		"font_color_type_single": "单色",
+		"font_color_type_various": "多色",
+		"theme_auto_background_type": "自动背景类型",
+		"theme_background_color": "背景颜色",
+		"theme_foreground_color": "前景颜色",
+		"theme_name": "名称",
+		"theme_name_placeholder": "请输入主题名称",
+		"theme_panel_color": "面板颜色",
+		"theme_type": "主题类型",
+		"theme_type_dark": "暗色",
+		"theme_type_light": "亮色",
+		"theme_type_other": "其他",
+		"title": "创建自定义主题"
+	},
 	"create_playlist": {
 		"create": "创建",
 		"error": "创建歌单失败",
@@ -35,6 +56,7 @@
 		},
 		"setting_view": {
 			"about": "关于",
+			"appearance": "外观",
 			"download": "下载",
 			"normal": "常规",
 			"play": "播放"
@@ -180,6 +202,10 @@
 			"readme": "介绍",
 			"source_code": "源代码",
 			"version": "版本"
+		},
+		"appearance": {
+			"click_to_create_theme": "点击创建自定义主题",
+			"custom": "自定义"
 		},
 		"apply": "应用",
 		"click_to_reload": "点击重新加载窗口",

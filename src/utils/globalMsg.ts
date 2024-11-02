@@ -5,6 +5,8 @@ const events = [
     'open-login-window',
     'close-login-window',
     'close-login-window-from-homeview',
+    'open-custom-window',
+    'close-custom-window',
 ]
 
 export class GlobalMsg {

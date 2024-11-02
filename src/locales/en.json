@@ -17,6 +17,27 @@
 		"subscribe": "Add to Playlist",
 		"view_comment": "View Comments"
 	},
+	"create_custom_theme": {
+		"font_color": "Font Color",
+		"font_color_primary": "Primary",
+		"font_color_quaternary": "Quaternary",
+		"font_color_secondary": "Secondary",
+		"font_color_tertiary": "Tertiary",
+		"font_color_type": "Font Color Type",
+		"font_color_type_single": "Single",
+		"font_color_type_various": "Various",
+		"theme_auto_background_type": "Auto Background Type",
+		"theme_background_color": "Background",
+		"theme_foreground_color": "Foreground",
+		"theme_name": "Name",
+		"theme_name_placeholder": "Please enter a theme name",
+		"theme_panel_color": "Panel",
+		"theme_type": "Type",
+		"theme_type_dark": "Dark",
+		"theme_type_light": "Light",
+		"theme_type_other": "Other",
+		"title": "Create Custom Theme"
+	},
 	"create_playlist": {
 		"create": "Create",
 		"error": "Failed to create playlist",
@@ -35,6 +56,7 @@
 		},
 		"setting_view": {
 			"about": "About",
+			"appearance": "Appearance",
 			"download": "Download",
 			"normal": "Normal",
 			"play": "Play"
@@ -180,6 +202,10 @@
 			"readme": "Readme",
 			"source_code": "Source",
 			"version": "Version"
+		},
+		"appearance": {
+			"click_to_create_theme": "Click to create a custom theme.",
+			"custom": "Custom"
 		},
 		"apply": "Apply",
 		"click_to_reload": "Click to reload window.",

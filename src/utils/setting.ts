@@ -1,4 +1,4 @@
-import { Message } from "@/dual/YMessageC";
+import { Theme1, Theme2 } from "./theme";
 import { themes } from "./theme";
 let fs: any, path: any, os: any;
 
@@ -42,6 +42,10 @@ export interface Settings {
     display: {
         language: 'zh' | 'en',
         theme: string,
+        userCustomThemes: Array<{
+            data: Theme1 | Theme2,
+            classContent: string,
+        }>,
         zoom: number,
         sidebarWidth: number,
         albumWidth: number,
@@ -183,9 +187,21 @@ export const settingGroup: SettingGroup = {
             value: localStorage.getItem('setting.display.theme') ?? 'dark',
             default: 'dark',
             validation: (value) => {
-                let valid = typeof value === 'string' && themes.some(theme => theme.value === value);
+                const userCustomThemes = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
+                let valid = typeof value === 'string' && (themes.some(theme => theme.value === value) || userCustomThemes.some((theme: any) => theme.data.value === value));
                 if (valid) {
                     localStorage.setItem('setting.display.theme', value);
+                }
+                return valid;
+            }
+        },
+        userCustomThemes: {
+            value: JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]'),
+            default: [],
+            validation: (value) => {
+                let valid = Array.isArray(value);
+                if (valid) {
+                    localStorage.setItem('setting.display.userCustomThemes', JSON.stringify(value));
                 }
                 return valid;
             }

@@ -5,6 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
+import { Doc } from './utils/document';
 
 export default defineComponent({
     name: 'App',
@@ -22,6 +23,8 @@ export default defineComponent({
         if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom.toString()));
         }
+        // 初始化用户自定义主题
+        Doc.updateDocumentClassBySetting(this.setting.display.userCustomThemes);
         // 初始化主题
         document.body.className = `theme-${this.setting.display.theme}`;
         // 初始化语言
