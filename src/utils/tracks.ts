@@ -1,4 +1,14 @@
 import { useApi } from "./api";
+function generateUniqueString(address: string): string {
+    const crypto = window.api?.crypto;
+    if (!crypto) {
+        return address.replace(/\//, '_yikt_') // 替换开头的 '/' 为 '_yikt_'
+            .replace(/\s/g, '_space_') // 替换空格
+            .replace(/[^\w-._]/g, '_other_')
+            .replace(/\./g, '_')
+    }
+    return crypto(address);
+}
 
 export interface ITrack {
     id: number; // 歌曲 id，唯一标识
@@ -155,11 +165,7 @@ export class Tracks {
                     }
                 } else if (url === 'local') {
                     const path = item.path.replace(/\\/g, '/');
-                    const validId = path
-                        .replace(/\//, '_yikt_') // 替换开头的 '/' 为 '_yikt_'
-                        .replace(/\s/g, '_space_') // 替换空格
-                        .replace(/[^\w-._]/g, '_other_')
-                        .replace(/\./g, '_')
+                    const validId = generateUniqueString(path);
                     track = {
                         id: validId,
                         name: item.name,

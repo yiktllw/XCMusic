@@ -3,6 +3,7 @@ import { shell } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import crypto from "crypto";
 import https from "https";
 
 interface electron {
@@ -20,6 +21,7 @@ interface api {
     fs: typeof fs;
     os: typeof os;
     path: typeof path;
+    crypto: (str: string) => string;
     NodeID3: typeof NodeID3;
     pathJoin: (...args: string[]) => string;
     readFile: (path: string, options?: { encoding?: null; flag?: string; }) => Buffer;

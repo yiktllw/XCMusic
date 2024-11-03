@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const crypto = require('crypto');
 
 contextBridge.exposeInMainWorld('api', {
     pathJoin: (...args) => path.join(...args), // 暴露 path.join
@@ -18,6 +19,7 @@ contextBridge.exposeInMainWorld('api', {
     fs: fs,
     path: path,
     os: os,
+    crypto: (str) => { return crypto.createHash('sha256').update(str).digest('hex'); }, // 加密字符串
 });
 contextBridge.exposeInMainWorld(
     'electron',
