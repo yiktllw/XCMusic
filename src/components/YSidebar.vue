@@ -293,7 +293,7 @@ export default defineComponent({
             border-radius: 10px;
             cursor: pointer;
             padding: 6px 0px 6px 8px;
-            transition: all 0.3s ease;
+            //transition: all 0.3s ease;
             user-select: none;
             white-space: nowrap;
             overflow: hidden;

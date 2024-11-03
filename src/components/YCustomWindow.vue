@@ -9,6 +9,21 @@
             <div class="main">
                 <div class="main-content">
                     <div class="checks">
+                        <div class="check-item preset">
+                            <div class="label">
+                                {{ $t('create_custom_theme.preset') }}
+                            </div>
+                            <div class="check">
+                                <input type="radio" id="preset_dark" value="dark" v-model="preset" />
+                                <label for="preset_dark">
+                                    {{ $t('create_custom_theme.theme_type_dark') }}
+                                </label>
+                                <input type="radio" id="preset_light" value="light" v-model="preset" />
+                                <label for="preset_light">
+                                    {{ $t('create_custom_theme.theme_type_light') }}
+                                </label>
+                            </div>
+                        </div>
                         <div class="check-item name">
                             <div class="label">
                                 {{ $t('create_custom_theme.theme_name') }}
@@ -298,10 +313,33 @@ export default defineComponent({
                     fontColorLow: '#999999',
                 };
             }
-        }
+        },
+        preset(val) {
+            this.fontColorType = 'single';
+            if (val === 'light') {
+                this.type = 'light';
+                this.background = '#ffffff';
+                this.autoBackgroundType = 'other';
+                this.foreground = '#000000';
+                this.panelBackground = '#eeeeee';
+                this.fontColors = {
+                    fontColorAll: '#000000',
+                };
+            } else if (val === 'dark') {
+                this.type = 'dark';
+                this.background = '#000000';
+                this.autoBackgroundType = 'dark';
+                this.foreground = '#ffffff';
+                this.panelBackground = '#333333';
+                this.fontColors = {
+                    fontColorAll: '#ffffff',
+                };
+            }
+        },
     },
     data() {
         return {
+            preset: 'dark' as 'dark' | 'light',
             name: '自定义主题',
             type: 'dark' as 'dark' | 'light',
             background: '#000000',
@@ -370,8 +408,8 @@ export default defineComponent({
     mounted() {
     },
     methods: {
-        handleNewWindowState() {
-            this.$emit('new-window-state');
+        handleNewWindowState(val: boolean) {
+            this.$emit('new-window-state', val);
         },
         createTheme() {
             const result = Theme.createTheme({
@@ -448,7 +486,7 @@ export default defineComponent({
             flex-direction: column;
             gap: 10px;
             min-width: 600px;
-            min-height: 460px;
+            min-height: 490px;
             background-color: var(--background-color);
             border: 1px solid var(--foreground-color);
 

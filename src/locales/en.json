@@ -26,6 +26,7 @@
 		"font_color_type": "Font Color Type",
 		"font_color_type_single": "Single",
 		"font_color_type_various": "Various",
+		"preset": "Preset",
 		"theme_auto_background_type": "Auto Background Type",
 		"theme_background_color": "Background",
 		"theme_foreground_color": "Foreground",

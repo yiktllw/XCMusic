@@ -11,7 +11,6 @@ const events = [
 
 export class GlobalMsg {
     subscriber: Subscriber;
-    dataTemp: any = null;
     constructor() {
         this.subscriber = new Subscriber(events);
     }
@@ -20,7 +19,6 @@ export class GlobalMsg {
             console.error('msg not exist in allowed list:', msg);
             return;
         }
-        this.dataTemp = data ?? null;
-        this.subscriber.exec(msg);
+        this.subscriber.exec(msg, data);
     }
 }

@@ -26,6 +26,7 @@
 		"font_color_type": "字体颜色类型",
 		"font_color_type_single": "单色",
 		"font_color_type_various": "多色",
+		"preset": "预设",
 		"theme_auto_background_type": "自动背景类型",
 		"theme_background_color": "背景颜色",
 		"theme_foreground_color": "前景颜色",

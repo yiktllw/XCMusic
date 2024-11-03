@@ -36,6 +36,7 @@
             <YLoginWindow :base64-image="base64Image" v-if="showLoginWindow"
                 @new-window-state="handleNewWindowState_loginWindow" />
             <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
+            <YCustomWindow v-if="showCustomWindow" @new-window-state="handleNewWindowState_customWindow" />
         </div>
         <div class="message-container">
             <div></div>
@@ -67,6 +68,7 @@ import { Message } from '@/dual/YMessageC';
 import { songItems } from '@/dual/YContextMenuItemC';
 import { useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
+import YCustomWindow from '@/components/YCustomWindow.vue';
 
 export default defineComponent({
     name: 'App',
@@ -87,6 +89,7 @@ export default defineComponent({
             showLoginWindow: false,
             base64Image: '',
             showCreatePlaylist: false,
+            showCustomWindow: false,
             msg: {
                 type: 'none',
                 message: '',
@@ -107,6 +110,7 @@ export default defineComponent({
         YPlayUI,
         YLoginWindow,
         YCreatePlaylist,
+        YCustomWindow,
     },
     computed: {
     },
@@ -147,10 +151,10 @@ export default defineComponent({
         this.globalMsg.subscriber.on({
             id: 'HomeView',
             type: 'open-login-window',
-            func: () => {
+            func: (data: any) => {
                 this.showLoginWindow = true;
                 this.showPreventContainer = true;
-                this.base64Image = this.globalMsg.dataTemp;
+                this.base64Image = data;
             },
         });
         this.globalMsg.subscriber.on({
@@ -159,6 +163,14 @@ export default defineComponent({
             func: () => {
                 this.showLoginWindow = false;
                 this.showPreventContainer = false;
+            },
+        });
+        this.globalMsg.subscriber.on({
+            id: 'HomeView',
+            type: 'open-custom-window',
+            func: () => {
+                this.showCustomWindow = true;
+                this.showPreventContainer = true;
             },
         });
     },
@@ -353,6 +365,12 @@ export default defineComponent({
         handleNewWindowState_createPlaylist(val: boolean) {
             if (val === false) {
                 this.showCreatePlaylist = false;
+                this.showPreventContainer = false;
+            }
+        },
+        handleNewWindowState_customWindow(val: boolean) {
+            if (val === false) {
+                this.showCustomWindow = false;
                 this.showPreventContainer = false;
             }
         },
