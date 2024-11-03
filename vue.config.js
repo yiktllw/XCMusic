@@ -84,7 +84,7 @@ module.exports = defineConfig({
             host: 'localhost',
             proxy: {
                 '/search': {
-                    target: 'http://localhost:10754',
+                    target: 'http://localhost:43210',
                     changeOrigin: true,
                     pathRewrite: {
                         '^/search': '/search'

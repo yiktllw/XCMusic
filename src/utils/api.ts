@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 创建 Axios 实例
 const apiClient = axios.create({
-    baseURL: process.env.VUE_APP_API || 'http://localhost:10754', // 设置基本请求地址
+    baseURL: process.env.VUE_APP_API || 'http://localhost:43210', // 设置基本请求地址
     timeout: 10000, // 设置请求超时时间
 });
 
@@ -11,7 +11,7 @@ apiClient.interceptors.request.use(
     (config) => {
         if (window.electron?.isElectron) {
             // 在 Electron 中直接使用 localhost 地址
-            config.baseURL = 'http://localhost:10754';
+            config.baseURL = 'http://localhost:43210';
         } else {
             // 在非 Electron 环境中，使用 /api 作为前缀
             if (process.env.VUE_APP_API) {

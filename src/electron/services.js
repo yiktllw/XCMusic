@@ -23,7 +23,7 @@ export async function startNeteaseMusicApi() {
     // Let user know that the service is starting
     console.log(`${clc.redBright('[NetEase API]')} initiating NCM API`);
 
-    let portInUse = await isPortInUse(10754);
+    let portInUse = await isPortInUse(43210);
 
     // 保存原始的 console.log
     const originalConsoleLog = console.log;
@@ -43,10 +43,10 @@ export async function startNeteaseMusicApi() {
     // Load the NCM API.
     if (!portInUse) {
         await server.serveNcmApi({
-            port: 10754,
+            port: 43210,
             moduleDefs: require('../ncmModDef'),
         });
     } else {
-        console.log(`${clc.redBright('[NetEase API]')} NCM API is already running on port 10754`);
+        console.log(`${clc.redBright('[NetEase API]')} NCM API is already running on port 43210`);
     }
 }

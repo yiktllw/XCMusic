@@ -39,6 +39,8 @@ async function createWindow() {
     win = new BrowserWindow({
         width: windowState.width,
         height: windowState.height,
+        transparent: true,
+        vibrancy: 'light',
         minWidth: 1000,
         minHeight: 700,
         webPreferences: {
