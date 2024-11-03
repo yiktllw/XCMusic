@@ -349,7 +349,7 @@ export class Player {
      * 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url
      */
     async reloadUrl() {
-        if (!this.currentTrack) return;
+        if (!this.currentTrack || isLocal(this.currentTrack.id)) return;
         let result = await this.getUrl(this.currentTrack.id);
         let url = result.url;
         this._audio.src = url;
