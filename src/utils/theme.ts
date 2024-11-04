@@ -207,4 +207,9 @@ export var themes: Array<Theme1 | Theme2> = [
         display: 'Monokai',
         background: '#272823',
     },
+    {
+        value: 'dracula',
+        display: 'Dracula',
+        background: '#282a35',
+    },
 ]

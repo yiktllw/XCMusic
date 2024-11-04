@@ -146,3 +146,16 @@
     --panel-background-color: #1e1f1c;
     --icon-invert: invert(0);
 }
+
+.theme-dracula{
+    --font-color-rgb: 255, 255, 255;
+    --font-color-main: rgba(var(--font-color-rgb), 1);
+    --font-color-high: rgba(var(--font-color-rgb), 0.8);
+    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+    --font-color-low: rgba(var(--font-color-rgb), 0.4);
+    --background-color: #282a35;
+    --foreground-color: #fff;
+    --foreground-color-rgb: 255, 255, 255;
+    --panel-background-color: #21222b;
+    --icon-invert: invert(0);
+}
