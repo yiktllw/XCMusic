@@ -3,20 +3,20 @@
         <div @click="$router.push({path: '/audio/test'})">
             点击跳转到音频调试界面
         </div>
-        <YCustomWindow />
+        <YCloseWindow></YCloseWindow>
     </div>
 </template>
 
 <script lang="ts">
+import YCloseWindow from '@/components/YCloseWindow.vue';
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 // import { Theme } from '@/utils/theme';
-import YCustomWindow from '@/components/YCustomWindow.vue';
 
 export default defineComponent({
     name: 'YTestView',
     components: {
-        YCustomWindow,
+        YCloseWindow,
     },
     setup() {
         const store = useStore();

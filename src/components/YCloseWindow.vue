@@ -1,0 +1,139 @@
+<template>
+    <div class="main">
+        <YWindow ref="window" @new-window-state="handleNewWindowState">
+            <template #header>
+                <span class="window-title">
+                    {{ $t('setting_view.close') }}
+                </span>
+            </template>
+            <div class="content font-color-high">
+                <div class="items">
+                    <div class="item close-item1">
+                        <input type="radio" name="close" value="minimize" v-model="closeBehavior"
+                            @change="setClose('minimize')">
+                        <label @click="setClose('minimize')">
+                            {{ $t('setting_view.close_to_minimize') }}
+                        </label>
+                    </div>
+                    <div class="item close-item2">
+                        <input type="radio" name="close" value="quit" v-model="closeBehavior"
+                            @change="setClose('quit')">
+                        <label @click="setClose('quit')">
+                            {{ $t('setting_view.close_to_quit') }}
+                        </label>
+                    </div>
+                    <div class="item always-ask">
+                        <input type="checkbox" id="always_ask" name="always_ask" v-model="closeAlwaysAsk"
+                            @change="setAlwaysAsk(closeAlwaysAsk)">
+                        <label for="always_ask" @click="setAlwaysAsk(closeAlwaysAsk)">
+                            {{ $t('setting_view.close_always_ask') }}
+                        </label>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button @click="cancel">
+                        {{ $t('cancel') }}
+                    </button>
+                    <button @click="ensure">
+                        {{ $t('confirm') }}
+                    </button>
+                </div>
+            </div>
+        </YWindow>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import YWindow from './YWindow.vue';
+import { useStore } from 'vuex';
+
+export default defineComponent({
+    name: 'YCloseWindow',
+    setup() {
+        const store = useStore();
+        const window = ref<InstanceType<typeof YWindow>>();
+        return {
+            setting: store.state.setting,
+            window,
+        };
+    },
+    data() {
+        return {
+            closeBehavior: 'minimize' as 'minimize' | 'quit',
+            closeAlwaysAsk: false,
+        };
+    },
+    components: {
+        YWindow,
+    },
+    mounted() {
+        this.closeBehavior = this.setting.titleBar.closeButton;
+        this.closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
+    },
+    methods: {
+        handleNewWindowState(val: boolean) {
+            this.$emit('new-window-state', val);
+        },
+        setClose(val: 'minimize' | 'quit') {
+            this.closeBehavior = val;
+            this.setting.titleBar.closeButton = val;
+        },
+        setAlwaysAsk(val: boolean) {
+            this.closeAlwaysAsk = val;
+            this.setting.titleBar.closeAlwaysAsk = val;
+        },
+        ensure() {
+            if (window.electron?.isElectron) {
+                window.electron.ipcRenderer.send(this.closeBehavior === 'minimize' ? 'close' : 'quit');
+                this.window?.closeWindow();
+            }
+        },
+        cancel() {
+            this.window?.closeWindow();
+        },
+    },
+});
+
+</script>
+
+<style lang="scss" scoped>
+.main {
+    .content {
+
+        .items {
+            padding: 10px 10px 5px 10px;
+
+            .item {
+                font-size: 18px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+
+                input {
+                    margin-right: 10px;
+                }
+
+                label {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+
+            button {
+                width: 50%;
+                padding: 5px 0;
+                margin: 0;
+                border-radius: 0;
+                font-size: 18px;
+                font-weight: bold;
+            }
+        }
+    }
+}
+</style>

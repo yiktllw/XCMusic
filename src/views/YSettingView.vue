@@ -48,6 +48,13 @@
                                     {{ $t('setting_view.close_to_quit') }}
                                 </label>
                             </div>
+                            <div class="always-ask">
+                                <input type="checkbox" id="always_ask" name="always_ask" v-model="closeAlwaysAsk"
+                                    @change="setAlwaysAsk(closeAlwaysAsk)">
+                                <label for="always_ask" @click="setAlwaysAsk(closeAlwaysAsk)">
+                                    {{ $t('setting_view.close_always_ask') }}
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="content-item">
@@ -117,7 +124,7 @@
                         <div class="content-item-content">
                             <input type="checkbox" id="auto_zoom" name="auto_zoom" v-model="auto_zoom"
                                 @change="setAutoZoom(auto_zoom)">
-                            <label for="auto_zoom" @click="setAutoZoom(auto_zoom)">
+                            <label for="auto_zoom" @click="setAutoZoom(auto_zoom)" :title="$t('setting_view.display.press_f11_to_fullscreen')">
                                 {{ $t('setting_view.display.fullscreen_auto_zoom') }}
                             </label>
                         </div>
@@ -351,6 +358,7 @@ export default defineComponent({
             theme: 'dark',
             zoom: 100,
             closeBehavior: 'minimize',
+            closeAlwaysAsk: false,
             auto_zoom: false,
             volume_leveling: false,
             spectrum: false,
@@ -383,6 +391,10 @@ export default defineComponent({
         setClose(behavior: 'minimize' | 'quit') {
             this.closeBehavior = behavior;
             this.setting.titleBar.closeButton = behavior;
+        },
+        setAlwaysAsk(bool: boolean) {
+            this.closeAlwaysAsk = bool;
+            this.setting.titleBar.closeAlwaysAsk = bool;
         },
         handleZoom() {
             try {

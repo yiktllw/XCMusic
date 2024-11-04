@@ -54,6 +54,7 @@ export interface Settings {
     titleBar: {
         searchHistory: string[],
         closeButton: 'quit' | 'minimize',
+        closeAlwaysAsk: boolean,
     }
 }
 
@@ -287,8 +288,23 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             }
-        }
-    }
+        },
+        closeAlwaysAsk: {
+            value: localStorage.getItem('setting.titleBar.closeAlwaysAsk') ?? true,
+            default: true,
+            validation: (value) => {
+                let valid = typeof value === 'boolean';
+                let valid2 = typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase());
+                if (valid) {
+                    localStorage.setItem('setting.titleBar.closeAlwaysAsk', value);
+                } else if (valid2) {
+                    localStorage.setItem('setting.titleBar.closeAlwaysAsk', value);
+                    valid = true;
+                }
+                return valid;
+            }
+        },
+    },
 }
 
 const modes = [

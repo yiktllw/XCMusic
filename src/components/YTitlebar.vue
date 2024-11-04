@@ -325,6 +325,11 @@ export default defineComponent({
         },
         close() {
             if (window.electron?.isElectron) {
+                const closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
+                if (closeAlwaysAsk) {
+                    this.globalMsg.post('open-close-window');
+                    return;
+                }
                 const closeBehavior = this.setting.titleBar.closeButton;
                 if (closeBehavior === 'minimize') {
                     window.electron.ipcRenderer.send('close');

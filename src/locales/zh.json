@@ -1,12 +1,14 @@
 {
 	"add_to_playlist": "收藏到歌单",
 	"album": "专辑",
+	"cancel": "取消",
 	"comment": {
 		"all_comment": "全部评论",
 		"hot_order": "热度",
 		"recommend_order": "推荐",
 		"time_order": "时间"
 	},
+	"confirm": "确认",
 	"context": {
 		"copy_link": "复制链接",
 		"delete_from_playlist": "从歌单中删除",
@@ -211,11 +213,13 @@
 		"apply": "应用",
 		"click_to_reload": "点击重新加载窗口",
 		"close": "关闭",
+		"close_always_ask": "关闭前总是询问",
 		"close_to_minimize": "点击关闭按钮时，最小化到托盘",
 		"close_to_quit": "点击关闭按钮时，退出程序",
 		"display": {
 			"fullscreen": "全屏",
-			"fullscreen_auto_zoom": "全屏时自动缩放"
+			"fullscreen_auto_zoom": "全屏时自动缩放",
+			"press_f11_to_fullscreen": "按下F11键进入全屏"
 		},
 		"download": {
 			"path": "下载路径",

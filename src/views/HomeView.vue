@@ -37,6 +37,7 @@
                 @new-window-state="handleNewWindowState_loginWindow" />
             <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
             <YCustomWindow v-if="showCustomWindow" @new-window-state="handleNewWindowState_customWindow" />
+            <YCloseWindow v-if="showCloseWindow" @new-window-state="handleNewWindowState_closeWindow" />
         </div>
         <div class="message-container">
             <div></div>
@@ -69,6 +70,7 @@ import { songItems } from '@/dual/YContextMenuItemC';
 import { useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
 import YCustomWindow from '@/components/YCustomWindow.vue';
+import YCloseWindow from '@/components/YCloseWindow.vue';
 
 export default defineComponent({
     name: 'App',
@@ -90,6 +92,7 @@ export default defineComponent({
             base64Image: '',
             showCreatePlaylist: false,
             showCustomWindow: false,
+            showCloseWindow: false,
             msg: {
                 type: 'none',
                 message: '',
@@ -111,6 +114,7 @@ export default defineComponent({
         YLoginWindow,
         YCreatePlaylist,
         YCustomWindow,
+        YCloseWindow,
     },
     computed: {
     },
@@ -170,6 +174,14 @@ export default defineComponent({
             type: 'open-custom-window',
             func: () => {
                 this.showCustomWindow = true;
+                this.showPreventContainer = true;
+            },
+        });
+        this.globalMsg.subscriber.on({
+            id: 'HomeView',
+            type: 'open-close-window',
+            func: () => {
+                this.showCloseWindow = true;
                 this.showPreventContainer = true;
             },
         });
@@ -371,6 +383,12 @@ export default defineComponent({
         handleNewWindowState_customWindow(val: boolean) {
             if (val === false) {
                 this.showCustomWindow = false;
+                this.showPreventContainer = false;
+            }
+        },
+        handleNewWindowState_closeWindow(val: boolean) {
+            if (val === false) {
+                this.showCloseWindow = false;
                 this.showPreventContainer = false;
             }
         },

@@ -1,12 +1,14 @@
 {
 	"add_to_playlist": "Add to playlist",
 	"album": "Album",
+	"cancel": "Cancel",
 	"comment": {
 		"all_comment": "All Comments",
 		"hot_order": "Popularity",
 		"recommend_order": "Recommended",
 		"time_order": "Time"
 	},
+	"confirm": "Confirm",
 	"context": {
 		"copy_link": "Copy Link",
 		"delete_from_playlist": "Remove from Playlist",
@@ -211,11 +213,13 @@
 		"apply": "Apply",
 		"click_to_reload": "Click to reload window.",
 		"close": "Close",
+		"close_always_ask": "Always ask before closing",
 		"close_to_minimize": "Close to Hide.",
 		"close_to_quit": "Close to Quit.",
 		"display": {
 			"fullscreen": "Fullscreen",
-			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen"
+			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
+			"press_f11_to_fullscreen": "Press F11 to Fullscreen"
 		},
 		"download": {
 			"path": "Path",
