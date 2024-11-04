@@ -177,6 +177,7 @@ export class Player {
             'history',
             'mode',
             'playerReady',
+            'gain',
         ]));
 
         this.db = new indexDB('ncm', 'playlist');
@@ -1134,6 +1135,7 @@ export class Player {
         try {
             if (this._gainNode) {
                 this._gainNode.gain.value = gain_linear;
+                this.subscriber.exec('gain');
                 setGainNodeMsg = ' gainNode set to ' + gain_linear;
             }
         } catch (error) {

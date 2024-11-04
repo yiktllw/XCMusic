@@ -1,5 +1,8 @@
 <template>
     <div class="display">
+        <div @click="$router.push({path: '/audio/test'})">
+            点击跳转到音频调试界面
+        </div>
         <YCustomWindow />
     </div>
 </template>
