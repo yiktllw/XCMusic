@@ -213,6 +213,10 @@
 		"close": "Close",
 		"close_to_minimize": "Close to Hide.",
 		"close_to_quit": "Close to Quit.",
+		"display": {
+			"fullscreen": "Fullscreen",
+			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen"
+		},
 		"download": {
 			"path": "Path",
 			"quality": "Quality",

@@ -213,6 +213,10 @@
 		"close": "关闭",
 		"close_to_minimize": "点击关闭按钮时，最小化到托盘",
 		"close_to_quit": "点击关闭按钮时，退出程序",
+		"display": {
+			"fullscreen": "全屏",
+			"fullscreen_auto_zoom": "全屏时自动缩放"
+		},
 		"download": {
 			"path": "下载路径",
 			"quality": "下载音质",

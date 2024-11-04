@@ -47,6 +47,7 @@ export interface Settings {
             classContent: string,
         }>,
         zoom: number,
+        fullscreenAutoZoom: boolean,
         sidebarWidth: number,
         albumWidth: number,
     },
@@ -220,6 +221,21 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             },
+        },
+        fullscreenAutoZoom: {
+            value: localStorage.getItem('setting.display.fullscreenAutoZoom') ?? false,
+            default: false,
+            validation: (value) => {
+                let valid = typeof value === 'boolean';
+                let valid2 = typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase());
+                if (valid) {
+                    localStorage.setItem('setting.display.fullscreenAutoZoom', value);
+                } else if (valid2) {
+                    localStorage.setItem('setting.display.fullscreenAutoZoom', value);
+                    valid = true;
+                }
+                return valid;
+            }
         },
         sidebarWidth: {
             value: localStorage.getItem('setting.display.sidebarWidth') ?? 200,

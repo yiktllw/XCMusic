@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu, ipcMain, screen } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -124,6 +124,24 @@ app.on('ready', async () => {
         if (win) {
             win.webContents.setZoomFactor(zoomLevel);
         }
+    });
+
+    // 监听全屏
+    win?.on('enter-full-screen', () => {
+        if (!win) return;
+        // 获取窗口的当前位置
+        const windowBounds = win.getBounds();
+        // 获取窗口所在的显示器
+        const display = screen.getDisplayNearestPoint({ x: windowBounds.x, y: windowBounds.y });
+        const { width, height } = display.workAreaSize; // 也可以用 display.size 获取整个显示器的尺寸
+
+        win.webContents.send('fullscreen-window-size', { width, height });
+    });
+
+    // 监听退出全屏
+    win?.on('leave-full-screen', () => {
+        if (!win) return;
+        win.webContents.send('leave-fullscreen');
     });
 
     // 创建托盘

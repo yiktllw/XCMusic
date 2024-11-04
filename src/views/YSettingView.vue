@@ -110,6 +110,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="content-item item-fullscreen-auto-zoom">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.display.fullscreen') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="checkbox" id="auto_zoom" name="auto_zoom" v-model="auto_zoom"
+                                @change="setAutoZoom(auto_zoom)">
+                            <label for="auto_zoom" @click="setAutoZoom(auto_zoom)">
+                                {{ $t('setting_view.display.fullscreen_auto_zoom') }}
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="play item" id="play">
@@ -339,6 +351,7 @@ export default defineComponent({
             theme: 'dark',
             zoom: 100,
             closeBehavior: 'minimize',
+            auto_zoom: false,
             volume_leveling: false,
             spectrum: false,
             dbclick: 'all',
@@ -391,6 +404,12 @@ export default defineComponent({
         setDbClick(behavior: 'all' | 'single') {
             this.dbclick = behavior;
             this.setting.play.dbclick = behavior;
+        },
+        setAutoZoom(bool: boolean) {
+            this.auto_zoom = bool;
+            this.setting.display.fullscreenAutoZoom = bool;
+            // tbd
+            // 全屏时设置自动缩放
         },
         setVolumeLeveling(bool: boolean) {
             this.volume_leveling = bool;
@@ -502,6 +521,7 @@ export default defineComponent({
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
         this.closeBehavior = this.setting.titleBar.closeButton;
+        this.auto_zoom = this.setting.display.fullscreenAutoZoom;
         this.volume_leveling = this.setting.play.volume_leveling;
         this.spectrum = this.setting.playui.spectrum;
         this.dbclick = this.setting.play.dbclick;

@@ -22,6 +22,19 @@ export default defineComponent({
         // 初始化缩放
         if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom.toString()));
+            window.electron.ipcRenderer.on('fullscreen-window-size', (event) => {
+                const autoScale = localStorage.getItem('setting.display.fullscreenAutoZoom') === 'true';
+                if (!autoScale) return;
+                const { width, height } = event;
+                const scalex = width / 1280;
+                const scaley = height / 800;
+                const scale = Math.min(scalex, scaley);
+                console.log('fullscreen size: ', width, height, 'scale: ', scale);
+                window.electron.ipcRenderer.send('zoom', scale);
+            });
+            window.electron.ipcRenderer.on('leave-fullscreen', () => {
+                window.electron.ipcRenderer.send('zoom', parseFloat(this.setting.display.zoom.toString()));
+            });
         }
         // 初始化用户自定义主题
         Doc.updateDocumentClassBySetting(this.setting.display.userCustomThemes);
