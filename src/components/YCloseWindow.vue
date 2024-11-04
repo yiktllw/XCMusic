@@ -9,23 +9,23 @@
             <div class="content font-color-high">
                 <div class="items">
                     <div class="item close-item1">
-                        <input type="radio" name="close" value="minimize" v-model="closeBehavior"
-                            @change="setClose('minimize')">
-                        <label @click="setClose('minimize')">
+                        <input type="radio" name="close" id="close_window_minimize" value="minimize"
+                            v-model="closeBehavior" @change="setClose('minimize')">
+                        <label for="close_window_minimize">
                             {{ $t('setting_view.close_to_minimize') }}
                         </label>
                     </div>
                     <div class="item close-item2">
-                        <input type="radio" name="close" value="quit" v-model="closeBehavior"
+                        <input type="radio" name="close" id="close_window_close" value="quit" v-model="closeBehavior"
                             @change="setClose('quit')">
-                        <label @click="setClose('quit')">
+                        <label for="close_window_close">
                             {{ $t('setting_view.close_to_quit') }}
                         </label>
                     </div>
                     <div class="item always-ask">
-                        <input type="checkbox" id="always_ask" name="always_ask" v-model="closeAlwaysAsk"
+                        <input type="checkbox" id="close_window_always_ask" name="always_ask" v-model="closeAlwaysAsk"
                             @change="setAlwaysAsk(closeAlwaysAsk)">
-                        <label for="always_ask" @click="setAlwaysAsk(closeAlwaysAsk)">
+                        <label for="close_window_always_ask">
                             {{ $t('setting_view.close_always_ask') }}
                         </label>
                     </div>

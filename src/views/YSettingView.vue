@@ -17,14 +17,14 @@
                             {{ $t('setting_view.language') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="radio" id="zh" name="language" value="zh" v-model="language"
+                            <input type="radio" id="setting_zh" name="language" value="zh" v-model="language"
                                 @change="switchToLanguage('zh')">
-                            <label for="zh" @click="switchToLanguage('zh')">
+                            <label for="setting_zh">
                                 简体中文
                             </label>
-                            <input type="radio" id="en" name="language" value="en" v-model="language"
+                            <input type="radio" id="setting_en" name="language" value="en" v-model="language"
                                 @change="switchToLanguage('en')">
-                            <label for="en" @click="switchToLanguage('en')">
+                            <label for="setting_en">
                                 English
                             </label>
                         </div>
@@ -35,23 +35,23 @@
                         </div>
                         <div class="content-item-content item-content-close">
                             <div class="close-item1">
-                                <input type="radio" name="close" value="minimize" v-model="closeBehavior"
-                                    @change="setClose('minimize')">
-                                <label @click="setClose('minimize')">
+                                <input type="radio" id="setting_minimize" name="close" value="minimize"
+                                    v-model="closeBehavior" @change="setClose('minimize')">
+                                <label for="setting_minimize">
                                     {{ $t('setting_view.close_to_minimize') }}
                                 </label>
                             </div>
                             <div class="close-item2">
-                                <input type="radio" name="close" value="quit" v-model="closeBehavior"
+                                <input type="radio" id="setting_close" name="close" value="quit" v-model="closeBehavior"
                                     @change="setClose('quit')">
-                                <label @click="setClose('quit')">
+                                <label for="setting_close">
                                     {{ $t('setting_view.close_to_quit') }}
                                 </label>
                             </div>
                             <div class="always-ask">
-                                <input type="checkbox" id="always_ask" name="always_ask" v-model="closeAlwaysAsk"
-                                    @change="setAlwaysAsk(closeAlwaysAsk)">
-                                <label for="always_ask" @click="setAlwaysAsk(closeAlwaysAsk)">
+                                <input type="checkbox" id="setting_always_ask" name="always_ask"
+                                    v-model="closeAlwaysAsk" @change="setAlwaysAsk(closeAlwaysAsk)">
+                                <label for="setting_always_ask">
                                     {{ $t('setting_view.close_always_ask') }}
                                 </label>
                             </div>
@@ -122,9 +122,9 @@
                             {{ $t('setting_view.display.fullscreen') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="checkbox" id="auto_zoom" name="auto_zoom" v-model="auto_zoom"
+                            <input type="checkbox" id="setting_auto_zoom" name="auto_zoom" v-model="auto_zoom"
                                 @change="setAutoZoom(auto_zoom)">
-                            <label for="auto_zoom" @click="setAutoZoom(auto_zoom)" :title="$t('setting_view.display.press_f11_to_fullscreen')">
+                            <label for="setting_auto_zoom" :title="$t('setting_view.display.press_f11_to_fullscreen')">
                                 {{ $t('setting_view.display.fullscreen_auto_zoom') }}
                             </label>
                         </div>
@@ -141,9 +141,9 @@
                             {{ $t('setting_view.play.volume_leveling') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="checkbox" id="volume_leveling" name="volume_leveling" v-model="volume_leveling"
-                                @change="setVolumeLeveling(volume_leveling)">
-                            <label for="volume_leveling" @click="setVolumeLeveling(volume_leveling)">
+                            <input type="checkbox" id="setting_volume_leveling" name="volume_leveling"
+                                v-model="volume_leveling" @change="setVolumeLeveling(volume_leveling)">
+                            <label for="setting_volume_leveling">
                                 {{ $t('setting_view.play.volume_leveling_content') }}
                             </label>
                         </div>
@@ -153,8 +153,9 @@
                             {{ $t('setting_view.play.playui') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="checkbox" id="spectrum" name="spectrum" v-model="spectrum">
-                            <label for="spectrum" @click="setSpectrum(spectrum)">
+                            <input type="checkbox" id="setting_spectrum" name="spectrum" v-model="spectrum"
+                                @change="setSpectrum(spectrum)">
+                            <label for="setting_spectrum">
                                 {{ $t('setting_view.play.show_spectrum') }}
                             </label>
                         </div>
@@ -165,16 +166,16 @@
                         </div>
                         <div class="content-item-content item-play-dbclick-content">
                             <div class="dbclick-item1">
-                                <input type="radio" id="play-dbclick" name="play" value="all" v-model="dbclick"
+                                <input type="radio" id="setting_play-dbclick" name="play" value="all" v-model="dbclick"
                                     @change="setDbClick('all')">
-                                <label for="play-dbclick" @click="setDbClick('all')">
+                                <label for="setting_play-dbclick">
                                     {{ $t('setting_view.play.dbclick_playall') }}
                                 </label>
                             </div>
                             <div class="dbclick-item2">
-                                <input type="radio" id="play-click" name="play" value="single" v-model="dbclick"
+                                <input type="radio" id="setting_play-click" name="play" value="single" v-model="dbclick"
                                     @change="setDbClick('single')">
-                                <label for="play-click" @click="setDbClick('single')">
+                                <label for="setting_play-click">
                                     {{ $t('setting_view.play.dbclick_playsingle') }}
                                 </label>
                             </div>
@@ -315,9 +316,6 @@ export default defineComponent({
         }
     },
     watch: {
-        spectrum(val) {
-            this.setSpectrum(val);
-        },
     },
     data() {
         return {
@@ -533,6 +531,7 @@ export default defineComponent({
         this.zoom = this.setting.display.zoom * 100;
         this.language = this.setting.display.language;
         this.closeBehavior = this.setting.titleBar.closeButton;
+        this.closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
         this.auto_zoom = this.setting.display.fullscreenAutoZoom;
         this.volume_leveling = this.setting.play.volume_leveling;
         this.spectrum = this.setting.playui.spectrum;
@@ -645,7 +644,7 @@ export default defineComponent({
                     }
 
                     .content-item-content {
-                        
+
                         .custom-text {
                             cursor: pointer;
                             color: var(--font-color-high);
@@ -658,7 +657,7 @@ export default defineComponent({
                         .reload-item {
                             cursor: pointer;
                             color: var(--font-color-high);
-                            
+
                             &:hover {
                                 color: var(--font-color-main);
                             }
