@@ -486,6 +486,7 @@ export default defineComponent({
         height: 100vh;
         display: flex;
         background-color: transparent;
+        backdrop-filter: blur(5px);
         align-items: center;
         justify-content: center;
         z-index: 1000;
