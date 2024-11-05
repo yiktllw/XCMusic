@@ -8,14 +8,22 @@
 		"recommend_order": "Recommended",
 		"time_order": "Time"
 	},
-	"confirm": "Confirm",
+	"confirm": {
+		"delete": "Sure to delete?",
+		"title": "Confirm"
+	},
 	"context": {
+		"addToPlaylistAll": "Add All to Playlist",
 		"copy_link": "Copy Link",
 		"delete_from_playlist": "Remove from Playlist",
+		"delete_playlist": "Delete Playlist",
 		"download": "Download",
+		"downloadAll": "Download All",
+		"editPlaylist": "Edit Playlist",
 		"info": "Song Info",
 		"nextplay": "Play Next",
 		"play": "Play",
+		"playAll": "Play All",
 		"subscribe": "Add to Playlist",
 		"view_comment": "View Comments"
 	},

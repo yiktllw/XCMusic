@@ -1,22 +1,22 @@
 <template>
     <div class="display">
-        <div @click="$router.push({path: '/audio/test'})">
+        <div @click="$router.push({ path: '/audio/test' })">
             点击跳转到音频调试界面
         </div>
-        <YCloseWindow></YCloseWindow>
+        <YConfirmWindow :confirm="confirm" />
     </div>
 </template>
 
 <script lang="ts">
-import YCloseWindow from '@/components/YCloseWindow.vue';
+import YConfirmWindow from '@/components/YConfirmWindow.vue';
+import { IConfirm } from '@/utils/globalMsg';
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
-// import { Theme } from '@/utils/theme';
 
 export default defineComponent({
     name: 'YTestView',
     components: {
-        YCloseWindow,
+        YConfirmWindow,
     },
     setup() {
         const store = useStore();
@@ -31,6 +31,13 @@ export default defineComponent({
     },
     data() {
         return {
+            confirm: {
+                content: 'confirm.delete',
+                needTranslate: true,
+                callback: () => {
+                    console.log('delete');
+                },
+            } as IConfirm,
         };
     },
     methods: {

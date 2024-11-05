@@ -177,7 +177,7 @@ import YLoading from '@/components/YLoading.vue';
 import YComment from '@/components/YComment.vue';
 import { Message } from '@/dual/YMessageC';
 import { ITrack, Tracks } from '@/utils/tracks';
-import { useApi } from '@/utils/api';
+import { playlist, useApi } from '@/utils/api';
 import { formatDate_yyyymmdd } from '@/utils/time';
 import { YColor } from '@/utils/color'
 import { Theme1, Theme2, themes } from '@/utils/theme';
@@ -298,7 +298,7 @@ export default defineComponent({
     },
     methods: {
         // 获取歌单
-        async fetchPlaylist(id: number | string) {
+        async fetchPlaylist(id: number) {
             try {
                 let requests = [];
                 if (this.type === 'playlist') {
@@ -326,7 +326,7 @@ export default defineComponent({
                             this.playlist.createrAvatarUrl = response.playlist.creator.avatarUrl;
                             // 歌曲数量
                             this.playlist.trackCount = response.playlist.trackCount;
-                            this.page = Math.floor(response.playlist.trackCount / 500) + 1;
+                            this.page = Math.floor(response.playlist.trackCount / 1000) + 1;
                             return response;
                         }).catch(error => {
                             console.error('Failed to fetch playlist:', error);
@@ -444,25 +444,10 @@ export default defineComponent({
             }
         },
         // 获取当前页的歌曲列表
-        async fetchTracks(id: number | string, page: number) {
-            let offset = (page - 1) * 500;
-            const limit = 500;
-            let getTracks = await useApi('/playlist/track/all', {
-                id: id,
-                limit: limit,
-                offset: offset
-            }).catch(error => {
-                console.log('Failed to fetch tracks:', error);
-            });
-            // 加入新的属性 originalIndex，用于排序
-            return markRaw((new Tracks({
-                url: '/playlist/track/all',
-                tracks: getTracks.songs,
-                params: {
-                    needIndex: true,
-                    page: page,
-                }
-            })).tracks);
+        async fetchTracks(id: number, page: number) {
+            const limit = 1000;
+            let result = await playlist.fetchTracks(id, page, limit);
+            return result;
         },
         // 设置背景颜色
         async _setBackgroundColor() {

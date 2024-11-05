@@ -121,7 +121,7 @@ export namespace YColor {
                     setBackgroundColor(YColor.hexToRgb(lightColor ?? '#FFFFFF'));
                 } else {
                     // 其他主题，对应colorThemeType为Undefined
-                    const DOM = document.querySelector('.mainContainer');
+                    const DOM = document.querySelector('#mainContainer');
                     if (!DOM) return;
                     const themeColorHEX = YColor.getLightThemeColor(YColor.rgbToHex(color.r, color.g, color.b), themeBackground);
                     const themeColorRGB = YColor.hexToRgb(themeColorHEX ?? '#FFFFFF');
@@ -136,7 +136,7 @@ export namespace YColor {
      * 设置背景颜色为主题色
      */
     export function setBackgroundColorTheme() {
-        const DOM = document.querySelector('.mainContainer');
+        const DOM = document.querySelector('#mainContainer');
         if (!DOM) return;
         (DOM as HTMLElement).style.background = 'var(--background-color)';
     }
@@ -150,7 +150,7 @@ export namespace YColor {
             let lightColor = YColor.getLightThemeColor(hex)
             setBackgroundColor(YColor.hexToRgb(lightColor ?? '#FFFFFF'));
         } else {
-            const DOM = document.querySelector('.mainContainer');
+            const DOM = document.querySelector('#mainContainer');
             if (!DOM) return;
             const themeColorHEX = YColor.getLightThemeColor(hex, themeBackground);
             const themeColorRGB = YColor.hexToRgb(themeColorHEX ?? '#FFFFFF');
@@ -201,7 +201,7 @@ export function setColorFromImg(imgSrc: string, document: Document) {
  * @returns 
  */
 export function setBackgroundColor(color: COLOR) {
-    const DOM = document.querySelector('.mainContainer');
+    const DOM = document.querySelector('#mainContainer');
     if (!DOM) return;
     (DOM as HTMLElement).style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
 }
@@ -212,7 +212,7 @@ export function setBackgroundColor(color: COLOR) {
  * @returns 
  */
 export function setBackgroundColorHex(hex: string) {
-    const DOM = document.querySelector('.mainContainer');
+    const DOM = document.querySelector('#mainContainer');
     if (!DOM) return;
     (DOM as HTMLElement).style.background = `linear-gradient(180deg, ${hex} 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
 }
@@ -222,7 +222,7 @@ export function setBackgroundColorHex(hex: string) {
  * @returns 
  */
 export function setBackgroundColorTheme() {
-    const DOM = document.querySelector('.mainContainer');
+    const DOM = document.querySelector('#mainContainer');
     if (!DOM) return;
     (DOM as HTMLElement).style.background = 'var(--background-color)';
 }

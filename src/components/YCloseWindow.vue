@@ -35,7 +35,7 @@
                         {{ $t('cancel') }}
                     </button>
                     <button @click="ensure">
-                        {{ $t('confirm') }}
+                        {{ $t('confirm.title') }}
                     </button>
                 </div>
             </div>

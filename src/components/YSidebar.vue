@@ -50,7 +50,7 @@
                     <button class="playlist-button font-color-main" v-for="button in userPlaylists" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
-                        :disabled="activeButtonId === button.id">
+                        :disabled="activeButtonId === button.id" @contextmenu="openCtxMenu($event, button.id, 'created-playlists')">
                         <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
@@ -78,7 +78,7 @@
                     <button class="playlist-button font-color-main" v-for="button in userSubscribes" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
-                        :disabled="activeButtonId === button.id">
+                        :disabled="activeButtonId === button.id" @contextmenu="openCtxMenu($event, button.id, 'subscribed-playlists')">
                         <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
@@ -94,6 +94,7 @@ import { Message } from '@/dual/YMessageC';
 import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
 import YScroll from './YScroll.vue';
+import { IPlaylistCtxData } from '@/dual/YContextMenuItemC';
 
 export default defineComponent({
     name: 'YSidebar',
@@ -160,7 +161,16 @@ export default defineComponent({
                 return;
             }
             this.globalMsg.post('create-playlist')
-        }
+        },
+        openCtxMenu(event: MouseEvent, id: number, from: 'created-playlists' | 'subscribed-playlists') {
+            const data: IPlaylistCtxData = {
+                id: id,
+                x: event.clientX,
+                y: event.clientY,
+                from: from,
+            };
+            this.globalMsg.post('open-ctx-menu-playlist', data);
+        },
     },
     mounted() {
         this.sidebarWidth = this.setting.display.sidebarWidth;

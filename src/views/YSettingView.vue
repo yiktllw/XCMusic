@@ -126,6 +126,9 @@
                                 @change="setAutoZoom(auto_zoom)">
                             <label for="setting_auto_zoom" :title="$t('setting_view.display.press_f11_to_fullscreen')">
                                 {{ $t('setting_view.display.fullscreen_auto_zoom') }}
+                                <span class="font-color-low">
+                                    ({{ $t('setting_view.display.press_f11_to_fullscreen') }})
+                                </span>
                             </label>
                         </div>
                     </div>

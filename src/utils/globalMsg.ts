@@ -8,7 +8,15 @@ const events = [
     'open-custom-window',
     'close-custom-window',
     'open-close-window',
+    'open-ctx-menu-playlist',
+    'confirm',
 ]
+
+export interface IConfirm {
+    content: string;
+    needTranslate: boolean;
+    callback: Function;
+}
 
 export class GlobalMsg {
     subscriber: Subscriber;
@@ -21,5 +29,8 @@ export class GlobalMsg {
             return;
         }
         this.subscriber.exec(msg, data);
+    }
+    confirm(args: IConfirm) {
+        this.subscriber.exec('confirm', args);
     }
 }

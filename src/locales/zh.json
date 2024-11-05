@@ -8,14 +8,22 @@
 		"recommend_order": "推荐",
 		"time_order": "时间"
 	},
-	"confirm": "确认",
+	"confirm": {
+		"delete": "确定删除吗？",
+		"title": "确认"
+	},
 	"context": {
+		"addToPlaylistAll": "添加到播放列表",
 		"copy_link": "复制链接",
 		"delete_from_playlist": "从歌单中删除",
+		"delete_playlist": "删除歌单",
 		"download": "下载",
+		"downloadAll": "下载全部",
+		"editPlaylist": "编辑歌单",
 		"info": "查看歌曲信息",
 		"nextplay": "下一首播放",
 		"play": "播放",
+		"playAll": "播放全部",
 		"subscribe": "收藏到歌单",
 		"view_comment": "查看评论"
 	},

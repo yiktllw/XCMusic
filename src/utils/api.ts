@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Tracks } from './tracks';
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -74,3 +75,56 @@ export async function toogleLike(id: number | string, status: boolean) {
         await setLike(id, true, localStorage.getItem('login_cookie') ?? '');
     }
 }
+
+export namespace playlist {
+    /** 
+     * 获取某个歌单的全部歌曲
+     * @param {number} playlistId 歌单id
+     */
+    export async function getAllTracks(playlistId: number) {
+        let trackCount = 0;
+        await useApi('/playlist/detail', {
+            id: playlistId
+        }).then((res) => {
+            trackCount = res.playlist.trackCount;
+        }).catch(error => {
+            console.error('Failed to fetch playlist detail:', error);
+        })
+        const limit = 1000;
+        let pageCount = Math.ceil(trackCount / limit);
+        let requests = [];
+        for (let i = 1; i <= pageCount; i++) {
+            requests.push(fetchTracks(playlistId, i, limit));
+        }
+        let allTracks = await Promise.all(requests).then((values) => {
+            return values.flat();
+        });
+        return allTracks;
+    }
+    /** 
+     * 获取某个歌单的第i页的歌曲，默认一页500首
+     * @param {number} playlistId 歌单id
+     * @param {number} page 页码
+     * @param {number} limit 每页数量，默认500
+     */
+    export async function fetchTracks(playlistId: number, page: number, limit: number = 500) {
+        let offset = (page - 1) * limit;
+        let getTracks = await useApi('/playlist/track/all', {
+            id: playlistId,
+            limit: limit,
+            offset: offset
+        }).catch(error => {
+            console.log('Failed to fetch tracks:', error);
+        });
+        // 加入新的属性 originalIndex，用于排序
+        return (new Tracks({
+            url: '/playlist/track/all',
+            tracks: getTracks.songs,
+            params: {
+                needIndex: true,
+                page: page,
+            }
+        })).tracks;
+    }
+}
+

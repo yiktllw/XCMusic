@@ -1,6 +1,6 @@
 <template>
     <!-- 主容器 -->
-    <div class="mainContainer ">
+    <div class="mainContainer" id="mainContainer">
         <div class="align-up">
             <div class="align-left">
                 <!-- 侧边栏 -->
@@ -38,6 +38,8 @@
             <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
             <YCustomWindow v-if="showCustomWindow" @new-window-state="handleNewWindowState_customWindow" />
             <YCloseWindow v-if="showCloseWindow" @new-window-state="handleNewWindowState_closeWindow" />
+            <YConfirmWindow :confirm="confirm" v-if="showConfirmWindow"
+                @new-window-state="handleNewWindowState_confirmWindow" />
         </div>
         <div class="message-container">
             <div></div>
@@ -66,11 +68,13 @@ import YPlayUI from '@/components/YPlayUI.vue';
 import YLoginWindow from '@/components/YLoginWindow.vue';
 import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import { Message } from '@/dual/YMessageC';
-import { songItems } from '@/dual/YContextMenuItemC';
-import { useApi } from '@/utils/api';
+import { IPlaylistCtxData, songItems, playlistItems } from '@/dual/YContextMenuItemC';
+import { playlist, useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
 import YCustomWindow from '@/components/YCustomWindow.vue';
 import YCloseWindow from '@/components/YCloseWindow.vue';
+import { IConfirm } from '@/utils/globalMsg';
+import YConfirmWindow from '@/components/YConfirmWindow.vue';
 
 export default defineComponent({
     name: 'App',
@@ -93,6 +97,8 @@ export default defineComponent({
             showCreatePlaylist: false,
             showCustomWindow: false,
             showCloseWindow: false,
+            confirm: null as unknown as IConfirm,
+            showConfirmWindow: false,
             msg: {
                 type: 'none',
                 message: '',
@@ -115,6 +121,7 @@ export default defineComponent({
         YCreatePlaylist,
         YCustomWindow,
         YCloseWindow,
+        YConfirmWindow,
     },
     computed: {
     },
@@ -185,6 +192,47 @@ export default defineComponent({
                 this.showPreventContainer = true;
             },
         });
+        this.globalMsg.subscriber.on({
+            id: 'HomeView',
+            type: 'open-ctx-menu-playlist',
+            func: (data: IPlaylistCtxData) => {
+                this.contextMenu?.showContextMenu();
+                this.menu = playlistItems;
+                this.target = data.id;
+                this.posX = data.x + 5 + 'px';
+                this.posY = data.y + 5 + 'px';
+                let menuWidth = 198 + 5;
+                let menuHeight = 35 * this.menu.length + 5;
+                this.setDirection(data.x, data.y, menuWidth, menuHeight);
+                console.log(data)
+                switch (data.from) {
+                    case 'created-playlists':
+                        this.menu[3].display = true;
+                        this.menu[3].showSeparator = true;
+                        this.menu[4].display = true;
+                        break;
+                    case 'subscribed-playlists':
+                        this.menu[3].display = false;
+                        this.menu[3].showSeparator = false;
+                        this.menu[4].display = false;
+                        break;
+                    case 'searched-playlists':
+                        this.menu[3].display = false;
+                        this.menu[3].showSeparator = false;
+                        this.menu[4].display = false;
+                        break;
+                }
+            },
+        })
+        this.globalMsg.subscriber.on({
+            id: 'HomeView',
+            type: 'confirm',
+            func: (args: IConfirm) => {
+                this.confirm = args;
+                this.showConfirmWindow = true;
+                this.showPreventContainer = true;
+            },
+        })
     },
     beforeUnmount() {
         this.globalMsg.subscriber.offAll('HomeView');
@@ -209,8 +257,8 @@ export default defineComponent({
                 this.target = JSON.parse(data.track);
                 this.posX = data.x + 5 + 'px';
                 this.posY = data.y + 5 + 'px';
-                let menuWidth = 198;
-                let menuHeight = 282;
+                let menuWidth = 198 + 5;
+                let menuHeight = 35 * this.menu.length + 5;
                 this.setDirection(data.x, data.y, menuWidth, menuHeight);
                 console.log(data)
                 let commentCount = await this.getCommentCount(this.target.id)
@@ -329,6 +377,40 @@ export default defineComponent({
                     this.showSongInfo = true;
                     this.showPreventContainer = true;
                     break;
+                case 'playlist-play':
+                    playlist.getAllTracks(arg.target).then((res) => {
+                        this.player.playAll(res);
+                        Message.post('success', 'message.playlist_view.added_to_playlist', true);
+                    });
+                case 'playlist-addtoplaylist':
+                    playlist.getAllTracks(arg.target).then((res) => {
+                        this.player.addPlaylist(res);
+                        Message.post('success', 'message.playlist_view.added_to_playlist', true);
+                    });
+                    break;
+                case 'playlist-download':
+                    Message.post('info', '功能暂未实现');
+                case 'playlist-edit':
+                    Message.post('info', '功能暂未实现');
+                    break;
+                case 'playlist-delete':
+                    const confirm: IConfirm = {
+                        content: this.$t('confirm.delete'),
+                        needTranslate: false,
+                        callback: () => {
+                            useApi('/playlist/delete', {
+                                id: arg.target,
+                                cookie: this.login.cookie,
+                            }).then(res => {
+                                this.login.refreshUserPlaylists();
+                                console.log('Delete playlist:', res);
+                            }).catch(err => {
+                                console.error('Error when delete playlist:', err);
+                            });
+                        },
+                    }
+                    this.globalMsg.confirm(confirm);
+                    break;
                 default:
                     break;
             }
@@ -389,6 +471,12 @@ export default defineComponent({
         handleNewWindowState_closeWindow(val: boolean) {
             if (val === false) {
                 this.showCloseWindow = false;
+                this.showPreventContainer = false;
+            }
+        },
+        handleNewWindowState_confirmWindow(val: boolean) {
+            if (val === false) {
+                this.showConfirmWindow = false;
                 this.showPreventContainer = false;
             }
         },

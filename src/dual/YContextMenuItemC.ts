@@ -1,25 +1,40 @@
+interface ICtxMenuItem {
+    /** 显示的文字 */
+    label: string;
+    /** 作用 */
+    role: string;
+    /** 图标 */
+    icon: string;
+    /** 是否显示分隔符 */
+    showSeparator: boolean;
+    /** 是否显示此菜单项 */
+    display: boolean;
+}
 
-export class YContextMenuItemC {
+export interface IPlaylistCtxData {
+    /** 歌单ID */
+    id: number;
+    /** 事件x坐标 */
+    x: number;
+    /** 事件y坐标 */
+    y: number;
+    /** 触发菜单的来源 */
+    from: 'created-playlists' | 'subscribed-playlists' | 'searched-playlists';
+}
+
+export class YContextMenuItemC implements ICtxMenuItem {
     _label: string;
     _role: string;
     _icon: string;
     _showSeparator: boolean;
     _display: boolean;
-    /**
-     * @param {Object} params
-     * @param {string} params.label 显示的文字
-     * @param {string} params.role 作用
-     * @param {string} params.icon 图标
-     * @param {boolean} params.showSeparator 是否显示分隔符
-     * @param {boolean} params.display 是否显示此菜单项
-     */
     constructor({
         label = '播放',
         role = 'play',
         icon = '@/assets/play.png',
         showSeparator = false,
         display = false,
-    }: { label: string; role: string; icon: string; showSeparator: boolean; display: boolean; }) {
+    }: ICtxMenuItem) {
         this._label = label;
         this._role = role;
         this._icon = icon;
@@ -68,7 +83,7 @@ export class YContextMenuItemC {
     }
 }
 
-export var songItems = [
+export const songItems = [
     new YContextMenuItemC({
         label: 'context.play',
         icon: require('@/assets/play_.svg'),
@@ -120,9 +135,47 @@ export var songItems = [
     }),
     new YContextMenuItemC({
         label: 'context.delete_from_playlist',
-        icon: require('@/assets/delete.svg'),
+        icon: require('@/assets/edit.svg'),
         role: 'song-delete',
         showSeparator: false,
         display: false,
     })
+]
+
+export const playlistItems = [
+    new YContextMenuItemC({
+        label: 'context.playAll',
+        icon: require('@/assets/play_.svg'),
+        role: 'playlist-play',
+        showSeparator: false,
+        display: true,
+    }),
+    new YContextMenuItemC({
+        label: 'context.addToPlaylistAll',
+        icon: require('@/assets/addtoplaylist.svg'),
+        role: 'playlist-addtoplaylist',
+        showSeparator: false,
+        display: true,
+    }),
+    new YContextMenuItemC({
+        label: 'context.downloadAll',
+        icon: require('@/assets/smalldownload.svg'),
+        role: 'playlist-download',
+        showSeparator: false,
+        display: true,
+    }),
+    new YContextMenuItemC({
+        label: 'context.editPlaylist',
+        icon: require('@/assets/edit.svg'),
+        role: 'playlist-edit',
+        showSeparator: true,
+        display: true,
+    }),
+    new YContextMenuItemC({
+        label: 'context.delete_playlist',
+        icon: require('@/assets/delete.svg'),
+        role: 'playlist-delete',
+        showSeparator: false,
+        display: false,
+    }),
 ]

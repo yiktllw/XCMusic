@@ -181,7 +181,7 @@ export default defineComponent({
                 .comment-user {
                     color: rgb(106, 110, 213);
                     cursor: pointer;
-                    width: 100%;
+                    width: fit-content;
                 }
 
                 .comment-text {
