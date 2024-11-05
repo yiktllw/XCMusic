@@ -114,6 +114,7 @@ import YWindow from '@/components/YWindow.vue';
 import YScroll from './YScroll.vue';
 import { Message } from '@/dual/YMessageC';
 import { isLocal } from '@/utils/localTracks_renderer';
+import { useStore } from 'vuex';
 
 export default defineComponent({
     name: 'YSongInfo',
@@ -125,9 +126,11 @@ export default defineComponent({
     },
     setup() {
         const window = ref<InstanceType<typeof YWindow>>();
+        const store = useStore();
 
         return {
             window,
+            globalMsg: store.state.globalMsg,
         };
     },
     components: {
@@ -156,11 +159,13 @@ export default defineComponent({
         openArtist(id: number | string) {
             if (!id || isLocal(id)) return;
             this.$router.push(`/artist/${id}`)
+            this.globalMsg.post('close-playui');
             this.window?.closeWindow();
         },
         openAlbum(id: number | string) {
             if (!id || isLocal(id)) return;
             this.$router.push(`/album/${id}`)
+            this.globalMsg.post('close-playui');
             this.window?.closeWindow();
         },
         isLocal(id: number | string) {

@@ -182,7 +182,6 @@ import { Lyrics } from '@/utils/lyric';
 import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import { getColorFromImg } from '@/utils/color';
-import { Message } from '@/dual/YMessageC';
 import YSpecCanvas from './YSpecCanvas.vue';
 import { isLocal } from '@/utils/localTracks_renderer';
 
@@ -209,6 +208,7 @@ export default defineComponent({
             player,
             login,
             setting: store.state.setting,
+            globalMsg: store.state.globalMsg,
         };
     },
     computed: {
@@ -592,10 +592,18 @@ export default defineComponent({
             },
             type: 'allTime',
         });
+        this.globalMsg.subscriber.on({
+            id: 'YPlayUI',
+            type: 'close-playui',
+            func: () => {
+                this.closePanel();
+            },
+        });
     },
     beforeUnmount() {
         clearInterval(this.timeInterval);
         this.player.subscriber.offAll('YPlayUI');
+        this.globalMsg.subscriber.offAll('YPlayUI');
         this.$emit('close-panel');
     },
 });

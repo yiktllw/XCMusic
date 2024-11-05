@@ -10,6 +10,7 @@ const events = [
     'open-close-window',
     'open-ctx-menu-playlist',
     'confirm',
+    'close-playui',
 ]
 
 export interface IConfirm {
