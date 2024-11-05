@@ -8,128 +8,130 @@
             </template>
             <div class="main">
                 <div class="main-content">
-                    <div class="checks">
-                        <div class="check-item preset">
-                            <div class="label">
-                                {{ $t('create_custom_theme.preset') }}
+                    <YScroll style="max-height: 440px; width: 300px;">
+                        <div class="checks">
+                            <div class="check-item preset">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.preset') }}
+                                </div>
+                                <div class="check">
+                                    <input type="radio" id="preset_dark" value="dark" v-model="preset" />
+                                    <label for="preset_dark">
+                                        {{ $t('create_custom_theme.theme_type_dark') }}
+                                    </label>
+                                    <input type="radio" id="preset_light" value="light" v-model="preset" />
+                                    <label for="preset_light">
+                                        {{ $t('create_custom_theme.theme_type_light') }}
+                                    </label>
+                                </div>
                             </div>
-                            <div class="check">
-                                <input type="radio" id="preset_dark" value="dark" v-model="preset" />
-                                <label for="preset_dark">
-                                    {{ $t('create_custom_theme.theme_type_dark') }}
-                                </label>
-                                <input type="radio" id="preset_light" value="light" v-model="preset" />
-                                <label for="preset_light">
-                                    {{ $t('create_custom_theme.theme_type_light') }}
-                                </label>
+                            <div class="check-item name">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_name') }}
+                                </div>
+                                <textarea class="input font-size-large" v-model="name" :maxlength="40"
+                                    :placeholder="$t('create_custom_theme.theme_name_placeholder')" rows="2"></textarea>
+                            </div>
+                            <div class="check-item type">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_type') }}
+                                </div>
+                                <div class="check">
+                                    <input type="radio" id="dark" value="dark" v-model="type" />
+                                    <label for="dark">
+                                        {{ $t('create_custom_theme.theme_type_dark') }}
+                                    </label>
+                                    <input type="radio" id="light" value="light" v-model="type" />
+                                    <label for="light">
+                                        {{ $t('create_custom_theme.theme_type_light') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="check-item background">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_background_color') }}
+                                </div>
+                                <input class="input-ori" type="color" v-model="background" />
+                            </div>
+                            <div class="check-item auto-background">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_auto_background_type') }}
+                                </div>
+                                <div class="check">
+                                    <input type="radio" id="_dark" value="dark" v-model="autoBackgroundType" />
+                                    <label for="_dark">
+                                        {{ $t('create_custom_theme.theme_type_dark') }}
+                                    </label>
+                                    <input type="radio" id="_other" value="other" v-model="autoBackgroundType" />
+                                    <label for="_other">
+                                        {{ $t('create_custom_theme.theme_type_other') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="check-item foreground">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_foreground_color') }}
+                                </div>
+                                <input class="input-ori" type="color" v-model="foreground" />
+                            </div>
+                            <div class="check-item panel-background">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.theme_panel_color') }}
+                                </div>
+                                <input class="input-ori" type="color" v-model="panelBackground" />
+                            </div>
+                            <div class="check-item font-color-type">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color_type') }}
+                                </div>
+                                <div class="check">
+                                    <input type="radio" id="fontColorAll" value="single" v-model="fontColorType" />
+                                    <label for="fontColorAll">
+                                        {{ $t('create_custom_theme.font_color_type_single') }}
+                                    </label>
+                                    <input type="radio" id="fontColor" value="various" v-model="fontColorType" />
+                                    <label for="fontColor">
+                                        {{ $t('create_custom_theme.font_color_type_various') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="check-item font-color-all" v-if="fontColorType === 'single'">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color') }}
+                                </div>
+                                <input class="input-ori" type="color"
+                                    v-model="(fontColors as Theme.IFontColorAll).fontColorAll" />
+                            </div>
+                            <div class="check-item font-color-primary" v-if="fontColorType === 'various'">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color_primary') }}
+                                </div>
+                                <input class="input-ori" type="color"
+                                    v-model="(fontColors as Theme.IFontColor).fontColorMain" />
+                            </div>
+                            <div class="check-item font-color-high" v-if="fontColorType === 'various'">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color_secondary') }}
+                                </div>
+                                <input class="input-ori" type="color"
+                                    v-model="(fontColors as Theme.IFontColor).fontColorHigh" />
+                            </div>
+                            <div class="check-item font-color-standard" v-if="fontColorType === 'various'">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color_tertiary') }}
+                                </div>
+                                <input class="input-ori" type="color"
+                                    v-model="(fontColors as Theme.IFontColor).fontColorStandard" />
+                            </div>
+                            <div class="check-item font-color-low" v-if="fontColorType === 'various'">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.font_color_quaternary') }}
+                                </div>
+                                <input class="input-ori" type="color"
+                                    v-model="(fontColors as Theme.IFontColor).fontColorLow" />
                             </div>
                         </div>
-                        <div class="check-item name">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_name') }}
-                            </div>
-                            <textarea class="input font-size-large" v-model="name" :maxlength="40"
-                                :placeholder="$t('create_custom_theme.theme_name_placeholder')" rows="2"></textarea>
-                        </div>
-                        <div class="check-item type">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_type') }}
-                            </div>
-                            <div class="check">
-                                <input type="radio" id="dark" value="dark" v-model="type" />
-                                <label for="dark">
-                                    {{ $t('create_custom_theme.theme_type_dark') }}
-                                </label>
-                                <input type="radio" id="light" value="light" v-model="type" />
-                                <label for="light">
-                                    {{ $t('create_custom_theme.theme_type_light') }}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="check-item background">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_background_color') }}
-                            </div>
-                            <input class="input-ori" type="color" v-model="background" />
-                        </div>
-                        <div class="check-item auto-background">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_auto_background_type') }}
-                            </div>
-                            <div class="check">
-                                <input type="radio" id="_dark" value="dark" v-model="autoBackgroundType" />
-                                <label for="_dark">
-                                    {{ $t('create_custom_theme.theme_type_dark') }}
-                                </label>
-                                <input type="radio" id="_other" value="other" v-model="autoBackgroundType" />
-                                <label for="_other">
-                                    {{ $t('create_custom_theme.theme_type_other') }}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="check-item foreground">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_foreground_color') }}
-                            </div>
-                            <input class="input-ori" type="color" v-model="foreground" />
-                        </div>
-                        <div class="check-item panel-background">
-                            <div class="label">
-                                {{ $t('create_custom_theme.theme_panel_color') }}
-                            </div>
-                            <input class="input-ori" type="color" v-model="panelBackground" />
-                        </div>
-                        <div class="check-item font-color-type">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color_type') }}
-                            </div>
-                            <div class="check">
-                                <input type="radio" id="fontColorAll" value="single" v-model="fontColorType" />
-                                <label for="fontColorAll">
-                                    {{ $t('create_custom_theme.font_color_type_single') }}
-                                </label>
-                                <input type="radio" id="fontColor" value="various" v-model="fontColorType" />
-                                <label for="fontColor">
-                                    {{ $t('create_custom_theme.font_color_type_various') }}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="check-item font-color-all" v-if="fontColorType === 'single'">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color') }}
-                            </div>
-                            <input class="input-ori" type="color"
-                                v-model="(fontColors as Theme.IFontColorAll).fontColorAll" />
-                        </div>
-                        <div class="check-item font-color-primary" v-if="fontColorType === 'various'">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color_primary') }}
-                            </div>
-                            <input class="input-ori" type="color"
-                                v-model="(fontColors as Theme.IFontColor).fontColorMain" />
-                        </div>
-                        <div class="check-item font-color-high" v-if="fontColorType === 'various'">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color_secondary') }}
-                            </div>
-                            <input class="input-ori" type="color"
-                                v-model="(fontColors as Theme.IFontColor).fontColorHigh" />
-                        </div>
-                        <div class="check-item font-color-standard" v-if="fontColorType === 'various'">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color_tertiary') }}
-                            </div>
-                            <input class="input-ori" type="color"
-                                v-model="(fontColors as Theme.IFontColor).fontColorStandard" />
-                        </div>
-                        <div class="check-item font-color-low" v-if="fontColorType === 'various'">
-                            <div class="label">
-                                {{ $t('create_custom_theme.font_color_quaternary') }}
-                            </div>
-                            <input class="input-ori" type="color"
-                                v-model="(fontColors as Theme.IFontColor).fontColorLow" />
-                        </div>
-                    </div>
+                    </YScroll>
                     <div class="preview" :style="{
                         background: `linear-gradient(180deg, ${nowBackgroundStyle} 0%, ${background} 300px, ${background} 100%)`,
                     }">
@@ -447,6 +449,7 @@ export default defineComponent({
     align-items: center;
     padding: 20px 10px 10px 10px;
     // width: 432.1px;
+    height: 500px;
 
     .main-content {
         display: flex;
@@ -486,7 +489,8 @@ export default defineComponent({
             flex-direction: column;
             gap: 10px;
             min-width: 600px;
-            min-height: 490px;
+            min-height: 440px;
+            max-height: 440px;
             background-color: var(--background-color);
             border: 1px solid var(--foreground-color);
 
