@@ -358,8 +358,8 @@ export class Player {
         try {
             if (this.playState === 'play') {
                 await this._audio.play();
-                this.updateTime();
             }
+            this.updateTime();
             console.log('Reload url', {
                 id: this.currentTrack.id,
                 name: this.currentTrack.name,
