@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/yiktllw/XCMusic/compare/v0.2.0...v0.2.1) (2024-11-06)
+
+
+### Features
+
+* 创建主题时可以选择预设 ([f2ecdfb](https://github.com/yiktllw/XCMusic/commit/f2ecdfb3c87fccafb216394ddc0a9a81a4e78bea))
+* 弹出窗口时背景模糊 ([3adae7d](https://github.com/yiktllw/XCMusic/commit/3adae7d01d542246032aa6a9249f86ddcddda940))
+* 实现自定义主题功能 ([8ee708b](https://github.com/yiktllw/XCMusic/commit/8ee708b53955396ec9cf7a809c6b5b858ace1a51))
+* 添加歌单右键菜单，实现删除歌单，实现确认窗口 ([38712f6](https://github.com/yiktllw/XCMusic/commit/38712f6875befb05bd14392d814e894b14aa3e2b))
+* 新增: 关闭时询问窗口 ([4a2cb16](https://github.com/yiktllw/XCMusic/commit/4a2cb16a767baf6656fff2f8b4856289c1529afd))
+* 新增: 设置-外观-全屏时自动缩放 ([fc14b63](https://github.com/yiktllw/XCMusic/commit/fc14b632f990570ea82988abf522baa73c3a8865))
+* 新增音频调试界面 ([6ef16f0](https://github.com/yiktllw/XCMusic/commit/6ef16f07e876f1fd38da882e490934233d9ce2b0))
+* 新增Dracula主题 ([e27ec08](https://github.com/yiktllw/XCMusic/commit/e27ec08b0b3f6b4643c8b8fa6450f6908071848c))
+* 优化自定义主题界面 ([0f1a2c2](https://github.com/yiktllw/XCMusic/commit/0f1a2c23c0cf146f6b661847f9e179b25385c1af))
+* 暂停状态下自动重载链接 ([8f7452f](https://github.com/yiktllw/XCMusic/commit/8f7452f988954ee59572638312efe7d9cce88cc0))
+* 只允许运行一个实例 ([c56d0db](https://github.com/yiktllw/XCMusic/commit/c56d0dbea0dca6f8a69d7e33405b2b113eab2329))
+
+
+### Bug Fixes
+
+* 修复播放界面中，从歌曲信息打开歌手/专辑时，不会自动关闭播放界面的bug ([2775699](https://github.com/yiktllw/XCMusic/commit/27756991d3289fcab8e888e49b87ac1aaaebff53))
+* 修复播放时间更新错误 ([435e3a7](https://github.com/yiktllw/XCMusic/commit/435e3a7c97df5a1a2cf0f103d79ba2ce45133277))
+* 修复设置界面的选项错误 ([ea82bde](https://github.com/yiktllw/XCMusic/commit/ea82bde54f2abefbcc2a231b858e77204a1d5151))
+* 修复重载url的错误 ([8519f0e](https://github.com/yiktllw/XCMusic/commit/8519f0e367f5a80836e5b74dc24dc20954414a7c))
+
 ## [0.2.0](https://github.com/yiktllw/XCMusic/compare/v0.1.4...v0.2.0) (2024-10-30)
 
 
