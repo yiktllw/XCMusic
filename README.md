@@ -84,7 +84,7 @@ npm install
 ```
 npm run electron:serve
 ```
-编译为win32程序
+编译为二进制程序
 ```
 npm run electron:build
 ```
