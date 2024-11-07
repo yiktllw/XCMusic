@@ -134,6 +134,7 @@ import { YColor } from '@/utils/color';
 import { mapState, useStore } from 'vuex';
 import { YPageC } from '@/dual/YPageC';
 import { markRaw, ref, defineComponent } from 'vue';
+import songsRank from '@/assets/songsrank.svg';
 
 export default defineComponent({
     name: 'YUserView',
@@ -345,8 +346,8 @@ export default defineComponent({
                 creator: response.playlist[0]?.creator ?? null,
                 playCount: 0,
                 trackCount: this.$t('user_view.total_listen') + `${this.user.listenSongs}`,
-                _picUrl: require('@/assets/songsrank.svg'),
-                _bigPicUrl: require('@/assets/songsrank.svg'),
+                _picUrl: songsRank,
+                _bigPicUrl: songsRank,
             }];
             this.user.userSubscribedPlaylists = [];
             // 返回处理后的歌单

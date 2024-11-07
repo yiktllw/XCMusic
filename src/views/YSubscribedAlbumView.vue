@@ -44,7 +44,7 @@ export default defineComponent({
     },
     methods: {
         async getUserSubscribedAlbums(newPage = false) {
-            const LIMIT = 25;
+            const LIMIT = 24;
             await useApi('/album/sublist', {
                 offset: (this.page.current - 1) * LIMIT,
                 limit: LIMIT,

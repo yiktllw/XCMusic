@@ -338,6 +338,7 @@ export default defineComponent({
         },
         preset(val) {
             this.fontColorType = 'single';
+            this.highlightColor = '#fe3c5a';
             if (val === 'light') {
                 this.type = 'light';
                 this.background = '#ffffff';

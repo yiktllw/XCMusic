@@ -48,6 +48,7 @@ export namespace YColor {
         if (!res) {
             const userCustomThemes = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
             res = userCustomThemes.find((theme: any) => theme.data.value === themeValue);
+            if (!res) throw new Error('theme not found');
             res = (res as unknown as {
                 data: Theme1 | Theme2,
                 classContent: string,
