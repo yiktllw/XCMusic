@@ -1,6 +1,15 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * damakuSongPicker.ts 为弹幕姬的点歌功能
+ * 需要配合弹幕姬的插件DMPlugin_XCMusic使用
+ * SongPicker类用于监听文件中的点歌请求
+ * 通常，在vuex store中实例化一个SongPicker对象
+ * 在网页端，此类不会被使用
+*-----------------------------------------*/
+
 import { YTrackC } from '../dual/YTrackC';
 import { useApi } from '@/utils/api';
-import { Subscriber, SubscribeOptions, UnsubscribeOptions } from './subscribe';
+import { Subscriber } from './subscribe';
 import { markRaw } from 'vue';
 
 export class SongPicker {

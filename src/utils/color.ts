@@ -1,3 +1,12 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * color.ts主要为背景颜色相关内容
+ * darkThemeColors为暗色主题对应的部分内容色_
+ * _用于在内容改变时，设置内容色到背景色的渐变
+ * YColor命名空间为一些颜色相关的，包装较完善的函数
+ * 其它导出的函数为兼容旧代码，待优化
+*-----------------------------------------*/
+
 import Color from "color";
 import { Theme1, Theme2, themes } from "./theme";
 

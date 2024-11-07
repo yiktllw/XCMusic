@@ -1,3 +1,10 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * tracks.ts 为处理歌曲列表的工具
+ * 需要使用时，将从api获取的歌曲列表和对应参数传入Tracks类中
+ * Tracks类会将歌曲列表处理成统一的格式
+*-----------------------------------------*/
+
 import { useApi } from "./api";
 function generateUniqueString(address: string): string {
     const crypto = window.api?.crypto;

@@ -1,3 +1,12 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * theme.ts 与 theme.scss 配合使用
+ * themes数组中为所有预设主题的配置
+ * Theme命名空间为自定义主题相关内容
+ * 代码逻辑待优化
+*-----------------------------------------*/
+
+
 function hexToRgb(hex: string) {
     const bigint = parseInt(hex.slice(1), 16);
     const r = (bigint >> 16) & 255;
@@ -107,7 +116,7 @@ export namespace Theme {
         resultClass += `--foreground-color: ${themeToBeProcessed.foreground}; \n `
         resultClass += `--foreground-color-rgb: ${foregroundColor.r}, ${foregroundColor.g}, ${foregroundColor.b}; \n `
         resultClass += `--panel-background-color: ${themeToBeProcessed.panelBackground}; \n`
-        
+
         const highlightColor = hexToRgb(themeToBeProcessed.highlight);
         resultClass += `--highlight-color-rgb: ${highlightColor.r}, ${highlightColor.g}, ${highlightColor.b}\n`
 

@@ -1,3 +1,11 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * globalMsg.ts 为渲染进程中，发送消息到HomeView的工具
+ * 主要有两个功能：
+ * 1. 发送消息到HomeView
+ * 2. 要求用户确认某些操作
+*-----------------------------------------*/
+
 import { Subscriber } from "./subscribe";
 
 const events = [

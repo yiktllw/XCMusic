@@ -1,7 +1,14 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * login.ts 为渲染进程中，处理登录状态的工具
+ * 封装了以下功能：
+ * 1. 获取登录信息(状态，用户ID，用户名，头像)
+ * 2. 获取用户创建的歌单，用户收藏的歌单
+*-----------------------------------------*/
+
 import { Subscriber } from "@/utils/subscribe";
 import { useApi } from "./api";
-import { ref, reactive, markRaw, shallowReactive, Ref, Raw, Reactive } from 'vue';
-import i18n from "@/i18n";
+import { ref, reactive, markRaw, Ref, Raw, Reactive } from 'vue';
 
 export class Login {
     _cookie: string | null;

@@ -1,3 +1,11 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * download.ts 为在主进程中下载歌曲的函数
+ * 请勿在渲染进程中调用！
+ * 请勿在渲染进程中调用！
+ * 请勿在渲染进程中调用！
+*-----------------------------------------*/
+
 import axios from 'axios';
 const fs = require('fs');
 const path = require('path');

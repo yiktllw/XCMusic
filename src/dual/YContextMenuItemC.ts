@@ -1,3 +1,8 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * YContextMenuItemC.ts 为YContextMenu组件配套的处理工具
+*-----------------------------------------*/
+
 interface ICtxMenuItem {
     /** 显示的文字 */
     label: string;

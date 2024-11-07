@@ -1,3 +1,8 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * rendererEvents.ts 为主进程中，处理渲染进程事件的文件
+*-----------------------------------------*/
+
 import { ipcMain, BrowserWindow, dialog, app } from 'electron';
 import { Download } from './download';
 import { scanMusicDirectory } from './localTracks';

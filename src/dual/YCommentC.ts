@@ -1,3 +1,8 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * YCommentC.ts 为YComment组件配套的处理工具
+*-----------------------------------------*/
+
 import { useApi } from "@/utils/api";
 import { YPageC } from "./YPageC";
 import { isLocal } from "@/utils/localTracks_renderer";

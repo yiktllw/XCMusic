@@ -1,3 +1,11 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * subscribe.ts 为订阅模块，用于订阅事件
+ * 在需要使用的地方，创建一个Subscriber实例
+ * 然后使用on方法订阅事件，使用exec方法执行事件
+ * 使用off方法取消订阅，使用offAll方法取消某个id订阅的所有事件
+*-----------------------------------------*/
+
 import { markRaw } from 'vue';
 
 export interface SubscribeOptions {

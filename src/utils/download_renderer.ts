@@ -1,3 +1,10 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * download_renderer.ts 为在渲染进程中下载歌曲的函数
+ * 下载任务由主进程完成
+ * Download类负责将下载任务添加到主进程，以及管理下载完成的歌曲
+*-----------------------------------------*/
+
 import indexDB from '@/utils/indexDB';
 import { Subscriber } from './subscribe';
 

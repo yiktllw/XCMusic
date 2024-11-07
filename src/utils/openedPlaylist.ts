@@ -1,4 +1,9 @@
-import { Subscriber, SubscribeOptions, UnsubscribeOptions } from "./subscribe";
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ *  openedPlaylist.ts 用于存储侧边栏打开的歌单
+*-----------------------------------------*/
+
+import { Subscriber } from "./subscribe";
 
 export class OpenedPlaylist {
     _id: number;
