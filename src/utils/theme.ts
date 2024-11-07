@@ -85,7 +85,8 @@ export namespace Theme {
         var resultClass = ``;
         var fontColors = ``;
         if ('fontColorAll' in themeToBeProcessed.fontColors) {
-            fontColors = `--font-color-rgb: ${themeToBeProcessed.fontColors.fontColorAll};\n`
+            const fontColorAll = hexToRgb(themeToBeProcessed.fontColors.fontColorAll);
+            fontColors = `--font-color-rgb: ${fontColorAll.r}, ${fontColorAll.g}, ${fontColorAll.b};\n`
             fontColors += `--font-color-main: rgba(var(--font-color-rgb), 1); \n`
             fontColors += `--font-color-high: rgba(var(--font-color-rgb), 0.8);\n`
             fontColors += `--font-color-standard: rgba(var(--font-color-rgb), 0.6);\n`
