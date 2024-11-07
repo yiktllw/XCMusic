@@ -88,11 +88,11 @@ export default defineComponent({
         cursor: pointer;
 
         .choosed-text {
-            color: rgb(254, 80, 110);
+            color: rgb(var(--highlight-color-rgb));
 
             .choosed {
                 height: 2px;
-                background-color: rgb(254, 60, 90);
+                background-color: rgb(var(--highlight-color-rgb));
                 transform: translate(7px, 4px);
                 width: calc(100% - 14px);
                 height: 4px;

@@ -34,7 +34,7 @@
         <div class="switcher">
             <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
                 @click="handleSwitcher(item.position)">
-                <span :class="{ 'choosed-text': item.position === position }" style="font-size: 16px; color:#fff;"
+                <span style="font-size: 16px; color:#fff;"
                     :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                     {{ $t(item.display) }}
                 </span>
@@ -417,14 +417,10 @@ export default defineComponent({
         border: none;
         cursor: pointer;
 
-        .choosed-text {
-            color: rgb(254, 80, 110);
-        }
-
         .choosed {
             width: 90%;
             height: 2px;
-            background-color: rgb(254, 60, 90);
+            background-color: rgb(var(--highlight-color-rgb));
             transform: translateY(1px);
             transform: translateX(1px);
         }

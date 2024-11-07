@@ -48,8 +48,7 @@
             <!-- 导航元素 -->
             <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher" :key="index"
                 @click="handleSwitcher(item.position)">
-                <span :class="{ 'choosed-text': item.position === user.position }"
-                    style="font-size: 16px; color:var(--font-color-main);"
+                <span style="font-size: 16px; color:var(--font-color-main);"
                     :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                     {{ $t(item.display) }}
                 </span>
@@ -549,13 +548,9 @@ export default defineComponent({
             border: none;
             cursor: pointer;
 
-            .choosed-text {
-                color: rgb(254, 80, 110);
-            }
-
             .choosed {
                 height: 2px;
-                background-color: rgb(254, 60, 90);
+                background-color: rgb(var(--highlight-color-rgb));
                 transform: translateY(1px);
                 transform: translateX(1px);
             }

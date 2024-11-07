@@ -240,7 +240,7 @@ ul {
                         cursor: pointer;
                         background-color: transparent;
                         border: none;
-                        transition: all 0.3s;
+                        // transition: all 0.3s;
 
                         &:hover {
                             color: var(--font-color-main);
@@ -256,10 +256,10 @@ ul {
                         cursor: pointer;
                         background-color: transparent;
                         border: none;
-                        color: rgb(234, 78, 68);
+                        color: rgba(var(--highlight-color-rgb), .8);
 
                         &:hover {
-                            color: rgb(255, 100, 90)
+                            color: rgb(var(--highlight-color-rgb));
                         }
                     }
                 }

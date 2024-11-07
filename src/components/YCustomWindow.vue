@@ -80,6 +80,12 @@
                                 </div>
                                 <input class="input-ori" type="color" v-model="panelBackground" />
                             </div>
+                            <div class="check-item highlight-color">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.highlight_color') }}
+                                </div>
+                                <input class="input-ori" type="color" v-model="highlightColor" />
+                            </div>
                             <div class="check-item font-color-type">
                                 <div class="label">
                                     {{ $t('create_custom_theme.font_color_type') }}
@@ -255,17 +261,31 @@
                             <div class="font-size-preview " :style="{
                                 color: fontColorStandard
                             }">
-                                这是底部栏
+                                <span>
+                                    这是底部栏
+                                </span>
+                                <span>
+                                    字体颜色为次要字体颜色
+                                </span>
                             </div>
                             <div class="font-size-preview " :style="{
                                 color: fontColorStandard
                             }">
-                                底部栏背景为面板颜色
+                                <button class="play-button" :style="{
+                                    backgroundColor: highlightColor,
+                                }">
+                                    <img src="@/assets/play.svg" class="play-img" />
+                                </button>
                             </div>
                             <div class="font-size-preview " :style="{
                                 color: fontColorStandard
                             }">
-                                字体颜色为次要字体颜色
+                                <span>
+                                    特殊按钮等颜色为强调色
+                                </span>
+                                <span>
+                                    其内容固定为白色
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -352,6 +372,7 @@ export default defineComponent({
             fontColorType: 'single' as 'single' | 'various',
             fontColors: { fontColorAll: '#ffffff' } as Theme.IFontColor | Theme.IFontColorAll,
             backgroundStyle: '',
+            highlightColor: '#fe3c5a',
         }
     },
     computed: {
@@ -403,6 +424,9 @@ export default defineComponent({
                 return YColor.getLightThemeColor(darkThemeColors[this.nowBackgroundIndex], this.background);
             }
         },
+        highlightColorRgb() {
+            return hexToRgb(this.highlightColor);
+        },
     },
     emits: [
         'new-window-state'
@@ -422,6 +446,7 @@ export default defineComponent({
                 foreground: this.foreground,
                 panelBackground: this.panelBackground,
                 fontColors: this.fontColors,
+                highlight: this.highlightColor,
             });
             const userCustomThemes = this.setting.display.userCustomThemes;
             this.setting.display.userCustomThemes = [
@@ -495,7 +520,24 @@ export default defineComponent({
             border: 1px solid var(--foreground-color);
 
             .font-size-preview {
+                display: flex;
+                flex-direction: column;
+                align-items: start;
                 font-size: 12px;
+                
+                .play-button{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    
+                    .play-img{
+                        margin-left: 3px;
+                        width: 16px;
+                    }
+                }
             }
 
             .up {
@@ -600,7 +642,7 @@ export default defineComponent({
         width: fit-content;
         border-radius: 20px;
         padding: 5px 20px 8px 20px;
-        background-color: rgb(255, 70, 90);
+        background-color: rgb(var(--highlight-color-rgb));
         color: #fff;
         border: none;
         cursor: pointer;

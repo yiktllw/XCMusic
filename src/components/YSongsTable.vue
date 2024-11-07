@@ -204,9 +204,8 @@
                                 <div class="popularity-bar"
                                     style="margin-left: 5px;width: 50px; height: 4px; background-color:rgba(var(--foreground-color-rgb), 0.321); border-radius: 2px;">
                                 </div>
-                                <div class="popularity-bar"
-                                    style="margin-left: 5px; height: 4px; background-color: rgb(254, 60, 90); border-radius: 2px; transform: translateY(-4px);"
-                                    :style="{ width: (track.pop / 100 * 50) + 'px' }">
+                                <div class="popularity-bar" style="margin-left: 5px; height: 4px; background-color: rgb(var(--highlight-color-rgb));
+ border-radius: 2px; transform: translateY(-4px);" :style="{ width: (track.pop / 100 * 50) + 'px' }">
                                 </div>
                             </div>
                             <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ??
@@ -769,5 +768,4 @@ export default defineComponent({
 
 </script>
 
-<style src="./YSongsTable.scss" lang="scss" scoped>
-</style>
+<style src="./YSongsTable.scss" lang="scss" scoped></style>

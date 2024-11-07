@@ -68,6 +68,10 @@ export namespace Theme {
          * 主题字体颜色
          */
         fontColors: IFontColor | IFontColorAll,
+        /**
+         * 强调色
+         */
+        highlight: string,
     }
 
     type ICssClassContent = string;
@@ -102,6 +106,9 @@ export namespace Theme {
         resultClass += `--foreground-color: ${themeToBeProcessed.foreground}; \n `
         resultClass += `--foreground-color-rgb: ${foregroundColor.r}, ${foregroundColor.g}, ${foregroundColor.b}; \n `
         resultClass += `--panel-background-color: ${themeToBeProcessed.panelBackground}; \n`
+        
+        const highlightColor = hexToRgb(themeToBeProcessed.highlight);
+        resultClass += `--highlight-color-rgb: ${highlightColor.r}, ${highlightColor.g}, ${highlightColor.b}\n`
 
         var _theme = null;
         _theme = {

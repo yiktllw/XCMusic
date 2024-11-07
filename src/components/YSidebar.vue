@@ -368,7 +368,7 @@ export default defineComponent({
             }
 
             .activeButton {
-                background-color: rgb(254, 60, 90);
+                background-color: rgb(var(--highlight-color-rgb));
                 color: #fff;
             }
         }

@@ -424,7 +424,8 @@ export default defineComponent({
         },
         highlightMatching(keyword: string) {
             if (keyword.startsWith(this.searchInput)) {
-                return `<span style="color: rgb(255, 60, 90);">${this.searchInput}</span>${keyword.slice(this.searchInput.length)}`;
+                return `<span style="color: rgb(var(--highlight-color-rgb));
+">${this.searchInput}</span>${keyword.slice(this.searchInput.length)}`;
             }
             return keyword;
         },

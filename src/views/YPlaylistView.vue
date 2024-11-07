@@ -119,8 +119,7 @@
                 <div class="orient-songs">
                     <!-- 4 歌曲按钮 -->
                     <button class="orient-button" @click="orient = 'songs'">
-                        <span :class="{ 'choosed-text': orient === 'songs' }"
-                            style="font-size: 16px; color:var(--font-color-main);"
+                        <span style="font-size: 16px; color:var(--font-color-main);"
                             :style="{ 'font-weight': orient === 'songs' ? 'bold' : '500', 'color': orient === 'songs' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                             {{ $t('playlist_view.songs') }}
                         </span>
@@ -139,7 +138,7 @@
                 <div class="orient-comments">
                     <!-- 4 评论按钮 -->
                     <button class="orient-button" @click="orient = 'comments'">
-                        <span :class="{ 'choosed-text': orient === 'comments' }" style="font-size: 16px;"
+                        <span style="font-size: 16px;"
                             :style="{ 'font-weight': orient === 'comments' ? 'bold' : '500', 'color': orient === 'comments' ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                             {{ $t('playlist_view.comments') }}
                         </span>
@@ -710,10 +709,11 @@ export default defineComponent({
                         border-radius: 5px;
                         padding: 7px 15px 7px 12px;
                         margin-right: 5px;
-                        background-color: rgb(254, 60, 90);
+                        background-color: rgb(var(--highlight-color-rgb));
+;
 
                         &:hover {
-                            background-color: rgb(230, 55, 76);
+                            background-color: rgba(var(--highlight-color-rgb), 0.8);
                         }
                     }
 
@@ -810,14 +810,10 @@ export default defineComponent({
             padding: 0;
         }
 
-        .choosed-text {
-            color: rgb(254, 80, 110);
-        }
-
         .choosed {
             width: 90%;
             height: 2px;
-            background-color: rgb(254, 60, 90);
+            background-color: rgb(var(--highlight-color-rgb));
             transform: translateY(1px);
             transform: translateX(1px);
         }

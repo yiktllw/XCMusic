@@ -124,7 +124,7 @@ export default defineComponent({
         width: fit-content;
         border-radius: 20px;
         padding: 5px 20px 8px 20px;
-        background-color: rgb(255, 70, 90);
+        background-color: rgb(var(--highlight-color-rgb));
         color: #fff;
         border: none;
         cursor: pointer;

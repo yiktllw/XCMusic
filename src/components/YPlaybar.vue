@@ -869,7 +869,7 @@ export default defineComponent({
                 display: flex;
                 width: 40px;
                 height: 40px;
-                background-color: rgb(254, 60, 90);
+                background-color: rgb(var(--highlight-color-rgb));
                 align-items: center;
                 justify-content: center;
                 border-radius: 100%;

@@ -169,7 +169,7 @@ export default defineComponent({
         .progress-fill {
             width: 100%;
             height: 100%;
-            background-color: rgb(254, 60, 90);
+            background-color: rgb(var(--highlight-color-rgb));
             border-radius: 10px;
         }
 
