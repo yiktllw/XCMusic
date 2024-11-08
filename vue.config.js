@@ -82,15 +82,15 @@ module.exports = defineConfig({
         devServer: {
             port: 4321,
             host: 'localhost',
-            proxy: {
-                '/search': {
-                    target: 'http://localhost:43210',
-                    changeOrigin: true,
-                    pathRewrite: {
-                        '^/search': '/search'
-                    }
-                },
-            },
+            // proxy: {
+            //     '/search': {
+            //         target: 'http://localhost:43210',
+            //         changeOrigin: true,
+            //         pathRewrite: {
+            //             '^/search': '/search'
+            //         }
+            //     },
+            // },
         }
     },
 });

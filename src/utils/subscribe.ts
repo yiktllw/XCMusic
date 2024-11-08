@@ -8,13 +8,13 @@
 
 import { markRaw } from 'vue';
 
-export interface SubscribeOptions {
+interface SubscribeOptions {
     id: string | number;
     func: Function;
     type: string;
 }
 
-export interface UnsubscribeOptions {
+interface UnsubscribeOptions {
     id: string;
     type: string;
 }
@@ -170,5 +170,11 @@ export class Subscriber {
                 item.func(...args);
             }
         });
+    }
+    /** 
+     * 清空所有订阅
+     */
+    clear() {
+        this._subscribes = [];
     }
 }
