@@ -126,23 +126,46 @@ app.on('ready', async () => {
         }
     });
 
-    // 监听全屏
-    win?.on('enter-full-screen', () => {
-        if (!win) return;
-        // 获取窗口的当前位置
-        const windowBounds = win.getBounds();
-        // 获取窗口所在的显示器
-        const display = screen.getDisplayNearestPoint({ x: windowBounds.x, y: windowBounds.y });
-        const { width, height } = display.workAreaSize; // 也可以用 display.size 获取整个显示器的尺寸
+    if (win) {
+        // 监听全屏
+        win.on('enter-full-screen', () => {
+            if (!win) return;
+            // 获取窗口的当前位置
+            const windowBounds = win.getBounds();
+            // 获取窗口所在的显示器
+            const display = screen.getDisplayNearestPoint({ x: windowBounds.x, y: windowBounds.y });
+            const { width, height } = display.workAreaSize; // 也可以用 display.size 获取整个显示器的尺寸
 
-        win.webContents.send('fullscreen-window-size', { width, height });
-    });
+            win.webContents.send('fullscreen-window-size', { width, height });
+        });
 
-    // 监听退出全屏
-    win?.on('leave-full-screen', () => {
-        if (!win) return;
-        win.webContents.send('leave-fullscreen');
-    });
+        // 监听退出全屏
+        win.on('leave-full-screen', () => {
+            if (!win) return;
+            win.webContents.send('leave-fullscreen');
+        });
+
+        // 处理窗口隐藏
+        win.on('hide', () => {
+            const showWindowMenuItem = menu.getMenuItemById('show-window');
+            if (showWindowMenuItem) {
+                showWindowMenuItem.enabled = true;
+            }
+            if (tray) tray.setContextMenu(menu);
+        });
+
+        // 处理窗口显示
+        win.on('show', () => {
+            if (menu && menu.getMenuItemById('show-window')) {
+                const showWindowMenuItem = menu.getMenuItemById('show-window');
+                if (showWindowMenuItem) {
+                    showWindowMenuItem.enabled = false;
+                }
+            }
+            if (tray) tray.setContextMenu(menu);
+        });
+    }
+
 
     // 创建托盘
     if (process.env.NODE_ENV === 'development') {
@@ -156,9 +179,9 @@ app.on('ready', async () => {
             label: '显示主窗口',
             id: 'show-window',
             click: () => {
-                win?.show();
+                if (win) win.show();
             },
-            enabled: !win?.show,
+            enabled: win ? !win.show : true,
         },
         {
             label: '退出',
@@ -171,32 +194,13 @@ app.on('ready', async () => {
     tray.setContextMenu(menu);
     tray.setToolTip('XCMusic');
 
-    // 处理窗口隐藏
-    win?.on('hide', () => {
-        const showWindowMenuItem = menu.getMenuItemById('show-window');
-        if (showWindowMenuItem) {
-            showWindowMenuItem.enabled = true;
-        }
-        tray?.setContextMenu(menu);
-    });
-
-    // 处理窗口显示
-    win?.on('show', () => {
-        if (menu?.getMenuItemById('show-window')) {
-            const showWindowMenuItem = menu.getMenuItemById('show-window');
-            if (showWindowMenuItem) {
-                showWindowMenuItem.enabled = false;
-            }
-        }
-        tray?.setContextMenu(menu);
-    });
-
     // 处理托盘点击事件
     tray.on('double-click', () => {
-        if (win?.isVisible()) {
+        if (!win) return;
+        if (win.isVisible()) {
             win.hide();
         } else {
-            win?.show();
+            win.show();
         }
     });
 })

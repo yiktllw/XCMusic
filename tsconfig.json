@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2016",
+        "target": "es2021",
         "module": "commonjs",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
@@ -19,7 +19,6 @@
         "skipLibCheck": true,
         "allowJs": true,
         "outDir": "./dist",
-        // "checkJs": true,
         "typeRoots": [
             "./node_modules/@types",
             "./src/types",

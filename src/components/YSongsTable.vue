@@ -715,7 +715,7 @@ export default defineComponent({
             console.log('Open Add To Playlist:', id);
             // 在HomeView中处理
         },
-        scrollToCurrentTrack() {
+        scrollToCurrentTrack(smooth = true) {
             if (!this.player.currentTrack) {
                 return;
             }
@@ -734,7 +734,7 @@ export default defineComponent({
                     const rowElement = this.main?.querySelector('.current_play_item');
                     if (rowElement) {
                         rowElement.scrollIntoView({
-                            behavior: 'smooth',
+                            behavior: smooth ? 'smooth' : 'auto',
                             block: 'center',
                         });
                         Message.post('success', this.$t('message.playlist_view.scrolled_to_current_track'));

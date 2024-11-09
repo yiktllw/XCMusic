@@ -502,7 +502,7 @@ export default defineComponent({
             this.$nextTick(() => {
                 setTimeout(() => {
                     if (this.songstable) {
-                        this.songstable.scrollToCurrentTrack();
+                        this.songstable.scrollToCurrentTrack(false);
                     }
                 }, 300);
             })

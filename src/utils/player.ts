@@ -20,6 +20,7 @@ import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 import { isLocal } from "./localTracks_renderer";
+import { qualities } from "./setting";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
     fs = window.api.fs;
@@ -488,50 +489,70 @@ export class Player {
      */
     async setAllQuality(id: number | string) {
         // 异步执行这些请求
-        let requests = [
+        let requests = [];
+        const abbrQualities = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
+        requests = [
             this.getQuality(id, 'standard').then((res: any) => {
                 this.currentTrack = {
                     ...this.currentTrack,
                     l: res,
                 }
-            }),
-            this.getQuality(id, 'exhigh').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    h: res,
-                }
-            }),
-            this.getQuality(id, 'lossless').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    sq: res,
-                }
-            }),
-            this.getQuality(id, 'hires').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    hr: res,
-                }
-            }),
-            this.getQuality(id, 'jyeffect').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    jyeffect: res,
-                }
-            }),
-            this.getQuality(id, 'sky').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    sky: res,
-                }
-            }),
-            this.getQuality(id, 'jymaster').then((res: any) => {
-                this.currentTrack = {
-                    ...this.currentTrack,
-                    jymaster: res,
-                }
-            }),
+            })
         ];
+        if (this.quality !== 'standard') {
+            requests.push(this.getQuality(id, this.quality).then((res: any) => {
+                const index = qualities.indexOf(this.quality);
+                const abbr = abbrQualities[index];
+                this.currentTrack = {
+                    ...this.currentTrack,
+                    [abbr]: res,
+                }
+            }))
+        }
+        // requests = [
+        //     this.getQuality(id, 'standard').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             l: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'exhigh').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             h: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'lossless').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             sq: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'hires').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             hr: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'jyeffect').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             jyeffect: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'sky').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             sky: res,
+        //         }
+        //     }),
+        //     this.getQuality(id, 'jymaster').then((res: any) => {
+        //         this.currentTrack = {
+        //             ...this.currentTrack,
+        //             jymaster: res,
+        //         }
+        //     }),
+        // ];
         // 执行所有请求
         await Promise.all(requests);
     }
@@ -1204,7 +1225,7 @@ export class Player {
      * @param {'standard'|'higher'|'exhigh'|'lossless'|'hires'|'jyeffect'|'sky'|'jymaster'} value 音质
      */
     set quality(value: 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster') {
-        if (value === 'standard' || value === 'higher' || value === 'exhigh' || value === 'lossless' || value === 'hires' || value === 'jyeffect' || value === 'sky' || value === 'jymaster') {
+        if (qualities.includes(value)) {
             this._quality = value;
             this.reloadUrl();
             this.subscriber.exec('quality');
