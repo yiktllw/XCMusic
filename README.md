@@ -8,6 +8,16 @@
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
 
+## 目录
+
+- [特性](#特性)
+- [待完成](#待完成)
+- [部署](#部署到vercel)
+- [配置开发环境](#配置开发环境)
+- [灵感来源](#灵感来源)
+- [关于](#关于)
+- [截图](#截图)
+
 访问DEMO: [xc-music.vercel.app](https://xc-music.vercel.app/)
 
 
