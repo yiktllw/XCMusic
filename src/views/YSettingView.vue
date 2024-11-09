@@ -545,6 +545,8 @@ export default defineComponent({
     },
     beforeUnmount() {
         this.globalMsg.subscriber.offAll('YSettingView');
+        this.main = null;
+        this.header = null;
     },
 })
 </script>

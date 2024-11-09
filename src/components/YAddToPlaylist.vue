@@ -36,7 +36,7 @@ export default defineComponent({
         },
     },
     setup() {
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
         return {
             window,
         };
@@ -101,6 +101,7 @@ export default defineComponent({
     },
     beforeUnmount() {
         this.login.subscriber.offAll('YAddToPlaylist');
+        this.window = null;
     },
 })
 

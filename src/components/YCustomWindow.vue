@@ -311,7 +311,7 @@ import { Doc } from '@/utils/document';
 export default defineComponent({
     name: 'YCustomWindow',
     setup() {
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
         const store = useStore();
         return {
             window,
@@ -434,6 +434,9 @@ export default defineComponent({
     ],
     mounted() {
     },
+    beforeUnmount() {
+        this.window = null;
+    },
     methods: {
         handleNewWindowState(val: boolean) {
             this.$emit('new-window-state', val);
@@ -525,16 +528,16 @@ export default defineComponent({
                 flex-direction: column;
                 align-items: start;
                 font-size: 12px;
-                
-                .play-button{
+
+                .play-button {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     width: 35px;
                     height: 35px;
                     border-radius: 50%;
-                    
-                    .play-img{
+
+                    .play-img {
                         margin-left: 3px;
                         width: 16px;
                     }

@@ -10,12 +10,15 @@ export default defineComponent({
     name: 'YSpecCanvas',
     setup() {
         const store = useStore();
-        const canvas = ref<HTMLCanvasElement>();
+        const canvas = ref<HTMLCanvasElement | null>();
         return {
             player: store.state.player,
             setting: store.state.setting,
             canvas,
         };
+    },
+    beforeUnmount() {
+        this.canvas = null;
     },
     data() {
         return {

@@ -23,7 +23,7 @@ import { defineComponent, ref } from 'vue';
 export default defineComponent({
     props: {
         trigger: {
-            type: Element,
+            type: HTMLElement,
             default: null,
         },
         defaultShow: {
@@ -140,6 +140,7 @@ export default defineComponent({
     },
     beforeUnmount() {
         window.removeEventListener('click', this.handleClickOutside);
+        this.panel = null;
     },
 })
 

@@ -36,13 +36,16 @@ export default defineComponent({
         YWindow,
     },
     setup() {
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
         const store = useStore();
 
         return {
             window,
             login: store.state.login,
         };
+    },
+    beforeUnmount() {
+        this.window = null;
     },
     data() {
         return {

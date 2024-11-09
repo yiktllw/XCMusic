@@ -27,10 +27,13 @@ import YPanel from './YPanel.vue';
 export default defineComponent({
     name: 'YContextMenu',
     setup() {
-        const panel = ref<InstanceType<typeof YPanel>>();
+        const panel = ref<InstanceType<typeof YPanel> | null>();
         return {
             panel
         }
+    },
+    beforeUnmount() {
+        this.panel = null;
     },
     props: {
         items: {

@@ -237,6 +237,11 @@ export default defineComponent({
     beforeUnmount() {
         this.globalMsg.subscriber.offAll('HomeView');
         window.removeEventListener('message', this.handleMessage);
+        this.contextMenu = null;
+        this.playUI = null;
+        this.YSidebar_ref = null;
+        this.YDisplayArea_ref = null;
+        this.prevent_container = null;
     },
     methods: {
         async handleMessage(event: any) {

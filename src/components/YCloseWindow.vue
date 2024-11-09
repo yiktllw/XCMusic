@@ -52,7 +52,7 @@ export default defineComponent({
     name: 'YCloseWindow',
     setup() {
         const store = useStore();
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
         return {
             setting: store.state.setting,
             window,
@@ -70,6 +70,9 @@ export default defineComponent({
     mounted() {
         this.closeBehavior = this.setting.titleBar.closeButton;
         this.closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
+    },
+    beforeUnmount() {
+        this.window = null;
     },
     methods: {
         handleNewWindowState(val: boolean) {

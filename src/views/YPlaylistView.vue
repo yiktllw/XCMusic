@@ -551,7 +551,7 @@ export default defineComponent({
         this.openedPlaylist.id = 0;
         this.playlist_songstable = null;
         this.album_songstable = null;
-    }
+    },
 })
 </script>
 

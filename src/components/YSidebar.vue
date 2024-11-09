@@ -196,6 +196,7 @@ export default defineComponent({
         clearTimeout(this.timeout);
         this.login.subscriber.offAll('YSidebar');
         this.OpenedPlaylist.subscriber.offAll('YSidebar');
+        this.sidebar_component = null;
     },
 });
 </script>

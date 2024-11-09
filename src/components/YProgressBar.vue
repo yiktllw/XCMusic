@@ -73,6 +73,14 @@ export default defineComponent({
             noSelect,
         };
     },
+    beforeUnmount() {
+        window.removeEventListener('mousemove', this.updateProgressEvent);
+        window.removeEventListener('mouseup', this.endSetProgress);
+        this.progress_bar = null;
+        this.big_frame = null;
+        this.progressDOM = null;
+        this.noSelect = null;
+    },
     watch: {
         progress(newValue, oldValue) {
             if (newValue === 0) {

@@ -34,7 +34,7 @@ export default defineComponent({
         YWindow,
     },
     setup() {
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
 
         return {
             window,
@@ -57,6 +57,9 @@ export default defineComponent({
         if (this.confirm === null) {
             this.window?.closeWindow();
         }
+    },
+    beforeUnmount() {
+        this.window = null;
     },
     methods: {
         handleNewWindowState(val: boolean) {

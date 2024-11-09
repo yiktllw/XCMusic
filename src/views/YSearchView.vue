@@ -91,7 +91,7 @@ import { Tracks, ITrack } from '@/utils/tracks';
 import { YPageC } from '@/dual/YPageC';
 import { YColor } from '@/utils/color';
 import { useApi } from '../utils/api';
-import { markRaw, ref, defineComponent } from 'vue';
+import { markRaw, defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'YSearchView',

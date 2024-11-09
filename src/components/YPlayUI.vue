@@ -194,9 +194,9 @@ export default defineComponent({
         YSpecCanvas,
     },
     setup() {
-        const lyricContainer = ref<InstanceType<typeof YScroll>>();
-        const playuiContainer = ref<HTMLElement>();
-        const playBar = ref<InstanceType<typeof YPlaybar>>();
+        const lyricContainer = ref<InstanceType<typeof YScroll> | null>();
+        const playuiContainer = ref<HTMLElement | null>();
+        const playBar = ref<InstanceType<typeof YPlaybar> | null>();
         const store = useStore();
         const player = store.state.player;
         const login = store.state.login;
@@ -605,6 +605,9 @@ export default defineComponent({
         this.player.subscriber.offAll('YPlayUI');
         this.globalMsg.subscriber.offAll('YPlayUI');
         this.$emit('close-panel');
+        this.lyricContainer = null;
+        this.playuiContainer = null;
+        this.playBar = null;
     },
 });
 </script>

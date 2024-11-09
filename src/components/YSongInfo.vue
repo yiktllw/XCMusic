@@ -125,13 +125,16 @@ export default defineComponent({
         },
     },
     setup() {
-        const window = ref<InstanceType<typeof YWindow>>();
+        const window = ref<InstanceType<typeof YWindow> | null>();
         const store = useStore();
 
         return {
             window,
             globalMsg: store.state.globalMsg,
         };
+    },
+    beforeUnmount() {
+        this.window = null;
     },
     components: {
         YWindow,

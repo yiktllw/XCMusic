@@ -33,6 +33,10 @@ export default defineComponent({
             scroll_ref,
         };
     },
+    beforeUnmount() {
+        this.main_ref = null;
+        this.scroll_ref = null;
+    },
     computed: {
         animationTime() {
             if (!this.showAni) {

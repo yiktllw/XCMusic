@@ -95,20 +95,6 @@
         <!-- 3 歌曲列表内容 -->
         <ul ref="UL">
             <template v-for="(track, index) in tracks.slice((page.current - 1) * limit, page.current * limit)">
-                <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
-                    <div class="reels-title font-color-main">
-                        {{ alReels[track.reelIndex]?.showreelName ?? $t('songs_table.unknown_name') }}
-                    </div>
-                    <div class="reels-other font-color-standard" v-if="alReels[track.reelIndex]?.composerName">
-                        {{ alReels[track.reelIndex]?.composerName ?? $t('songs_table.unknown_artist') }}
-                    </div>
-                    <div class="reels-other font-color-standard"
-                        v-for="artist in alReels[track.reelIndex]?.otherArtists">
-                        <span>
-                            {{ artist }}
-                        </span>
-                    </div>
-                </div>
                 <li :id="`track-item-${track.id}`" class="track-item"
                     :class="nowPlaying === track.id ? 'current_play_item' : ''">
                     <div class="align-up">
@@ -197,14 +183,14 @@
                             <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
                                 formatDuration(track.dt) }}</div>
                             <!-- 5 热度 -->
-                            <div class="popularity" v-if="showTrackPopularity">
+                            <!-- <div class="popularity" v-if="showTrackPopularity">
                                 <div class="popularity-bar"
                                     style="margin-left: 5px;width: 50px; height: 4px; background-color:rgba(var(--foreground-color-rgb), 0.321); border-radius: 2px;">
                                 </div>
                                 <div class="popularity-bar" style="margin-left: 5px; height: 4px; background-color: rgb(var(--highlight-color-rgb));
  border-radius: 2px; transform: translateY(-4px);" :style="{ width: (track.pop / 100 * 50) + 'px' }">
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ??
                                 0
                                 }}次
@@ -450,7 +436,6 @@ export default defineComponent({
         // 清空引用
         this.main = null;
         this.songs_album_ref = null;
-        // this.track_album_ref = null;
         this.UL = null;
         window.removeEventListener('mousemove', this.resize);
     },

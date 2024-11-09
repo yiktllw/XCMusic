@@ -102,7 +102,7 @@
                         :title="$t('playbar.loop')">
                 </button>
                 <!-- 选择播放模式面板 -->
-                <YPanel :default-show="false" ref="play_mode_panel" :trigger="play_mode_panel_trigger"
+                <YPanel :default-show="false" ref="play_mode_panel" :trigger="play_mode_panel_trigger as HTMLElement"
                     :slide-direction="5" :hide-mode="'show'" :slide-distance="8" :animation-time="0.1">
                     <div class="playMode-switcher" id="panel">
                         <div class="playMode-item" @click="tooglePlayMode('order'); play_mode_panel?.tooglePanel()">
@@ -151,7 +151,7 @@
                     {{ $t(qualityDisplay) }}
                 </div>
                 <!-- 选择音质面板 -->
-                <YPanel ref="quality_panel" :trigger="quality_panel_trigger" :slide-direction="4" :default-show="false"
+                <YPanel ref="quality_panel" :trigger="quality_panel_trigger as HTMLElement" :slide-direction="4" :default-show="false"
                     :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
                     <div class="quality-panel" id="panel">
                         <div class="quality-title font-color-main">
@@ -176,7 +176,7 @@
                     style="width: 22px; height: 22px;margin-right:10px; " :title="$t('playbar.volume')"
                     ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
-                <YPanel ref="volume_panel" :trigger="volume_panel_trigger" :slide-direction="5" :animation-time="0.1"
+                <YPanel ref="volume_panel" :trigger="volume_panel_trigger as HTMLElement" :slide-direction="5" :animation-time="0.1"
                     :slide-distance="10" id="panel">
                     <div class="volume-container" id="panel">
                         <YProgressBarV v-model="volume"
@@ -192,7 +192,7 @@
                     style="width: 20px; height: 20px; margin-left:10px; " @click="playlist_panel?.tooglePanel"
                     :title="$t('playbar.playlist')" ref="playlist_panel_trigger">
                 <!-- 播放列表面板 -->
-                <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger" :slide-direction="4"
+                <YPanel ref="playlist_panel" :trigger="playlist_panel_trigger as HTMLElement" :slide-direction="4"
                     :default-show="false" @show-panel="scrollToCurrentTrack">
                     <div class="playlist-container" id="panel">
                         <div class="playlist-title">
@@ -257,17 +257,16 @@ export default defineComponent({
         YScroll,
     },
     setup() {
-        const quality_panel = ref<InstanceType<typeof YPanel>>();
-        const songstable = ref<InstanceType<typeof YSongsTable>>();
-        const play_mode_panel = ref<InstanceType<typeof YPanel>>();
-        const play_mode_panel_trigger = ref<HTMLElement>();
-        const quality_panel_trigger = ref<HTMLElement>();
-        const volume_panel = ref<InstanceType<typeof YPanel>>();
-        const volume_panel_trigger = ref<HTMLElement>();
-        const playlist_panel = ref<InstanceType<typeof YPanel>>();
-        const playlist_panel_trigger = ref<HTMLElement>();
-
-        const progressBarNoTrack = ref<InstanceType<typeof YProgressBar>>();
+        const quality_panel = ref<InstanceType<typeof YPanel> | null>();
+        const songstable = ref<InstanceType<typeof YSongsTable> | null>();
+        const play_mode_panel = ref<InstanceType<typeof YPanel> | null>();
+        const play_mode_panel_trigger = ref<HTMLElement | null>();
+        const quality_panel_trigger = ref<HTMLElement | null>();
+        const volume_panel = ref<InstanceType<typeof YPanel> | null>();
+        const volume_panel_trigger = ref<HTMLElement | null>();
+        const playlist_panel = ref<InstanceType<typeof YPanel> | null>();
+        const playlist_panel_trigger = ref<HTMLElement | null>();
+        const progressBarNoTrack = ref<InstanceType<typeof YProgressBar> | null>();
 
         const store = useStore();
 
@@ -621,6 +620,16 @@ export default defineComponent({
     beforeUnmount() {
         this.player.subscriber.offAll('YPlaybar' + `${this.type}`);
         this.download.subscriber.offAll('YPlaybar' + `${this.type}`);
+        this.quality_panel = null;
+        this.songstable = null;
+        this.play_mode_panel = null;
+        this.play_mode_panel_trigger = null;
+        this.quality_panel_trigger = null;
+        this.volume_panel = null;
+        this.volume_panel_trigger = null;
+        this.playlist_panel = null;
+        this.playlist_panel_trigger = null;
+        this.progressBarNoTrack = null;
     },
 })
 

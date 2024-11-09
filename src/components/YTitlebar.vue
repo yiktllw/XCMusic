@@ -475,6 +475,12 @@ export default defineComponent({
         // 移除外部点击处理器
         document.removeEventListener('click', this.handleOutsideClick);
         this.globalMsg.subscriber.offAll('YTitlebar');
+        this.search_panel = null;
+        this.search_panel_trigger = null;
+        this.search_input = null;
+        this.dropdownMenu = null;
+        this.user_info_panel = null;
+        this.user_info_menu_trigger = null;
     },
 })
 </script>
