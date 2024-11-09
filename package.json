@@ -46,7 +46,6 @@
         "@types/color": "^3.0.6",
         "@types/electron-store": "^3.2.0",
         "@types/express": "^4.17.21",
-        "@types/lodash": "^4.17.10",
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-router": "~5.0.0",
         "@vue/cli-plugin-typescript": "^5.0.8",

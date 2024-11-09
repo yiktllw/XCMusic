@@ -272,10 +272,11 @@ export default defineComponent({
         isLoading(val) {
             if (!val) {
                 this.$nextTick(() => {
-                    const mainScroll = document.getElementById('yscroll-display-area');
+                    let mainScroll = document.getElementById('yscroll-display-area');
                     if (window.savedPositions[this.$route.path] && mainScroll) {
                         mainScroll.scrollTop = window.savedPositions[this.$route.path].top as number;
                     }
+                    mainScroll = null;
                 });
             }
         },
@@ -548,6 +549,8 @@ export default defineComponent({
     beforeUnmount() {
         // 组件销毁时发送消息
         this.openedPlaylist.id = 0;
+        this.playlist_songstable = null;
+        this.album_songstable = null;
     }
 })
 </script>

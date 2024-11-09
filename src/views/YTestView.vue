@@ -1,22 +1,22 @@
 <template>
     <div class="display">
-        <div @click="$router.push({ path: '/audio/test' })">
+        <div class="font-color-main" @click="$router.push({ path: '/audio/test' })">
             点击跳转到音频调试界面
         </div>
-        <YConfirmWindow :confirm="confirm" />
     </div>
 </template>
 
 <script lang="ts">
 import YConfirmWindow from '@/components/YConfirmWindow.vue';
-import { IConfirm } from '@/utils/globalMsg';
-import { defineComponent } from 'vue';
+import { defineComponent, markRaw, ref } from 'vue';
 import { useStore } from 'vuex';
+import YSongsTable from '@/components/YSongsTable.vue';
 
 export default defineComponent({
     name: 'YTestView',
     components: {
         YConfirmWindow,
+        YSongsTable,
     },
     setup() {
         const store = useStore();
@@ -31,40 +31,11 @@ export default defineComponent({
     },
     data() {
         return {
-            confirm: {
-                content: 'confirm.delete',
-                needTranslate: true,
-                callback: () => {
-                    console.log('delete');
-                },
-            } as IConfirm,
         };
     },
     methods: {
     },
     async mounted() {
-        // const theme: Theme.IThemeCSS = {
-        //     autoBackgroundType: 'other',
-        //     background: '#f0f0f0',
-        //     foreground: '#0f0f0f',
-        //     name: 'test',
-        //     type: 'light',
-        //     fontColors: {
-        //         fontColorAll: '#000000',
-        //     },
-        //     panelBackground: '#f0f0f0',
-        // }
-        // const result = Theme.createTheme(theme);
-        // const _theme = result.theme;
-        // const classContent = result.classContent;
-        // const userCustomThemes = this.setting.display.userCustomThemes.slice();
-        // this.setting.display.userCustomThemes = [
-        //     ...userCustomThemes,
-        //     {
-        //         data: _theme,
-        //         classContent: classContent,
-        //     }
-        // ]
     },
     beforeUnmount() {
     },
@@ -75,8 +46,14 @@ export default defineComponent({
 <style lang="scss" scoped>
 .display {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    .scrollable {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .item {

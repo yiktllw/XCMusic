@@ -10,7 +10,7 @@
                 </button>
             </div>
             <!-- 4 歌曲标题-表头 -->
-            <div class="songsName" ref="songs_name_ref" v-if="showTrackTitle">
+            <div class="songsName" v-if="showTrackTitle">
                 <!-- 5 标题排序按钮 -->
                 <button :disabled="!resortable" class="header-button" @click="handleSort">
                     <span>
@@ -93,7 +93,7 @@
             </div>
         </div>
         <!-- 3 歌曲列表内容 -->
-        <ul>
+        <ul ref="UL">
             <template v-for="(track, index) in tracks.slice((page.current - 1) * limit, page.current * limit)"
                 :key="track.id">
                 <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
@@ -110,10 +110,8 @@
                         </span>
                     </div>
                 </div>
-                <li :id="`track-item-${track.id}`" class="track-item" ref="track_item_ref"
-                    :class="nowPlaying === track.id ? 'current_play_item' : ''" @mouseover="trackMouseEnter(track.id)"
-                    @mouseleave="trackMouseLeave(track.id)" @dblclick="playSongAndPlaylist(track)"
-                    @click="setFocused(track.id)" tabindex="0" @contextmenu="openContextMenu($event, track)">
+                <li :id="`track-item-${track.id}`" class="track-item"
+                    :class="nowPlaying === track.id ? 'current_play_item' : ''">
                     <div class="align-up">
                         <!-- 4 左侧对齐 -->
                         <div class="align-left">
@@ -130,9 +128,9 @@
                             <img v-if="showTrackCover" class="track-cover" loading="lazy"
                                 :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
                             <!-- 5 歌曲信息 -->
-                            <div class="track-info" ref="trackInfo">
+                            <div class="track-info">
                                 <!-- 6 歌曲名称 -->
-                                <div class="track-name" ref="track_name_ref"
+                                <div class="track-name"
                                     :style="{ color: track.id === nowPlaying ? 'rgb(234,78,68)' : 'var(--font-color-main)' }"
                                     :title="track.name + (track.tns ? ('\n' + track.tns) : '')" v-if="showTrackTitle">
                                     {{ type === 'album' ? track.reelName ?? track.name : track.name }}
@@ -148,7 +146,7 @@
                                         v-if="downloadedSongIds.includes(track.id)">
                                     <span v-for="(artist, index) in track.ar" :key="artist.id">
                                         <!-- 7 歌手按钮 -->
-                                        <span @click="handleArtistClick(artist.id)"
+                                        <span class="ul-button" :id="`artist-${artist.id}`"
                                             :class="track.id === nowPlaying ? 'artist-button-active' : 'artist-button'"
                                             :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                             {{ artist.name }}
@@ -164,21 +162,21 @@
                         <!-- 4 右侧对齐 -->
                         <div class="align-right">
                             <div class="track-menu" :id="`track-menu-${track.id}`">
-                                <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.download')" @click="downloadSong(track)"
+                                <img src="@/assets/smalldownload.svg" class="track-menu-icon g-icon ul-button"
+                                    id="download" :title="$t('context.download')"
                                     v-if="!downloadedSongIds.includes(track.id)">
-                                <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.subscribe')" @click="openAddToPlaylist(track.id)">
-                                <img src="@/assets/comment.svg" class="track-menu-icon g-icon"
-                                    :title="$t('context.view_comment')" @click="openSongComment(track.id)">
-                                <img src="@/assets/detail.svg" class="track-menu-icon g-icon"
-                                    :title="$t('songs_table.more')" @click="openContextMenu($event, track, 'toogle')">
+                                <img src="@/assets/subscribe.svg" class="track-menu-icon g-icon ul-button"
+                                    id="subscribe" :title="$t('context.subscribe')">
+                                <img src="@/assets/comment.svg" class="track-menu-icon g-icon ul-button" id="comment"
+                                    :title="$t('context.view_comment')">
+                                <img src="@/assets/detail.svg" class="track-menu-icon g-icon ul-button" id="detail"
+                                    :title="$t('songs_table.more')">
                             </div>
                             <!-- 5 专辑名称 -->
-                            <div class="track-album" ref="track_album_ref" v-if="showTrackAlbum"
+                            <div class="track-album track-album-ref" v-if="showTrackAlbum"
                                 :style="{ 'width': `${alWidth}px` }">
                                 <!-- 6 专辑按钮 -->
-                                <button @click="handleAlbumClick(track.al.id)" class="album-button font-color-standard"
+                                <button class="album-button font-color-standard ul-button" :id="`album-${track.al.id}`"
                                     :title="track.al.name + (track.al.tns ? ('\n' + track.al.tns) : '')">
                                     {{ trackAlTns(track.al.name, track.al.tns) }}
                                 </button>
@@ -186,8 +184,8 @@
                             <!-- 5 喜欢 -->
                             <div class="likes" style="text-align: left;" v-if="showTrackLikes">
                                 <img v-if="id === 'YPlaybar.vue'" src="../assets/delete.svg"
-                                    class="g-icon like-icon delete-icon" :id="`track-menu-${track.id}`"
-                                    :title="$t('playbar.delete_from_playlist')" @click="deletaFromPlaylist(track.id)">
+                                    class="g-icon like-icon delete-icon ul-button" :id="`track-menu-${track.id}`"
+                                    :title="$t('playbar.delete_from_playlist')">
                                 <div :id="`track-menu-2-${track.id}`" style="display: block;">
                                     <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
                                         style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
@@ -236,12 +234,13 @@ import YPlaying from './YPlaying.vue';
 import YPage from './YPage.vue';
 import { YPageC } from '@/dual/YPageC';
 import { Message } from '@/dual/YMessageC';
-import { ref, watch, defineComponent } from 'vue';
+import { ref, watch, defineComponent, toRaw } from 'vue';
 import { useApi } from '@/utils/api';
 import upArrow from '../assets/up-arrow.svg';
 import downArrow from '../assets/down-arrow.svg';
 import updownArrow from '../assets/updown-arrow.svg';
 import { isLocal } from '@/utils/localTracks_renderer';
+import { ITrack } from '@/utils/tracks';
 
 type AlReels = {
     showreelName: string;
@@ -339,34 +338,26 @@ export default defineComponent({
     },
     name: 'YSongsTable',
     setup(props: { modelValue: Array<any> }) {
-        const tracks = ref<Array<any>>(props.modelValue);
+        const tracks = ref<Array<ITrack>>(props.modelValue);
         watch(() => props.modelValue, (newValue) => {
             tracks.value = newValue;
         });
 
         const main = ref<HTMLElement | null>(null);
         const songs_album_ref = ref<HTMLElement | null>(null);
-        const songs_name_ref = ref<HTMLElement | null>(null);
-        const track_item_ref = ref<HTMLElement[] | null>(null);
-        const track_name_ref = ref<HTMLElement[] | null>(null);
-        const trackInfo = ref<HTMLElement[] | null>(null);
-        const track_album_ref = ref<HTMLElement[] | null>(null);
+        const UL = ref<HTMLElement | null>(null);
 
         const store = useStore();
 
         return {
             tracks,
             songs_album_ref,
-            songs_name_ref,
-            track_item_ref,
-            track_name_ref,
-            trackInfo,
-            track_album_ref,
             main,
             download: store.state.download,
             player: store.state.player,
             login: store.state.login,
             setting: store.state.setting,
+            UL,
         };
     },
     components: {
@@ -374,6 +365,7 @@ export default defineComponent({
         YPage,
     },
     emits: [
+        'update:modelValue',
         'update-display',
         'play-song-and-playlist',
     ],
@@ -415,6 +407,7 @@ export default defineComponent({
             page: new YPageC(Math.ceil(this.tracks.length / this.limit) || 1),
             nowPlaying: 0,
             downloadedSongIds: [] as any[],
+            hoverTrackId: 0,
         }
     },
     async mounted() {
@@ -440,10 +433,27 @@ export default defineComponent({
                 this.downloadedSongIds = this.download.downloadedSongIds;
             }
         })
+        this.UL?.addEventListener('mousemove', this.handleUlMouseMove);
+        this.UL?.addEventListener('mouseleave', this.handleUlMouseLeave);
+        this.UL?.addEventListener('dblclick', this.handleUlDbClick);
+        this.UL?.addEventListener('click', this.handleUlClick);
+        this.UL?.addEventListener('contextmenu', this.handleUlContext);
     },
     beforeUnmount() {
         this.player.subscriber.offAll(this.id);
         this.download.subscriber.offAll(this.id);
+        this.UL?.removeEventListener('mousemove', this.handleUlMouseMove);
+        this.UL?.removeEventListener('mouseleave', this.handleUlMouseLeave);
+        this.UL?.removeEventListener('dblclick', this.handleUlDbClick);
+        this.UL?.removeEventListener('click', this.handleUlClick);
+        this.UL?.removeEventListener('contextmenu', this.handleUlContext);
+        console.log('YSongsTable Unmounted, Cleaned EventListener');
+        // 清空引用
+        this.main = null;
+        this.songs_album_ref = null;
+        // this.track_album_ref = null;
+        this.UL = null;
+        window.removeEventListener('mousemove', this.resize);
     },
     watch: {
         tracks(newVal, oldVal) {
@@ -507,13 +517,13 @@ export default defineComponent({
         },
         // 根据新的专辑宽度调整歌曲名称和专辑的宽度
         resizeByNewWidth(newWidth: number) {
-            if (this.track_album_ref) {
-                this.track_album_ref.forEach(element => {
-                    if (element) { // 确保元素存在
-                        element.style.width = `${newWidth}px`;
-                    }
-                });
-            }
+            let track_albums: NodeListOf<Element> | null = document.querySelectorAll('.track-album-ref');
+            track_albums.forEach(element => {
+                if (element) { // 确保元素存在
+                    (element as HTMLElement).style.width = `${newWidth}px`;
+                }
+            });
+            track_albums = null;
         },
         // 停止resize
         stopResize() {
@@ -643,37 +653,102 @@ export default defineComponent({
         formatLyric(lyric: string) {
             return '   ' + lyric + '   ';
         },
-        trackMouseEnter(id: number | string) {
-            // console.log('trackMouseEnter', id);
-            let doms = this.main?.querySelectorAll(`#track-menu-${id}`);
-            if (doms) {
-                doms.forEach((dom) => {
-                    (dom as HTMLElement).style.display = 'flex';
-                });
-            }
-            if (this.id !== 'YPlaybar.vue') {
-                return;
-            }
-            let domToBeHidden = this.main?.querySelector(`#track-menu-2-${id}`);
-            if (domToBeHidden) {
-                (domToBeHidden as HTMLElement).style.display = 'none';
+        getClosestTrackItem(element: HTMLElement) {
+            return element.closest('.track-item') as HTMLElement;
+        },
+        handleUlContext(event: MouseEvent) {
+            const trackItem = this.getClosestTrackItem(event.target as HTMLElement);
+            if (!trackItem) return;
+
+            let trackId_ = trackItem.id.replace('track-item-', '');
+            let trackId = parseInt(trackId_, 10);
+
+            // 查找对应的 track 对象
+            const track = this.tracks.find(t => t.id === trackId);
+
+            if (track) this.openContextMenu(event, track);
+        },
+        handleUlClick(event: MouseEvent) {
+            const trackItem = this.getClosestTrackItem(event.target as HTMLElement);
+            if (!trackItem) return;
+
+            let trackId_ = trackItem.id.replace('track-item-', '');
+            let trackId = parseInt(trackId_, 10);
+            if (trackId) this.setFocused(trackId);
+
+            const button = (event.target as HTMLElement).closest('.ul-button');
+            if (!button) return;
+            const buttonId = button.id;
+
+            if (buttonId.includes('artist-')) {
+                const artistId = parseInt(buttonId.replace('artist-', ''), 10);
+                if (artistId) this.handleArtistClick(artistId);
+            } else if (buttonId.includes('album-')) {
+                const albumId = parseInt(buttonId.replace('album-', ''), 10);
+                if (albumId) this.handleAlbumClick(albumId);
+            } else if (buttonId.includes('download')) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (track) this.downloadSong(toRaw(track));
+            } else if (buttonId.includes('comment')) {
+                this.openSongComment(trackId);
+            } else if (buttonId.includes('subscribe')) {
+                this.openAddToPlaylist(trackId);
+            } else if (buttonId.includes('detail')) {
+                const track = this.tracks.find(t => t.id === trackId)
+                this.openContextMenu(event, toRaw(track), 'toogle');
+            } else if (buttonId.includes('track-menu-')) {
+                const trackId = parseInt(buttonId.replace('track-menu-', ''), 10);
+                this.deletaFromPlaylist(trackId);
             }
         },
-        trackMouseLeave(id: number | string) {
-            // console.log('trackMouseLeave', id);
-            let doms = this.main?.querySelectorAll(`#track-menu-${id}`);
-            if (doms) {
-                doms.forEach((dom) => {
-                    (dom as HTMLElement).style.display = 'none';
-                })
-            }
-            if (this.id !== 'YPlaybar.vue') {
-                return;
-            }
-            let domToBeShown = this.main?.querySelector(`#track-menu-2-${id}`);
-            if (domToBeShown) {
-                (domToBeShown as HTMLElement).style.display = 'block';
-            }
+        handleUlDbClick(event: MouseEvent) {
+            const trackItem = this.getClosestTrackItem(event.target as HTMLElement);
+            if (!trackItem) return;
+
+            let trackId_ = trackItem.id.replace('track-item-', '');
+            let trackId = parseInt(trackId_, 10);
+
+            // 查找对应的 track 对象
+            const track = this.tracks.find(t => t.id === trackId);
+
+            if (track) this.playSongAndPlaylist(track);
+        },
+        handleUlMouseMove(event: MouseEvent) {
+            const trackItem = this.getClosestTrackItem(event.target as HTMLElement);
+            if (!trackItem) return;
+
+            let trackId_ = trackItem.id.replace('track-item-', '');
+            let trackId = parseInt(trackId_, 10);
+            if (trackId === this.hoverTrackId) return; // 避免重复触发
+
+            // 查找对应的 track 对象
+            const track = this.tracks.find(t => t.id === trackId);
+
+            if (track) this.trackMouseEnter(track.id);
+        },
+        handleUlMouseLeave() {
+            this.trackMouseLeave(this.hoverTrackId);
+        },
+        trackMouseEnter(id: number) {
+            this.trackMouseLeave(this.hoverTrackId);
+            let dom = this.main?.querySelector(`#track-menu-${id}`) as HTMLElement;
+            if (dom) dom.style.display = 'flex';
+
+            this.hoverTrackId = id;
+            if (this.id !== 'YPlaybar.vue') return;
+
+            let domToBeHidden = this.main?.querySelector(`#track-menu-2-${id}`) as HTMLElement;
+            if (domToBeHidden) domToBeHidden.style.display = 'none';
+
+        },
+        trackMouseLeave(id: number) {
+            let dom = this.main?.querySelector(`#track-menu-${id}`) as HTMLElement;
+            if (dom) dom.style.display = 'none';
+
+            if (this.id !== 'YPlaybar.vue') return;
+
+            let domToBeShown = this.main?.querySelector(`#track-menu-2-${id}`) as HTMLElement;
+            if (domToBeShown) domToBeShown.style.display = 'block';
         },
         trackAlTns(name: string, tns: string | string[]) {
             let result = name;
@@ -731,7 +806,7 @@ export default defineComponent({
                     this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;
                 }
                 this.$nextTick(() => {
-                    const rowElement = this.main?.querySelector('.current_play_item');
+                    let rowElement = this.main?.querySelector('.current_play_item');
                     if (rowElement) {
                         rowElement.scrollIntoView({
                             behavior: smooth ? 'smooth' : 'auto',
@@ -739,6 +814,7 @@ export default defineComponent({
                         });
                         Message.post('success', this.$t('message.playlist_view.scrolled_to_current_track'));
                     }
+                    rowElement = null;
                 })
             }
         },

@@ -24,7 +24,10 @@ const routes = [
                 props: route => ({
                     playlistId: Number(route.params.id),
                     type: 'playlist',
-                })
+                }),
+                meta: {
+                    keepAlive: false,
+                }
             },
             {
                 path: 'album/:id',
