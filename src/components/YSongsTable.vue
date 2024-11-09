@@ -94,8 +94,7 @@
         </div>
         <!-- 3 歌曲列表内容 -->
         <ul ref="UL">
-            <template v-for="(track, index) in tracks.slice((page.current - 1) * limit, page.current * limit)"
-                :key="track.id">
+            <template v-for="(track, index) in tracks.slice((page.current - 1) * limit, page.current * limit)">
                 <div class="reels" v-if="track.songInReelIndex === 0 && type === 'album' && alReels.length > 0">
                     <div class="reels-title font-color-main">
                         {{ alReels[track.reelIndex]?.showreelName ?? $t('songs_table.unknown_name') }}
@@ -104,7 +103,7 @@
                         {{ alReels[track.reelIndex]?.composerName ?? $t('songs_table.unknown_artist') }}
                     </div>
                     <div class="reels-other font-color-standard"
-                        v-for="artist in alReels[track.reelIndex]?.otherArtists" :key="artist">
+                        v-for="artist in alReels[track.reelIndex]?.otherArtists">
                         <span>
                             {{ artist }}
                         </span>
@@ -144,7 +143,7 @@
                                 <div class="track-artist font-color-standard" v-if="showTrackArtist">
                                     <img src="@/assets/success.svg" class="track-artist-download-icon"
                                         v-if="downloadedSongIds.includes(track.id)">
-                                    <span v-for="(artist, index) in track.ar" :key="artist.id">
+                                    <span v-for="(artist, index) in track.ar">
                                         <!-- 7 歌手按钮 -->
                                         <span class="ul-button" :id="`artist-${artist.id}`"
                                             :class="track.id === nowPlaying ? 'artist-button-active' : 'artist-button'"
