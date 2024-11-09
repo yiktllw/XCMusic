@@ -164,6 +164,8 @@ ul {
     margin: 0px;
     padding: 8px 0px 8px 0px;
     border-radius: 10px;
+    content-visibility: auto;
+    contain-intrinsic-size: 56.7px;
 
     &:hover {
         background-color: rgba(var(--foreground-color-rgb), 0.1);

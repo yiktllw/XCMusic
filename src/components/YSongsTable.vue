@@ -127,7 +127,7 @@
                             <!-- 5 封面图片 -->
                             <div class="before-cover" style="min-width: 10px; height: 40px;" v-if="!showTrackCounter">
                             </div>
-                            <img v-if="showTrackCover" class="track-cover"
+                            <img v-if="showTrackCover" class="track-cover" loading="lazy"
                                 :src="track._picUrl ? track._picUrl : track.al?.picUrl" alt="Cover Image" />
                             <!-- 5 歌曲信息 -->
                             <div class="track-info" ref="trackInfo">
