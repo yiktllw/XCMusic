@@ -53,23 +53,23 @@
                                         'transform': index === currentLine ? 'scale(1.375)' : 'scale(1)',
                                         'transition': ` color, transform 0.5s ease`
                                     }">
-                                    <span v-if="line.content" :style="{
+                                    <span v-if="(line as LrcItem).content" :style="{
                                         'color': index === currentLine ? 'var(--font-color-main)' : 'var(--font-color-standard)',
                                         'transition': `color 0.5s ease`
                                     }">
-                                        <span v-if="typeof line.content !== 'string'">
-                                            <span v-for="(content, cindex) in line.content">
+                                        <span v-if="typeof (line as LrcItem).content !== 'string'">
+                                            <span v-for="content in (line as LrcItem2).content">
                                                 <img v-if="content.li" :src="content.li + '?param=22y22'"
                                                     style="border-radius: 10px; margin: 0 2px -4px 8px;">
                                                 {{ content.tx }}
                                             </span>
                                         </span>
                                         <span v-else>
-                                            {{ line.content }}
+                                            {{ (line as LrcItem).content }}
                                         </span>
                                     </span>
-                                    <span v-else-if="line.words" class="yrc-line">
-                                        <span v-for="(word, windex) in line.words" :style="{
+                                    <span v-else-if="(line as YrcItem).words" class="yrc-line">
+                                        <span v-for="(word, windex) in (line as YrcItem).words" :style="{
                                         }" class="yrc-line-item">
                                             <span class="item-ori">
                                                 {{ word.text }}
@@ -94,9 +94,9 @@
                     <YScroll v-else style="height: calc(100vh - 350px); margin-left: 5px; ">
                         <div class="wiki font-color-main" v-if="position === 'wiki'">
                             <div class="wiki-content">
-                                <div class="wiki-first-listen" v-if="firstListen?.creatives?.length > 0">
+                                <div class="wiki-first-listen" v-if="firstListen?.creatives?.length ?? 0 > 0">
                                     <div class="first-listen-main-title">
-                                        {{ firstListen.uiElement.mainTitle.title }}
+                                        {{ firstListen?.uiElement.mainTitle.title }}
                                     </div>
                                     <div class="first-listen-content">
                                         <div class="content-first-listen">
@@ -128,7 +128,7 @@
                                         {{ songWiki?.uiElement.mainTitle.title }}
                                     </div>
                                     <div class="wiki-song-content">
-                                        <div class="wiki-song-content-item" v-for="(creative, index) in creatives">
+                                        <div class="wiki-song-content-item" v-for="(creative) in creatives">
                                             <div class="item-title">
                                                 {{ creative.title }}
                                             </div>
@@ -145,7 +145,7 @@
                         </div>
                         <div class="sheet font-color-main" v-else-if="position === 'sheet'">
                             <div class="sheet-list" v-if="sheets">
-                                <div class="sheet-item" v-for="(sheet, index) in sheets" @click="openSheet(sheet)">
+                                <div class="sheet-item" v-for="(sheet) in sheets" @click="openSheet(sheet)">
                                     <div class="sheet-item-img">
                                         <img class="sheet-preview-img" :src="sheet.coverImageUrl + '?param=80y100'" />
                                     </div>
@@ -176,12 +176,13 @@ import YPlaybar from './YPlaybar.vue';
 import YTitlebar from './YTitlebar.vue';
 import YScroll from './YScroll.vue';
 import { defineComponent, ref } from 'vue';
-import { Lyrics } from '@/utils/lyric';
+import { LrcItem, LrcItem2, Lyrics, YrcItem } from '@/utils/lyric';
 import { useStore } from 'vuex';
 import { useApi } from '@/utils/api';
 import { getColorFromImg } from '@/utils/color';
 import YSpecCanvas from './YSpecCanvas.vue';
 import { isLocal } from '@/utils/localTracks_renderer';
+import { ICreative, SheetList, SongWikiSummary } from '@/dual/YPlayUI';
 
 export default defineComponent({
     name: 'YPlayUI',
@@ -253,23 +254,23 @@ export default defineComponent({
             return '';
         },
         creatives() {
-            let res: any[] = [];
+            let res: ICreative[] = [];
             if (this.songWiki) {
-                this.songWiki.creatives.forEach((element: any) => {
-                    let contentRes: any[] = [];
-                    if (element.uiElement.textLinks) {
-                        element.uiElement.textLinks.forEach((textLink: any) => {
+                this.songWiki.creatives.forEach((element) => {
+                    let contentRes: string[] = [];
+                    if (element.uiElement?.textLinks) {
+                        element.uiElement.textLinks.forEach((textLink) => {
                             contentRes.push(textLink.text);
                         });
                     } else if (element.resources) {
-                        element.resources.forEach((resource: any) => {
+                        element.resources.forEach((resource) => {
                             if (resource.uiElement.mainTitle) {
                                 contentRes.push(resource.uiElement.mainTitle.title);
                             }
                         });
                     }
                     res.push({
-                        title: element.uiElement.mainTitle.title,
+                        title: element.uiElement?.mainTitle.title ?? '',
                         content: contentRes,
                     });
                 });
@@ -299,15 +300,14 @@ export default defineComponent({
                 ],
             },
             position: 'lyric',
-            lyrics: null as any,
-            firstListen: null as any,
-            songWiki: null as any,
-            sheets: null as any,
+            lyrics: null as Array<LrcItem | YrcItem | LrcItem2> | null,
+            firstListen: null as SongWikiSummary.IFirstListen | null,
+            songWiki: null as SongWikiSummary.IWikiSummary | null,
+            sheets: null as SheetList.ISheet[] | null,
             currentTime: 0,
             currentLine: 0,
-            startTime: null as any,
-            timeInterval: null as any,
-            scrollAnimationFrame: null as any,
+            startTime: null as number | null,
+            scrollAnimationFrame: null as number | null,
         };
     },
     emits: [
@@ -523,7 +523,7 @@ export default defineComponent({
                 console.error('Failed to get sheets:', error);
             });
         },
-        openSheet(sheet: any) {
+        openSheet(sheet: SheetList.ISheet) {
             this.$router.push({ path: `/sheet/${sheet.id}` });
             this.closePanel();
         },
@@ -599,7 +599,6 @@ export default defineComponent({
         });
     },
     beforeUnmount() {
-        clearInterval(this.timeInterval);
         this.player.subscriber.offAll('YPlayUI');
         this.globalMsg.subscriber.offAll('YPlayUI');
         this.$emit('close-panel');

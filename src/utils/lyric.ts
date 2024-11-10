@@ -6,10 +6,28 @@
  * 2. 解析LRC歌词(逐行歌词)
 *-----------------------------------------*/
 
-interface YrcItem {
+
+export interface LrcItem {
+    startTime: number;
+    content: string;
+}
+
+export interface LrcItem2 {
+    startTime: number;
+    content: Array<{
+        li: string;
+        tx: string;
+    }>;
+}
+
+export interface YrcItem {
     startTime: number;
     duration?: number;
-    words: Array<any>;
+    words: Array<{
+        startTime: number;
+        duration: number;
+        text: string;
+    }>;
 }
 
 export class Lyrics {
@@ -17,7 +35,7 @@ export class Lyrics {
         'yrc',
         'lrc',
     ]
-    lyrics: any[] | undefined;
+    lyrics: Array<LrcItem | YrcItem | LrcItem2>;
     /**
      * 从api返回的歌词数据中解析歌词
      * @param {Object} params
@@ -30,12 +48,11 @@ export class Lyrics {
     }: { type: string; data: string; }) {
         if (!this.#allowTypes.includes(type)) {
             console.error('Unsupported lyric type:', type, 'Supported types:', this.#allowTypes);
+        }
+        if (type === 'yrc') {
+            this.lyrics = Lyrics.parseYRC(data);
         } else {
-            if (type === 'yrc') {
-                this.lyrics = Lyrics.parseYRC(data);
-            } else if (type === 'lrc') {
-                this.lyrics = Lyrics.parseLRC(data);
-            }
+            this.lyrics = Lyrics.parseLRC(data);
         }
     }
     /**
@@ -43,7 +60,7 @@ export class Lyrics {
      * @param {string} yrc 
      * @returns {Array} 返回解析后的歌词数组
      */
-    static parseYRC(yrc: string): Array<any> {
+    static parseYRC(yrc: string): Array<YrcItem> {
         const lines = yrc.split('\n');  // 将yrc内容按行分割
         const lyrics: YrcItem[] = [{
             startTime: 0,
@@ -106,11 +123,11 @@ export class Lyrics {
      * @param {string} lrc LRC歌词
      * @returns {Array} 返回解析后的歌词数组
      */
-    static parseLRC(lrc: string): Array<any> {
+    static parseLRC(lrc: string): Array<LrcItem> {
         // 将LRC文件按行分割
         const lines = lrc.split('\n');
         // 存储解析结果的数组
-        const lyrics = [
+        const lyrics: LrcItem[] = [
             {
                 startTime: 0,
                 content: '',
