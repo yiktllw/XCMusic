@@ -5,6 +5,6 @@
 
 ## 新增翻译内容
 - 在`en.json`写入键值。
-- 运行`sont.js`，将键名按字母排序。
+- 运行`sort.js`，将键名按字母排序。
 - 运行`sync_key.js`，将新增的键同步到`zh.json`。
 - 在`zh.json`中，查找值为`TO_BE_TRANSLATED`的键，并填入中文翻译。
