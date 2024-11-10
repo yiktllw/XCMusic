@@ -1,3 +1,18 @@
+
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * global.d.ts 为全局变量的声明文件
+ * 用于声明全局变量，以便在其他文件中使用
+ * 已声明的全局变量有:
+ * Window:
+ *  -setting: Setting;
+ *  -Setting: typeof Setting;
+ *  -electron: electron;
+ *  -api: api;
+ *  -savedPositions: savedPositions;
+ *  -test: any;
+*-----------------------------------------*/
+
 import { Setting } from "./utils/setting";
 import { shell } from "electron";
 import * as fs from "fs";

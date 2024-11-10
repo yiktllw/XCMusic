@@ -1,3 +1,27 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * preload.js 用于在渲染进程中使用 node.js 模块
+ * 已添加的功能:
+ * 1. path.join
+ * 2. fs.readFileSync
+ * 3. fs.writeFileSync
+ * 4. fs.existsSync
+ * 5. fs.mkdirSync
+ * 6. os.homedir
+ * 7. crypto.createHash
+ * 8. ipcRenderer.send
+ * 9. ipcRenderer.on
+ * 10. ipcRenderer.once
+ * 11. ipcRenderer.invoke
+ * 12. shell
+ * 13. isElectron
+ * 14. ipcRenderer
+ * 15. fs
+ * 16. path
+ * 17. os
+ * 18. crypto
+*-----------------------------------------*/
+
 const { contextBridge, ipcRenderer, shell } = require('electron');
 
 const fs = require('fs');

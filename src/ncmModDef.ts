@@ -1,4 +1,9 @@
-// From YesPlay Music
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * 部分来自YesPlayMusic 
+ * ncmModDef.ts 为网易云API模块定义文件
+ * 用于在server.ts中引入所有的API模块
+*-----------------------------------------*/
 
 module.exports = [
     {

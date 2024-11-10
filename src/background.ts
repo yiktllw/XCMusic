@@ -1,3 +1,19 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * background.ts 为 Electron 主进程的入口文件
+ * 已在该文件中实现的功能: 
+ * 1. 创建窗口
+ * 2. 创建托盘
+ * 3. 监听缩放比例消息
+ * 4. 监听全屏和退出全屏
+ * 5. 处理窗口隐藏和显示
+ * 6. 处理托盘点击事件
+ * 7. 监听退出事件
+ * 8. 监听第二个实例
+ * 9. 存储窗口的大小和位置
+*-----------------------------------------*/
+
+
 'use strict'
 
 import { app, protocol, BrowserWindow, Tray, Menu, ipcMain, screen } from 'electron'
@@ -219,5 +235,11 @@ if (isDevelopment) {
         })
     }
 }
+
+/**
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * 此处导入所有与ipcMain相关的事件
+ */
+
 import './utils/rendererEvents';
 
