@@ -3,13 +3,13 @@
         <YHeader :switcher="switcher" @new-position="handlePosition" />
         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
             :showTrackPopularity="false" :id="'YLocalSongsView.vue'" v-if="position === 'download'" />
-        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
+        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="localTracks"
             :showTrackPopularity="false" :show-track-likes="false" :id="'YLocalSongsView.vue-2'" v-else />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, toRaw } from 'vue';
 import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
 import YHeader from '@/components/YHeader.vue';
@@ -34,6 +34,7 @@ export default defineComponent({
     data() {
         return {
             tracks: [] as ITrack[],
+            localTracks: [] as ITrack[],
             position: 'download',
             switcher: [
                 {
@@ -63,8 +64,12 @@ export default defineComponent({
             if (position === 'download') {
                 this.getDownloadedTracks();
             } else {
-                const res = await window.electron.ipcRenderer.invoke('get-local-tracks', this.setting.download.path);
-                this.tracks = (new Tracks({
+                const paths = toRaw(this.setting.download.localPaths);
+                let res: any[] = [];
+                for (const path of paths) {
+                    res = res.concat(await window.electron.ipcRenderer.invoke('get-local-tracks', path));
+                }
+                this.localTracks = (new Tracks({
                     url: 'local',
                     tracks: res,
                 })).tracks;

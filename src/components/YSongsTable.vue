@@ -645,7 +645,8 @@ export default defineComponent({
             if (!trackItem) return;
 
             let trackId_ = trackItem.id.replace('track-item-', '');
-            let trackId = parseInt(trackId_, 10);
+            let trackId: number | string = trackId_;
+            if (!isLocal(trackId_)) trackId = parseInt(trackId_, 10);
 
             // 查找对应的 track 对象
             const track = this.tracks.find(t => t.id === trackId);
@@ -657,8 +658,8 @@ export default defineComponent({
             if (!trackItem) return;
 
             let trackId_ = trackItem.id.replace('track-item-', '');
-            let trackId = parseInt(trackId_, 10);
-            if (trackId) this.setFocused(trackId);
+            let trackId: number | string = trackId_;
+            if (isLocal(trackId_)) { return; } else { trackId = parseInt(trackId_, 10) };
 
             const button = (event.target as HTMLElement).closest('.ul-button');
             if (!button) return;
@@ -690,7 +691,8 @@ export default defineComponent({
             if (!trackItem) return;
 
             let trackId_ = trackItem.id.replace('track-item-', '');
-            let trackId = parseInt(trackId_, 10);
+            let trackId: number | string = trackId_;
+            if (!isLocal(trackId_)) trackId = parseInt(trackId_, 10);
 
             // 查找对应的 track 对象
             const track = this.tracks.find(t => t.id === trackId);
@@ -702,7 +704,8 @@ export default defineComponent({
             if (!trackItem) return;
 
             let trackId_ = trackItem.id.replace('track-item-', '');
-            let trackId = parseInt(trackId_, 10);
+            let trackId: number | string = trackId_;
+            if (!isLocal(trackId_)) trackId = parseInt(trackId_, 10);
             if (trackId === this.hoverTrackId) return; // 避免重复触发
 
             // 查找对应的 track 对象
