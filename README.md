@@ -8,6 +8,8 @@
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
 
+![image](https://github.com/user-attachments/assets/309af8e7-07af-4f88-9a9a-872c40563a23)
+
 ## 目录
 
 - [特性](#特性)
@@ -124,8 +126,6 @@ npm run electron:build
 </div>
 
 ## 截图
-![image](https://github.com/user-attachments/assets/309af8e7-07af-4f88-9a9a-872c40563a23)
-
 ![image](https://github.com/user-attachments/assets/97cfc4f3-3dfa-4305-8476-076cf2b75b3a)
 
 ![image](https://github.com/user-attachments/assets/07d9be0a-c8d4-4ce8-b2fc-9ab9f312e63e)
