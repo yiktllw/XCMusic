@@ -7,8 +7,9 @@
 <div align="center">
 	<img src="./src/assets/logo.svg" style="width:300px;">
 </div>
+<br></br>
 
-![image](https://github.com/user-attachments/assets/309af8e7-07af-4f88-9a9a-872c40563a23)
+![image](https://github.com/user-attachments/assets/45fcabb2-8f89-434e-a8cc-7548a740c030)
 
 ## 目录
 
@@ -126,22 +127,23 @@ npm run electron:build
 </div>
 
 ## 截图
-![image](https://github.com/user-attachments/assets/97cfc4f3-3dfa-4305-8476-076cf2b75b3a)
+![image](https://github.com/user-attachments/assets/1ab7d31b-955a-4a49-b7c5-bf253fd92a61)
 
-![image](https://github.com/user-attachments/assets/07d9be0a-c8d4-4ce8-b2fc-9ab9f312e63e)
+![image](https://github.com/user-attachments/assets/9ae95407-2a1b-470b-a1b5-4de008dc331a)
 
-![image](https://github.com/user-attachments/assets/5ce78c42-dc6e-4291-8121-90783345cd23)
+![image](https://github.com/user-attachments/assets/1f54849d-62fa-4083-8f50-ef4cb0281eaf)
 
-![image](https://github.com/user-attachments/assets/4a5a5a48-55ac-4edc-86ac-a63cd68247ca)
+![image](https://github.com/user-attachments/assets/99b367f7-0af6-4e84-994e-65e4727dda50)
 
-![image](https://github.com/user-attachments/assets/3770519c-035a-4c25-b70c-28e4f6eed30f)
+![image](https://github.com/user-attachments/assets/a50d0ed3-2cce-4164-a250-c3095b8944b9)
 
-![image](https://github.com/user-attachments/assets/34d6a10a-4581-4943-afa6-d1bc4708a090)
+![image](https://github.com/user-attachments/assets/3ccda896-91a9-4c39-b7aa-a4d9054c1844)
 
-![image](https://github.com/user-attachments/assets/2fdb5c77-217a-4226-8139-26efac5f6533)
+![image](https://github.com/user-attachments/assets/295ae345-c30a-45bb-b750-f720371e8ef0)
 
-![image](https://github.com/user-attachments/assets/87a43859-f795-4126-ab5d-a81931411a75)
+![image](https://github.com/user-attachments/assets/c5904c59-651c-43e6-bebf-2bb45d18b52e)
 
-![image](https://github.com/user-attachments/assets/17159272-990a-4256-9776-b65a17ba23c2)
+![image](https://github.com/user-attachments/assets/74b1ac59-b995-4794-b230-dc80369c38b7)
 
+![image](https://github.com/user-attachments/assets/e7e17666-31d1-484a-98a7-18284c5b10af)
 
