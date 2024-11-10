@@ -3,8 +3,20 @@
         <YHeader :switcher="switcher" @new-position="handlePosition" />
         <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
             :showTrackPopularity="false" :id="'YLocalSongsView.vue'" v-if="position === 'download'" />
-        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="localTracks"
-            :showTrackPopularity="false" :show-track-likes="false" :id="'YLocalSongsView.vue-2'" v-else />
+        <div class="local" v-else>
+            <div class="path-info font-color-main">
+                <div class="path-title">
+                    {{ $t('localsongs.addpaths') + ' :' }}
+                </div>
+                <div class="path-list font-color-high">
+                    <div class="path-item" v-for="path in localPaths" :key="path">
+                        {{ path }}
+                    </div>
+                </div>
+            </div>
+            <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="localTracks"
+                :showTrackPopularity="false" :show-track-likes="false" :id="'YLocalSongsView.vue-2'" />
+        </div>
     </div>
 </template>
 
@@ -35,6 +47,7 @@ export default defineComponent({
         return {
             tracks: [] as ITrack[],
             localTracks: [] as ITrack[],
+            localPaths: [] as string[],
             position: 'download',
             switcher: [
                 {
@@ -79,6 +92,7 @@ export default defineComponent({
     mounted() {
         YColor.setBackgroundColorTheme();
         this.getDownloadedTracks();
+        this.localPaths = toRaw(this.setting.download.localPaths);
         this.download.subscriber.on({
             id: 'YLocalSongsView',
             type: 'downloaded-songs',
@@ -96,5 +110,27 @@ export default defineComponent({
 <style lang="scss" scoped>
 .main {
     padding: 0;
+
+    .local {
+        width: 100%;
+        .path-info {
+            padding: 0 0 0px 30px;
+            width: fit-content;
+            font-weight: bold;
+            text-align: left;
+            .path-title {
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+            
+            .path-list {
+                font-size: 14px;
+                
+                .path-item{
+                    padding: 5px 0;
+                }
+            }
+        }
+    }
 }
 </style>

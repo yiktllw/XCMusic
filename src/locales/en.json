@@ -75,6 +75,9 @@
 		}
 	},
 	"local_music": "Local Music",
+	"localsongs": {
+		"addpaths": "Added Paths in Settings"
+	},
 	"login": "Login",
 	"logout": "Logout",
 	"message": {
