@@ -15,6 +15,7 @@ import { YPageC } from '@/dual/YPageC';
 import YPage from '@/components/YPage.vue';
 import { useStore } from 'vuex';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
+import { YColor } from '@/utils/color';
 
 export default defineComponent({
     name: 'YSubscribedAlbumView',
@@ -35,6 +36,7 @@ export default defineComponent({
         };
     },
     mounted() {
+        YColor.setBackgroundColorTheme();
         this.getUserSubscribedAlbums(true);
     },
     watch: {
