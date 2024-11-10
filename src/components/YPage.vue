@@ -5,27 +5,27 @@
                 <img src="@/assets/backarrow.svg" class="arrow-img g-icon">
             </div>
             <div class="all" v-if="page.total < 8">
-                <div class="pages" v-for="i in page.total" :key="i" @click="page.current = i"
+                <div class="pages" v-for="i in page.total" @click="page.current = i"
                     :class="page.current === i ? 'currentPage' : ''">
                     {{ i }}
                 </div>
             </div>
             <div class="omit" v-else>
-                <div class="pages" v-for="i in page.leftPage" :key="i" @click="page.current = i"
+                <div class="pages" v-for="i in page.leftPage" @click="page.current = i"
                     :class="page.current === i ? 'currentPage' : ''">
                     {{ i }}
                 </div>
                 <div class="pages">
                     ...
                 </div>
-                <div class="pages" v-for="i in page.middlePage" :key="i" @click="page.current = i"
+                <div class="pages" v-for="i in page.middlePage" @click="page.current = i"
                     :class="page.current === i ? 'currentPage' : ''">
                     {{ i }}
                 </div>
                 <div class="pages" v-if="page.current > 2 && page.current < page.total - 1">
                     ...
                 </div>
-                <div class="pages" v-for="i in page.rightPage" :key="i" @click="page.current = i"
+                <div class="pages" v-for="i in page.rightPage" @click="page.current = i"
                     :class="page.current === i ? 'currentPage' : ''">
                     {{ i }}
                 </div>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="page-goto" v-if="page.total > 8">
-            <input type="number" :min="1" :max="page.total" v-model="tempPage" @keydown.enter="goto()" >
+            <input type="number" :min="1" :max="page.total" v-model="tempPage" @keydown.enter="goto()">
             <span>/ &nbsp;{{ page.total }} &nbsp;</span>
             <button class="font-size-std" @click="goto()">跳转</button>
         </div>

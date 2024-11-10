@@ -239,7 +239,7 @@
                                     {{ $t('setting_view.download.clear') }}
                                 </div>
                             </div>
-                            <div class="path-item" v-for="(path, index) in localPaths">
+                            <div class="path-item" v-for="(path, index) in localPaths" :key="path">
                                 <input type="text" v-model="localPaths[index]" />
                                 <div class="select-file" @click="setPath(index)">
                                     {{ $t('setting_view.download.select') }}

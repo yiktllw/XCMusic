@@ -53,7 +53,7 @@
                         </div>
                         <!-- 4 创建信息 -->
                         <div class="album-artist font-color-high" v-else>
-                            <span v-for="(artist, index) in playlist.artists">
+                            <span v-for="(artist, index) in playlist.artists" :key="artist.id">
                                 <!-- 5 歌手按钮 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">

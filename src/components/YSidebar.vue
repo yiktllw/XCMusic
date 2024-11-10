@@ -46,11 +46,12 @@
                 <img class="add-img g-icon" src="../assets/add.svg" @click="createPlaylist">
             </div>
             <transition name="slide-fade">
-                <div class="fade-container" v-if="showMyPlaylist" :key="userPlaylists.length">
+                <div class="fade-container" v-if="showMyPlaylist">
                     <button class="playlist-button font-color-main" v-for="button in userPlaylists" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
-                        :disabled="activeButtonId === button.id" @contextmenu="openCtxMenu($event, button.id, 'created-playlists')">
+                        :disabled="activeButtonId === button.id"
+                        @contextmenu="openCtxMenu($event, button.id, 'created-playlists')">
                         <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>
@@ -74,11 +75,12 @@
                 </div>
             </button>
             <transition name="slide-fade">
-                <div class="fade-container" v-if="showMySubscribedPlaylist" :key="userSubscribes.length">
+                <div class="fade-container" v-if="showMySubscribedPlaylist">
                     <button class="playlist-button font-color-main" v-for="button in userSubscribes" :key="button.id"
                         @click="handleButtonClick(button.id)" :title="button.label"
                         :class="{ 'activeButton': activeButtonId === button.id }"
-                        :disabled="activeButtonId === button.id" @contextmenu="openCtxMenu($event, button.id, 'subscribed-playlists')">
+                        :disabled="activeButtonId === button.id"
+                        @contextmenu="openCtxMenu($event, button.id, 'subscribed-playlists')">
                         <img :src="button.img + '?param=60y60'" class="button-icon" :id="button.img" />
                         <div class="playlist-button-text">{{ button.label }}</div>
                     </button>

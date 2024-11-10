@@ -14,9 +14,9 @@
                             {{ track.name }}
                         </div>
                         <div class="track-artist font-color-standard">
-                            <span v-for="(artist, index) in track.ar" :key="artist.id">
+                            <span v-for="(artist, index) in track.ar">
                                 <span class="artist-button" @click="openArtist(artist.id)"
-                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
+                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                     {{ artist.name }}
                                 </span>
                                 <span v-if="index < track.ar.length - 1"> /&nbsp; </span>
@@ -48,8 +48,8 @@
                         <div class="lyric font-color-standard" v-if="position === 'lyric' && lyrics">
                             <div class="lyric-a">
                                 <div class="before-lyric" />
-                                <div class="lyric-line" v-for="(line, index) in lyrics" :key="line"
-                                    :class="lineClass(index)" :style="{
+                                <div class="lyric-line" v-for="(line, index) in lyrics" :class="lineClass(index)"
+                                    :style="{
                                         'transform': index === currentLine ? 'scale(1.375)' : 'scale(1)',
                                         'transition': ` color, transform 0.5s ease`
                                     }">
@@ -58,7 +58,7 @@
                                         'transition': `color 0.5s ease`
                                     }">
                                         <span v-if="typeof line.content !== 'string'">
-                                            <span v-for="(content, cindex) in line.content" :key="cindex">
+                                            <span v-for="(content, cindex) in line.content">
                                                 <img v-if="content.li" :src="content.li + '?param=22y22'"
                                                     style="border-radius: 10px; margin: 0 2px -4px 8px;">
                                                 {{ content.tx }}
@@ -69,7 +69,7 @@
                                         </span>
                                     </span>
                                     <span v-else-if="line.words" class="yrc-line">
-                                        <span v-for="(word, windex) in line.words" :key="windex" :style="{
+                                        <span v-for="(word, windex) in line.words" :style="{
                                         }" class="yrc-line-item">
                                             <span class="item-ori">
                                                 {{ word.text }}
@@ -128,13 +128,12 @@
                                         {{ songWiki?.uiElement.mainTitle.title }}
                                     </div>
                                     <div class="wiki-song-content">
-                                        <div class="wiki-song-content-item" v-for="(creative, index) in creatives"
-                                            :key="index">
+                                        <div class="wiki-song-content-item" v-for="(creative, index) in creatives">
                                             <div class="item-title">
                                                 {{ creative.title }}
                                             </div>
                                             <div class="item-content">
-                                                <span v-for="(content, cindex) in creative.content" :key="cindex">
+                                                <span v-for="(content, cindex) in creative.content">
                                                     {{ content }}
                                                     <span v-if="cindex < creative.content.length - 1"> 、 </span>
                                                 </span>
@@ -146,8 +145,7 @@
                         </div>
                         <div class="sheet font-color-main" v-else-if="position === 'sheet'">
                             <div class="sheet-list" v-if="sheets">
-                                <div class="sheet-item" v-for="(sheet, index) in sheets" :key="index"
-                                    @click="openSheet(sheet)">
+                                <div class="sheet-item" v-for="(sheet, index) in sheets" @click="openSheet(sheet)">
                                     <div class="sheet-item-img">
                                         <img class="sheet-preview-img" :src="sheet.coverImageUrl + '?param=80y100'" />
                                     </div>
@@ -351,11 +349,10 @@ export default defineComponent({
             } else if (newPos === 'sheet') {
                 this.getSheets();
                 this.$nextTick(() => {
-                    const container = this.lyricContainer?.$el;
-                    if (!container) {
-                        return;
-                    }
+                    let container = this.lyricContainer?.$el;
+                    if (!container) return;
                     container.scrollTop = 0;
+                    container = null;
                 });
             }
         },
@@ -484,6 +481,7 @@ export default defineComponent({
                 if (progressDOM) {
                     progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .4321), rgb(${color.r}, ${color.g}, ${color.b} ))`;
                 }
+                progressDOM = null;
             });
         },
         async getWiki() {

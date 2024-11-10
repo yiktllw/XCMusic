@@ -4,7 +4,7 @@ let items = defineModel()
 
 <template>
     <div class="list">
-        <div v-for="(item, index) in items" :key="item.key ?? index" class="item">
+        <div v-for="(item, index) in items" class="item">
             <div class="multi-select-item ">
                 <input type="checkbox" v-model="item.selected" />
             </div>
@@ -17,6 +17,7 @@ let items = defineModel()
 .list {
     display: flex;
     flex-direction: column;
+
     .item {
         display: flex;
         flex-direction: row;

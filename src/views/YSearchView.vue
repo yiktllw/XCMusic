@@ -32,8 +32,7 @@
         </div>
         <!-- 导航 -->
         <div class="switcher">
-            <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
-                @click="handleSwitcher(item.position)">
+            <button class="switcher-item" v-for="(item, index) in switcher" @click="handleSwitcher(item.position)">
                 <span style="font-size: 16px; color:#fff;"
                     :style="{ 'font-weight': item.position === position ? 'bold' : '500', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                     {{ $t(item.display) }}

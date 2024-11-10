@@ -1,6 +1,6 @@
 <template>
     <div class="main font-color-main">
-        <div class="track" v-if="type === 'song'" :key="trackKey">
+        <div class="track" v-if="type === 'song'">
             <div class="cover" v-if="track.picUrl">
                 <img :src="track.picUrl + '?param=100y100'" />
             </div>
@@ -14,7 +14,7 @@
                     专辑:&nbsp;{{ track.al.name }}
                 </div>
                 <div class="track-artist">
-                    歌手:&nbsp;<span v-for="(artist, index) in track.ar" :key="index" :title="artist.name"
+                    歌手:&nbsp;<span v-for="(artist, index) in track.ar" :key="artist.id" :title="artist.name"
                         @click="openArtist(artist.id)">
                         {{ artist.name }}
                         <span v-if="index !== track.ar.length - 1">&nbsp;/&nbsp;</span>
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <YComment :type="type" :id="id" :key="id" />
+        <YComment :type="type" :id="id" />
     </div>
 </template>
 
@@ -65,7 +65,6 @@ export default defineComponent({
     data() {
         return {
             track: this.type === 'song' ? new YTrackC(this.id) : new YTrackC(null),
-            trackKey: 0,
         };
     },
     methods: {
@@ -76,7 +75,6 @@ export default defineComponent({
             this.$router.push({ path: `/artist/${id}` });
         },
         async trackLoaded() {
-            this.trackKey++;
             let theme = YColor.findTheme(this.setting.display.theme);
             YColor.setBkColorFromImg(this.track.picUrl, document, theme.type, theme.background);
         }

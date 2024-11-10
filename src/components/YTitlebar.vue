@@ -31,11 +31,11 @@
                                 {{ $t('titlebar.searchHistory') }}
                             </div>
                             <div class="search-history-items">
-                                <div v-for="item in searchHistory" :key="item" class="item-container">
-                                    <span class="search-history-item font-color-standard" @click="search(item)">
-                                        {{ item }}
+                                <div v-for="str in searchHistory" :key="str" class="item-container">
+                                    <span class="search-history-item font-color-standard" @click="search(str)">
+                                        {{ str }}
                                     </span>
-                                    <div class="delete-button" @click="deleteSearchHistory(item)">
+                                    <div class="delete-button" @click="deleteSearchHistory(str)">
                                         <img class="img-delete g-icon" src="../assets/close.svg">
                                     </div>
                                 </div>
@@ -45,7 +45,7 @@
                             <div class="search-suggestions-title">
                                 {{ $t('titlebar.suggestedSearches') }}
                             </div>
-                            <div class="search-suggestion" v-for="suggestion in searchSuggestions" :key="suggestion"
+                            <div class="search-suggestion" v-for="suggestion in searchSuggestions"
                                 :title="suggestion.keyword" @click="search(suggestion.keyword)"
                                 v-html="highlightMatching(suggestion.keyword)">
                             </div>
@@ -55,7 +55,7 @@
                                 {{ $t('titlebar.trending') }}
                             </div>
                             <div class="search-suggestion font-color-high" v-for="(hotSearch) in hotSearches"
-                                :key="hotSearch" :title="hotSearch.first" @click="search(hotSearch.first)"
+                                :title="hotSearch.first" @click="search(hotSearch.first)"
                                 v-html="highlightMatching(hotSearch.first)" />
                         </div>
                     </YScroll>

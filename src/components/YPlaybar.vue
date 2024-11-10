@@ -6,13 +6,12 @@
     </div>
     <div class="playbar font-color-main">
         <!-- 1 左侧 -->
-        <div class="align-left" :key="currentTrack?.id">
+        <div class="align-left">
             <!-- 2 播放信息 -->
             <div class="play-info" @mouseover="setShowButton" @mouseleave="showButton = false">
                 <div class="play-info-left" v-if="type === 'default'">
                     <!-- 3 封面 -->
-                    <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')"
-                        :key="currentTrackCover">
+                    <img class="img-cover img" :src="currentTrackCover ?? require('../assets/song.svg')">
                     <div v-if="currentTrack" class="open-panel" @click="$emit('open-panel')">
                         <div class="open-panel-overlay">
                         </div>
@@ -21,15 +20,15 @@
                     <!-- 4 播放信息文本 -->
                     <div class="play-info-text">
                         <!-- 5 播放信息文本:标题 -->
-                        <div class="play-info-text-title" :title="currentTrackName" :key="currentTrackName">
+                        <div class="play-info-text-title" :title="currentTrackName">
                             <YTextBanner :text="currentTrackName" style="width: 100%; overflow: hidden;" />
                         </div>
                         <!-- 5 播放信息文本:艺术家 -->
                         <div class="play-info-text-artist font-color-standard">
-                            <span v-for="(artist, index) in currentTrackArtists" :key="artist.id">
+                            <span v-for="(artist, index) in currentTrackArtists">
                                 <!-- 艺术家名 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
-                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')" :key="artist.id">
+                                    :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
                                     {{ artist.name }}
                                 </span>
                                 <span v-if="index < currentTrackArtists.length - 1"> /&nbsp; </span>
@@ -67,8 +66,7 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))"
-                    :key="currentTrack?.id">
+                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))">
                     <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
                         :title="$t('playbar.cancel_like')">
                     <img v-else class="img-like img g-icon" src="../assets/unlikes.svg" :title="$t('playbar.like')">
@@ -79,7 +77,7 @@
                 </button>
                 <!-- 3 播放/暂停按钮 -->
                 <button class="button play-button" @click="tooglePlayState"
-                    :title="playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')" :key="playState">
+                    :title="playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')">
                     <img v-show="playState === 'pause'" class="img-play img" src="../assets/play.svg">
                     <img v-show="playState === 'play'" class="img-pause img" src="../assets/pause.svg">
                 </button>
@@ -132,12 +130,12 @@
             <!-- 2 进度条 -->
             <div class="progress" v-if="type === 'default'">
                 <!-- 3 自定义进度条 -->
-                <div class="time font-color-main" :key="currentTime">
+                <div class="time font-color-main">
                     {{ currentTime ? formatDuration(currentTime) : '00:00' }}
                 </div>
                 <YProgressBar v-model="progress" style="height:20px;width: 321px"
                     @update:model-value="setAudioProgress" />
-                <div class="time font-color-main" :key="duration">
+                <div class="time font-color-main">
                     {{ formatDuration(duration) }}
                 </div>
             </div>
@@ -151,14 +149,14 @@
                     {{ $t(qualityDisplay) }}
                 </div>
                 <!-- 选择音质面板 -->
-                <YPanel ref="quality_panel" :trigger="quality_panel_trigger as HTMLElement" :slide-direction="4" :default-show="false"
-                    :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
+                <YPanel ref="quality_panel" :trigger="quality_panel_trigger as HTMLElement" :slide-direction="4"
+                    :default-show="false" :animation-time="0.1" :slide-distance="15" :z-index="100" :hide-mode="'if'">
                     <div class="quality-panel" id="panel">
                         <div class="quality-title font-color-main">
                             {{ $t('playbar.sound_quality') }}
                         </div>
                         <div class="quality-switcher">
-                            <div class="quality-item" v-for="quality in qualityGroup" :key="quality.id"
+                            <div class="quality-item" v-for="quality in qualityGroup"
                                 @click="setQuality(quality.name as 'jymaster' | 'sky' | 'jyeffect' | 'hires' | 'lossless' | 'exhigh' | 'standard')"
                                 :style="{ 'opacity': quality.available ? 1 : .4 }">
                                 <div class="quality-item-title font-color-high">
@@ -176,8 +174,8 @@
                     style="width: 22px; height: 22px;margin-right:10px; " :title="$t('playbar.volume')"
                     ref="volume_panel_trigger" @click="volume_panel?.tooglePanel()">
                 <!-- 音量面板 -->
-                <YPanel ref="volume_panel" :trigger="volume_panel_trigger as HTMLElement" :slide-direction="5" :animation-time="0.1"
-                    :slide-distance="10" id="panel">
+                <YPanel ref="volume_panel" :trigger="volume_panel_trigger as HTMLElement" :slide-direction="5"
+                    :animation-time="0.1" :slide-distance="10" id="panel">
                     <div class="volume-container" id="panel">
                         <YProgressBarV v-model="volume"
                             style="height: 120px;width: 20px;position: absolute; bottom: 30px;"

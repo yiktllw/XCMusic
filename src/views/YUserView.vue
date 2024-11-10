@@ -46,7 +46,7 @@
         <!-- 导航 -->
         <div class="switcher font-color-standard">
             <!-- 导航元素 -->
-            <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher" :key="index"
+            <button class="switcher-item font-color-standard" v-for="(item, index) in user.switcher"
                 @click="handleSwitcher(item.position)">
                 <span style="font-size: 16px; color:var(--font-color-main);"
                     :style="{ 'font-weight': item.position === user.position ? 'bold' : '500', 'color': item.position === user.position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
@@ -104,7 +104,7 @@
                 </div>
                 <!-- 歌手简介 -->
                 <div class="artist-intro font-color-high" v-if="user.intro && user.position === 'detail'">
-                    <div v-for="(item, index) in user.intro" :key="index">
+                    <div v-for="(item, index) in user.intro">
                         <!-- 标题 -->
                         <div v-if="item.ti"
                             style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: var(--font-color-main);">

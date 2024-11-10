@@ -1,8 +1,7 @@
 <template>
     <div class="switcher font-color-standard">
         <!-- 导航元素 -->
-        <button class="switcher-item" v-for="(item, index) in switcher" :key="index"
-            @click="handleSwitcher(item.position)">
+        <button class="switcher-item" v-for="(item, index) in switcher" @click="handleSwitcher(item.position)">
             <div :class="{ 'choosed-text': item.position === position }"
                 :style="{ 'font-weight': item.position === position ? 'bold' : 'var(--font-weight-header)', 'color': item.position === position ? 'var(--font-color-main)' : 'var(--font-color-standard)' }">
                 {{ $t(item.display) }}

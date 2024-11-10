@@ -1,5 +1,5 @@
 <template>
-    <div class="comment-main" :key="key">
+    <div class="comment-main">
         <div class="header">
             <div class="header-left">
                 <div class="font-size-larger" v-if="showHeader">
@@ -84,7 +84,6 @@ export default defineComponent({
     data() {
         return {
             cmt: new YCommentC(this.type as Types, this.id),
-            key: 0,
         };
     },
     methods: {
@@ -94,14 +93,8 @@ export default defineComponent({
         openUserPage(id: number | string) {
             this.$router.push({ path: `/user/${id}` });
         },
-        update() {
-            this.key++;
-        },
     },
     mounted() {
-        this.cmt.onCommentUpdate = () => {
-            this.key++;
-        };
     },
 });
 
