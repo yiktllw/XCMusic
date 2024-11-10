@@ -47,6 +47,7 @@ export interface Settings {
     download: {
         path: string,
         quality: string,
+        localPaths: string[],
     }
     display: {
         language: 'zh' | 'en',
@@ -180,6 +181,17 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             },
+        },
+        localPaths: {
+            value: JSON.parse(localStorage.getItem('setting.download.localPaths') ?? '[]'),
+            default: [],
+            validation: (value) => {
+                let valid = Array.isArray(value);
+                if (valid) {
+                    localStorage.setItem('setting.download.localPaths', JSON.stringify(value));
+                }
+                return valid;
+            }
         },
     },
     display: {

@@ -231,6 +231,11 @@
 			"press_f11_to_fullscreen": "Press F11 to Fullscreen"
 		},
 		"download": {
+			"add": "Add Path",
+			"clear": "Clear Path",
+			"click_clear": "Click to clear the path",
+			"delete": "Delete Path",
+			"local": "Local",
 			"path": "Path",
 			"quality": "Quality",
 			"select": "Select"

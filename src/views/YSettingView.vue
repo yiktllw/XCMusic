@@ -226,6 +226,28 @@
                             </div>
                         </div>
                     </div>
+                    <div class="content-item item-download-local">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.download.local') }}
+                        </div>
+                        <div class="content-item-content local-path-content download-path-content">
+                            <div class="head">
+                                <div class="head-item add-path" @click="addPath">
+                                    {{ $t('setting_view.download.add') }}
+                                </div>
+                                <div class="head-item clear-path" @click="clearPath">
+                                    {{ $t('setting_view.download.clear') }}
+                                </div>
+                            </div>
+                            <div class="path-item" v-for="(path, index) in localPaths">
+                                <input type="text" v-model="localPaths[index]" />
+                                <div class="select-file" @click="setPath(index)">
+                                    {{ $t('setting_view.download.select') }}
+                                </div>
+                                <img src="../assets/delete.svg" class="g-icon delete-img" @click="deletePath(index)" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="about item" id="about">
@@ -369,6 +391,7 @@ export default defineComponent({
             qualities: qualities,
             devices: [] as MediaDeviceInfo[],
             selectedDevice: '' as any,
+            localPaths: [] as string[],
         }
     },
     methods: {
@@ -436,6 +459,44 @@ export default defineComponent({
                 if (bool) {
                     Message.post('info', 'setting_view.work_after_reload_window', true);
                 }
+            }
+        },
+        async getFolderPath() {
+            if (window.electron?.isElectron) {
+                const path = await window.electron.ipcRenderer.invoke('select-folder');
+                if (path && typeof path === 'string') {
+                    return path;
+                } else {
+                    throw new Error('No path selected');
+                }
+            } else {
+                throw new Error('Only desktop version supports this feature');
+            }
+        },
+        async addPath() {
+            try {
+                const path = await this.getFolderPath();
+                this.localPaths.push(path);
+                this.setting.download.localPaths = this.localPaths;
+            } catch (error) {
+                return;
+            }
+        },
+        clearPath() {
+            this.localPaths = [];
+            this.setting.download.localPaths = this.localPaths;
+        },
+        deletePath(index: number) {
+            this.localPaths.splice(index, 1);
+            this.setting.download.localPaths = this.localPaths;
+        },
+        async setPath(index: number) {
+            try {
+                const path = await this.getFolderPath();
+                this.localPaths[index] = path;
+                this.setting.download.localPaths = this.localPaths;
+            } catch (error) {
+                return;
             }
         },
         async selectFile() {
@@ -541,6 +602,7 @@ export default defineComponent({
         this.dbclick = this.setting.play.dbclick;
         this.downloadPath = this.setting.download.path;
         this.quality = this.setting.download.quality;
+        this.localPaths = this.setting.download.localPaths;
         this.getDevices();
     },
     beforeUnmount() {
@@ -774,6 +836,50 @@ export default defineComponent({
 
                                 &:hover {
                                     color: var(--font-color-main);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                .item-download-local{
+                    .local-path-content{
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        
+                        .head{
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            width: 100%;
+                            margin-bottom: 10px;
+
+                            .head-item{
+                                cursor: pointer;
+                                color: var(--font-color-high);
+                                margin-right: 10px;
+
+                                &:hover {
+                                    color: var(--font-color-main);
+                                }
+                            }
+                        }
+                        
+                        .path-item{
+                            display: flex;
+                            align-items: center;
+                            flex-direction: row;
+                            
+                            .delete-img{
+                                cursor: pointer;
+                                margin-left: 10px;
+                                width: 16px;
+                                height: 16px;
+                                opacity: 0.7;
+                                
+                                &:hover{
+                                    opacity: 1;
                                 }
                             }
                         }
