@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/yiktllw/XCMusic/compare/v0.2.1...v0.2.2) (2024-11-10)
+
+
+### Features
+
+* 本地音乐界面显示已添加的文件夹 ([9b35f20](https://github.com/yiktllw/XCMusic/commit/9b35f2065a94723d94f0b6a1972a212c59d1d5e2))
+* 禁用播放列表的滚动动画；在获取音量均衡数据时，不再获取所有数据，而是standard和当前音质的数据。 ([6f9d47c](https://github.com/yiktllw/XCMusic/commit/6f9d47c9e1b5b4c510379951a1f3fc741c30456c))
+* 实现自定义强调色 ([21b2f02](https://github.com/yiktllw/XCMusic/commit/21b2f02021445ee25af90a6246c7e1c72dc6f078))
+* 为SongsTable启用懒加载 ([9980dcd](https://github.com/yiktllw/XCMusic/commit/9980dcd257931b724833cfa446d8b00826af3f11))
+* 新增: 设置-下载-本地路径 ([cecd940](https://github.com/yiktllw/XCMusic/commit/cecd940d0afe2b536a54f0b916c6a80360dd0012))
+* 新增本地路径无效时的错误处理 ([f1f31a3](https://github.com/yiktllw/XCMusic/commit/f1f31a38120e5ee98d7adf180cb6dacc8cc21e4f))
+
+
+### Bug Fixes
+
+* 消除key造成的内存泄漏 ([a768df2](https://github.com/yiktllw/XCMusic/commit/a768df2cf5349b1a93df8cf5f3f5a8ae0d41f6b6))
+* 新增解决依赖冲突的babel_cmds.js ([cd78b87](https://github.com/yiktllw/XCMusic/commit/cd78b87860aacdf6332da7d09d73aa273e6d1ea8))
+* 修复本地音乐错误 ([e39fe15](https://github.com/yiktllw/XCMusic/commit/e39fe15feddd78fec53399e3f3305523938effad))
+* 修复播放列表没有删除按钮的问题 ([78cd94f](https://github.com/yiktllw/XCMusic/commit/78cd94fa7112ba6f096328933ab447889d35f8ed))
+* 修复图片懒加载造成的内存泄漏 ([c02d070](https://github.com/yiktllw/XCMusic/commit/c02d070d6304b1b337b423a298c25c05796bb7b4))
+* 修复主题不存在时的panic，修复若干小错误 ([4d0ae3f](https://github.com/yiktllw/XCMusic/commit/4d0ae3fc66730447f5b07b2a035ed8f1678dc1b6))
+* 修复自定义暗色主题的字体颜色错误 ([c9f043c](https://github.com/yiktllw/XCMusic/commit/c9f043cf4d19c5a49bf238dae5ef0abee9e4c8d0))
+* 修复anonymous_token相关错误 ([8ec616d](https://github.com/yiktllw/XCMusic/commit/8ec616dc265c95696d4166a7de2ae1a97bde4394))
+
 ### [0.2.1](https://github.com/yiktllw/XCMusic/compare/v0.2.0...v0.2.1) (2024-11-06)
 
 
