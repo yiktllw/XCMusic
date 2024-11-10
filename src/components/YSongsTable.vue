@@ -176,21 +176,20 @@
                                         style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
                                     <img v-else src="../assets/unlikes.svg"
                                         style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
-
                                 </div>
                             </div>
                             <!-- 5 时长 -->
                             <div class="track-duration font-color-standard" v-if="showTrackDuration">{{
                                 formatDuration(track.dt) }}</div>
                             <!-- 5 热度 -->
-                            <!-- <div class="popularity" v-if="showTrackPopularity">
+                            <div class="popularity" v-if="showTrackPopularity">
                                 <div class="popularity-bar"
                                     style="margin-left: 5px;width: 50px; height: 4px; background-color:rgba(var(--foreground-color-rgb), 0.321); border-radius: 2px;">
                                 </div>
                                 <div class="popularity-bar" style="margin-left: 5px; height: 4px; background-color: rgb(var(--highlight-color-rgb));
  border-radius: 2px; transform: translateY(-4px);" :style="{ width: (track.pop / 100 * 50) + 'px' }">
                                 </div>
-                            </div> -->
+                            </div>
                             <div class="listen-count" style="color: #bbb;" v-if="showListenCount">{{ track.playCount ??
                                 0
                                 }}次
@@ -717,9 +716,10 @@ export default defineComponent({
             this.trackMouseLeave(this.hoverTrackId);
         },
         trackMouseEnter(id: number) {
+            // 在id为YPlaybar.vue时，会有多个dom
             this.trackMouseLeave(this.hoverTrackId);
-            let dom = this.main?.querySelector(`#track-menu-${id}`) as HTMLElement;
-            if (dom) dom.style.display = 'flex';
+            let doms = this.main?.querySelectorAll(`#track-menu-${id}`) as unknown as HTMLElement[];
+            if (doms) doms.forEach(dom => dom.style.display = 'flex');
 
             this.hoverTrackId = id;
             if (this.id !== 'YPlaybar.vue') return;
@@ -729,8 +729,9 @@ export default defineComponent({
 
         },
         trackMouseLeave(id: number) {
-            let dom = this.main?.querySelector(`#track-menu-${id}`) as HTMLElement;
-            if (dom) dom.style.display = 'none';
+            // 在id为YPlaybar.vue时，会有多个dom
+            let doms = this.main?.querySelectorAll(`#track-menu-${id}`) as unknown as HTMLElement[];
+            if (doms) doms.forEach(dom => dom.style.display = 'none');
 
             if (this.id !== 'YPlaybar.vue') return;
 
