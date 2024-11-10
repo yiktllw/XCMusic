@@ -239,12 +239,7 @@ import downArrow from '../assets/down-arrow.svg';
 import updownArrow from '../assets/updown-arrow.svg';
 import { isLocal } from '@/utils/localTracks_renderer';
 import { ITrack } from '@/utils/tracks';
-
-type AlReels = {
-    showreelName: string;
-    composerName: string;
-    otherArtists: string[];
-}
+import { AlReels } from '@/dual/YSongsTable';
 
 export default defineComponent({
     props: {

@@ -153,8 +153,7 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" v-model="filteredTracks"
-                :showTrackPopularity="false" id="YPlaylist.vue-playlist" :from="playlistId"
-                ref="playlist_songstable" />
+                :showTrackPopularity="false" id="YPlaylist.vue-playlist" :from="playlistId" ref="playlist_songstable" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" v-model="filteredTracks"
                 :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" id="YPlaylist.vue-album"
                 :type="'album'" :show-header="false" :resortable="false" ref="album_songstable" />
@@ -183,6 +182,9 @@ import { Theme1, Theme2, themes } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { preparePlaylist } from '@/utils/playlist';
 import { markRaw, ref, defineComponent } from 'vue';
+import { AlReels } from '@/dual/YSongsTable';
+import { IArtist } from '@/dual/YPlaylistView';
+import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
 
 export default defineComponent({
     name: 'YPlaylist',
@@ -228,19 +230,19 @@ export default defineComponent({
                 name: '',           // 歌单名称
                 transName: '',      // 歌单翻译名称
                 coverImgUrl: '',    // 封面图片 URL
-                artists: [] as any[],        // 歌单歌手
+                artists: [] as IArtist[],        // 歌单歌手
                 playCount: 0,       // 播放次数
                 createTime: '',     // 创建时间
                 createrId: 0,       // 创建者 ID
                 createrName: '',    // 创建者名称
                 createrAvatarUrl: '', // 创建者头像 URL
                 trackCount: 0,      // 歌曲数量
-                alReels: [] as any[],        // 专辑信息
+                alReels: [] as AlReels[],        // 专辑信息
                 tracks: [] as ITrack[], // 歌曲列表
             },
             isLoading: true,   // 是否正在加载
             searchQuery: '',    // 搜索关键字
-            filteredTracks: [] as any[], // 搜索过滤后的歌曲列表
+            filteredTracks: [] as ITrack[], // 搜索过滤后的歌曲列表
             orient: 'songs',    // 歌曲列表或评论列表
             page: 1,            // 歌单页数
         };
@@ -288,7 +290,7 @@ export default defineComponent({
             }
         }
     },
-    beforeRouteLeave(to: any, from: any, next: any) {
+    beforeRouteLeave(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
         const mainScroll = document.getElementById('yscroll-display-area');
         window.savedPositions[from.path] = {
             top: mainScroll?.scrollTop ?? 0,
@@ -482,9 +484,9 @@ export default defineComponent({
                     trackNameTns = track.tns[0] ? track.tns[0].toLowerCase() : '';
                 }
                 // 歌手名称
-                const trackArtist = track.ar.map((artist: any) => artist.name.toLowerCase()).join(' / ');
+                const trackArtist = track.ar.map((artist) => artist.name.toLowerCase()).join(' / ');
                 // 歌手别名
-                const trackArtistTns = track.ar.map((artist: any) => artist.tns[0] ? artist.tns[0].toLowerCase() : '').join('/');
+                const trackArtistTns = track.ar.map((artist) => artist.tns[0] ? artist.tns[0].toLowerCase() : '').join('/');
                 // 专辑名称
                 const trackAlbum = track.al.name.toLowerCase();
                 // 专辑别名
@@ -509,7 +511,7 @@ export default defineComponent({
             Message.post('success', this.$t('message.playlist_view.added_to_playlist'));
         },
         // 播放歌曲
-        async playSongs(track: any) {
+        async playSongs(track: ITrack) {
             console.log('playSongs');
             await this.player.playTrack(track);
             this.player.playState = 'play';

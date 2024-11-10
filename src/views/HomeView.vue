@@ -32,7 +32,7 @@
         </div>
         <div class="prevent-action-container" ref="prevent_container" v-if="showPreventContainer">
             <YAddToPlaylist :ids="trackIds" @new-window-state="handleNewWindowState" v-if="showAddToPlaylist" />
-            <YSongInfo :track="trackOfInfo" @new-window-state="handleNewWindowState_songInfo" v-if="showSongInfo" />
+            <YSongInfo :track="trackOfInfo!" @new-window-state="handleNewWindowState_songInfo" v-if="showSongInfo" />
             <YLoginWindow :base64-image="base64Image" v-if="showLoginWindow"
                 @new-window-state="handleNewWindowState_loginWindow" />
             <YCreatePlaylist v-if="showCreatePlaylist" @new-window-state="handleNewWindowState_createPlaylist" />
@@ -68,13 +68,14 @@ import YPlayUI from '@/components/YPlayUI.vue';
 import YLoginWindow from '@/components/YLoginWindow.vue';
 import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import { Message } from '@/dual/YMessageC';
-import { IPlaylistCtxData, songItems, playlistItems } from '@/dual/YContextMenuItemC';
+import { IPlaylistCtxData, songItems, playlistItems, IMenuClick } from '@/dual/YContextMenuItemC';
 import { playlist, useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
 import YCustomWindow from '@/components/YCustomWindow.vue';
 import YCloseWindow from '@/components/YCloseWindow.vue';
 import { IConfirm } from '@/utils/globalMsg';
 import YConfirmWindow from '@/components/YConfirmWindow.vue';
+import { ITrack } from '@/utils/tracks';
 
 export default defineComponent({
     name: 'App',
@@ -89,8 +90,8 @@ export default defineComponent({
             direction: 4,
             showPreventContainer: false,
             showAddToPlaylist: false,
-            trackIds: [] as any[],
-            trackOfInfo: null as any,
+            trackIds: [] as number[],
+            trackOfInfo: null as ITrack | null,
             showSongInfo: false,
             showLoginWindow: false,
             base64Image: '',
@@ -162,7 +163,7 @@ export default defineComponent({
         this.globalMsg.subscriber.on({
             id: 'HomeView',
             type: 'open-login-window',
-            func: (data: any) => {
+            func: (data: string) => {
                 this.showLoginWindow = true;
                 this.showPreventContainer = true;
                 this.base64Image = data;
@@ -244,7 +245,7 @@ export default defineComponent({
         this.prevent_container = null;
     },
     methods: {
-        async handleMessage(event: any) {
+        async handleMessage(event: MessageEvent) {
             if (event.data.type === 'song-open-context-menu' || event.data.type === 'song-toogle-context-menu') {
                 if (event.data.type === 'song-toogle-context-menu') {
                     this.contextMenu?.toogleContextMenu();
@@ -269,7 +270,7 @@ export default defineComponent({
                 let commentCount = await this.getCommentCount(this.target.id)
                 this.menu[4].label = this.$t('context.view_comment') + `(${commentCount})`
             } else if (event.data.type === 'song-open-add-to-playlist') {
-                this.trackIds = event.data.data.ids.filter((id: any) => {
+                this.trackIds = event.data.data.ids.filter((id: number | string) => {
                     return !isLocal(id);
                 });
                 console.log('ids: ', this.trackIds);
@@ -340,7 +341,7 @@ export default defineComponent({
             }
 
         },
-        handleMenuClick(arg: any) {
+        handleMenuClick(arg: IMenuClick) {
             switch (arg.role) {
                 case 'song-play':
                     this.player.playTrack(arg.target);

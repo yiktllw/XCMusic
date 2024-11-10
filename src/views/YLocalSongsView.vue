@@ -27,6 +27,7 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import YHeader from '@/components/YHeader.vue';
 import { ITrack, TrackIds, Tracks } from '@/utils/tracks';
 import { YColor } from '@/utils/color';
+import { musicFile } from '@/utils/localTracks';
 
 export default defineComponent({
     name: 'YLocalSongsView',
@@ -78,7 +79,7 @@ export default defineComponent({
                 this.getDownloadedTracks();
             } else {
                 const paths = toRaw(this.setting.download.localPaths);
-                let res: any[] = [];
+                let res: musicFile[] = [];
                 for (const path of paths) {
                     res = res.concat(await window.electron.ipcRenderer.invoke('get-local-tracks', path));
                 }
@@ -113,20 +114,22 @@ export default defineComponent({
 
     .local {
         width: 100%;
+
         .path-info {
             padding: 0 0 0px 30px;
             width: fit-content;
             font-weight: bold;
             text-align: left;
+
             .path-title {
                 font-size: 16px;
                 margin-bottom: 5px;
             }
-            
+
             .path-list {
                 font-size: 14px;
-                
-                .path-item{
+
+                .path-item {
                     padding: 5px 0;
                 }
             }

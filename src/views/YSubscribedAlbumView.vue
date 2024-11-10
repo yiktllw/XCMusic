@@ -16,6 +16,7 @@ import YPage from '@/components/YPage.vue';
 import { useStore } from 'vuex';
 import YPlaylistBiglist from '@/components/YPlaylistBiglist.vue';
 import { YColor } from '@/utils/color';
+import { IPlaylist } from '@/dual/YPlaylistList';
 
 export default defineComponent({
     name: 'YSubscribedAlbumView',
@@ -32,7 +33,7 @@ export default defineComponent({
     data() {
         return {
             page: new YPageC(1),
-            albums: [] as any[],
+            albums: [] as IPlaylist[],
         };
     },
     mounted() {
@@ -54,7 +55,12 @@ export default defineComponent({
             }).then(res => {
                 if (!res) { return; }
                 if (newPage) { this.page = new YPageC(Math.ceil(res.count / LIMIT)); }
-                this.albums = res.data.map((album: any) => {
+                this.albums = res.data.map((album: {
+                    id: number;
+                    picUrl: string;
+                    name: string;
+                    size: number;
+                }) => {
                     return {
                         id: album.id,
                         _bigPicUrl: album.picUrl + '?param=200y200',

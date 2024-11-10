@@ -7,23 +7,24 @@
  * 歌单
  */
 export interface IPlaylist {
-    id: number;
+    id: number | string;
     name: string;
     _picUrl: string;
     _bigPicUrl: string;
     playCount: number;
-    trackCount: number;
+    trackCount: number | string;
     creator: {
         userId: number;
         nickname: string;
     }
+    userId?: number;
 }
 
 /**
  * 专辑
  */
 export interface IPlaylist {
-    id: number;
+    id: number | string;
     name: string;
     _picUrl: string;
     _bigPicUrl: string;

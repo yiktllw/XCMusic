@@ -17,28 +17,28 @@
                 </div>
                 <!-- 用户等级 -->
                 <div class="user-level font-color-high" v-if="type === 'user'">
-                    LV.{{ user.level }}
+                    LV.{{ (user as IUser).level }}
                 </div>
                 <!-- 歌手翻译名 -->
-                <div class="trans-name font-color-high" v-if="type === 'artist' && user.transName">
-                    {{ user.transName }}
+                <div class="trans-name font-color-high" v-if="type === 'artist' && (user as IArtist).transName">
+                    {{ (user as IArtist).transName }}
                 </div>
                 <!-- 歌手身份 -->
-                <div class="artist-identity font-color-high" v-if="type === 'artist' && user.identity">
-                    {{ user.identity }}
+                <div class="artist-identity font-color-high" v-if="type === 'artist' && (user as IArtist).identity">
+                    {{ (user as IArtist).identity }}
                 </div>
                 <!-- 关注/粉丝 -->
                 <div class="user-follow font-color-high" v-if="type === 'user'">
                     <div style="cursor: pointer;" @click="openUserFollow(userId, 'follow')">
                         {{ $t('titlebar.follows') }}:
-                        {{ user.follows }}
+                        {{ (user as IUser).follows }}
                     </div>
                     <div
                         style="height:100%;width:1px;background-color: rgba(255, 255, 255, .1); margin: 0px 10px; border-radius: 1px;">
                     </div>
                     <div style="cursor: pointer;" @click="openUserFollow(userId, 'follower')">
                         {{ $t('titlebar.followers') }}:
-                        {{ user.followeds }}
+                        {{ (user as IUser).followeds }}
                     </div>
                 </div>
             </div>
@@ -61,10 +61,10 @@
             <!-- 右侧切换视图 -->
             <div v-if="showRightSwitcher" class="right-switcher"
                 style="display: flex;flex: 1;justify-content: flex-end; margin-right: 30px;">
-                <img src="@/assets/biglist.svg" class="list-icon g-icon" @click="user.listType = false"
-                    :style="{ opacity: user.listType ? .6 : 1 }">
-                <img src="@/assets/smalllist.svg" class="list-icon g-icon" @click="user.listType = true"
-                    :style="{ opacity: user.listType ? 1 : .6 }">
+                <img src="@/assets/biglist.svg" class="list-icon g-icon" @click="(user as IUser).listType = false"
+                    :style="{ opacity: (user as IUser).listType ? .6 : 1 }">
+                <img src="@/assets/smalllist.svg" class="list-icon g-icon" @click="(user as IUser).listType = true"
+                    :style="{ opacity: (user as IUser).listType ? 1 : .6 }">
             </div>
         </div>
         <!-- 用户/歌手主界面 -->
@@ -72,14 +72,14 @@
             <!-- 用户主界面 -->
             <div class="content-user" v-if="type === 'user'">
                 <!-- 歌单界面 -->
-                <div class="playlist-list" v-if="user.listType">
+                <div class="playlist-list" v-if="(user as IUser).listType">
                     <YPlaylistList
-                        :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
+                        :playlists="user.position === 'createdPlaylist' ? (user as IUser).userPlaylists : (user as IUser).userSubscribedPlaylists" />
                 </div>
                 <!-- 大歌单界面 -->
                 <div class="playlist-biglist" v-else>
                     <YPlaylistBiglist
-                        :playlists="user.position === 'createdPlaylist' ? user.userPlaylists : user.userSubscribedPlaylists" />
+                        :playlists="user.position === 'createdPlaylist' ? (user as IUser).userPlaylists : (user as IUser).userSubscribedPlaylists" />
                 </div>
             </div>
             <!-- 歌手界面 -->
@@ -87,24 +87,24 @@
                 <!-- 歌手作品 -->
                 <div class="artist-works" v-if="user.position === 'song'">
                     <!-- 歌曲列表 -->
-                    <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="user.tracks"
-                        v-if="user.tracks" :id="'YUserView.vue'" />
+                    <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false"
+                        v-model="(user as IArtist).tracks" v-if="(user as IArtist).tracks" :id="'YUserView.vue'" />
                     <YPage v-model="page" />
                 </div>
                 <!-- 加载中 -->
-                <YLoading v-if="!user.tracks" />
+                <YLoading v-if="!(user as IArtist).tracks" />
                 <!-- 歌单界面 -->
-                <div class="playlist-list" v-if="user.listType && user.position === 'album'">
+                <div class="playlist-list" v-if="(user as IUser).listType && user.position === 'album'">
                     <!-- 歌手专辑列表 -->
-                    <YPlaylistList type="album" :playlists="user.albums" />
+                    <YPlaylistList type="album" :playlists="(user as IArtist).albums" />
                 </div>
                 <!-- 大歌单界面 -->
-                <div class="playlist-biglist" v-if="!user.listType && user.position === 'album'">
-                    <YPlaylistBiglist type="album" :playlists="user.albums" />
+                <div class="playlist-biglist" v-if="!(user as IUser).listType && user.position === 'album'">
+                    <YPlaylistBiglist type="album" :playlists="(user as IArtist).albums" />
                 </div>
                 <!-- 歌手简介 -->
-                <div class="artist-intro font-color-high" v-if="user.intro && user.position === 'detail'">
-                    <div v-for="(item, index) in user.intro">
+                <div class="artist-intro font-color-high" v-if="(user as IArtist).intro && user.position === 'detail'">
+                    <div v-for="(item) in (user as IArtist).intro">
                         <!-- 标题 -->
                         <div v-if="item.ti"
                             style="font-size: 18px; font-weight: bold; margin: 15px 0px 10px 0px; color: var(--font-color-main);">
@@ -131,11 +131,12 @@ import YPage from '@/components/YPage.vue';
 import { Tracks } from '@/utils/tracks';
 import { useApi } from '@/utils/api';
 import { YColor } from '@/utils/color';
-import { mapState, useStore } from 'vuex';
+import { useStore } from 'vuex';
 import { YPageC } from '@/dual/YPageC';
-import { markRaw, ref, defineComponent } from 'vue';
+import { markRaw, defineComponent } from 'vue';
 import songsRank from '@/assets/songsrank.svg';
 import { Theme1, Theme2 } from '@/utils/theme';
+import { IArtist, IUser } from '@/dual/YUserView';
 
 export default defineComponent({
     name: 'YUserView',
@@ -172,7 +173,7 @@ export default defineComponent({
     data() {
         return {
             // 用户/歌手信息
-            user: null as any,
+            user: null as IUser | IArtist | null,
             page: new YPageC(1),
         }
     },
@@ -186,14 +187,14 @@ export default defineComponent({
     computed: {
         // 是否显示右侧切换视图
         showRightSwitcher() {
-            return this.type === 'user' || (this.type === 'artist' && this.user.position === 'album');
+            return this.type === 'user' || (this.type === 'artist' && this.user!.position === 'album');
         },
     },
     methods: {
         // 切换导航位置，并获取对应的数据
-        handleSwitcher(position: string) {
+        handleSwitcher(position: 'createdPlaylist' | 'subscribedPlaylist' | 'song' | 'album' | 'detail') {
             console.log('switch position', position);
-            this.user.position = position;
+            this.user!.position = position;
             switch (position) {
                 case 'createdPlaylist':
                     this.fetchUserPlaylist();
@@ -231,31 +232,18 @@ export default defineComponent({
                 });
                 // 处理用户信息
                 this.user = {
-                    // 用户 id
                     id: response.profile.userId,
-                    // 用户名
                     name: response.profile.nickname,
-                    // 用户头像
                     picUrl: response.profile.avatarUrl + '?param=160y160',
-                    // 粉丝数
                     followeds: response.profile.followeds,
-                    // 关注数
                     follows: response.profile.follows,
-                    // 歌单数
                     playlistCount: response.profile.playlistCount,
-                    // 等级
                     level: response.level,
-                    // 听歌数量
                     listenSongs: response.listenSongs,
-                    // 是否显示歌单大图
                     listType: false,
-                    // 用户创建的歌单
                     userPlaylists: [],
-                    // 用户收藏的歌单
                     userSubscribedPlaylists: [],
-                    // 切换器的初始位置
                     position: 'createdPlaylist',
-                    // 用户界面的切换器
                     switcher: [
                         {
                             display: 'sidebar.created_playlist',
@@ -280,27 +268,16 @@ export default defineComponent({
                 let artist = response.data.artist;
                 // 处理歌手信息
                 this.user = {
-                    // 歌手 id
                     id: artist.id,
-                    // 歌手名
                     name: artist.name,
-                    // 歌手翻译名
                     transName: artist.transNames[0],
-                    // 歌手头像
                     picUrl: artist.avatar + '?param=160y160',
-                    // 歌手身份
                     identity: response.data.identify?.imageDesc ?? '',
-                    // 歌手简介
                     briefDesc: artist.briefDesc,
-                    // 歌手描述
                     intro: [],
-                    // 歌手音乐数
                     musicSize: artist.musicSize,
-                    // 歌手专辑数
                     albumSize: artist.albumSize,
-                    // 歌手的作品
-                    artistWorks: [],
-                    // 歌手的专辑
+                    tracks: [],
                     albums: [],
                     // 切换器的初始位置
                     position: 'song',
@@ -313,12 +290,10 @@ export default defineComponent({
                         {
                             display: 'user_view.albums',
                             position: 'album',
-                            playlists: [],
                         },
                         {
                             display: 'user_view.detail',
                             position: 'detail',
-                            detail: '',
                         },
                     ],
                 };
@@ -340,29 +315,35 @@ export default defineComponent({
                 console.log('fetch user playlist error:', err);
             });
             // 清空用户的歌单
-            this.user.userPlaylists = [{
+            (this.user as IUser).userPlaylists = [{
                 name: this.$t('user_view.listen_rank'),
                 id: `user-record-${this.userId}`,
                 userId: this.userId,
                 creator: response.playlist[0]?.creator ?? null,
                 playCount: 0,
-                trackCount: this.$t('user_view.total_listen') + `${this.user.listenSongs}`,
+                trackCount: this.$t('user_view.total_listen') + `${(this.user as IUser)?.listenSongs}`,
                 _picUrl: songsRank,
                 _bigPicUrl: songsRank,
+                artist: {
+                    name: '',
+                    id: 0,
+                },
+                size: 0,
+                publishTime: 0,
             }];
-            this.user.userSubscribedPlaylists = [];
+            (this.user as IUser).userSubscribedPlaylists = [];
             // 返回处理后的歌单
             response.playlist.forEach((item: any) => {
                 if (!item.subscribed) {
                     // 用户创建的歌单
-                    this.user.userPlaylists.push({
+                    (this.user as IUser).userPlaylists.push({
                         ...item,
                         _picUrl: item.coverImgUrl + '?param=40y40',
                         _bigPicUrl: item.coverImgUrl + '?param=180y180',
                     });
                 } else {
                     // 用户收藏的歌单
-                    this.user.userSubscribedPlaylists.push({
+                    (this.user as IUser).userSubscribedPlaylists.push({
                         ...item,
                         _picUrl: item.coverImgUrl + '?param=40y40',
                         _bigPicUrl: item.coverImgUrl + '?param=180y180',
@@ -385,7 +366,7 @@ export default defineComponent({
                 console.log('fetch artist albums error:', err);
             });
             // 返回处理后的专辑
-            this.user.albums = response.hotAlbums.map((album: any) => {
+            (this.user as IArtist)!.albums = response.hotAlbums.map((album: any) => {
                 return {
                     ...album,
                     _picUrl: album.picUrl + '?param=80y80',
@@ -416,7 +397,7 @@ export default defineComponent({
                     // 由于歌曲的封面缺失，需要获取歌手的专辑
                     // await this.fetchArtistAlbums();
                     // 为歌曲添加专辑的封面
-                    this.user.tracks = markRaw((new Tracks({
+                    (this.user as IArtist).tracks = markRaw((new Tracks({
                         url: '/api/v2/artist/songs',
                         tracks: response.songs,
                     })).tracks);
@@ -438,12 +419,12 @@ export default defineComponent({
                     // 处理歌手的描述
                     let desc = [
                         {
-                            ti: `${this.user.name} 简介`,
-                            txt: this.user.briefDesc,
+                            ti: `${(this.user as IArtist).name} 简介`,
+                            txt: (this.user as IArtist).briefDesc,
                         },
                     ];
                     // 添加歌手的描述
-                    this.user.intro = [
+                    (this.user as IArtist).intro = [
                         ...desc,
                         ...response.introduction,
                     ]
@@ -460,7 +441,7 @@ export default defineComponent({
         // 获取用户信息
         await this.fetchUser();
         const theme = YColor.findTheme(this.setting.display.theme);
-        if (this.user.picUrl) {
+        if (this.user?.picUrl) {
             YColor.setBkColorFromImg(this.user.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
         }
     }

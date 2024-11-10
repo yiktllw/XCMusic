@@ -16,6 +16,12 @@ interface ICtxMenuItem {
     display: boolean;
 }
 
+export interface IMenuClick{
+    role: string;
+    target: any;
+    from: number;
+}
+
 export interface IPlaylistCtxData {
     /** 歌单ID */
     id: number;

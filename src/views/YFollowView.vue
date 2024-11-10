@@ -13,6 +13,7 @@ import YArtistList from '@/components/YArtistList.vue';
 import YPage from '@/components/YPage.vue';
 import { YPageC } from '@/dual/YPageC';
 import { YColor } from '@/utils/color';
+import { IArtist } from '@/dual/YArtistList';
 
 export default defineComponent({
     name: 'YFollowView',
@@ -55,7 +56,7 @@ export default defineComponent({
     },
     data() {
         return {
-            users: [] as any[],
+            users: [] as IArtist[],
             page: new YPageC(0),
         };
     },
@@ -74,14 +75,14 @@ export default defineComponent({
                 if (!res) return;
                 if (!res.more) this.page._allow_page_increase = false;
                 if (this.type === 'follows') {
-                    this.users = res.follow?.map((item: any) => {
+                    this.users = res.follow?.map((item: { avatarUrl: string }) => {
                         return {
                             ...item,
                             _picUrl: item.avatarUrl + '?param=130y130',
                         };
                     }) ?? [];
                 } else {
-                    this.users = res.followeds?.map((item: any) => {
+                    this.users = res.followeds?.map((item: { avatarUrl: string }) => {
                         return {
                             ...item,
                             _picUrl: item.avatarUrl + '?param=130y130',

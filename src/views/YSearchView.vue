@@ -218,7 +218,7 @@ export default defineComponent({
                 offset: (this.playlistsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[2].playlists = result.result.playlists?.map((playlist: any) => {
+                    this.switcher[2].playlists = result.result.playlists?.map((playlist: { coverImgUrl: string }) => {
                         return {
                             ...playlist,
                             _picUrl: playlist.coverImgUrl + '?param=40y40',
@@ -246,7 +246,7 @@ export default defineComponent({
                 offset: (this.albumsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[1].playlists = result.result.albums?.map((album: any) => {
+                    this.switcher[1].playlists = result.result.albums?.map((album: { picUrl: string }) => {
                         return {
                             ...album,
                             _picUrl: album.picUrl + '?param=80y80',
@@ -273,7 +273,7 @@ export default defineComponent({
                 offset: (this.artistsPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[3].artists = result.result.artists?.map((artist: any) => {
+                    this.switcher[3].artists = result.result.artists?.map((artist: { picUrl: string }) => {
                         return {
                             ...artist,
                             _picUrl: artist.picUrl + '?param=130y130',
@@ -324,7 +324,7 @@ export default defineComponent({
                 offset: (this.usersPage.current - 1) * 100,
             })
                 .then(result => {
-                    this.switcher[5].users = result.result.userprofiles?.map((user: any) => {
+                    this.switcher[5].users = result.result.userprofiles?.map((user: { avatarUrl: string }) => {
                         return {
                             ...user,
                             _picUrl: user.avatarUrl + '?param=130y130',

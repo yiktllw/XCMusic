@@ -390,7 +390,7 @@ export default defineComponent({
             quality: 'standard',
             qualities: qualities,
             devices: [] as MediaDeviceInfo[],
-            selectedDevice: '' as any,
+            selectedDevice: '' as string,
             localPaths: [] as string[],
         }
     },
@@ -404,8 +404,8 @@ export default defineComponent({
             scroll.scrollTo({ top: scrollTop, behavior: 'smooth' });
 
         },
-        handleTheme(e: any) {
-            this.switchToTheme(e.target.value);
+        handleTheme(e: Event) {
+            this.switchToTheme((e.target as HTMLInputElement)?.value);
         },
         switchToTheme(theme: string) {
             this.theme = theme;

@@ -74,7 +74,7 @@
                             </span>
                             <span class="song-info-item-content">{{ track.id }}</span>
                         </div>
-                        <img class="img-copy g-icon" @click="copy(track.id)" src="@/assets/copy.svg"
+                        <img class="img-copy g-icon" @click="copy(track.id.toString())" src="@/assets/copy.svg"
                             :title="$t('song_info.click_to_copy')">
                     </div>
                     <div class="song-info-item" v-if="!isLocal(track.id)">
@@ -115,12 +115,13 @@ import YScroll from './YScroll.vue';
 import { Message } from '@/dual/YMessageC';
 import { isLocal } from '@/utils/localTracks_renderer';
 import { useStore } from 'vuex';
+import { ITrack } from '@/utils/tracks';
 
 export default defineComponent({
     name: 'YSongInfo',
     props: {
         track: {
-            type: Object,
+            type: Object as () => ITrack,
             required: true,
         },
     },

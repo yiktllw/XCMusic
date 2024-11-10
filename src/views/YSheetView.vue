@@ -34,6 +34,7 @@ import { useApi } from '@/utils/api';
 import YPage from '@/components/YPage.vue';
 import { YPageC } from '@/dual/YPageC';
 import { YColor } from '@/utils/color';
+import { ISheet } from '@/dual/YSheetView';
 
 export default defineComponent({
     name: 'YSheetView',
@@ -48,9 +49,9 @@ export default defineComponent({
     },
     data() {
         return {
-            sheet: [] as any[],
+            sheet: [] as ISheet[],
             page: new YPageC(1),
-            scrollInterval: null as any,
+            scrollInterval: null as NodeJS.Timeout | null,
         };
     },
     setup() {
@@ -65,10 +66,10 @@ export default defineComponent({
         },
         'page.current'() {
             this.$nextTick(() => {
-               const scrollDom = document.getElementById('yscroll-display-area');
+                const scrollDom = document.getElementById('yscroll-display-area');
                 scrollDom?.scrollTo({
-                     top: 0,
-                     behavior: 'auto',
+                    top: 0,
+                    behavior: 'auto',
                 });
             });
         }
@@ -78,11 +79,11 @@ export default defineComponent({
             await useApi('/sheet/preview', {
                 id: this.sheetId,
                 cookie: this.login.cookie,
-            }).then((res: any) => {
+            }).then((res) => {
                 this.sheet = res.data;
-                this.sheet = this.sheet.sort((a: any, b: any) => a.id - b.id);
+                this.sheet = this.sheet.sort((a, b) => a.id - b.id);
                 this.page = new YPageC(this.sheet.length > 0 ? this.sheet.length : 1);
-            }).catch((err: any) => {
+            }).catch((err: Error) => {
                 console.error('getSheet', err);
             });
         },
@@ -125,10 +126,10 @@ export default defineComponent({
             }
         },
         startScrolling(direction: 'UP' | 'DOWN') {
-            this.scroll(direction); 
-            this.scrollInterval = window.setInterval(() => {
-                this.scroll(direction); 
-            }, 1000 / 60); 
+            this.scroll(direction);
+            this.scrollInterval = setInterval(() => {
+                this.scroll(direction);
+            }, 1000 / 60);
         },
         stopScrolling() {
             if (this.scrollInterval) {
@@ -153,7 +154,7 @@ export default defineComponent({
     beforeUnmount() {
         window.removeEventListener('keydown', this.handleKeydown);
         window.removeEventListener('keyup', this.handleKeyup);
-        this.stopScrolling(); 
+        this.stopScrolling();
     }
 });
 

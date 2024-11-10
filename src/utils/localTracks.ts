@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import musicMetadata from 'music-metadata';
 
-interface musicFile {
+export interface musicFile {
     name: string;
     path: string;
     title: string;
