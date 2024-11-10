@@ -3,7 +3,7 @@
         <div class="title font-color-main">
             {{ $t('subscribed_album') }}
         </div>
-        <YPlaylistBiglist :playlists="albums" />
+        <YPlaylistBiglist :type="'album'" :playlists="albums" />
         <YPage v-model="page" />
     </div>
 </template>
