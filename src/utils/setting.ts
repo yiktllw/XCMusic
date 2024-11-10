@@ -210,8 +210,11 @@ export const settingGroup: SettingGroup = {
             value: localStorage.getItem('setting.display.theme') ?? 'dark',
             default: 'dark',
             validation: (value) => {
-                const userCustomThemes = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
-                let valid = typeof value === 'string' && (themes.some(theme => theme.value === value) || userCustomThemes.some((theme: any) => theme.data.value === value));
+                const userCustomThemes: Array<{
+                    data: Theme1 | Theme2,
+                    classContent: string,
+                }> = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
+                let valid = typeof value === 'string' && (themes.some(theme => theme.value === value) || userCustomThemes.some((theme) => theme.data.value === value));
                 if (valid) {
                     localStorage.setItem('setting.display.theme', value);
                 }

@@ -31,7 +31,11 @@ export class YTrackC implements ITrack {
     _id: number;
     _name: string;
     _picUrl: string;
-    _ar: any[];
+    _ar: Array<{ // 歌手信息
+        id: number; // 歌手 id，唯一标识
+        name: string;   // 歌手名
+        tns: string;    // 歌手别名
+    }>;
     _al: {
         id: number,
         name: string,

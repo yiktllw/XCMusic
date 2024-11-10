@@ -107,7 +107,7 @@ export class Lyrics {
                     const obj = JSON.parse(line);
                     lyrics.push({
                         startTime: obj.t,
-                        words: obj.c.map((item: any) => ({ text: item.tx })),
+                        words: obj.c.map((item: { tx: string }) => ({ text: item.tx })),
                     });
                 } catch (e) {
                     // 忽略解析错误行

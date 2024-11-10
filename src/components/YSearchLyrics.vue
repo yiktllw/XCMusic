@@ -6,12 +6,13 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import YSongsTable from './YSongsTable.vue';
+import { ITrack } from '@/utils/tracks';
 
 export default defineComponent({
     name: 'YSearchLyrics',
     props: {
         modelValue: {
-            type: Array as () => any[],
+            type: Array as () => ITrack[],
             default: () => [],
         },
     },

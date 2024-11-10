@@ -11,18 +11,19 @@ const fs = require('fs');
 const path = require('path');
 const NodeID3 = require('node-id3');
 import flac from 'flac-metadata';
+import { ITrack } from './tracks';
 
 export class Download {
     /**
      * 下载歌曲文件并保存到本地
      * @returns 下载的文件路径
      */
-    static async song(songUrl: string, track: { name: string; ar: Array<object>; al: { name: string; picUrl: string; }; }, downloadDir: string): Promise<string> {
+    static async song(songUrl: string, track: ITrack, downloadDir: string): Promise<string> {
         if (!fs.existsSync(downloadDir)) {
             // throw new Error('Invalid download directory');
         }
         const name = sanitizeFileName(track.name);
-        const artist = track.ar.map((ar: any) => ar.name).join('; ');
+        const artist = track.ar.map((ar) => ar.name).join('; ');
         const album = track.al.name;
         const coverUrl = track.al.picUrl;
         const url = songUrl.replace(/\?.*$/g, '');
@@ -99,7 +100,7 @@ export class Download {
                     const writer = fs.createWriteStream(outputFilePath.replace('.flac', '-updated.flac'));
                     const processor = new flac.Processor();
 
-                    let mdbVorbis: any;
+                    let mdbVorbis: flac.data.MetaDataBlockVorbisComment | null = null;
 
                     processor.on("preprocess", function (mdb) {
                         // 移除现有的 VORBIS_COMMENT 块（如果存在）
@@ -132,7 +133,7 @@ export class Download {
                         resolve(outputFilePath);
                     });
 
-                    writer.on('error', (err: any) => {
+                    writer.on('error', (err: Error) => {
                         console.error('Error writing FLAC metadata:', err);
                     });
                 }

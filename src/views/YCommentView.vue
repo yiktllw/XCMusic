@@ -32,6 +32,7 @@ import YComment from '@/components/YComment.vue';
 import { YTrackC } from '@/dual/YTrackC';
 import { YColor } from '@/utils/color';
 import { mapState, useStore } from 'vuex';
+import { Theme1, Theme2 } from '@/utils/theme';
 
 export default defineComponent({
     name: 'YCommentView',
@@ -76,7 +77,7 @@ export default defineComponent({
         },
         async trackLoaded() {
             let theme = YColor.findTheme(this.setting.display.theme);
-            YColor.setBkColorFromImg(this.track.picUrl, document, theme.type, theme.background);
+            YColor.setBkColorFromImg(this.track.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
         }
     },
     mounted() {

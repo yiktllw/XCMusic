@@ -249,7 +249,7 @@ type AlReels = {
 export default defineComponent({
     props: {
         modelValue: {
-            type: Array,
+            type: Array as () => ITrack[],
             required: true,
             default: () => []
         },
@@ -335,7 +335,7 @@ export default defineComponent({
         },
     },
     name: 'YSongsTable',
-    setup(props: { modelValue: Array<any> }) {
+    setup(props: { modelValue: Array<ITrack> }) {
         const tracks = ref<Array<ITrack>>(props.modelValue);
         watch(() => props.modelValue, (newValue) => {
             tracks.value = newValue;
@@ -404,7 +404,7 @@ export default defineComponent({
             alWidth: 230,
             page: new YPageC(Math.ceil(this.tracks.length / this.limit) || 1),
             nowPlaying: 0,
-            downloadedSongIds: [] as any[],
+            downloadedSongIds: [] as number[],
             hoverTrackId: 0,
         }
     },
@@ -462,7 +462,7 @@ export default defineComponent({
         isLocal(id: number | string) {
             return isLocal(id);
         },
-        async playSongAndPlaylist(track: any) {
+        async playSongAndPlaylist(track: ITrack) {
             console.log('Play Song And Playlist:', track.id);
             if (!this.canSendPlaylist || this.setting.play.dbclick === 'single') {
                 await this.player.playTrack(track);
@@ -575,27 +575,27 @@ export default defineComponent({
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'titleAsc':
                     console.log('按标题升序排序');
                     // 处理按标题升序排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.name.localeCompare(b.name));
+                    this.tracks.sort((a, b) => a.name.localeCompare(b.name));
                     break;
                 case 'titleDesc':
                     console.log('按标题降序排序');
                     // 处理按标题降序排序逻辑
-                    this.tracks.sort((a: any, b: any) => b.name.localeCompare(a.name));
+                    this.tracks.sort((a, b) => b.name.localeCompare(a.name));
                     break;
                 case 'artistAsc':
                     console.log('按歌手升序排序');
                     // 处理按歌手升序排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.ar[0].name.localeCompare(b.ar[0].name));
+                    this.tracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
                     break;
                 case 'artistDesc':
                     console.log('按歌手降序排序');
                     // 处理按歌手降序排序逻辑
-                    this.tracks.sort((a: any, b: any) => b.ar[0].name.localeCompare(a.ar[0].name));
+                    this.tracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -608,17 +608,17 @@ export default defineComponent({
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按专辑升序排序');
                     // 处理按专辑升序排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.al.name.localeCompare(b.al.name));
+                    this.tracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
                     break;
                 case 'albumDesc':
                     console.log('按专辑降序排序');
                     // 处理按专辑降序排序逻辑
-                    this.tracks.sort((a: any, b: any) => b.al.name.localeCompare(a.al.name));
+                    this.tracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -631,17 +631,17 @@ export default defineComponent({
                 case 'default':
                     console.log('使用默认排序');
                     // 处理默认排序逻辑
-                    this.tracks.sort((a: any, b: any) => a.originalIndex - b.originalIndex);
+                    this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
                     break;
                 case 'albumAsc':
                     console.log('按时间升序排序');
                     // 处理按时间升序排序逻辑
-                    this.tracks.sort((a: any, b: any) => parseFloat(a.dt) - parseFloat(b.dt));
+                    this.tracks.sort((a, b) => parseFloat(a.dt.toString()) - parseFloat(b.dt.toString()));
                     break;
                 case 'albumDesc':
                     console.log('按时间降序排序');
                     // 处理按时间降序排序逻辑
-                    this.tracks.sort((a: any, b: any) => parseFloat(b.dt) - parseFloat(a.dt));
+                    this.tracks.sort((a, b) => parseFloat(b.dt.toString()) - parseFloat(a.dt.toString()));
                     break;
                 default:
                     console.log('未知排序选项');
@@ -693,6 +693,7 @@ export default defineComponent({
                 this.openAddToPlaylist(trackId);
             } else if (buttonId.includes('detail')) {
                 const track = this.tracks.find(t => t.id === trackId)
+                if (!track) return;
                 this.openContextMenu(event, toRaw(track), 'toogle');
             } else if (buttonId.includes('track-menu-')) {
                 const trackId = parseInt(buttonId.replace('track-menu-', ''), 10);
@@ -769,7 +770,7 @@ export default defineComponent({
             if (!id || isLocal(id)) return;
             this.$router.push(`/comment/song/${id}`);
         },
-        openContextMenu(event: any, track: any, type = 'show') {
+        openContextMenu(event: MouseEvent, track: ITrack, type = 'show') {
             window.postMessage({
                 type: type === 'show' ? 'song-open-context-menu' : 'song-toogle-context-menu',
                 data: {
@@ -797,7 +798,7 @@ export default defineComponent({
                 return;
             }
             let currentTrackIndex = null;
-            const currentTrack = this.tracks.find((track: any, index: number) => {
+            const currentTrack = this.tracks.find((track, index) => {
                 if (track.id === this.player.currentTrack.id) {
                     currentTrackIndex = index;
                     return true;
@@ -820,7 +821,7 @@ export default defineComponent({
                 })
             }
         },
-        async downloadSong(track: any) {
+        async downloadSong(track: ITrack) {
             if (!track.id || isLocal(track.id)) return;
             const url = await useApi('/song/url/v1', {
                 id: track.id,
@@ -837,7 +838,7 @@ export default defineComponent({
             if (this.id !== 'YPlaybar.vue') {
                 return;
             }
-            this.tracks = this.tracks.filter((track: any) => track.id !== id);
+            this.tracks = this.tracks.filter((track) => track.id !== id);
             this.player.deleteTrack(id);
         },
     },

@@ -9,8 +9,17 @@ import fs from 'fs';
 import path from 'path';
 import musicMetadata from 'music-metadata';
 
+interface musicFile {
+    name: string;
+    path: string;
+    title: string;
+    artist: string;
+    album: string;
+    duration: number;
+}
+
 export async function scanMusicDirectory(dirPath: string) {
-    const musicFiles: any[] = [];
+    const musicFiles: musicFile[] = [];
 
     // 读取目录中的所有文件
     const files = fs.readdirSync(dirPath);

@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import { YColor } from '@/utils/color';
+import { Theme1, Theme2 } from '@/utils/theme';
 import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 
@@ -23,7 +24,7 @@ export default defineComponent({
     mounted() {
         // YColor.setBackgroundColorTheme();
         const theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBackgroundColorHex(YColor.getColorFromThreeLetters('hello'), theme.type, theme.background);
+        YColor.setBackgroundColorHex(YColor.getColorFromThreeLetters('hello'), (theme as Theme1).type, (theme as Theme2).background);
     }
 });
 </script>

@@ -8,15 +8,27 @@ import { YPageC } from "./YPageC";
 import { isLocal } from "@/utils/localTracks_renderer";
 export type Types = 'song' | 'playlist' | 'album';
 
+export interface IComment {
+    commentId: number;
+    time: number;
+    user: {
+        userId: number;
+        nickname: string;
+        avatarUrl: string;
+    };
+    content: string;
+    likedCount: number;
+}
+
 export class YCommentC {
     _type: Types;
     _id: string | number;
     _commentsTitle: string;
-    _comments: any[];
+    _comments: IComment[];
     _sortType: string;
     page: YPageC;
     _count: number;
-    _onCommentUpdate: any;
+    _onCommentUpdate: Function;
     /**
      * 
      * @param {'song'|'playlist'|'album'} type 评论资源的类型
@@ -41,7 +53,7 @@ export class YCommentC {
         // 初始化数据
         this.initData(true);
         // 回调函数
-        this._onCommentUpdate = null;
+        this._onCommentUpdate = () => { };
     }
     /**
      * 初始化评论数据

@@ -75,7 +75,7 @@ ipcMain.handle('get-local-tracks', async (event, dirPath) => {
     try {
         const tracks = await scanMusicDirectory(dirPath);
         return tracks;
-    } catch (err: any) {
+    } catch (err: unknown) {
         // return err.toString();
         console.error('Error scanning music directory:', err);
         return [];
@@ -90,7 +90,7 @@ ipcMain.on('download-song', async (event, songUrl, track, downloadDir) => {
             filePath: filePath,
             track: track
         });
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error('Error downloading song:', err);
     }
 });

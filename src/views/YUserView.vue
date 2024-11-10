@@ -135,6 +135,7 @@ import { mapState, useStore } from 'vuex';
 import { YPageC } from '@/dual/YPageC';
 import { markRaw, ref, defineComponent } from 'vue';
 import songsRank from '@/assets/songsrank.svg';
+import { Theme1, Theme2 } from '@/utils/theme';
 
 export default defineComponent({
     name: 'YUserView',
@@ -460,7 +461,7 @@ export default defineComponent({
         await this.fetchUser();
         const theme = YColor.findTheme(this.setting.display.theme);
         if (this.user.picUrl) {
-            YColor.setBkColorFromImg(this.user.picUrl, document, theme.type, theme.background);
+            YColor.setBkColorFromImg(this.user.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
         }
     }
 })

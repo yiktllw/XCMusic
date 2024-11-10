@@ -52,17 +52,18 @@ export namespace YColor {
      * @param {string} themeValue 主题值
      * @returns {Object} 主题对象: { value: string, display: string, type?: string, background?: string }
      */
-    export function findTheme(themeValue: string): any {
+    export function findTheme(themeValue: string): Theme1 | Theme2 {
         var res = themes.find((theme) => theme.value === themeValue);
         if (!res) {
-            const userCustomThemes = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
-            res = userCustomThemes.find((theme: any) => theme.data.value === themeValue);
-            if (!res) throw new Error('theme not found');
-            res = (res as unknown as {
+            const userCustomThemes: Array<{
                 data: Theme1 | Theme2,
                 classContent: string,
-            }).data;
+            }> = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
+            let _res = userCustomThemes.find((theme) => theme.data.value === themeValue);
+            if (!res) throw new Error('theme not found');
+            res = _res?.data;
         }
+        if (!res) throw new Error('theme not found');
         return res;
     }
     /**

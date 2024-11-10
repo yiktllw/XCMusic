@@ -155,6 +155,7 @@ import { useApi } from '@/utils/api';
 import { mapActions, useStore } from 'vuex';
 import YPanel from './YPanel.vue';
 import YScroll from './YScroll.vue';
+import { IHotSearch, ISearchSuggestion } from '@/dual/YTitlebar';
 
 export default defineComponent({
     name: 'YTitlebar',
@@ -206,14 +207,14 @@ export default defineComponent({
                 level: 0,
             },    // 用于存储用户信息
             showDropdown: false,    // 用于控制下拉登录菜单的显示
-            searchHistory: [] as any[],    // 用于存储搜索历史
+            searchHistory: [] as string[],    // 用于存储搜索历史
             base64Image: '',    // 用于存储 Base64 图片
             userNickName: '用户昵称',   // 用于存储用户昵称
             avatarSrc: '',      // 用于存储头像地址
             searchInput: '',    // 用于存储搜索输入
             qrKey: '',  // 用于存储二维码 key
-            searchSuggestions: [] as any[],  // 用于存储搜索建议
-            hotSearches: [] as any[],    // 用于存储热搜榜
+            searchSuggestions: [] as ISearchSuggestion[],  // 用于存储搜索建议
+            hotSearches: [] as IHotSearch[],    // 用于存储热搜榜
             selectedSuggestion: 0,  // 用于存储选中的搜索建议
         };
     },
@@ -298,9 +299,9 @@ export default defineComponent({
         },
 
         // 处理登录窗口的外部点击
-        handleOutsideClick(event: any) {
+        handleOutsideClick(event: MouseEvent) {
             const dropdownMenu = this.dropdownMenu;
-            if (dropdownMenu && !dropdownMenu.contains(event.target)) {
+            if (dropdownMenu && !dropdownMenu.contains(event.target as Node)) {
                 this.showDropdown = false; // 隐藏下拉菜单
             }
         },
@@ -341,8 +342,8 @@ export default defineComponent({
             }
         },
         // 搜索
-        handleSearch(event: any) {
-            this.search(event.target.value);
+        handleSearch(event: KeyboardEvent) {
+            this.search((event.target as HTMLInputElement).value);
         },
         search(text: string) {
             if (text === '') {
@@ -385,8 +386,8 @@ export default defineComponent({
             }
             console.log('search:', text);
         },
-        async getSearchSuggestions(event: any) {
-            const searchText = event.target.value;
+        async getSearchSuggestions(event: Event) {
+            const searchText = (event.target as HTMLInputElement)?.value;
             if (!searchText) {
                 this.searchSuggestions = [];
                 return;

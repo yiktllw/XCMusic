@@ -453,7 +453,7 @@ export default defineComponent({
         async _setBackgroundColor() {
             const theme = YColor.findTheme(this.setting.display.theme);
             if (!theme) { return; }
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, theme.type, theme.background);
+            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, (theme as Theme1).type, (theme as Theme2).background);
         },
         // 处理搜索
         handleSearch(input: string, fromEnter: boolean) {

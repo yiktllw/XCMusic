@@ -67,7 +67,7 @@ export class Subscriber {
      * 更新订阅，私有函数，请勿在外部调用
      */
     updateSubscribe(globalIndex: string | number, func: Function) {
-        let index = this._subscribes.findIndex((item: any) => item.index === globalIndex);
+        let index = this._subscribes.findIndex((item) => item.globalIndex === globalIndex);
         if (index !== -1) {
             this._subscribes[index].func = func;
         }
@@ -96,7 +96,7 @@ export class Subscriber {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
+        let arrayWithId = this._subscribes.filter((item) => item.id === id);
         if (arrayWithId.length === 0) {
             // 如果没有这个id的订阅，则直接添加到订阅列表。
             this.push({
@@ -136,11 +136,11 @@ export class Subscriber {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
+        let arrayWithId = this._subscribes.filter((item) => item.id === id);
         if (arrayWithId.length !== 0) {
-            arrayWithId.forEach((item: { type: string; globalIndex: any; }) => {
+            arrayWithId.forEach((item: { type: string; globalIndex: number; }) => {
                 if (item.type === type) {
-                    let index = this._subscribes.findIndex((_item: { globalIndex: any; }) => _item.globalIndex === item.globalIndex);
+                    let index = this._subscribes.findIndex((_item: { globalIndex: number; }) => _item.globalIndex === item.globalIndex);
                     this._subscribes.splice(index, 1);
                 }
             })
@@ -150,9 +150,9 @@ export class Subscriber {
      * 取消某个id订阅的所有事件
      */
     offAll(id: string) {
-        let arrayWithId = this._subscribes.filter((item: any) => item.id === id);
-        arrayWithId.forEach((item: { globalIndex: any; }) => {
-            let index = this._subscribes.findIndex((_item: { globalIndex: any; }) => _item.globalIndex === item.globalIndex);
+        let arrayWithId = this._subscribes.filter((item) => item.id === id);
+        arrayWithId.forEach((item: { globalIndex: number; }) => {
+            let index = this._subscribes.findIndex((_item: { globalIndex: number; }) => _item.globalIndex === item.globalIndex);
             this._subscribes.splice(index, 1);
         })
     }
@@ -165,7 +165,7 @@ export class Subscriber {
             console.log('type is not in allowedEvents: ', type, 'allowedEvents: ', this.allowedEvents);
             return;
         }
-        this._subscribes.forEach((item: any) => {
+        this._subscribes.forEach((item) => {
             if (item.type === type) {
                 item.func(...args);
             }

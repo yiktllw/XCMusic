@@ -7,6 +7,7 @@
  * 3. 管理已经下载的歌曲信息
 *-----------------------------------------*/
 import { IDownloadedSong } from './download_renderer';
+import { ITrack } from './tracks';
 
 class IndexedDB {
     dbName: string;
@@ -57,7 +58,7 @@ class IndexedDB {
      * @param {Array} array
      * @returns {Promise<string>}
      */
-    storePlaylist(array: Array<any>): Promise<string> {
+    storePlaylist(array: Array<ITrack>): Promise<string> {
         return new Promise((resolve, reject) => {
             const transaction = this.db?.transaction(this.storeName, 'readwrite');
             const store = transaction?.objectStore(this.storeName);
@@ -115,7 +116,7 @@ class IndexedDB {
      * 获取播放列表
      * @returns {Promise<Array>}
      */
-    fetchPlaylist(): Promise<Array<any>> {
+    fetchPlaylist(): Promise<Array<ITrack>> {
         return new Promise((resolve, reject) => {
             const transaction = this.db?.transaction(this.storeName, 'readonly');
             const store = transaction?.objectStore(this.storeName);

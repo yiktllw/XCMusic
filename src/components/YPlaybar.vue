@@ -537,7 +537,7 @@ export default defineComponent({
                     avQuality.forEach((avItem) => {
                         if (quality.name === avItem.name) {
                             quality.available = true;
-                            quality.size = avItem.size;
+                            quality.size = avItem.size ?? '';
                         }
                     });
                 });

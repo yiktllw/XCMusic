@@ -49,13 +49,12 @@ export interface ITrack {
     jyeffect: any;  // 高清环绕声信息
     sky: any;   // 沉浸环绕声信息
     jymaster: any;  // 超清母带信息
-    originalIndex: any; // 原始序号, 用于歌单内歌曲排序
+    originalIndex: number; // 原始序号, 用于歌单内歌曲排序
     local: boolean; // 是否为本地歌曲
     localPath: string;  // 本地歌曲路径
 }
 
 export class Tracks {
-    _tracksMap: Map<any, any>;
     _tracks: Array<ITrack>;
     /**
      * 初始化歌曲列表
@@ -65,7 +64,6 @@ export class Tracks {
      * @param {object} params.params 额外参数
      */
     constructor({ url, tracks, params, }: { url: string; tracks: Array<any>; params?: any; }) {
-        this._tracksMap = new Map();
         this._tracks = tracks.map((item, index): ITrack => {
             let resultTrack: ITrack = {
                 id: 0,
@@ -96,14 +94,14 @@ export class Tracks {
                 lyrics: [
                     '',
                 ],
-                h: null as any,
-                l: null as any,
-                sq: null as any,
-                hr: null as any,
-                jyeffect: null as any,
-                sky: null as any,
-                jymaster: null as any,
-                originalIndex: null as any,
+                h: null,
+                l: null,
+                sq: null,
+                hr: null,
+                jyeffect: null,
+                sky: null,
+                jymaster: null,
+                originalIndex: 0,
                 local: false,
                 localPath: '',
             }
@@ -115,7 +113,7 @@ export class Tracks {
                     track = item;
                 } else if (url === '/artist/songs') {
                     track = item;
-                    let index = params.albums.findIndex((album: any) => album.id === track.al.id);
+                    let index = params.albums.findIndex((album: { id: number }) => album.id === track.al.id);
                     if (index === -1) {
                         track.al.picUrl = require('@/assets/song.svg');
                     } else {
@@ -130,7 +128,7 @@ export class Tracks {
                         picUrl: track.album.picUrl,
                         tns: '',
                     }
-                    track.ar = track.artists.map((ar: any) => {
+                    track.ar = track.artists.map((ar: { id: number, name: string }) => {
                         return {
                             id: ar.id,
                             name: ar.name,
@@ -149,8 +147,16 @@ export class Tracks {
                         }
                     }
                     if (params.reels) {
-                        params.reels.forEach((reel: any, reelIndex: any) => {
-                            reel.songList.forEach((song: any, songIndex: any) => {
+                        interface IReel {
+                            songList: Array<{
+                                songId: number;
+                                song: Object;
+                                songName: string;
+                                songIndex: number;
+                            }>;
+                        }
+                        params.reels.forEach((reel: IReel, reelIndex: number) => {
+                            reel.songList.forEach((song, songIndex) => {
                                 if (song.songId == track.id) {
                                     track.reelName = song.songName;
                                     resultTrack.reelIndex = reelIndex;
@@ -206,7 +212,7 @@ export class Tracks {
                 }
                 resultTrack.cd = track.cd ?? 1;
                 resultTrack.no = track.no ?? 1;
-                resultTrack.ar = track.ar.map((ar: any) => {
+                resultTrack.ar = track.ar.map((ar: {id: number, name: string, tns: string}) => {
                     return {
                         id: ar.id,
                         name: ar.name,
@@ -230,29 +236,17 @@ export class Tracks {
                 resultTrack.localPath = track.localPath ?? '';
             }
 
-            // 将 resultTrack 放入 Map 中，使用 id 作为键
-            this._tracksMap.set(resultTrack.id, resultTrack);
-
             return resultTrack;
         });
     }
     get tracks() {
         return this._tracks;
     }
-
-    /**
-     * 使用 id 获取单个 track
-     * @param {number} id 要获取的 track 的 id
-     * @returns {object|null} 返回对应 id 的 track 对象或 null
-     */
-    getTrackById(id: number): object | null {
-        return this._tracksMap.get(id) || null;
-    }
 }
 
 export class TrackIds {
     _ids: Array<number>;
-    result: any[] = [];
+    result: ITrack[] = [];
     constructor(ids: Array<number>) {
         this._ids = ids;
     }
@@ -263,7 +257,7 @@ export class TrackIds {
         await useApi('/song/detail', {
             ids: this._ids.join(',')
         }).then(res => {
-            this.result = res.songs.map((item: any) => {
+            this.result = res.songs.map((item: { al: { picUrl: string } }) => {
                 return {
                     ...item,
                     _picUrl: item.al.picUrl + '?param=80y80',

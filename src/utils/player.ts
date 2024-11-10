@@ -693,7 +693,7 @@ export class Player {
     /** 
      * 添加列表到播放列表
      */
-    addPlaylist(list: any[]) {
+    addPlaylist(list: ITrack[]) {
         // 保存当前歌曲
         let ori_track = this._playlist[this._current] ?? null;
         // 
@@ -708,7 +708,7 @@ export class Player {
         });
 
         // 收集要添加到播放列表的歌曲
-        const tracksToAdd: any[] = [];
+        const tracksToAdd: ITrack[] = [];
 
         list.forEach(track => {
             // 使用 Map 进行 O(1) 查找
@@ -754,7 +754,7 @@ export class Player {
      * 下一首播放指定歌曲
      * @param {Object} track 歌曲对象
      */
-    nextPlay(track: any) {
+    nextPlay(track: ITrack) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === track.id);
         if (trackIndex !== -1) {
@@ -772,7 +772,7 @@ export class Player {
      * 播放全部
      * @param {Array} list 歌曲列表
      */
-    async playAll(list: Array<any>) {
+    async playAll(list: Array<ITrack>) {
         // 设置播放列表
         this.playlist = list;
         // 设置当前播放索引为0
@@ -1194,7 +1194,7 @@ export class Player {
      * 获取音质显示
      */
     get qualityDisplay(): 'quality.standard' | 'quality.higher' | 'quality.exhigh' | 'quality.lossless' | 'quality.hires' | 'quality.jyeffect' | 'quality.sky' | 'quality.jymaster' | 'quality.default' | 'quality.local' {
-        if (store.state.download.downloadedSongs.some((song: any) => song.id == this.currentTrack?.id)) {
+        if (store.state.download.downloadedSongs.some((song) => song.id == this.currentTrack?.id)) {
             return 'quality.local';
         }
         switch (this.quality) {
@@ -1235,8 +1235,14 @@ export class Player {
      * 获取当前歌曲的可用音质
      * @returns {Array} 返回一个包含音质信息的数组, 数组元素为对象: {name: 'quality', size: 'size'}
      */
-    get availableQuality(): Array<any> {
-        let result = [];
+    get availableQuality(): Array<{
+        name: 'exhigh' | 'standard' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster',
+        size: string | undefined
+    }> {
+        let result: Array<{
+            name: 'exhigh' | 'standard' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster',
+            size: string | undefined
+        }> = [];
         if (!this.currentTrack) return [];
         if (this.currentTrack.h) {
             result.push({

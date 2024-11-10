@@ -97,6 +97,7 @@ import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
 import YScroll from './YScroll.vue';
 import { IPlaylistCtxData } from '@/dual/YContextMenuItemC';
+import { IPlaylist } from '@/utils/login';
 
 export default defineComponent({
     name: 'YSidebar',
@@ -108,9 +109,8 @@ export default defineComponent({
             sidebarWidth: 200,
             newWidth: 0,
             activeButtonId: 0,
-            timeout: null as any,
-            userSubscribes: [] as any[],
-            userPlaylists: [] as any[],
+            userSubscribes: [] as IPlaylist[],
+            userPlaylists: [] as IPlaylist[],
         };
     },
     props: {
@@ -195,7 +195,6 @@ export default defineComponent({
         })
     },
     beforeUnmount() {
-        clearTimeout(this.timeout);
         this.login.subscriber.offAll('YSidebar');
         this.OpenedPlaylist.subscriber.offAll('YSidebar');
         this.sidebar_component = null;

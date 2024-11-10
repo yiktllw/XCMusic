@@ -9,6 +9,7 @@
 import { Subscriber } from "@/utils/subscribe";
 import { useApi } from "./api";
 import { ref, reactive, markRaw, Ref, Raw, Reactive } from 'vue';
+import { UserPlaylist } from "@/dual/login";
 
 export interface IPlaylist {
     name: string;
@@ -162,7 +163,7 @@ export class Login {
         }).then(res => {
             this._userPlaylists = [];
             this._userSubscribes = [];
-            res.playlist.forEach((playlist: any) => {
+            res.playlist.forEach((playlist: UserPlaylist) => {
                 if (!playlist.subscribed) {
                     this._userPlaylists.push({
                         name: playlist.name,
