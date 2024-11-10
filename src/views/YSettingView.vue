@@ -870,6 +870,7 @@ export default defineComponent({
                             display: flex;
                             align-items: center;
                             flex-direction: row;
+                            padding: 5px 0;
                             
                             .delete-img{
                                 cursor: pointer;
