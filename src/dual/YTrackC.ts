@@ -1,7 +1,34 @@
 import { useApi } from "@/utils/api";
+import { ITrack } from "@/utils/tracks";
 
-export class YTrackC {
-    _id: string | number | null;
+export class YTrackC implements ITrack {
+    /*
+     * 满足接口的空信息
+     */
+    tns = '';
+    cd = 0;
+    no = 0;
+    reelIndex = 0;
+    reelName = '';
+    songInReelIndex = 0;
+    dt = 0;
+    pop = 0;
+    playCount = 0;
+    lyrics = [];
+    h = null;
+    l = null;
+    sq = null;
+    hr = null;
+    jyeffect = null;
+    sky = null;
+    jymaster = null;
+    originalIndex = 0;
+    local = false;
+    localPath = '';
+    /* 
+     * 非空信息
+    */
+    _id: number;
     _name: string;
     _picUrl: string;
     _ar: any[];
@@ -9,15 +36,15 @@ export class YTrackC {
         id: number,
         name: string,
         picUrl: string,
-        tns: string[]
+        tns: string
     };
     _onTrackLoaded: Function;
     /**
      * 从歌曲id初始化歌曲信息
      * @param {number|string} id 歌曲id
      */
-    constructor(id: number | string | null) {
-        this._id = id;
+    constructor(id: number | null) {
+        this._id = id ?? 0;
         this._name = '';
         this._picUrl = '';
         this._ar = [];
@@ -25,9 +52,9 @@ export class YTrackC {
             id: 0,
             name: '',
             picUrl: '',
-            tns: []
+            tns: ''
         };
-        this._onTrackLoaded = () => {};
+        this._onTrackLoaded = () => { };
         this.#init();
     }
     /**
@@ -70,15 +97,6 @@ export class YTrackC {
     }
     get onTrackLoaded() {
         return this._onTrackLoaded;
-    }
-    get track() {
-        return {
-            id: this._id,
-            name: this._name,
-            picUrl: this._picUrl,
-            ar: this._ar,
-            al: this._al
-        }
     }
     set onTrackLoaded(fn) {
         if (typeof fn === 'function') {

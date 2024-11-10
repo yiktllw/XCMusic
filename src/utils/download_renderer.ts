@@ -7,10 +7,17 @@
 
 import indexDB from '@/utils/indexDB';
 import { Subscriber } from './subscribe';
+import { ITrack } from './tracks';
+
+export interface IDownloadedSong {
+    id: number;
+    name: string;
+    path: string;
+}
 
 export class Download {
     db: indexDB;
-    downloadedSongs: Array<any>;
+    downloadedSongs: Array<IDownloadedSong>;
     subscriber: Subscriber;
 
     constructor() {
@@ -45,7 +52,7 @@ export class Download {
         this.subscriber.exec(type);
     }
 
-    add(url: string, track: any, downloadDir: string) {
+    add(url: string, track: ITrack, downloadDir: string) {
         if (!window.electron?.isElectron) {
             console.error('Not in Electron environment');
             return;
@@ -53,7 +60,7 @@ export class Download {
         window.electron.ipcRenderer.send('download-song', url, track, downloadDir);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         if (!window.electron?.isElectron) {
             console.error('Not in Electron environment');
             return;

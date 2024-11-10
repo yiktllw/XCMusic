@@ -83,11 +83,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { formatDate_yyyymmdd } from '@/utils/time';
+import { IPlaylist } from '@/dual/YPlaylistList';
+
 export default defineComponent({
     name: 'YPlaylistList',
     props: {
         playlists: {
-            type: Array as () => any[],
+            type: Array as () => IPlaylist[],
             default: () => [],
         },
         type: {

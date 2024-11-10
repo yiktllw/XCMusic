@@ -21,6 +21,7 @@ import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 import { isLocal } from "./localTracks_renderer";
 import { qualities } from "./setting";
+import { ITrack } from "./tracks";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
     fs = window.api.fs;
@@ -47,7 +48,7 @@ export class Player {
     /**
      * 播放列表
      */
-    _playlist: any[];
+    _playlist: ITrack[];
     /**
      * 歌单ID
      */
@@ -63,7 +64,7 @@ export class Player {
     /**
      * 播放历史
      */
-    _history: any[];
+    _history: ITrack[];
     /**
      * 播放历史索引
      */
@@ -100,7 +101,7 @@ export class Player {
     /**
      * 更新时间的定时器
      */
-    _updateTime: any;
+    _updateTime: null | NodeJS.Timeout;
     /**
      * 订阅事件
      */
@@ -109,7 +110,7 @@ export class Player {
      * IndexDB, 用于存储播放列表
      */
     db: indexDB;
-    reloadInterval: any = null;
+    reloadInterval: null | NodeJS.Timeout = null;
     _mediaSessionInit: boolean;
     /**
      * 是否初始化设备
@@ -252,7 +253,7 @@ export class Player {
                 if (!imgSrc) imgSrc = require('@/assets/song.svg')
                 let metaData = {
                     title: this.currentTrackName ?? '未知歌曲',
-                    artist: this.currentTrackArtists ? this.currentTrackArtists.map((artist: any) => artist.name).join(' / ') : '未知歌手',
+                    artist: this.currentTrackArtists ? this.currentTrackArtists.map((artist) => artist.name).join(' / ') : '未知歌手',
                     album: this.currentTrack?.al?.name ?? '未知专辑',
                     artwork: [
                         { src: imgSrc ? imgSrc + '?param=96y96' : '', sizes: '96x96', type: 'image/png' },
@@ -314,7 +315,7 @@ export class Player {
             }
         })
     }
-    async handleAudioError(error: any) {
+    async handleAudioError(error: MediaError | null) {
         console.log('Audio Error', error);
         if (!this.currentTrack) return;
         if (navigator.onLine) {
@@ -383,9 +384,9 @@ export class Player {
      * @param {Object} track 歌曲对象
      * @param {Boolean} autoPlay 是否自动播放
      */
-    async playTrack(track: any, autoPlay: boolean = true) {
+    async playTrack(track: ITrack, autoPlay: boolean = true) {
         // 查询指定的歌曲是否在播放列表中
-        let trackIndex = this._playlist.findIndex((_track: any) => _track.id === track.id);
+        let trackIndex = this._playlist.findIndex((_track) => _track.id === track.id);
         if (trackIndex === -1) {
             // 如果不在播放列表中则添加到播放列表
             this.addTrack(track);
@@ -461,7 +462,7 @@ export class Player {
         let gainData = [], peakData = [];
         // 因为所有音质的文件峰值是相同的，也是就说能够混用音量均衡数据
         // 所以，在所有音质的音量均衡数据中，查找音量最大的数据。
-        const prop = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
+        const prop: Array<keyof ITrack> = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
         for (let i = 0; i < prop.length; i++) {
             gainData.push(this.currentTrack[prop[i]]?.gain);
             peakData.push(this.currentTrack[prop[i]]?.peak);
@@ -492,7 +493,7 @@ export class Player {
         let requests = [];
         const abbrQualities = ['l', 'h', 'sq', 'hr', 'jyeffect', 'sky', 'jymaster'];
         requests = [
-            this.getQuality(id, 'standard').then((res: any) => {
+            this.getQuality(id, 'standard').then((res: QualityInfo | null) => {
                 this.currentTrack = {
                     ...this.currentTrack,
                     l: res,
@@ -500,7 +501,7 @@ export class Player {
             })
         ];
         if (this.quality !== 'standard') {
-            requests.push(this.getQuality(id, this.quality).then((res: any) => {
+            requests.push(this.getQuality(id, this.quality).then((res: QualityInfo | null) => {
                 const index = qualities.indexOf(this.quality);
                 const abbr = abbrQualities[index];
                 this.currentTrack = {
@@ -509,50 +510,6 @@ export class Player {
                 }
             }))
         }
-        // requests = [
-        //     this.getQuality(id, 'standard').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             l: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'exhigh').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             h: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'lossless').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             sq: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'hires').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             hr: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'jyeffect').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             jyeffect: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'sky').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             sky: res,
-        //         }
-        //     }),
-        //     this.getQuality(id, 'jymaster').then((res: any) => {
-        //         this.currentTrack = {
-        //             ...this.currentTrack,
-        //             jymaster: res,
-        //         }
-        //     }),
-        // ];
         // 执行所有请求
         await Promise.all(requests);
     }
@@ -834,7 +791,7 @@ export class Player {
      * 添加歌曲到播放列表
      * @param {Object} value 歌曲对象
      */
-    addTrack(value: any) {
+    addTrack(value: ITrack) {
         // 查询指定的歌曲是否在播放列表中
         let trackIndex = this._playlist.findIndex(_track => _track.id === value.id);
         if (trackIndex === -1) {
@@ -1006,7 +963,7 @@ export class Player {
      * 添加到历史
      * @param {Object} track 歌曲对象
      */
-    appendToHistory(track: object) {
+    appendToHistory(track: ITrack) {
         this._history.push(track)
         this._historyIndex = this._history.length - 1;
         this.subscriber.exec('history');
@@ -1015,7 +972,7 @@ export class Player {
      * 插入到历史开头
      * @param {Object} track 歌曲对象
      */
-    insertToHistory(track: object) {
+    insertToHistory(track: ITrack) {
         this._history.splice(0, 0, track);
         this._historyIndex = 0;
         this.subscriber.exec('history');
@@ -1076,14 +1033,14 @@ export class Player {
         let response = null;
         if (isLocal(id)) return null;
         const downloads = store.state.download.downloadedSongs;
-        if (downloads.some((song: any) => song.id === id) && window.electron?.isElectron) {
-            let song = downloads.find((song: any) => song.id === id);
-            if (fs.existsSync(song.path)) {
+        if (downloads.some((song) => song.id === id) && window.electron?.isElectron) {
+            let song = downloads.find((song) => song.id === id);
+            if (fs.existsSync(song?.path) && song) {
                 const fileUrl = `file://${song.path.replace(/\\/g, '/')}`;
                 return { url: fileUrl, };
             } else {
                 Message.post('error', 'player.local_file_not_found');
-                store.state.download.delete(song.id);
+                if (song) store.state.download.delete(song.id);
             }
         }
         if (localStorage.getItem('login_cookie')) {

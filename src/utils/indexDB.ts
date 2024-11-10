@@ -6,6 +6,7 @@
  * 2. 存储、获取播放列表
  * 3. 管理已经下载的歌曲信息
 *-----------------------------------------*/
+import { IDownloadedSong } from './download_renderer';
 
 class IndexedDB {
     dbName: string;
@@ -144,9 +145,8 @@ class IndexedDB {
 
     /**
      * 获取所有存储的歌曲信息
-     * @returns {Promise<Array<object>>}
      */
-    getAllSongs(): Promise<Array<object>> {
+    getAllSongs(): Promise<Array<IDownloadedSong>> {
         return new Promise((resolve, reject) => {
             if (!this.db) return reject('Database not open');
 
@@ -166,10 +166,8 @@ class IndexedDB {
 
     /**
      * 添加歌曲信息到数据库
-     * @param {object} song
-     * @returns {Promise<void>}
      */
-    addDownloadedSong(song: { id: string, name: string, path: string }): Promise<void> {
+    addDownloadedSong(song: IDownloadedSong): Promise<void> {
         return new Promise((resolve, reject) => {
             if (!this.db) return reject('Database not open');
 
@@ -189,10 +187,8 @@ class IndexedDB {
 
     /**
      * 删除数据库中的歌曲
-     * @param {string} id
-     * @returns {Promise<void>}
      */
-    deleteDownloadedSong(id: string): Promise<void> {
+    deleteDownloadedSong(id: number): Promise<void> {
         return new Promise((resolve, reject) => {
             if (!this.db) return reject('Database not open');
 
@@ -212,7 +208,6 @@ class IndexedDB {
 
     /**
      * 清除歌曲存储库
-     * @returns {Promise<void>}
      */
     clearDownloadStore(): Promise<void> {
         return new Promise((resolve, reject) => {

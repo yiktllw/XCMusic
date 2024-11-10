@@ -46,11 +46,11 @@
                     <img class="img-subscribe play-info-ico g-icon" src="../assets/subscribe.svg"
                         :title="$t('context.subscribe')" @click="handleSubscribe">
                     <img class="img-download play-info-ico g-icon" src="../assets/smalldownload.svg"
-                        :title="$t('context.download')" v-if="!downloadedSongIds.includes(currentTrack?.id)"
+                        :title="$t('context.download')" v-if="!downloadedSongIds.includes(currentTrack?.id ?? 0)"
                         @click="downloadCurrentTrack">
                     <div class="song-comment">
                         <img class="img-comment play-info-ico g-icon" src="../assets/comment2.svg"
-                            :title="$t('context.view_comment')" @click="handleCommentClick(currentTrack?.id)">
+                            :title="$t('context.view_comment')" @click="handleCommentClick(currentTrack?.id ?? 0)">
                         <div class="song-comment-num">
                             {{ currentTrackComment }}
                         </div>
@@ -66,8 +66,8 @@
             <!-- 2 控制按钮 -->
             <div class="buttons">
                 <!-- 3 喜欢按钮 -->
-                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id))">
-                    <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id)"
+                <button class="button like-button" @click="_toogleLike(likelist.includes(currentTrack?.id ?? 0))">
+                    <img class="img-like img" src="../assets/likes.svg" v-if="likelist.includes(currentTrack?.id ?? 0)"
                         :title="$t('playbar.cancel_like')">
                     <img v-else class="img-like img g-icon" src="../assets/unlikes.svg" :title="$t('playbar.like')">
                 </button>
@@ -243,6 +243,7 @@ import YProgressBarV from './YProgressBarV.vue';
 import YTextBanner from './YTextBanner.vue';
 import YScroll from './YScroll.vue';
 import { isLocal } from '@/utils/localTracks_renderer';
+import { ITrack } from '@/utils/tracks';
 
 export default defineComponent({
     name: 'YPlaybar',
@@ -356,9 +357,9 @@ export default defineComponent({
                 }
             ],
             showButton: false,
-            playlist: [] as any[],
+            playlist: [] as ITrack[],
             playState: 'pause',
-            currentTrack: null as any,
+            currentTrack: null as ITrack | null,
             currentTrackComment: '0',
             playMode: 'order',
             duration: 0 as number,
@@ -367,7 +368,7 @@ export default defineComponent({
             progressInterval: null,
             volume: 0,
             qualityDisplay: 'quality.standard',
-            downloadedSongIds: [] as any[],
+            downloadedSongIds: [] as number[],
         }
     },
     watch: {
@@ -386,7 +387,7 @@ export default defineComponent({
             return this.currentTrack?.al.picUrl;
         },
         currentTrackArtists() {
-            return this.currentTrack?.ar;
+            return this.currentTrack?.ar ?? [];
         },
     },
     methods: {
@@ -429,10 +430,10 @@ export default defineComponent({
             this.player.mode = mode;
             this.setting.play.mode = mode;
         },
-        async playTrack(track: any) {
+        async playTrack(track: ITrack) {
             await this.player.playTrack(track);
         },
-        addTrackToPlaylist(track: any) {
+        addTrackToPlaylist(track: ITrack) {
             this.player.addTrack(track);
         },
         handleArtistClick(artistId: number | string) {

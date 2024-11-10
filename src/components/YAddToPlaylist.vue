@@ -26,12 +26,14 @@ import { defineComponent, ref } from 'vue';
 import { Message } from '@/dual/YMessageC';
 import { useApi } from '@/utils/api';
 import { useStore } from 'vuex';
+import { IPlaylist } from '@/utils/login';
+
 
 export default defineComponent({
     name: 'YAddToPlaylist',
     props: {
         ids: {
-            type: Array,
+            type: Array as () => number[],
             required: true,
         },
     },
@@ -55,7 +57,7 @@ export default defineComponent({
     },
     data() {
         return {
-            userPlaylists: [] as any[],
+            userPlaylists: [] as IPlaylist[],
         };
     },
     methods: {

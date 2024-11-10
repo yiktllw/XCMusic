@@ -10,15 +10,22 @@ import { Subscriber } from "@/utils/subscribe";
 import { useApi } from "./api";
 import { ref, reactive, markRaw, Ref, Raw, Reactive } from 'vue';
 
+export interface IPlaylist {
+    name: string;
+    label: string;
+    id: number;
+    img: string;
+}
+
 export class Login {
     _cookie: string | null;
     _status: Ref<boolean> | boolean;
     _userId: Ref<number | string | null> | number | string | null;
     _userName: Ref<string | null> | string | null;
-    _likelist: Raw<any[]>;
+    _likelist: Raw<number[]>;
     _avatar: Ref<string | null> | string | null;
-    _userPlaylists: Reactive<any[]>;
-    _userSubscribes: Reactive<any[]>;
+    _userPlaylists: Reactive<IPlaylist[]>;
+    _userSubscribes: Reactive<IPlaylist[]>;
     subscriber: Subscriber;
     interval: NodeJS.Timeout;
     _userFavoriteId: number = 0;
@@ -146,6 +153,7 @@ export class Login {
         }
         if (!this._userId) {
             await this.updateInfo();
+            if (!this._userId) return;
         }
         await useApi('/user/playlist', {
             uid: this._userId,

@@ -11,6 +11,7 @@ import { YTrackC } from '../dual/YTrackC';
 import { useApi } from '@/utils/api';
 import { Subscriber } from './subscribe';
 import { markRaw } from 'vue';
+import { ITrack } from './tracks';
 
 export class SongPicker {
     homeDir: string;
@@ -18,7 +19,7 @@ export class SongPicker {
     filePath: string;
     subscriber: Subscriber;
     song: null | { type: string; data: number | string; };
-    _track: null | Object;
+    _track: null | ITrack;
     timer: NodeJS.Timeout;
     constructor() {
         this.homeDir = window.api.homeDir();
@@ -124,7 +125,7 @@ export class SongPicker {
                         })
                         let track = markRaw(new YTrackC(trimmedContent));
                         track.onTrackLoaded = () => {
-                            this._track = track.track;
+                            this._track = track;
                             this.subscriber.exec('track');
                         }
                     } else if (startIndex2 !== -1) {
@@ -134,7 +135,7 @@ export class SongPicker {
                         })
                         let track = markRaw(new YTrackC(trimmedContent));
                         track.onTrackLoaded = () => {
-                            this._track = track.track;
+                            this._track = track;
                             this.subscriber.exec('nextTrack');
                         }
                     }
@@ -173,7 +174,7 @@ export class SongPicker {
      * 获取当前歌曲
      * @returns {Object} 返回当前歌曲
      */
-    get track(): object | null {
+    get track(): ITrack | null {
         return this._track;
     }
 }

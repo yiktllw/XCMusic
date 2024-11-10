@@ -13,7 +13,7 @@
             </div>
             <!-- 专辑数/粉丝数 -->
             <div class="artists-track-count font-size-small font-color-standard"
-                :title="type === 'artist' ? artist.albumSize : artist.followeds">
+                :title="type === 'artist' ? artist.albumSize.toString() : artist.followeds.toString()">
                 <span>{{ type === 'artist' ? ($t('album') + ': ' + artist.albumSize) : ($t('fans') + ': ' +
                     artist.followeds) }}</span>
             </div>
@@ -23,13 +23,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { IArtist } from '@/dual/YArtistList';
 
 export default defineComponent({
     name: 'YArtistList',
     props: {
         // 歌手列表
         artists: {
-            type: Array as () => any[],
+            type: Array as () => IArtist[],
             default: () => [],
         },
         // 类型

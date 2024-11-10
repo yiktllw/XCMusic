@@ -16,7 +16,8 @@
                     {{ playlist.name }}
                 </div>
                 <div class="playlist-item-count font-color-standard">
-                    {{ (playlist.trackCount ?? playlist.size) ? (playlist.trackCount ?? playlist.size) + $t('playlist_biglist.song_count') : '&nbsp;'
+                    {{ (playlist.trackCount ?? playlist.size) ? (playlist.trackCount ?? playlist.size) +
+                        $t('playlist_biglist.song_count') : '&nbsp;'
                     }}
                 </div>
             </div>
@@ -26,11 +27,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { IPlaylist } from '../dual/YPlaylistList';
 export default defineComponent({
     name: 'YPlaylistBiglist',
     props: {
         playlists: {
-            type: Array as () => any[],
+            type: Array as () => IPlaylist[],
             default: () => [],
         },
         type: {

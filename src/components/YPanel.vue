@@ -113,20 +113,20 @@ export default defineComponent({
         closePanel() {
             this.showPanel = false;
         },
-        handleClickOutside(event: any) {
+        handleClickOutside(event: MouseEvent) {
             const panelDom = this.panel?.querySelector('#panel');
 
             if (this.trigger && panelDom) {
                 let { top, left, right, bottom } = panelDom.getBoundingClientRect();
                 let { top: top2, left: left2, right: right2, bottom: bottom2 } = this.trigger.getBoundingClientRect();
-                const isContained = panelDom?.contains(event.target) || (top <= event.clientY && event.clientY <= bottom && left <= event.clientX && event.clientX <= right);
-                const isTriggerContained = this.trigger.contains(event.target) || (top2 <= event.clientY && event.clientY <= bottom2 && left2 <= event.clientX && event.clientX <= right2);
+                const isContained = panelDom?.contains(event.target as Node) || (top <= event.clientY && event.clientY <= bottom && left <= event.clientX && event.clientX <= right);
+                const isTriggerContained = this.trigger.contains(event.target as Node) || (top2 <= event.clientY && event.clientY <= bottom2 && left2 <= event.clientX && event.clientX <= right2);
                 if (this.panel && !isContained && !isTriggerContained && this.showPanel) {
                     this.showPanel = false;
                     console.log('handleClickOutside and close panel');
                 }
             } else if (panelDom) {
-                if (this.panel && !this.panel.contains(event.target) && this.showPanel) {
+                if (this.panel && !this.panel.contains(event.target as Node) && this.showPanel) {
                     this.showPanel = false;
                     console.log('No trigger, handleClickOutside and close panel');
                 }

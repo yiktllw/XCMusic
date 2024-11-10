@@ -37,9 +37,9 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array<any>,
+            type: Array<YContextMenuItemC>,
             required: true,
-            validator: function (value: any[]) {
+            validator: function (value: YContextMenuItemC[]) {
                 return value.every(item => item instanceof YContextMenuItemC)
             }
         },
