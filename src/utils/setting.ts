@@ -186,7 +186,7 @@ export const settingGroup: SettingGroup = {
             value: JSON.parse(localStorage.getItem('setting.download.localPaths') ?? '[]'),
             default: [],
             validation: (value) => {
-                let valid = Array.isArray(value);
+                let valid = Array.isArray(value) && value.every((path: string) => isValidDirectory(path));
                 if (valid) {
                     localStorage.setItem('setting.download.localPaths', JSON.stringify(value));
                 }
@@ -467,7 +467,7 @@ function getDownloadDirectory(): string {
 /** 
  * 检查目录是否有效
  */
-function isValidDirectory(directoryPath: string): boolean {
+export function isValidDirectory(directoryPath: string): boolean {
     if (!window.electron?.isElectron) {
         console.error('Not running in electron');
         return false;
