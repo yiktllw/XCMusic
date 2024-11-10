@@ -201,7 +201,7 @@
                     <div class="align-down" v-if="showLyrics">
                         <div class="lyrics" style="color: #aaa; font-size: 14px; margin-top: 5px; margin-left: 50px;">
                             {{ $t('playui.lyric') }}:
-                            <span v-for="(lyric, index) in track.lyrics" :key="index" v-html="formatLyric(lyric)">
+                            <span v-for="(lyric) in track.lyrics" v-html="formatLyric(lyric)">
                             </span>
                         </div>
                     </div>

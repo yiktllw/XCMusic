@@ -90,6 +90,10 @@
 ```
 npm install
 ```
+解决依赖冲突
+```
+node babel_cmds.js
+```
 运行Electron程序
 ```
 npm run electron:serve

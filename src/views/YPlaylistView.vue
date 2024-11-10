@@ -53,7 +53,7 @@
                         </div>
                         <!-- 4 创建信息 -->
                         <div class="album-artist font-color-high" v-else>
-                            <span v-for="(artist, index) in playlist.artists" :key="artist.id">
+                            <span v-for="(artist, index) in playlist.artists">
                                 <!-- 5 歌手按钮 -->
                                 <span @click="handleArtistClick(artist.id)" class="artist-button"
                                     :title="artist.name + (artist.tns ? ('\n' + artist.tns) : '')">
@@ -153,10 +153,10 @@
             <YLoading v-if="isLoading" />
             <!-- 2 歌曲列表 -->
             <YSongsTable v-if="!isLoading && type === 'playlist' && orient === 'songs'" v-model="filteredTracks"
-                :showTrackPopularity="false" :id="'YPlaylist.vue-playlist'" :from="playlistId"
+                :showTrackPopularity="false" id="YPlaylist.vue-playlist" :from="playlistId"
                 ref="playlist_songstable" />
             <YSongsTable v-if="!isLoading && type === 'album' && orient === 'songs'" v-model="filteredTracks"
-                :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" :id="'YPlaylist.vue-album'"
+                :showTrackAlbum="false" :showTrackCover="false" :al-reels="playlist.alReels" id="YPlaylist.vue-album"
                 :type="'album'" :show-header="false" :resortable="false" ref="album_songstable" />
             <!-- 2 分页 -->
             <YComment :type="type" :id="playlistId" v-if="orient === 'comments'" :show-header="false" ref="ycomment" />
@@ -713,7 +713,7 @@ export default defineComponent({
                         padding: 7px 15px 7px 12px;
                         margin-right: 5px;
                         background-color: rgb(var(--highlight-color-rgb));
-;
+                        ;
 
                         &:hover {
                             background-color: rgba(var(--highlight-color-rgb), 0.8);
