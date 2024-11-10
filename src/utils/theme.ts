@@ -6,7 +6,6 @@
  * 代码逻辑待优化
 *-----------------------------------------*/
 
-
 function hexToRgb(hex: string) {
     const bigint = parseInt(hex.slice(1), 16);
     const r = (bigint >> 16) & 255;
@@ -182,7 +181,7 @@ export var themes: Array<Theme1 | Theme2> = [
     {
         value: 'light',
         display: 'setting_view.theme_name.light',
-        type: 'light',
+        background: '#f7f9fc',
     },
     {
         value: 'light-high-contrast',

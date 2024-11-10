@@ -80,7 +80,7 @@
                         </div>
                         <div class="content-item-content">
                             <select v-model="theme" @change="handleTheme">
-                                <option v-for="item in themes" :key="item.value" :value="item.value">
+                                <option v-for="item in themes" :value="item.value">
                                     {{
                                         [
                                             'setting_view.theme_name.dark',

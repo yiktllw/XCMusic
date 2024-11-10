@@ -15,14 +15,19 @@
                                     {{ $t('create_custom_theme.preset') }}
                                 </div>
                                 <div class="check">
-                                    <input type="radio" id="preset_dark" value="dark" v-model="preset" />
-                                    <label for="preset_dark">
-                                        {{ $t('create_custom_theme.theme_type_dark') }}
-                                    </label>
-                                    <input type="radio" id="preset_light" value="light" v-model="preset" />
-                                    <label for="preset_light">
-                                        {{ $t('create_custom_theme.theme_type_light') }}
-                                    </label>
+                                    <select v-model="preset" @change="handlePresetChange">
+                                        <option v-for="item in appThemes" :value="item.name">
+                                            {{
+                                                [
+                                                    'setting_view.theme_name.dark',
+                                                    'setting_view.theme_name.dark_high_contrast',
+                                                    'setting_view.theme_name.light',
+                                                    'setting_view.theme_name.light_high_contrast',
+                                                ].includes(item.name) ?
+                                                    $t(item.name) : item.name
+                                            }}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="check-item name">
@@ -302,11 +307,12 @@
 import { defineComponent, ref } from 'vue';
 import YWindow from './YWindow.vue';
 import YScroll from './YScroll.vue';
-import { Theme } from '@/utils/theme';
+import { Theme, Theme1, Theme2 } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { YColor } from '@/utils/color';
 import { darkThemeColors, hexToRgb } from '@/utils/color';
 import { Doc } from '@/utils/document';
+import { themes } from '@/utils/theme';
 
 export default defineComponent({
     name: 'YCustomWindow',
@@ -362,7 +368,7 @@ export default defineComponent({
     },
     data() {
         return {
-            preset: 'dark' as 'dark' | 'light',
+            preset: '',
             name: '自定义主题',
             type: 'dark' as 'dark' | 'light',
             background: '#000000',
@@ -374,6 +380,7 @@ export default defineComponent({
             fontColors: { fontColorAll: '#ffffff' } as Theme.IFontColor | Theme.IFontColorAll,
             backgroundStyle: '',
             highlightColor: '#fe3c5a',
+            appThemes: [] as Theme.IThemeCSS[],
         }
     },
     computed: {
@@ -433,6 +440,9 @@ export default defineComponent({
         'new-window-state'
     ],
     mounted() {
+        this.appThemes = this.getAppThemes();
+        this.preset = this.appThemes[0].name;
+        this.applyTheme(this.appThemes[0]);
     },
     beforeUnmount() {
         this.window = null;
@@ -467,11 +477,99 @@ export default defineComponent({
         nextIndex() {
             this.nowBackgroundIndex = (this.nowBackgroundIndex + 1) % darkThemeColors.length;
         },
+        getAppThemes() {
+            const themeGroup = themes.map((theme) => {
+                return `.theme-${theme.value}`;
+            });
+            const styleTags = document.head.querySelectorAll('style');
+
+            let res: Theme.IThemeCSS[] = [];
+
+            for (let styleTag of styleTags) {
+                if (!styleTag.sheet) {
+                    continue;
+                }
+                // 获取 <style> 标签中的 CSS 规则
+                const cssRules = styleTag.sheet.cssRules
+
+                for (let cssRule of cssRules) {
+                    // 判断是否为 CSSStyleRule 类型
+                    if (cssRule instanceof CSSStyleRule) {
+                        if (themeGroup.includes(cssRule.selectorText)) {
+                            const appTheme = themes.find((theme) => theme.value === cssRule.selectorText.slice(7));
+                            // 获取 CSSStyleDeclaration 对象
+                            const cssStyleDeclaration = cssRule.style
+                            const background = cssStyleDeclaration.getPropertyValue('--background-color').trim();
+                            const foreground = cssStyleDeclaration.getPropertyValue('--foreground-color').trim();
+                            const panelBackground = cssStyleDeclaration.getPropertyValue('--panel-background-color').trim();
+                            const highlightColorRgb = cssStyleDeclaration.getPropertyValue('--highlight-color-rgb')
+                            const fontColorRgb = cssStyleDeclaration.getPropertyValue('--font-color-rgb')
+                            const iconInvert = cssStyleDeclaration.getPropertyValue('--icon-invert').includes('invert(0)');
+                            const _theme: Theme.IThemeCSS = {
+                                name: appTheme!.display,
+                                type: iconInvert ? 'dark' : 'light',
+                                background: background,
+                                foreground: foreground,
+                                panelBackground: panelBackground,
+                                highlight: this.rgbStrToHex(highlightColorRgb),
+                                autoBackgroundType: (appTheme as Theme2).background ? 'other' : 'dark',
+                                fontColors: {
+                                    fontColorAll: this.rgbStrToHex(fontColorRgb),
+                                },
+                            }
+                            res.push(_theme);
+                        }
+                    }
+                }
+            }
+            return res;
+        },
+        rgbStrToHex(rgbStr: string) {
+            const rgb = rgbStr.split(',').map((item) => parseInt(item));
+            return YColor.rgbToHex(rgb[0], rgb[1], rgb[2]);
+        },
+        applyTheme(theme: Theme.IThemeCSS) {
+            this.type = theme.type;
+            this.background = theme.background;
+            this.foreground = theme.foreground;
+            this.panelBackground = theme.panelBackground;
+            this.highlightColor = theme.highlight;
+            this.autoBackgroundType = theme.autoBackgroundType;
+            this.fontColors = theme.fontColors;
+        },
+        handlePresetChange() {
+            const theme = this.appThemes.find((item) => item.name === this.preset);
+            if (theme) {
+                this.applyTheme(theme);
+            }
+        },
     }
 })
 </script>
 
 <style lang="scss" scoped>
+select {
+    width: 143px;
+    padding: 2px 2px !important;
+    border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
+    background-color: transparent;
+    color: var(--font-color-high);
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 0 10px;
+    margin-right: 10px;
+    cursor: pointer;
+
+    option {
+        color: var(--font-color-high);
+        background-color: var(--background-color);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
 .main {
     display: flex;
     flex-direction: column;
@@ -479,6 +577,8 @@ export default defineComponent({
     padding: 20px 10px 10px 10px;
     // width: 432.1px;
     height: 500px;
+    max-height: 90vh;
+    max-width: 90vw;
 
     .main-content {
         display: flex;
