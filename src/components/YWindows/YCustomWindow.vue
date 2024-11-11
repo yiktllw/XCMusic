@@ -619,6 +619,7 @@ select {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-bottom: 20px;
 
             .check-item {
                 display: flex;
