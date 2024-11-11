@@ -23,8 +23,12 @@ export default defineComponent({
     },
     mounted() {
         // YColor.setBackgroundColorTheme();
-        const theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBackgroundColorHex(YColor.getColorFromThreeLetters('hello'), (theme as Theme1).type, (theme as Theme2).background);
+        try {
+            const theme = YColor.findTheme(this.setting.display.theme);
+            YColor.setBackgroundColorHex(YColor.getColorFromThreeLetters('hello'), (theme as Theme1).type, (theme as Theme2).background);
+        } catch (error) {
+            console.error('YGreetingView', error);
+        }
     }
 });
 </script>
@@ -46,7 +50,7 @@ export default defineComponent({
         max-width: calc(100% - 40px);
         max-height: 10%;
     }
-    
+
     .down-img {
         bottom: 20px;
         position: absolute;

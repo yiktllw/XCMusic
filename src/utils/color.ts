@@ -60,7 +60,9 @@ export namespace YColor {
                 classContent: string,
             }> = JSON.parse(localStorage.getItem('setting.display.userCustomThemes') ?? '[]');
             let _res = userCustomThemes.find((theme) => theme.data.value === themeValue);
-            if (!res) throw new Error('theme not found');
+            if (!_res) {
+                throw new Error(`THEME NOT FOUND. \nrequire: ${themeValue} \nuserCustomThemes: ${JSON.stringify(userCustomThemes, null, 2)}`);
+            }
             res = _res?.data;
         }
         if (!res) throw new Error('theme not found');

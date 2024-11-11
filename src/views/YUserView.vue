@@ -440,9 +440,13 @@ export default defineComponent({
     async mounted() {
         // 获取用户信息
         await this.fetchUser();
-        const theme = YColor.findTheme(this.setting.display.theme);
-        if (this.user?.picUrl) {
-            YColor.setBkColorFromImg(this.user.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+        try {
+            const theme = YColor.findTheme(this.setting.display.theme);
+            if (this.user?.picUrl) {
+                YColor.setBkColorFromImg(this.user.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+            }
+        } catch (error) {
+            console.error('YUserView', error);
         }
     }
 })

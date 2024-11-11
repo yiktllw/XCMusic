@@ -454,9 +454,12 @@ export default defineComponent({
         },
         // 设置背景颜色
         async _setBackgroundColor() {
-            const theme = YColor.findTheme(this.setting.display.theme);
-            if (!theme) { return; }
-            YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+            try {
+                const theme = YColor.findTheme(this.setting.display.theme);
+                YColor.setBkColorFromImg(this.playlist.coverImgUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+            } catch (error) {
+                console.error('Failed to set background color:', error);
+            }
         },
         // 处理搜索
         handleSearch(input: string, fromEnter: boolean) {

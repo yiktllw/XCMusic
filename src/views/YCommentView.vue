@@ -76,8 +76,12 @@ export default defineComponent({
             this.$router.push({ path: `/artist/${id}` });
         },
         async trackLoaded() {
-            let theme = YColor.findTheme(this.setting.display.theme);
-            YColor.setBkColorFromImg(this.track.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+            try {
+                let theme = YColor.findTheme(this.setting.display.theme);
+                YColor.setBkColorFromImg(this.track.picUrl, document, (theme as Theme1).type, (theme as Theme2).background);
+            } catch (error) {
+                console.error('YCommentView', error);
+            }
         }
     },
     mounted() {
