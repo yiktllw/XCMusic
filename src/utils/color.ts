@@ -116,6 +116,27 @@ export namespace YColor {
     }
 
     /**
+     * 从字符串中获取HEX颜色
+     * @param str 任意字符串
+     * @returns HEX颜色值
+     */
+    export function stringToHexColor(str: string): string {
+        // Step 1: 将字符串转换成数值哈希
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        // Step 2: 将哈希值分为 R, G, B
+        const r = (hash >> 16) & 0xFF;
+        const g = (hash >> 8) & 0xFF;
+        const b = hash & 0xFF;
+
+        // Step 3: 转换成Hex格式
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+    }
+
+    /**
      * 从图片中获取颜色,并根据主题类型设置背景颜色
      * @param {string} imgSrc 图片地址
      * @param {Document} document Document 对象
@@ -145,6 +166,7 @@ export namespace YColor {
             }
         });
     }
+
     /**
      * 设置背景颜色为主题色
      */
@@ -153,10 +175,11 @@ export namespace YColor {
         if (!DOM) return;
         (DOM as HTMLElement).style.background = 'var(--background-color)';
     }
+
     /**
      * 设置背景颜色为HEX颜色
      */
-    export function setBackgroundColorHex(hex: string, colorThemeType: COLOR_THEME_TYPE | undefined, themeBackground: string = '#131319') {
+    export function setBackgroundColorHex(hex: string, colorThemeType?: COLOR_THEME_TYPE, themeBackground: string = '#131319') {
         if (colorThemeType === 'dark') {
             setBackgroundColor(YColor.hexToRgb(hex));
         } else if (colorThemeType === 'light') {
@@ -170,6 +193,7 @@ export namespace YColor {
             (DOM as HTMLElement).style.background = `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
         }
     }
+
     /**
      * 从三个字母中获取HEX颜色
      */

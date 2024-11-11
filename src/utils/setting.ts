@@ -471,7 +471,7 @@ function createProxy(obj: SettingGroup): SettingGroup {
                         }
                         if (target[prop].value !== value) {
                             target[prop].value = value;
-                            console.log(`Set ${prop} to ${value}`);
+                            console.log(`Set ${prop} to `, JSON.stringify(value, null, '\t'));
                         }
                         return true;
                     }
