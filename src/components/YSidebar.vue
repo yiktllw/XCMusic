@@ -171,6 +171,7 @@ export default defineComponent({
             this.globalMsg.post('create-playlist')
         },
         openCtxMenu(event: MouseEvent, id: number, from: 'created-playlists' | 'subscribed-playlists') {
+            event.preventDefault();
             const playlist = from === 'created-playlists' ? this.userPlaylists.find((item) => item.id === id) : this.userSubscribes.find((item) => item.id === id);
             if (!playlist) return;
             const data: IPlaylistCtxData = {

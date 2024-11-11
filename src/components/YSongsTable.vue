@@ -635,6 +635,7 @@ export default defineComponent({
             return element.closest('.track-item') as HTMLElement;
         },
         handleUlContext(event: MouseEvent) {
+            event.preventDefault();
             const trackItem = this.getClosestTrackItem(event.target as HTMLElement);
             if (!trackItem) return;
 
