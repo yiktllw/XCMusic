@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/yiktllw/XCMusic/compare/v0.2.2...v0.2.3) (2024-11-11)
+
+
+### Features
+
+* 更新主页图片 ([839b641](https://github.com/yiktllw/XCMusic/commit/839b6419298f16b3baf0f944e544c498f6bb5f0c))
+* 实现编辑歌单信息 ([420423e](https://github.com/yiktllw/XCMusic/commit/420423e4595e3b541be09d210adff1a06224dfed))
+* 实现导入、导出设置为JSON文件 ([93210ea](https://github.com/yiktllw/XCMusic/commit/93210eab217a8c437d683d2ab8d6e90dae0ee9ae))
+* 实现开机自启动功能(win & mac) ([39cedf5](https://github.com/yiktllw/XCMusic/commit/39cedf5879229ae9cf893ef997e5821f6542cfd3))
+* 实装歌单界面的下载按钮和右键菜单的下载歌单 ([40f2cfe](https://github.com/yiktllw/XCMusic/commit/40f2cfeeaaf029f642022a3290bb39c46bc51dcd))
+* 收藏的专辑界面固定为主题色 ([35246f2](https://github.com/yiktllw/XCMusic/commit/35246f2305ad1dec84c06b1cff7d19203577c1e6))
+* 为本地音乐界面实现加载动画 ([d8ba630](https://github.com/yiktllw/XCMusic/commit/d8ba630b827534c6d71c58c0b8e1a3cc26a26a38))
+* 为设置-下载-本地路径添加有效性检查 ([b6605f3](https://github.com/yiktllw/XCMusic/commit/b6605f36a7f0312fd24d9190f7a9cc8f23c2ddce))
+* 为右键菜单阻止默认行为(网页端) ([9febc0b](https://github.com/yiktllw/XCMusic/commit/9febc0b0e4ca381a507a764140a56e3f0ca2bd67))
+* 新增: 设置-播放-启动时自动播放 ([f7c14a0](https://github.com/yiktllw/XCMusic/commit/f7c14a08f75d86c86acb94e42c1e0f40f5949ad5))
+* 新增下载管理界面 ([e3bd7a2](https://github.com/yiktllw/XCMusic/commit/e3bd7a2b0c82846b01b764e0c54d70922b859453))
+* 新增字符串生成颜色方法 ([3ad9dde](https://github.com/yiktllw/XCMusic/commit/3ad9ddec2692ea4b17e01fb15f3d4edb17bc83a0))
+* 优化自定义主题界面显示；删除不必要的组件 ([97dbd33](https://github.com/yiktllw/XCMusic/commit/97dbd330cb0825a50b0367a34c216d0745bab445))
+* 优化markdown显示效果，更新README.md ([3f847fb](https://github.com/yiktllw/XCMusic/commit/3f847fbfe2cd653c9155d26ecba45bb44d69d0ec))
+* 在后端添加下载进度监控功能；添加注释 ([190a750](https://github.com/yiktllw/XCMusic/commit/190a75071e8d8821c27849a445cdfe4ca44af0c2))
+* 自定义主题时，可以从文字获取颜色 ([f99d793](https://github.com/yiktllw/XCMusic/commit/f99d79354c5bfbaf44e235bc3d605ccbf71b9700))
+* 自定义主题时可以选择所有系统主题作为预设 ([cf256e9](https://github.com/yiktllw/XCMusic/commit/cf256e9da3f7b0967c9032fcf3fc87e01c3f557d))
+
+
+### Bug Fixes
+
+* 修复评论界面异常 ([1257348](https://github.com/yiktllw/XCMusic/commit/12573483d296a90af8df318f43646e372d6c4286))
+* 修复收藏的专辑界面跳转错误 ([4e1faa2](https://github.com/yiktllw/XCMusic/commit/4e1faa2c7df9790b6ecb161bbda367a0f83d2ca2))
+* 修复主题色相关错误 ([61a850f](https://github.com/yiktllw/XCMusic/commit/61a850fc07a997f09c96e565e5d6e48511f18518))
+* 修复专辑界面reel信息丢失 ([fa4142c](https://github.com/yiktllw/XCMusic/commit/fa4142c60aff3e514d4a97e1005831e648884d4e))
+
 ### [0.2.2](https://github.com/yiktllw/XCMusic/compare/v0.2.1...v0.2.2) (2024-11-10)
 
 
