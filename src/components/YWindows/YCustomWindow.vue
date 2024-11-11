@@ -305,8 +305,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import YWindow from './YWindow.vue';
-import YScroll from './YScroll.vue';
+import YWindow from '../YWindow.vue';
+import YScroll from '../YScroll.vue';
 import { Theme, Theme1, Theme2 } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { YColor } from '@/utils/color';

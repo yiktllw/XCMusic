@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts">
-import YConfirmWindow from '@/components/YConfirmWindow.vue';
 import { defineComponent, markRaw, ref } from 'vue';
 import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
@@ -15,7 +14,6 @@ import YSongsTable from '@/components/YSongsTable.vue';
 export default defineComponent({
     name: 'YTestView',
     components: {
-        YConfirmWindow,
         YSongsTable,
     },
     setup() {

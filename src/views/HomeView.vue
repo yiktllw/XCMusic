@@ -65,16 +65,16 @@ import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
 import YPlayUI from '@/components/YPlayUI.vue';
-import YLoginWindow from '@/components/YLoginWindow.vue';
+import YLoginWindow from '@/components/YWindows/YLoginWindow.vue';
 import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
 import { Message } from '@/dual/YMessageC';
 import { IPlaylistCtxData, songItems, playlistItems, IMenuClick } from '@/dual/YContextMenuItemC';
 import { playlist, useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
-import YCustomWindow from '@/components/YCustomWindow.vue';
-import YCloseWindow from '@/components/YCloseWindow.vue';
+import YCustomWindow from '@/components/YWindows/YCustomWindow.vue';
+import YCloseWindow from '@/components/YWindows/YCloseWindow.vue';
 import { IConfirm } from '@/utils/globalMsg';
-import YConfirmWindow from '@/components/YConfirmWindow.vue';
+import YConfirmWindow from '@/components/YWindows/YConfirmWindow.vue';
 import { ITrack } from '@/utils/tracks';
 
 export default defineComponent({

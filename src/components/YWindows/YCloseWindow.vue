@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import YWindow from './YWindow.vue';
+import YWindow from '../YWindow.vue';
 import { useStore } from 'vuex';
 
 export default defineComponent({

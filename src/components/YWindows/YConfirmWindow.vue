@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import YWindow from './YWindow.vue';
+import YWindow from '../YWindow.vue';
 import { IConfirm } from '@/utils/globalMsg';
 
 export default defineComponent({
