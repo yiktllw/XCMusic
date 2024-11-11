@@ -29,6 +29,7 @@
 		"view_comment": "View Comments"
 	},
 	"create_custom_theme": {
+		"color_from_str": "String To Color",
 		"font_color": "Font Color",
 		"font_color_primary": "Primary",
 		"font_color_quaternary": "Quaternary",

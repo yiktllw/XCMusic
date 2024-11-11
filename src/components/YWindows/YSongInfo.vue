@@ -111,7 +111,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import YWindow from '@/components/YWindow.vue';
-import YScroll from './YScroll.vue';
+import YScroll from '../YScroll.vue';
 import { Message } from '@/dual/YMessageC';
 import { isLocal } from '@/utils/localTracks_renderer';
 import { useStore } from 'vuex';

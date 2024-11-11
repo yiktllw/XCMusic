@@ -29,6 +29,7 @@
 		"view_comment": "查看评论"
 	},
 	"create_custom_theme": {
+		"color_from_str": "文字转颜色",
 		"font_color": "字体颜色",
 		"font_color_primary": "主要字体颜色",
 		"font_color_quaternary": "次次要字体颜色",

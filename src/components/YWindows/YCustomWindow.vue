@@ -141,6 +141,22 @@
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColor).fontColorLow" />
                             </div>
+                            <div class="check-item">
+                                <div class="label">
+                                    {{ $t('create_custom_theme.color_from_str') }}
+                                </div>
+                                <textarea class="input" :spellcheck="false" @input="setColorFromStr" v-model="str" />
+                            </div>
+                            <div class="color-display">
+                                <div class="color-block" :style="{
+                                    backgroundColor: colorFromStr,
+                                }" />
+                                <div class="color-display-text">
+                                    {{ colorFromStr }}
+                                </div>
+                                <img src="@/assets/copy.svg" class="copy-img g-icon" @click="copy(colorFromStr)"
+                                    :title="$t('song_info.click_to_copy')" />
+                            </div>
                         </div>
                     </YScroll>
                     <div class="preview" :style="{
@@ -307,12 +323,13 @@
 import { defineComponent, ref } from 'vue';
 import YWindow from '../YWindow.vue';
 import YScroll from '../YScroll.vue';
-import { Theme, Theme1, Theme2 } from '@/utils/theme';
+import { Theme, Theme2 } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { YColor } from '@/utils/color';
 import { darkThemeColors, hexToRgb } from '@/utils/color';
 import { Doc } from '@/utils/document';
 import { themes } from '@/utils/theme';
+import { Message } from '@/dual/YMessageC';
 
 export default defineComponent({
     name: 'YCustomWindow',
@@ -381,6 +398,8 @@ export default defineComponent({
             backgroundStyle: '',
             highlightColor: '#fe3c5a',
             appThemes: [] as Theme.IThemeCSS[],
+            colorFromStr: '#cc77bf',
+            str: 'xcmusic',
         }
     },
     computed: {
@@ -543,6 +562,17 @@ export default defineComponent({
                 this.applyTheme(theme);
             }
         },
+        setColorFromStr() {
+            this.colorFromStr = YColor.stringToHexColor(this.str);
+        },
+        copy(text: string) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('复制成功: ', text);
+                Message.post('success', `复制成功: ${text}`);
+            }, () => {
+                Message.post('error', `复制失败: ${text}`);
+            });
+        },
     }
 })
 </script>
@@ -610,6 +640,36 @@ select {
                 }
             }
 
+            .color-display {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 10px 0 0 130px;
+
+                .color-block {
+                    width: 40px;
+                    height: 20px;
+                    border: 1px solid var(--foreground-color);
+                }
+
+                .color-display-text {
+                    margin-left: 10px;
+                    color: var(--font-color-high);
+                    font-weight: bold;
+                }
+
+                .copy-img {
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                    margin-left: 10px;
+                    opacity: .7;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
         }
 
         .preview {
