@@ -20,7 +20,7 @@ export class Download {
     db: indexDB;
     downloadedSongs: Array<IDownloadedSong>;
     subscriber: Subscriber;
-    downloading: ITrack[] = [];
+    downloading: IDownloadProgress[] = [];
 
     constructor() {
         this.db = new indexDB('download', 'songs');
@@ -30,8 +30,6 @@ export class Download {
             'downloaded-songs',
             /** 下载中的歌曲 */
             'downloading',
-            /** 下载进度 */
-            'download-progress'
         ]);
         this.db.openDatabase().then(async () => {
             this.downloadedSongs = await this.db.getAllSongs();
@@ -53,12 +51,16 @@ export class Download {
                     name: track.name,
                     path: filePath
                 });
-                this.downloading = this.downloading.filter(song => song.id !== track.id);
+                this.downloading = this.downloading.filter(item => item.track.id !== track.id);
                 this.subscriber.exec('downloading');
                 this.subscriber.exec('downloaded-songs', track);
             });
             window.electron.ipcRenderer.on('download-progress', (data: IDownloadProgress) => {
-                this.subscriber.exec('download-progress', data);
+                const index = this.downloading.findIndex(item => item.track.id === data.track.id);
+                if (index !== -1) {
+                    this.downloading[index] = data;
+                }
+                this.subscriber.exec('downloading');
             });
         }
     }
@@ -72,12 +74,15 @@ export class Download {
             console.error('Not in Electron environment');
             return;
         }
-        if (this.downloading.some(song => song.id === track.id)) {
+        if (this.downloading.some(item => item.track.id === track.id)) {
             console.error('Song is already downloading: ', { ...track });
             return;
         }
         window.electron.ipcRenderer.send('download-song', url, track, downloadDir);
-        this.downloading.push(track);
+        this.downloading.push({
+            track: track,
+            percent: 0,
+        });
         this.subscriber.exec('downloading');
     }
 

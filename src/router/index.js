@@ -155,6 +155,11 @@ const routes = [
                 component: () => import('../views/YLocalSongsView.vue'),
             },
             {
+                path: 'download',
+                name: 'Download',
+                component: () => import('../views/YDownloadView.vue'),
+            },
+            {
                 path: 'audio/test',
                 name: 'AudioTest',
                 component: () => import('../views/YAudioView.vue'),

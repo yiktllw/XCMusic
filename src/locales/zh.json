@@ -76,10 +76,13 @@
 	},
 	"local_music": "本地音乐",
 	"localsongs": {
-		"addpaths": "设置中添加的路径"
+		"addpaths": "设置中添加的路径",
+		"downloaded": "已下载",
+		"downloading": "正在下载"
 	},
 	"login": "登录",
 	"logout": "退出",
+	"manage_download": "下载管理",
 	"message": {
 		"homeview": {
 			"add_to_playlist_success": "已添加到下一首播放",

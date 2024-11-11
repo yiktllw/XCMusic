@@ -76,10 +76,13 @@
 	},
 	"local_music": "Local Music",
 	"localsongs": {
-		"addpaths": "Added Paths in Settings"
+		"addpaths": "Added Paths in Settings",
+		"downloaded": "Downloaded",
+		"downloading": "Downloading"
 	},
 	"login": "Login",
 	"logout": "Logout",
+	"manage_download": "Manage Download",
 	"message": {
 		"homeview": {
 			"add_to_playlist_success": "Added to playlist",

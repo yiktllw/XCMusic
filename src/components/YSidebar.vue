@@ -20,9 +20,15 @@
                 </div>
             </button>
             <button class="big-button font-color-standard" @click="$router.push({ path: '/local' })">
-                <img src="@/assets/download.svg" class="g-icon big-button-icon" />
+                <img src="@/assets/local.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('local_music') }}
+                </div>
+            </button>
+            <button class="big-button font-color-standard" @click="$router.push({ path: '/download' })">
+                <img src="@/assets/download.svg" class="g-icon big-button-icon" />
+                <div class="big-button-text">
+                    {{ $t('manage_download') }}
                 </div>
             </button>
             <div class="split-line"></div>

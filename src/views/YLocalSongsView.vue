@@ -1,9 +1,9 @@
 <template>
     <div class="main">
-        <YHeader :switcher="switcher" @new-position="handlePosition" />
-        <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="tracks"
-            :showTrackPopularity="false" :id="'YLocalSongsView.vue'" v-if="position === 'download'" />
-        <div class="local" v-else>
+        <div class="title">
+            {{ $t('local_music') }}
+        </div>
+        <div class="local">
             <div class="path-info font-color-main">
                 <div class="path-title">
                     {{ $t('localsongs.addpaths') + ' :' }}
@@ -24,8 +24,7 @@
 import { defineComponent, toRaw } from 'vue';
 import { useStore } from 'vuex';
 import YSongsTable from '@/components/YSongsTable.vue';
-import YHeader from '@/components/YHeader.vue';
-import { ITrack, TrackIds, Tracks } from '@/utils/tracks';
+import { ITrack, Tracks } from '@/utils/tracks';
 import { YColor } from '@/utils/color';
 import { musicFile } from '@/utils/localTracks';
 
@@ -33,12 +32,10 @@ export default defineComponent({
     name: 'YLocalSongsView',
     components: {
         YSongsTable,
-        YHeader,
     },
     setup() {
         const store = useStore();
         return {
-            download: store.state.download,
             setting: store.state.setting,
         }
     },
@@ -46,64 +43,28 @@ export default defineComponent({
     },
     data() {
         return {
-            tracks: [] as ITrack[],
             localTracks: [] as ITrack[],
             localPaths: [] as string[],
-            position: 'download',
-            switcher: [
-                {
-                    num: 0,
-                    showNum: false,
-                    position: 'download',
-                    display: 'header.local_music.downloaded_songs',
-                },
-                {
-                    num: 0,
-                    showNum: false,
-                    position: 'local',
-                    display: 'header.local_music.local_songs',
-                },
-            ],
         };
     },
     methods: {
-        async getDownloadedTracks() {
-            const ids = this.download.downloadedSongIds;
-            const temp = new TrackIds(ids);
-            await temp.initData();
-            this.tracks = temp.tracks;
-        },
-        async handlePosition(position: string) {
-            this.position = position;
-            if (position === 'download') {
-                this.getDownloadedTracks();
-            } else {
-                const paths = toRaw(this.setting.download.localPaths);
-                let res: musicFile[] = [];
-                for (const path of paths) {
-                    res = res.concat(await window.electron.ipcRenderer.invoke('get-local-tracks', path));
-                }
-                this.localTracks = (new Tracks({
-                    url: 'local',
-                    tracks: res,
-                })).tracks;
-            }
+        async init() {
+            const paths = toRaw(this.setting.download.localPaths);
+            let res: musicFile[] = [];
+            for (const path of paths)
+                res = res.concat(await window.electron.ipcRenderer.invoke('get-local-tracks', path));
+            this.localTracks = (new Tracks({
+                url: 'local',
+                tracks: res,
+            })).tracks;
         },
     },
     mounted() {
         YColor.setBackgroundColorTheme();
-        this.getDownloadedTracks();
+        this.init();
         this.localPaths = toRaw(this.setting.download.localPaths);
-        this.download.subscriber.on({
-            id: 'YLocalSongsView',
-            type: 'downloaded-songs',
-            func: async () => {
-                await this.getDownloadedTracks();
-            }
-        })
     },
     beforeUnmount() {
-        this.download.subscriber.offAll('YLocalSongsView');
     },
 })
 </script>
@@ -111,6 +72,16 @@ export default defineComponent({
 <style lang="scss" scoped>
 .main {
     padding: 0;
+    text-align: left;
+    margin-bottom: 20px;
+
+    .title {
+        width: inherit;
+        font-size: 20px;
+        margin: 15px 30px;
+        font-weight: bold;
+        color: var(--font-color-main);
+    }
 
     .local {
         width: 100%;
