@@ -1,7 +1,7 @@
-/*-----------------------------------------*
+/*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * rendererEvents.ts 为主进程中，处理渲染进程事件的文件
-*-----------------------------------------*/
+*---------------------------------------------------------------*/
 
 import { ipcMain, BrowserWindow, dialog, app } from 'electron';
 import { Download } from './download';
@@ -83,9 +83,10 @@ ipcMain.handle('get-local-tracks', async (event, dirPath) => {
 });
 
 ipcMain.on('download-song', async (event, songUrl, track, downloadDir) => {
+    const win = getCurrentWindow();
     try {
         // 下载歌曲文件
-        const filePath = await Download.song(songUrl, track, downloadDir);
+        const filePath = await Download.song(songUrl, track, downloadDir, win);
         event.reply('download-song-reply', filePath, {
             filePath: filePath,
             track: track

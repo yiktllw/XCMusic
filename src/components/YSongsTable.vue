@@ -20,9 +20,7 @@
                     <div v-if="resortable" class="sort-content">
                         <img :src="sortingStates[currentSortingIndex].icon" class="sort-icon g-icon" />
                         <span style="font-size:13px; color: var(--font-color-standard);">
-                            {{
-                                $t(sortingStates[currentSortingIndex].text)
-                            }}
+                            {{ $t(sortingStates[currentSortingIndex].text) }}
                         </span>
                     </div>
                 </button>

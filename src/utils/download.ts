@@ -1,10 +1,10 @@
-/*-----------------------------------------*
+/*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * download.ts 为在主进程中下载歌曲的函数
  * 请勿在渲染进程中调用！
  * 请勿在渲染进程中调用！
  * 请勿在渲染进程中调用！
-*-----------------------------------------*/
+*---------------------------------------------------------------*/
 
 import axios from 'axios';
 const fs = require('fs');
@@ -12,13 +12,19 @@ const path = require('path');
 const NodeID3 = require('node-id3');
 import flac from 'flac-metadata';
 import { ITrack } from './tracks';
+import { BrowserWindow, ipcMain } from 'electron';
+
+export interface IDownloadProgress {
+    track: ITrack;
+    percent: number;
+}
 
 export class Download {
     /**
      * 下载歌曲文件并保存到本地
      * @returns 下载的文件路径
      */
-    static async song(songUrl: string, track: ITrack, downloadDir: string): Promise<string> {
+    static async song(songUrl: string, track: ITrack, downloadDir: string, win: BrowserWindow | null): Promise<string> {
         if (!fs.existsSync(downloadDir)) {
             // throw new Error('Invalid download directory');
         }
@@ -48,8 +54,14 @@ export class Download {
             family: 4, // 使用 IPv4
             timeout: 30000, // 设置超时时间为30秒
             onDownloadProgress(progressEvent) {
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded));
-                console.log(`Downloading ${name}.${fileExtension}: ${percentCompleted}% completed`);
+                if (win) {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded));
+                    const progress: IDownloadProgress = {
+                        track: track,
+                        percent: percentCompleted
+                    };
+                    win.webContents.send('download-progress', progress);
+                }
             },
         });
 

@@ -1,13 +1,14 @@
-/*-----------------------------------------*
+/*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * download_renderer.ts 为在渲染进程中下载歌曲的函数
  * 下载任务由主进程完成
  * Download类负责将下载任务添加到主进程，以及管理下载完成的歌曲
-*-----------------------------------------*/
+*---------------------------------------------------------------*/
 
 import indexDB from '@/utils/indexDB';
 import { Subscriber } from './subscribe';
 import { ITrack } from './tracks';
+import { IDownloadProgress } from './download';
 
 export interface IDownloadedSong {
     id: number;
@@ -19,19 +20,28 @@ export class Download {
     db: indexDB;
     downloadedSongs: Array<IDownloadedSong>;
     subscriber: Subscriber;
+    downloading: ITrack[] = [];
 
     constructor() {
         this.db = new indexDB('download', 'songs');
         this.downloadedSongs = [];
         this.subscriber = new Subscriber([
-            'downloaded-songs'
+            /** 已下载的歌曲 */
+            'downloaded-songs',
+            /** 下载中的歌曲 */
+            'downloading',
+            /** 下载进度 */
+            'download-progress'
         ]);
         this.db.openDatabase().then(async () => {
             this.downloadedSongs = await this.db.getAllSongs();
             this.subscriber.exec('downloaded-songs');
         });
         if (window.electron?.isElectron) {
-            window.electron.ipcRenderer.on('download-song-reply', async (event, data, nouse) => {
+            window.electron.ipcRenderer.on('download-song-reply', async (_filePath: string, data: {
+                filePath: string;
+                track: ITrack;
+            }) => {
                 const { filePath, track } = data;
                 await this.db.addDownloadedSong({
                     id: track.id,
@@ -43,7 +53,12 @@ export class Download {
                     name: track.name,
                     path: filePath
                 });
-                this.subscriber.exec('downloaded-songs');
+                this.downloading = this.downloading.filter(song => song.id !== track.id);
+                this.subscriber.exec('downloading');
+                this.subscriber.exec('downloaded-songs', track);
+            });
+            window.electron.ipcRenderer.on('download-progress', (data: IDownloadProgress) => {
+                this.subscriber.exec('download-progress', data);
             });
         }
     }
@@ -57,7 +72,13 @@ export class Download {
             console.error('Not in Electron environment');
             return;
         }
+        if (this.downloading.some(song => song.id === track.id)) {
+            console.error('Song is already downloading: ', { ...track });
+            return;
+        }
         window.electron.ipcRenderer.send('download-song', url, track, downloadDir);
+        this.downloading.push(track);
+        this.subscriber.exec('downloading');
     }
 
     async delete(id: number) {
