@@ -151,6 +151,18 @@
                     {{ $t('header.setting_view.play') }}
                 </div>
                 <div class="play-content item-content">
+                    <div class="content-item ">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.play.launch') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="checkbox" id="setting_auto_play" name="auto_play"
+                                v-model="autoPlay" @change="setAutoPlay(autoPlay)">
+                            <label for="setting_auto_play">
+                                {{ $t('setting_view.play.auto_play') }}
+                            </label>
+                        </div>
+                    </div>
                     <div class="content-item item-play-volume_leveling">
                         <div class="content-item-title">
                             {{ $t('setting_view.play.volume_leveling') }}
@@ -405,6 +417,7 @@ export default defineComponent({
             selectedDevice: '' as string,
             localPaths: [] as string[],
             openAtLogin: false,
+            autoPlay: false,
         }
     },
     methods: {
@@ -600,7 +613,11 @@ export default defineComponent({
         setOpenAtLogin(bool: boolean) {
             this.openAtLogin = bool;
             this.setting.system.openAtLogin = bool;
-        }
+        },
+        setAutoPlay(bool: boolean) {
+            this.autoPlay = bool;
+            this.setting.play.autoPlay = bool;
+        },
     },
     mounted() {
         YColor.setBackgroundColorTheme();
@@ -621,6 +638,7 @@ export default defineComponent({
         this.quality = this.setting.download.quality;
         this.localPaths = this.setting.download.localPaths;
         this.openAtLogin = this.setting.system.openAtLogin;
+        this.autoPlay = this.setting.play.autoPlay;
         this.getDevices();
     },
     beforeUnmount() {

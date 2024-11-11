@@ -29,92 +29,50 @@ if (window.electron?.isElectron) {
 }
 
 export class Player {
-    /**
-     * 音频对象
-     */
+    /** 音频对象 */
     _audio: HTMLAudioElement;
-    /**
-     * 因为_audio连接到了_audioContext，无法直接设置_audio的输出设备，所以需要一个新的音频对象来设置输出设备
-     */
+    /** 因为_audio连接到了_audioContext，无法直接设置_audio的输出设备，所以需要一个新的音频对象来设置输出设备 */
     _outputAudio: HTMLAudioElement;
-    /**
-     * 音频上下文，用于设置增益
-     */
+    /** 音频上下文，用于设置增益 */
     _audioContext: AudioContext | null;
-    /**
-     * 增益节点，用于设置音量均衡
-     */
+    /** 增益节点，用于设置音量均衡 */
     _gainNode: GainNode | null;
-    /**
-     * 播放列表
-     */
+    /** 播放列表 */
     _playlist: ITrack[];
-    /**
-     * 歌单ID
-     */
+    /** 歌单ID */
     _playlistId: number | string;
-    /**
-     * 当前播放的歌曲索引
-     */
+    /** 当前播放的歌曲索引 */
     _current: number;
-    /**
-     * 播放模式
-     */
+    /** 播放模式 */
     _mode: 'order' | 'listloop' | 'random' | 'loop' | 'listrandom';
-    /**
-     * 播放历史
-     */
+    /** 播放历史 */
     _history: ITrack[];
-    /**
-     * 播放历史索引
-     */
+    /** 播放历史索引 */
     _historyIndex: number;
-    /**
-     * 播放状态
-     */
+    /** 播放状态 */
     _playState: 'play' | 'pause';
-    /**
-     * 音量
-     */
+    /** 音量 */
     _volume: number;
-    /**
-     * 当前播放时间
-     */
+    /** 当前播放时间 */
     _currentTime: number | string;
-    /**
-     * 播放进度
-     */
+    /** 播放进度 */
     _progress: number | string;
-    /**
-     * 歌曲总时长
-     */
+    /** 歌曲总时长 */
     _duration: number | string;
-    /**
-     * 音质
-     */
+    /** 音质 */
     _quality: 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'jymaster';
     _volume_leveling: boolean;
-    /**
-     * 点歌功能
-     */
+    /** 点歌功能 */
     songPicker: SongPicker | undefined;
-    /**
-     * 更新时间的定时器
-     */
+    /** 更新时间的定时器 */
     _updateTime: null | NodeJS.Timeout;
-    /**
-     * 订阅事件
-     */
+    /** 订阅事件 */
     subscriber: Subscriber;
-    /**
-     * IndexDB, 用于存储播放列表
-     */
+    /** IndexDB, 用于存储播放列表 */
     db: indexDB;
     reloadInterval: null | NodeJS.Timeout = null;
     _mediaSessionInit: boolean;
-    /**
-     * 是否初始化设备
-     */
+    /** 是否初始化设备 */
     deviceInit: boolean = false;
     _sourceNode: MediaElementAudioSourceNode | undefined;
     _destination: MediaStreamAudioDestinationNode | undefined;
@@ -214,7 +172,8 @@ export class Player {
                             id: 'indexDB',
                             type: 'playerReady',
                             func: () => {
-                                this.playTrack(JSON.parse(lastTrack), true);
+                                const autoPlay = localStorage.getItem('setting.play.autoPlay') === 'true';
+                                this.playTrack(JSON.parse(lastTrack), autoPlay);
                                 console.log('Last track played', JSON.parse(lastTrack));
                             }
                         })

@@ -258,10 +258,12 @@
 		"open_at_login": "Open at Login",
 		"open_sys": "System",
 		"play": {
+			"auto_play": "Auto Play When Launched",
 			"dbclick": "Playlist",
 			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
 			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
 			"device": "Device",
+			"launch": "Launch",
 			"playui": "Play UI",
 			"show_spectrum": "Show Spectrum",
 			"volume_leveling": "Volume",

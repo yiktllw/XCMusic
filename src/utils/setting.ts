@@ -19,10 +19,15 @@ if (window.electron?.isElectron) {
 
 type SettingCatagory = {
     [key: string]: {
+        /** 设置项的值 */
         value: any,
+        /** 设置项的默认值(暂未使用) */
         default: any,
+        /** 检验器，验证值是否有效 */
         validation: (value: any) => boolean,
+        /** 更好支持数字类型 */
         type?: 'number',
+        /** 在导出设置时，是否忽略，默认忽略 */
         nosave?: boolean
     }
 }
@@ -32,40 +37,69 @@ export type SettingGroup = {
 };
 
 export interface Settings {
+    /** 播放设置 */
     play: {
+        /** 双击歌曲列表的行为 */
         dbclick: 'all' | 'single',
+        /** 是否启用音量均衡 */
         volume_leveling: boolean,
+        /** 音量 */
         volume: number,
+        /** 播放模式 */
         mode: string,
+        /** 播放音质 */
         quality: string,
+        /** 播放设备 */
         device: string,
+        /** 是否启用自动播放 */
+        autoPlay: boolean,
     },
+    /** 播放界面设置 */
     playui: {
+        /** 是否显示播放界面的频谱图 */
         spectrum: boolean,
     }
+    /** 下载设置 */
     download: {
+        /** 下载路径 */
         path: string,
+        /** 下载音质 */
         quality: string,
+        /** 本地音乐路径 */
         localPaths: string[],
     }
+    /** 显示设置 */
     display: {
+        /** 语言 */
         language: 'zh' | 'en',
+        /** 主题 */
         theme: string,
+        /** 用户自定义的主题 */
         userCustomThemes: Array<{
             data: Theme1 | Theme2,
             classContent: string,
         }>,
+        /** 缩放 */
         zoom: number,
+        /** 全屏时是否自动缩放 */
         fullscreenAutoZoom: boolean,
+        /** 侧边栏宽度 */
         sidebarWidth: number,
+        /** 歌曲列表的专辑列宽度 */
         albumWidth: number,
     },
+    /** 标题栏设置 */
     titleBar: {
+        /** 搜索历史 */
         searchHistory: string[],
+        /** 点击关闭按钮时的行为 */
         closeButton: 'quit' | 'minimize',
+        /** 是否 总是询问关闭按钮行为 */
         closeAlwaysAsk: boolean,
     },
+    /** 系统 */
     system: {
+        /** 开机自启动 */
         openAtLogin: boolean,
     }
 }
@@ -142,7 +176,19 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             }
-        }
+        },
+        autoPlay: {
+            value: localStorage.getItem('setting.play.autoPlay') === 'true',
+            default: false,
+            validation: (value) => {
+                let valid = validBoolean(value);
+                if (valid) {
+                    value = strToBool(value);
+                    localStorage.setItem('setting.play.autoPlay', value);
+                }
+                return valid;
+            },
+        },
     },
     playui: {
         spectrum: {
@@ -338,7 +384,7 @@ export const settingGroup: SettingGroup = {
             validation: (value) => {
                 let valid = false;
                 let isBool = typeof value === 'boolean';
-                
+
                 // 将value转换为boolean并得知是否有效
                 if (isBool) {
                     localStorage.setItem('setting.system.openAtLogin', value);
@@ -353,7 +399,7 @@ export const settingGroup: SettingGroup = {
                         valid = true;
                     }
                 }
-                
+
                 if (valid && window.electron?.isElectron) {
                     window.electron.ipcRenderer.send('open-at-login', value);
                 }
@@ -513,4 +559,13 @@ export function isValidDirectory(directoryPath: string): boolean {
     } catch (err) {
         return false;  // 如果出现错误，说明目录无效
     }
+}
+
+function validBoolean(value: any): boolean {
+    return typeof value === 'boolean' || (typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase()));
+}
+
+function strToBool(value: string | boolean): boolean {
+    if (typeof value === 'boolean') return value;
+    return value === 'true';
 }
