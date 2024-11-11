@@ -5,24 +5,19 @@
     <h1 align="center"> 
         XCMusic
     </h1>
-  <p align="center">
-    第三方网易云音乐客户端 / GUI of Netease Cloud Music
-    <br />
-    <a href="https://xc-music.vercel.app">访问Demo</a>
-    ·
-    <a href="https://github.com/yiktllw/XCMusic/issues">报告Bug</a>
-    ·
-    <a href="https://github.com/yiktllw/XCMusic/issues">提出新特性</a>
-    <br/>
-
-  </p>
+    <p align="center">
+        第三方网易云音乐客户端 / GUI of Netease Cloud Music
+        <br />
+        <a href="https://xc-music.vercel.app">访问Demo</a>
+        ·
+        <a href="https://github.com/yiktllw/XCMusic/issues">报告Bug</a>
+        ·
+        <a href="https://github.com/yiktllw/XCMusic/issues">提出新特性</a>
+        <br/>
+    </p>
     <div align="center">
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url]
     </div>
 </p>
 
@@ -107,10 +102,6 @@
 安装依赖
 ```shell
 npm install
-```
-解决依赖冲突
-```shell
-node babel_cmds.js
 ```
 运行Electron程序
 ```shell
