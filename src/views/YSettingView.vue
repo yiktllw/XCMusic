@@ -29,6 +29,18 @@
                             </label>
                         </div>
                     </div>
+                    <div class="content-item">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.open_sys') }}
+                        </div>
+                        <div class="content-item-content">
+                            <input type="checkbox" id="setting_open_at_login" name="open_at_login" v-model="openAtLogin"
+                                @change="setOpenAtLogin(openAtLogin)">
+                            <label for="setting_open_at_login">
+                                {{ $t('setting_view.open_at_login') }}
+                            </label>
+                        </div>
+                    </div>
                     <div class="content-item close-item">
                         <div class="content-item-title">
                             {{ $t('setting_view.close') }}
@@ -313,7 +325,7 @@ import { YColor } from '@/utils/color';
 import YHeader from '@/components/YHeader.vue';
 import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
-import { themes, Theme } from '@/utils/theme';
+import { themes } from '@/utils/theme';
 import packageJson from '../../package.json';
 import { qualities } from '@/utils/setting';
 
@@ -392,6 +404,7 @@ export default defineComponent({
             devices: [] as MediaDeviceInfo[],
             selectedDevice: '' as string,
             localPaths: [] as string[],
+            openAtLogin: false,
         }
     },
     methods: {
@@ -583,6 +596,10 @@ export default defineComponent({
                 return item.data;
             });
             this.themes = themes.concat(userCustomThemes);
+        },
+        setOpenAtLogin(bool: boolean) {
+            this.openAtLogin = bool;
+            this.setting.system.openAtLogin = bool;
         }
     },
     mounted() {
@@ -603,6 +620,7 @@ export default defineComponent({
         this.downloadPath = this.setting.download.path;
         this.quality = this.setting.download.quality;
         this.localPaths = this.setting.download.localPaths;
+        this.openAtLogin = this.setting.system.openAtLogin;
         this.getDevices();
     },
     beforeUnmount() {
@@ -841,21 +859,21 @@ export default defineComponent({
                         }
                     }
                 }
-                
-                .item-download-local{
-                    .local-path-content{
+
+                .item-download-local {
+                    .local-path-content {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        
-                        .head{
+
+                        .head {
                             display: flex;
                             flex-direction: row;
                             align-items: center;
                             width: 100%;
                             margin-bottom: 10px;
 
-                            .head-item{
+                            .head-item {
                                 cursor: pointer;
                                 color: var(--font-color-high);
                                 margin-right: 10px;
@@ -865,21 +883,21 @@ export default defineComponent({
                                 }
                             }
                         }
-                        
-                        .path-item{
+
+                        .path-item {
                             display: flex;
                             align-items: center;
                             flex-direction: row;
                             padding: 5px 0;
-                            
-                            .delete-img{
+
+                            .delete-img {
                                 cursor: pointer;
                                 margin-left: 10px;
                                 width: 16px;
                                 height: 16px;
                                 opacity: 0.7;
-                                
-                                &:hover{
+
+                                &:hover {
                                     opacity: 1;
                                 }
                             }

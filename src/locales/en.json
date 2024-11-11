@@ -255,6 +255,8 @@
 			"select": "Select"
 		},
 		"language": "Language",
+		"open_at_login": "Open at Login",
+		"open_sys": "System",
 		"play": {
 			"dbclick": "Playlist",
 			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",

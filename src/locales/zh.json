@@ -255,6 +255,8 @@
 			"select": "选择路径"
 		},
 		"language": "语言",
+		"open_at_login": "开机自启动",
+		"open_sys": "开机",
 		"play": {
 			"dbclick": "播放列表",
 			"dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",

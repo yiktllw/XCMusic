@@ -17,7 +17,6 @@ if (window.electron?.isElectron) {
     os = window.api.os;
 }
 
-
 type SettingCatagory = {
     [key: string]: {
         value: any,
@@ -65,6 +64,9 @@ export interface Settings {
         searchHistory: string[],
         closeButton: 'quit' | 'minimize',
         closeAlwaysAsk: boolean,
+    },
+    system: {
+        openAtLogin: boolean,
     }
 }
 
@@ -327,6 +329,37 @@ export const settingGroup: SettingGroup = {
                 }
                 return valid;
             }
+        },
+    },
+    system: {
+        openAtLogin: {
+            value: localStorage.getItem('setting.system.openAtLogin') === 'true',
+            default: false,
+            validation: (value) => {
+                let valid = false;
+                let isBool = typeof value === 'boolean';
+                
+                // 将value转换为boolean并得知是否有效
+                if (isBool) {
+                    localStorage.setItem('setting.system.openAtLogin', value);
+                    valid = true;
+                } else if (typeof value === 'string') {
+                    value = value.toLowerCase();
+                    if (value === 'true') {
+                        value = true;
+                        valid = true;
+                    } else if (value === 'false') {
+                        value = false;
+                        valid = true;
+                    }
+                }
+                
+                if (valid && window.electron?.isElectron) {
+                    window.electron.ipcRenderer.send('open-at-login', value);
+                }
+
+                return valid;
+            },
         },
     },
 }
