@@ -224,7 +224,14 @@
 	"setting_view": {
 		"about": {
 			"author": "Author",
+			"backup": "Backup",
 			"changelog": "Changelog",
+			"export": "Export To JSON",
+			"export_fail": "Export To JSON Failed",
+			"export_success": "Export To JSON Successfully",
+			"import": "Import From JSON",
+			"import_no_file": "No File Selected",
+			"import_success": "Imported Successfully",
 			"readme": "Readme",
 			"source_code": "Source",
 			"version": "Version"

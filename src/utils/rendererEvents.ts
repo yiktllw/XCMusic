@@ -7,6 +7,9 @@ import { ipcMain, BrowserWindow, dialog, app } from 'electron';
 import { Download } from './download';
 import { scanMusicDirectory } from './localTracks';
 import { ITrack } from './tracks';
+import { event } from '@yiktllw/ncm-api';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -80,6 +83,50 @@ ipcMain.handle('get-local-tracks', async (event, dirPath) => {
         // return err.toString();
         console.error('Error scanning music directory:', err);
         return [];
+    }
+});
+
+ipcMain.handle('save-json', async (event, json): Promise<null | string> => {
+    const { canceled, filePath } = await dialog.showSaveDialog({
+        title: '导出设置JSON文件',
+        defaultPath: path.join(app.getPath('desktop'), 'XCMusic_Settings.json'), // 默认路径为桌面
+        filters: [{ name: 'JSON', extensions: ['json'] }]
+    });
+    try {
+        if (canceled) {
+            return null;
+        } else if (filePath) {
+            fs.writeFileSync(filePath, json, 'utf-8');
+            return filePath;
+        } else {
+            console.error('No file path provided');
+            return null;
+        }
+    } catch (err) {
+        console.error('Error saving JSON file:', err);
+        return null;
+    }
+})
+
+ipcMain.handle('open-json', async (): Promise<null | string> => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        defaultPath: app.getPath('desktop'),
+        filters: [{ name: 'JSON', extensions: ['json'] }]
+    });
+    try {
+        if (canceled) {
+            return null;
+        } else if (filePaths.length > 0) {
+            const json = fs.readFileSync(filePaths[0], 'utf-8');
+            return json;
+        } else {
+            console.error('No file path provided');
+            return null;
+        }
+    } catch (err) {
+        console.error('Error opening JSON file:', err);
+        return null;
     }
 });
 

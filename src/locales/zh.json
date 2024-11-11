@@ -224,7 +224,14 @@
 	"setting_view": {
 		"about": {
 			"author": "作者",
+			"backup": "备份",
 			"changelog": "变更日志",
+			"export": "导出设置",
+			"export_fail": "导出失败",
+			"export_success": "导出成功",
+			"import": "导入设置",
+			"import_no_file": "请选择一个文件",
+			"import_success": "导入成功",
 			"readme": "介绍",
 			"source_code": "源代码",
 			"version": "版本"

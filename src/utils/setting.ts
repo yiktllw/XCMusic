@@ -36,6 +36,9 @@ export type SettingGroup = {
     [key: string]: SettingCatagory
 };
 
+/**
+ * 设置接口，用于获取智能提示
+ */
 export interface Settings {
     /** 播放设置 */
     play: {
@@ -104,6 +107,9 @@ export interface Settings {
     }
 }
 
+/**
+ * 设置类，用于实例化设置，内容与Settings接口一致
+ */
 export const settingGroup: SettingGroup = {
     play: {
         dbclick: {
@@ -410,6 +416,7 @@ export const settingGroup: SettingGroup = {
     },
 }
 
+/** 播放模式 */
 const modes = [
     'order',
     'random',
@@ -418,6 +425,7 @@ const modes = [
     'loop'
 ]
 
+/** 音质 */
 export const qualities = [
     'standard',
     'higher',
@@ -429,100 +437,56 @@ export const qualities = [
     'jymaster',
 ]
 
+/** 
+ * 设置类 
+ * 访问方法与Settings接口一致
+ * 通过代理实现，能够验证值的有效性
+*/
 export class Setting {
     constructor() {
-        return Setting.createProxy(settingGroup);
-    }
-    static createProxy(obj: SettingGroup): SettingGroup {
-        const proxyObj: { [key: string]: any } = {};
-
-        for (const key of Object.keys(obj)) {
-            if (typeof obj[key] === 'object' && obj[key] !== null) {
-                proxyObj[key] = new Proxy(obj[key] as SettingCatagory, {
-                    get(target, prop) {
-                        if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
-                            return target[prop].value;
-                        }
-                        return typeof prop === 'string' ? target[prop] : undefined;
-                    },
-                    set(target, prop, value) {
-                        if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
-                            if (target[prop].type === 'number') {
-                                value = parseFloat(value);
-                            }
-                            if (target[prop].validation && !target[prop].validation(value)) {
-                                throw new Error(`Invalid value: ${value} for ${prop}`);
-                            }
-                            if (target[prop].value !== value) {
-                                target[prop].value = value;
-                                console.log(`Set ${prop} to ${value}`);
-                            }
-                            return true;
-                        }
-                        return false; // 不允许修改非 value 属性的其他属性
-                    }
-                });
-            } else {
-                proxyObj[key] = obj[key];
-            }
-        }
-
-        return proxyObj;
-    }
-    /**
-     * 将当前设置导出为 JSON 字符串
-     * @param {Setting} instance Setting的实例
-     * @returns {string} JSON string
-     */
-    static exportToJSON(instance: any): string {
-        let settings: { [key: string]: any } = {};
-        for (const key of Object.keys(settingGroup)) {
-            settings[key] = {};
-            try {
-                if (settingGroup[key].nosave) continue;
-                if (settings[key].value !== undefined) {
-                    settings[key] = instance[key];
-                } else {
-                    for (const subKey of Object.keys(settingGroup[key])) {
-                        if (settingGroup[key][subKey].nosave) continue;
-                        settings[key][subKey] = instance[key][subKey];
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        // return settings;
-        return JSON.stringify(settings, null, '\t');
-    }
-
-    /**
-     * 
-     * @param {Setting} instance Setting的实例
-     * @param {String} json JSON字符串
-     */
-    static importFromJSON(instance: any, json: string) {
-        let settings = JSON.parse(json);
-        for (const key of Object.keys(settings)) {
-            try {
-                if (settings[key].value !== undefined) {
-                    instance[key] = settings[key];
-                } else {
-                    for (const subKey of Object.keys(settings[key])) {
-                        instance[key][subKey] = settings[key][subKey];
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        return instance;
+        return createProxy(settingGroup);
     }
 }
 
-/**
- * 获取默认下载目录
- */
+/** 创建一个SettingGroup的代理 */
+function createProxy(obj: SettingGroup): SettingGroup {
+    const proxyObj: { [key: string]: any } = {};
+
+    for (const key of Object.keys(obj)) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            proxyObj[key] = new Proxy(obj[key] as SettingCatagory, {
+                get(target, prop) {
+                    if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
+                        return target[prop].value;
+                    }
+                    return typeof prop === 'string' ? target[prop] : undefined;
+                },
+                set(target, prop, value) {
+                    if (typeof prop === 'string' && prop in target && 'value' in target[prop]) {
+                        if (target[prop].type === 'number') {
+                            value = parseFloat(value);
+                        }
+                        if (target[prop].validation && !target[prop].validation(value)) {
+                            throw new Error(`Invalid value: ${value} for ${prop}`);
+                        }
+                        if (target[prop].value !== value) {
+                            target[prop].value = value;
+                            console.log(`Set ${prop} to ${value}`);
+                        }
+                        return true;
+                    }
+                    return false; // 不允许修改非 value 属性的其他属性
+                }
+            });
+        } else {
+            proxyObj[key] = obj[key];
+        }
+    }
+
+    return proxyObj;
+}
+
+/** 获取默认下载目录 */
 export function getDownloadDirectory(): string {
     if (!window.electron?.isElectron) {
         console.error('Not running in electron');
@@ -546,6 +510,55 @@ export function getDownloadDirectory(): string {
     return downloadDir;
 }
 
+/**
+ * 将当前设置导出为 JSON 字符串
+ * @param {Setting} instance Setting的实例
+ * @returns {string} JSON string
+ */
+export function exportToJSON(instance: any): string {
+    let settings: { [key: string]: any } = {};
+    for (const key of Object.keys(settingGroup)) {
+        settings[key] = {};
+        try {
+            if (settingGroup[key].nosave) continue;
+            if (settings[key].value !== undefined) {
+                settings[key] = instance[key];
+            } else {
+                for (const subKey of Object.keys(settingGroup[key])) {
+                    if (settingGroup[key][subKey].nosave) continue;
+                    settings[key][subKey] = instance[key][subKey];
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    // return settings;
+    return JSON.stringify(settings, null, '\t');
+}
+
+/**
+ * 
+ * @param {Setting} instance Setting的实例
+ * @param {String} json JSON字符串
+ */
+export function importFromJSON(instance: any, json: string): any {
+    let settings = JSON.parse(json);
+    for (const key of Object.keys(settings)) {
+        try {
+            if (settings[key].value !== undefined) {
+                instance[key] = settings[key];
+            } else {
+                for (const subKey of Object.keys(settings[key])) {
+                    instance[key][subKey] = settings[key][subKey];
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    return instance;
+}
 /** 
  * 检查目录是否有效
  */

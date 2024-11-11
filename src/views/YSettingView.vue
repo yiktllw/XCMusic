@@ -156,8 +156,8 @@
                             {{ $t('setting_view.play.launch') }}
                         </div>
                         <div class="content-item-content">
-                            <input type="checkbox" id="setting_auto_play" name="auto_play"
-                                v-model="autoPlay" @change="setAutoPlay(autoPlay)">
+                            <input type="checkbox" id="setting_auto_play" name="auto_play" v-model="autoPlay"
+                                @change="setAutoPlay(autoPlay)">
                             <label for="setting_auto_play">
                                 {{ $t('setting_view.play.auto_play') }}
                             </label>
@@ -279,6 +279,19 @@
                     {{ $t('header.setting_view.about') }}
                 </div>
                 <div class="about-content item-content">
+                    <div class="content-item item-backup">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.about.backup') }}
+                        </div>
+                        <div class="content-item-content backup-content">
+                            <div class="export backup-content-item" @click="exportToJSON">
+                                {{ $t('setting_view.about.export') }}
+                            </div>
+                            <div class="import backup-content-item" @click="importFromJSON">
+                                {{ $t('setting_view.about.import') }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="content-item item-about-version">
                         <div class="content-item-title">
                             {{ $t('setting_view.about.version') }}
@@ -339,7 +352,7 @@ import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
 import { themes } from '@/utils/theme';
 import packageJson from '../../package.json';
-import { qualities } from '@/utils/setting';
+import { exportToJSON, importFromJSON, qualities, Settings } from '@/utils/setting';
 
 export default defineComponent({
     name: 'YSettingView',
@@ -618,28 +631,52 @@ export default defineComponent({
             this.autoPlay = bool;
             this.setting.play.autoPlay = bool;
         },
+        async exportToJSON() {
+            if (!window.electron?.isElectron) return;
+            const json = exportToJSON(this.setting);
+            const savedPath = await window.electron.ipcRenderer.invoke('save-json', json);
+            if (savedPath) {
+                Message.post('success', this.$t('setting_view.about.export_success'));
+            } else {
+                Message.post('error', this.$t('setting_view.about.export_fail'));
+            }
+        },
+        async importFromJSON() {
+            if (!window.electron?.isElectron) return;
+            const json = await window.electron.ipcRenderer.invoke('open-json');
+            if (json) {
+                importFromJSON(this.setting, json);
+                Message.post('success', this.$t('setting_view.about.import_success'));
+            } else {
+                Message.post('error', this.$t('setting_view.about.import_no_file'));
+            }
+            this.init();
+        },
+        init() {
+            YColor.setBackgroundColorTheme();
+            this.theme = this.setting.display.theme;
+            const userCustomThemes = this.setting.display.userCustomThemes.map((item) => {
+                return item.data;
+            });
+            this.themes = this.themes.concat(userCustomThemes);
+            this.zoom = this.setting.display.zoom * 100;
+            this.language = this.setting.display.language;
+            this.closeBehavior = this.setting.titleBar.closeButton;
+            this.closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
+            this.auto_zoom = this.setting.display.fullscreenAutoZoom;
+            this.volume_leveling = this.setting.play.volume_leveling;
+            this.spectrum = this.setting.playui.spectrum;
+            this.dbclick = this.setting.play.dbclick;
+            this.downloadPath = this.setting.download.path;
+            this.quality = this.setting.download.quality;
+            this.localPaths = this.setting.download.localPaths;
+            this.openAtLogin = this.setting.system.openAtLogin;
+            this.autoPlay = this.setting.play.autoPlay;
+            this.getDevices();
+        }
     },
     mounted() {
-        YColor.setBackgroundColorTheme();
-        this.theme = this.setting.display.theme;
-        const userCustomThemes = this.setting.display.userCustomThemes.map((item) => {
-            return item.data;
-        });
-        this.themes = this.themes.concat(userCustomThemes);
-        this.zoom = this.setting.display.zoom * 100;
-        this.language = this.setting.display.language;
-        this.closeBehavior = this.setting.titleBar.closeButton;
-        this.closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
-        this.auto_zoom = this.setting.display.fullscreenAutoZoom;
-        this.volume_leveling = this.setting.play.volume_leveling;
-        this.spectrum = this.setting.playui.spectrum;
-        this.dbclick = this.setting.play.dbclick;
-        this.downloadPath = this.setting.download.path;
-        this.quality = this.setting.download.quality;
-        this.localPaths = this.setting.download.localPaths;
-        this.openAtLogin = this.setting.system.openAtLogin;
-        this.autoPlay = this.setting.play.autoPlay;
-        this.getDevices();
+        this.init();
     },
     beforeUnmount() {
         this.globalMsg.subscriber.offAll('YSettingView');
@@ -804,6 +841,22 @@ export default defineComponent({
 
                         label {
                             cursor: pointer;
+                        }
+                    }
+
+                    .backup-content {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+
+                        .backup-content-item {
+                            cursor: pointer;
+                            color: var(--font-color-high);
+                            margin-right: 10px;
+
+                            &:hover {
+                                color: var(--font-color-main);
+                            }
                         }
                     }
 
