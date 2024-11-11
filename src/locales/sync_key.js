@@ -1,3 +1,11 @@
+/*-----------------------------------------*
+ * YiktLLW .. 2025-03-21 .. Johannes Brahms
+ * 本文件用于将 en.json 的键复制到 zh.json 并排序
+ * 在sourceFileName中指定源文件路径
+ * 在targetFileName中指定目标文件路径
+*-----------------------------------------*/
+
+
 const sourceFileName = './src/locales/en.json';
 const targetFileName = './src/locales/zh.json';
 

@@ -404,11 +404,8 @@ export default defineComponent({
         }
     },
     async mounted() {
-        if (this.login.status) {
-            if (this.login.likelist?.length === 0) {
-                this.login.reloadLikelist();
-            }
-        }
+        if (this.login.status && this.login.likelist?.length === 0) this.login.reloadLikelist();
+
         this.alWidth = this.setting.display.albumWidth;
         this.nowPlaying = this.player.currentTrack?.id ?? 0;
         this.player.subscriber.on({
@@ -454,9 +451,7 @@ export default defineComponent({
         },
     },
     methods: {
-        isLocal(id: number | string) {
-            return isLocal(id);
-        },
+        isLocal(id: number | string) { return isLocal(id); },
         async playSongAndPlaylist(track: ITrack) {
             console.log('Play Song And Playlist:', track.id);
             if (!this.canSendPlaylist || this.setting.play.dbclick === 'single') {
@@ -492,28 +487,21 @@ export default defineComponent({
             // 计算鼠标移动距离
             this.deltaX = event.clientX - this.initialMouseX;
             // 计算新的专辑宽度
-            if (this.initialAlbumWidth - this.deltaX > 200 && this.initialAlbumWidth - this.deltaX < 400) {
+            if (this.initialAlbumWidth - this.deltaX > 200 && this.initialAlbumWidth - this.deltaX < 400)
                 this.newWidth = this.initialAlbumWidth - this.deltaX;
-            }
             // 设置专辑宽度
-            if (this.songs_album_ref && this.newWidth > 200 && this.newWidth < 400) {
+            if (this.songs_album_ref && this.newWidth > 200 && this.newWidth < 400)
                 this.songs_album_ref.style.width = `${this.newWidth}px`;
-            }
-
         },
         setAlbumWidth(width: number) {
-            if (this.songs_album_ref) {
-                this.songs_album_ref.style.width = `${width}px`;
-            }
+            if (this.songs_album_ref) this.songs_album_ref.style.width = `${width}px`;
             this.resizeByNewWidth(width);
         },
         // 根据新的专辑宽度调整歌曲名称和专辑的宽度
         resizeByNewWidth(newWidth: number) {
             let track_albums: NodeListOf<Element> | null = document.querySelectorAll('.track-album-ref');
             track_albums.forEach(element => {
-                if (element) { // 确保元素存在
-                    (element as HTMLElement).style.width = `${newWidth}px`;
-                }
+                if (element) (element as HTMLElement).style.width = `${newWidth}px`;
             });
             track_albums = null;
         },
@@ -743,6 +731,8 @@ export default defineComponent({
             let doms = this.main?.querySelectorAll(`#track-menu-${id}`) as unknown as HTMLElement[];
             if (doms) doms.forEach(dom => dom.style.display = 'none');
 
+            this.hoverTrackId = 0;
+
             if (this.id !== 'YPlaybar.vue') return;
 
             let domToBeShown = this.main?.querySelector(`#track-menu-2-${id}`) as HTMLElement;
@@ -750,16 +740,12 @@ export default defineComponent({
         },
         trackAlTns(name: string, tns: string | string[]) {
             let result = name;
-            if (tns?.length > 0) {
-                result += ' (' + tns + ')';
-            }
+            if (tns?.length > 0) result += ' (' + tns + ')';
             return result;
         },
         setFocused(id: number | string) {
             let dom = this.main?.querySelector(`#track-item-${id}`);
-            if (dom) {
-                dom?.classList.add('focused');
-            }
+            if (dom) dom?.classList.add('focused');
         },
         openSongComment(id: number | string) {
             if (!id || isLocal(id)) return;
@@ -789,9 +775,7 @@ export default defineComponent({
             // 在HomeView中处理
         },
         scrollToCurrentTrack(smooth = true) {
-            if (!this.player.currentTrack) {
-                return;
-            }
+            if (!this.player.currentTrack) return;
             let currentTrackIndex = null;
             const currentTrack = this.tracks.find((track, index) => {
                 if (track.id === this.player.currentTrack.id) {
@@ -800,9 +784,9 @@ export default defineComponent({
                 }
             });
             if (currentTrack && (currentTrackIndex ?? -1) >= 0 && typeof currentTrackIndex === 'number') {
-                if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current) {
+                if (Math.floor(currentTrackIndex / this.limit) + 1 !== this.page.current)
                     this.page.current = Math.floor(currentTrackIndex / this.limit) + 1;
-                }
+
                 this.$nextTick(() => {
                     let rowElement = this.main?.querySelector('.current_play_item');
                     if (rowElement) {
@@ -829,17 +813,12 @@ export default defineComponent({
             this.download.add(url, track, this.setting.download.path);
         },
         deletaFromPlaylist(id: number | string) {
-            // if (!id || isLocal(id)) return;
-            if (this.id !== 'YPlaybar.vue') {
-                return;
-            }
+            if (this.id !== 'YPlaybar.vue') return;
             this.tracks = this.tracks.filter((track) => track.id !== id);
             this.player.deleteTrack(id);
         },
     },
 })
-
-
 </script>
 
 <style src="./YSongsTable.scss" lang="scss" scoped></style>
