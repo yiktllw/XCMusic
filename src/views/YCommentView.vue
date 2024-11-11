@@ -31,7 +31,7 @@ import { defineComponent } from 'vue';
 import YComment from '@/components/YComment.vue';
 import { YTrackC } from '@/dual/YTrackC';
 import { YColor } from '@/utils/color';
-import { mapState, useStore } from 'vuex';
+import { useStore } from 'vuex';
 import { Theme1, Theme2 } from '@/utils/theme';
 
 export default defineComponent({
@@ -81,6 +81,7 @@ export default defineComponent({
         }
     },
     mounted() {
+        this.track.init();
         this.track.onTrackLoaded = async () => {
             await this.trackLoaded();
         };

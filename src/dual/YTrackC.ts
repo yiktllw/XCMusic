@@ -59,12 +59,12 @@ export class YTrackC implements ITrack {
             tns: ''
         };
         this._onTrackLoaded = () => { };
-        this.#init();
+        this.init();
     }
     /**
      * 初始化歌曲信息
      */
-    async #init() {
+    async init() {
         if (!this._id) {
             return;
         } else {

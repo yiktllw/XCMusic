@@ -95,6 +95,7 @@ export default defineComponent({
         },
     },
     mounted() {
+        this.cmt.initData();
     },
 });
 
