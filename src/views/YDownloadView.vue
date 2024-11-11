@@ -68,6 +68,8 @@ export default defineComponent({
             type: 'downloaded-songs',
             func: async () => {
                 await this.getDownloadedTracks();
+                this.downloading = this.download.downloading;
+                this.downloadingKey += 1;
             }
         });
         this.downloading = this.download.downloading;

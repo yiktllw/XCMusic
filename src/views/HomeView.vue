@@ -128,9 +128,6 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const player = store.state.player;
-        const setting = store.state.setting;
-        const login = store.state.login;
         const contextMenu = ref<typeof YContextMenu | null>(null);
         const playUI = ref<typeof YPlayUI | null>(null);
         const YSidebar_ref = ref<typeof YSidebar | null>(null);
@@ -138,9 +135,10 @@ export default defineComponent({
         const prevent_container = ref<HTMLElement | null>(null);
 
         return {
-            player,
-            setting,
-            login,
+            player: store.state.player,
+            setting: store.state.setting,
+            login: store.state.login,
+            download: store.state.download,
             contextMenu,
             playUI,
             YSidebar_ref,
@@ -395,7 +393,11 @@ export default defineComponent({
                     });
                     break;
                 case 'playlist-download':
-                    Message.post('info', '功能暂未实现');
+                    playlist.getAllTracks(arg.target).then(res => {
+                        this.download.addList(res);
+                        Message.post('success', this.$t('playlist_view.list_added_to_download'));
+                    })
+                    break;
                 case 'playlist-edit':
                     Message.post('info', '功能暂未实现');
                     break;

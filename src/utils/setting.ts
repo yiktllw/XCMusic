@@ -172,12 +172,12 @@ export const settingGroup: SettingGroup = {
             }
         },
         quality: {
-            value: localStorage.getItem('setting.play.quality') ?? 'standard',
+            value: localStorage.getItem('setting.download.quality') ?? 'standard',
             default: 'standard',
             validation: (value) => {
                 let valid = typeof value === 'string' && qualities.includes(value);
                 if (valid) {
-                    localStorage.setItem('setting.play.quality', value);
+                    localStorage.setItem('setting.download.quality', value);
                 }
                 return valid;
             },
@@ -444,7 +444,7 @@ export class Setting {
 /**
  * 获取默认下载目录
  */
-function getDownloadDirectory(): string {
+export function getDownloadDirectory(): string {
     if (!window.electron?.isElectron) {
         console.error('Not running in electron');
         return '';

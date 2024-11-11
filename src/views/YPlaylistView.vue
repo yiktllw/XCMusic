@@ -215,6 +215,7 @@ export default defineComponent({
             login: store.state.login,
             openedPlaylist: store.state.openedPlaylist,
             setting: store.state.setting,
+            download: store.state.download,
             playlist_songstable,
             album_songstable,
         };
@@ -542,7 +543,8 @@ export default defineComponent({
             }
         },
         downloadPlaylist() {
-            Message.post('info', '功能暂未实现');
+            this.download.addList(this.filteredTracks);
+            Message.post('success', this.$t('playlist_view.list_added_to_download'));
         },
         multiChoice() {
             Message.post('info', '功能暂未实现');

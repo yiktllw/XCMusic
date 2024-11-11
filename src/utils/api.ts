@@ -138,3 +138,20 @@ export namespace playlist {
     }
 }
 
+export namespace Song {
+    /**
+     * 获取歌曲的某个音质的链接
+     */
+    export async function getUrl(id: number, level: string): Promise<string> {
+        const url: string = await useApi('/song/url/v1', {
+            id: id,
+            level: level,
+            cookie: localStorage.getItem('login_cookie') ?? undefined,
+        }).then((res) => res.data[0].url).catch((err) => {
+            console.error('Failed to get URL:', err);
+            return '';
+        });
+        return url;
+    }
+}
+

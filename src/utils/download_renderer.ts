@@ -9,6 +9,8 @@ import indexDB from '@/utils/indexDB';
 import { Subscriber } from './subscribe';
 import { ITrack } from './tracks';
 import { IDownloadProgress } from './download';
+import { Song } from './api';
+import { getDownloadDirectory } from './setting';
 
 export interface IDownloadedSong {
     id: number;
@@ -20,7 +22,14 @@ export class Download {
     db: indexDB;
     downloadedSongs: Array<IDownloadedSong>;
     subscriber: Subscriber;
+    /**
+     * 正在下载的歌曲列表
+     */
     downloading: IDownloadProgress[] = [];
+    /**
+     * 预订了下载任务的歌曲列表
+     */
+    private downloadlist: ITrack[] = [];
 
     constructor() {
         this.db = new indexDB('download', 'songs');
@@ -30,6 +39,8 @@ export class Download {
             'downloaded-songs',
             /** 下载中的歌曲 */
             'downloading',
+            /** 预订了下载任务的歌曲 */
+            'downloadlist',
         ]);
         this.db.openDatabase().then(async () => {
             this.downloadedSongs = await this.db.getAllSongs();
@@ -62,6 +73,22 @@ export class Download {
                 }
                 this.subscriber.exec('downloading');
             });
+            this.subscriber.on({
+                id: 'download_renderer',
+                type: 'downloading',
+                func: async () => {
+                    if (this.downloading.length === 0 && this.downloadlist.length > 0) {
+                        const song = this.downloadlist.shift();
+                        if (!song) return;
+
+                        const url = await Song.getUrl(song.id, localStorage.getItem('setting.download.quality') ?? 'standard');
+                        const downloadDir = localStorage.getItem('setting.download.path') ?? getDownloadDirectory();
+                        if (!url || !downloadDir) return;
+
+                        this.add(url, song, downloadDir);
+                    }
+                }
+            })
         }
     }
 
@@ -83,6 +110,14 @@ export class Download {
             track: track,
             percent: 0,
         });
+        this.subscriber.exec('downloading');
+    }
+
+    addList(_list: ITrack[]) {
+        const list = _list.filter(item => !this.downloadlist.some(song => song.id === item.id) && !this.downloadedSongIds.includes(item.id));
+        if (list.length === 0) console.log('no new songs to download');
+        this.downloadlist.push(...list);
+        this.subscriber.exec('downloadlist');
         this.subscriber.exec('downloading');
     }
 
