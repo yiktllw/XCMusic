@@ -136,6 +136,22 @@ export namespace playlist {
             }
         })).tracks;
     }
+    /**
+     * 更新歌单信息
+     * @param id 歌单id
+     * @param name 歌单名称
+     * @param desc 歌单描述
+     */
+    export async function editPlaylist(id: number, name: string, desc: string) {
+        const cookie = localStorage.getItem('login_cookie');
+        if (!cookie) console.error('No login cookie found');
+        await useApi('/playlist/update', {
+            id: id,
+            name: name,
+            desc: desc,
+            cookie: cookie,
+        })
+    }
 }
 
 export namespace Song {

@@ -40,6 +40,7 @@
             <YCloseWindow v-if="showCloseWindow" @new-window-state="handleNewWindowState_closeWindow" />
             <YConfirmWindow :confirm="confirm" v-if="showConfirmWindow"
                 @new-window-state="handleNewWindowState_confirmWindow" />
+            <YEditPlaylistWindow :playlist="playlist_to_edit!" v-if="showEditPlaylistWindow" @new-window-state="handleNewWindowState_editPlaylistWindow" />
         </div>
         <div class="message-container">
             <div></div>
@@ -54,28 +55,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
 import YDisplayArea from '@/components/YDisplayArea.vue';
 import YSidebar from '../components/YSidebar.vue';
 import YTitlebar from '../components/YTitlebar.vue';
-import { useStore } from 'vuex';
 import YPlaybar from '../components/YPlaybar.vue';
 import YContextMenu from '@/components/YContextMenu.vue';
 import YAddToPlaylist from '@/components/YAddToPlaylist.vue';
 import YSongInfo from '@/components/YSongInfo.vue';
 import YMessage from '@/components/YMessage.vue';
 import YPlayUI from '@/components/YPlayUI.vue';
+import YCreatePlaylist from '@/components/YWindows/YCreatePlaylistWindow.vue';
 import YLoginWindow from '@/components/YWindows/YLoginWindow.vue';
-import YCreatePlaylist from '@/components/YCreatePlaylist.vue';
+import YConfirmWindow from '@/components/YWindows/YConfirmWindow.vue';
+import YCustomWindow from '@/components/YWindows/YCustomWindow.vue';
+import YCloseWindow from '@/components/YWindows/YCloseWindow.vue';
+import YEditPlaylistWindow from '@/components/YWindows/YEditPlaylistWindow.vue';
+import { useStore } from 'vuex';
+import { defineComponent, ref } from 'vue';
 import { Message } from '@/dual/YMessageC';
 import { IPlaylistCtxData, songItems, playlistItems, IMenuClick } from '@/dual/YContextMenuItemC';
 import { playlist, useApi } from '@/utils/api';
 import { isLocal } from '@/utils/localTracks_renderer';
-import YCustomWindow from '@/components/YWindows/YCustomWindow.vue';
-import YCloseWindow from '@/components/YWindows/YCloseWindow.vue';
 import { IConfirm } from '@/utils/globalMsg';
-import YConfirmWindow from '@/components/YWindows/YConfirmWindow.vue';
 import { ITrack } from '@/utils/tracks';
+import { IPlaylist } from '@/utils/login';
 
 export default defineComponent({
     name: 'App',
@@ -100,6 +103,8 @@ export default defineComponent({
             showCloseWindow: false,
             confirm: null as unknown as IConfirm,
             showConfirmWindow: false,
+            showEditPlaylistWindow: false,
+            playlist_to_edit: null as IPlaylist | null,
             msg: {
                 type: 'none',
                 message: '',
@@ -123,6 +128,7 @@ export default defineComponent({
         YCustomWindow,
         YCloseWindow,
         YConfirmWindow,
+        YEditPlaylistWindow,
     },
     computed: {
     },
@@ -197,7 +203,7 @@ export default defineComponent({
             func: (data: IPlaylistCtxData) => {
                 this.contextMenu?.showContextMenu();
                 this.menu = playlistItems;
-                this.target = data.id;
+                this.target = data;
                 this.posX = data.x + 5 + 'px';
                 this.posY = data.y + 5 + 'px';
                 let menuWidth = 198 + 5;
@@ -382,24 +388,27 @@ export default defineComponent({
                     this.showPreventContainer = true;
                     break;
                 case 'playlist-play':
-                    playlist.getAllTracks(arg.target).then((res) => {
+                    playlist.getAllTracks(arg.target.id).then((res) => {
                         this.player.playAll(res);
                         Message.post('success', 'message.playlist_view.added_to_playlist', true);
                     });
                 case 'playlist-addtoplaylist':
-                    playlist.getAllTracks(arg.target).then((res) => {
+                    playlist.getAllTracks(arg.target.id).then((res) => {
                         this.player.addPlaylist(res);
                         Message.post('success', 'message.playlist_view.added_to_playlist', true);
                     });
                     break;
                 case 'playlist-download':
-                    playlist.getAllTracks(arg.target).then(res => {
+                    playlist.getAllTracks(arg.target.id).then(res => {
                         this.download.addList(res);
                         Message.post('success', this.$t('playlist_view.list_added_to_download'));
                     })
                     break;
                 case 'playlist-edit':
-                    Message.post('info', '功能暂未实现');
+                    const _playlist: IPlaylist = arg.target.playlist;
+                    this.playlist_to_edit = _playlist;
+                    this.showEditPlaylistWindow = true;
+                    this.showPreventContainer = true;
                     break;
                 case 'playlist-delete':
                     const confirm: IConfirm = {
@@ -485,6 +494,12 @@ export default defineComponent({
         handleNewWindowState_confirmWindow(val: boolean) {
             if (val === false) {
                 this.showConfirmWindow = false;
+                this.showPreventContainer = false;
+            }
+        },
+        handleNewWindowState_editPlaylistWindow(val: boolean) {
+            if (val === false) {
+                this.showEditPlaylistWindow = false;
                 this.showPreventContainer = false;
             }
         },

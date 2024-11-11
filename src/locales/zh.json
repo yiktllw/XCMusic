@@ -20,6 +20,7 @@
 		"download": "下载",
 		"downloadAll": "下载全部",
 		"editPlaylist": "编辑歌单",
+		"edit_playlist": "编辑歌单信息",
 		"info": "查看歌曲信息",
 		"nextplay": "下一首播放",
 		"play": "播放",
@@ -60,6 +61,12 @@
 		"title": "创建歌单"
 	},
 	"default": "默认",
+	"edit_playlist": {
+		"description": "歌单描述",
+		"input_desc": "请输入歌单描述",
+		"input_name": "请输入歌单名称",
+		"name": "歌单名称"
+	},
 	"fans": "粉丝",
 	"header": {
 		"local_music": {

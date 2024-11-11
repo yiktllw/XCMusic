@@ -3,6 +3,8 @@
  * YContextMenuItemC.ts 为YContextMenu组件配套的处理工具
 *---------------------------------------------------------------*/
 
+import { IPlaylist } from "@/utils/login";
+
 interface ICtxMenuItem {
     /** 显示的文字 */
     label: string;
@@ -31,6 +33,8 @@ export interface IPlaylistCtxData {
     y: number;
     /** 触发菜单的来源 */
     from: 'created-playlists' | 'subscribed-playlists' | 'searched-playlists';
+    /** 侧边栏的歌单 */
+    playlist: IPlaylist;
 }
 
 export class YContextMenuItemC implements ICtxMenuItem {

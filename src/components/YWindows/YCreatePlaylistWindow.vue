@@ -25,13 +25,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import YWindow from './YWindow.vue';
+import YWindow from '../YWindow.vue';
 import { useApi } from '@/utils/api';
 import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
 
 export default defineComponent({
-    name: 'YCreatePlaylist',
+    name: 'YCreatePlaylistWindow',
     components: {
         YWindow,
     },

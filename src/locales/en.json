@@ -20,6 +20,7 @@
 		"download": "Download",
 		"downloadAll": "Download All",
 		"editPlaylist": "Edit Playlist",
+		"edit_playlist": "Edit Playlist Information",
 		"info": "Song Info",
 		"nextplay": "Play Next",
 		"play": "Play",
@@ -60,6 +61,12 @@
 		"title": "Create Playlist"
 	},
 	"default": "Default",
+	"edit_playlist": {
+		"description": "Description",
+		"input_desc": "Please enter a description",
+		"input_name": "Please enter a name",
+		"name": "Playlist Name"
+	},
 	"fans": "Fans",
 	"header": {
 		"local_music": {
