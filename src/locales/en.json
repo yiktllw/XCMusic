@@ -82,7 +82,7 @@
 	},
 	"login": "Login",
 	"logout": "Logout",
-	"manage_download": "Manage Download",
+	"manage_download": "Download",
 	"message": {
 		"homeview": {
 			"add_to_playlist_success": "Added to playlist",

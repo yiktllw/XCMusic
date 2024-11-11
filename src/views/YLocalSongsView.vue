@@ -14,7 +14,8 @@
                     </div>
                 </div>
             </div>
-            <YSongsTable :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="localTracks"
+            <YLoading v-if="loading" />
+            <YSongsTable v-else :resortable="false" :canSendPlaylist="false" :showHeader="false" v-model="localTracks"
                 :showTrackPopularity="false" :show-track-likes="false" :id="'YLocalSongsView.vue-2'" />
         </div>
     </div>
@@ -27,11 +28,13 @@ import YSongsTable from '@/components/YSongsTable.vue';
 import { ITrack, Tracks } from '@/utils/tracks';
 import { YColor } from '@/utils/color';
 import { musicFile } from '@/utils/localTracks';
+import YLoading from '@/components/YLoading.vue';
 
 export default defineComponent({
     name: 'YLocalSongsView',
     components: {
         YSongsTable,
+        YLoading,
     },
     setup() {
         const store = useStore();
@@ -45,6 +48,7 @@ export default defineComponent({
         return {
             localTracks: [] as ITrack[],
             localPaths: [] as string[],
+            loading: true,
         };
     },
     methods: {
@@ -57,6 +61,7 @@ export default defineComponent({
                 url: 'local',
                 tracks: res,
             })).tracks;
+            this.loading = false
         },
     },
     mounted() {
