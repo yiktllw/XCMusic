@@ -134,16 +134,16 @@
             <!-- 设置、最小化、最大化和关闭按钮 -->
             <button class="settings" @click="$router.push({ path: '/setting' })" :title="$t('titlebar.settings')"
                 v-if="type === 'default'">
-                <img class="img settings g-icon" src="../assets/settings.svg" alt="Settings" />
+                <img class="img settings g-icon" src="../assets/settings.svg" />
             </button>
             <button class="minimize " @click="minimize" :title="$t('titlebar.minimize')">
-                <img class="img minimize g-icon" src="../assets/min.svg" alt="Minimize" />
+                <img class="img minimize g-icon" src="../assets/min.svg" />
             </button>
             <button class="maximize " @click="maximize" :title="$t('titlebar.maximize')">
-                <img class="img maximize g-icon" src="../assets/max.svg" alt="Maximize" />
+                <img class="img maximize g-icon" src="../assets/max.svg" />
             </button>
             <button class="close" @click="close" :title="$t('titlebar.close')">
-                <img class="img close g-icon" src="../assets/close.svg" alt="Close" />
+                <img class="img close g-icon" src="../assets/close.svg" />
             </button>
         </div>
     </div>

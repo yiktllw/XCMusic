@@ -19,6 +19,7 @@ const events = [
     'open-ctx-menu-playlist',
     'confirm',
     'close-playui',
+    'refresh-sidebar',
 ]
 
 export interface IConfirm {

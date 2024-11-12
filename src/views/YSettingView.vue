@@ -144,6 +144,38 @@
                             </label>
                         </div>
                     </div>
+                    <div class="content-item item-sidebar">
+                        <div class="content-item-title">
+                            {{ $t('setting_view.display.sidebar') }}
+                        </div>
+                        <div class="content-item-content item-sidebar-content">
+                            <div class="item-sidebar-content-title">
+                                {{ $t('setting_view.display.hideInSidebar') }}
+                            </div>
+                            <div class="item-sidebar-content-checks">
+                                <input type="checkbox" id="setting_sidebar_favorite" name="setting_sidebar_favorite"
+                                    v-model="hideInSidebar_favorite" @change="setHideInSidebar">
+                                <label for="setting_sidebar_favorite">
+                                    {{ $t('playlist_view.my_favorite_musics') }}
+                                </label>
+                                <input type="checkbox" id="setting_sidebar_album" name="setting_sidebar_album"
+                                    v-model="hideInSidebar_album" @change="setHideInSidebar">
+                                <label for="setting_sidebar_album">
+                                    {{ $t('subscribed_album') }}
+                                </label>
+                                <input type="checkbox" id="setting_sidebar_local" name="setting_sidebar_local"
+                                    v-model="hideInSidebar_local" @change="setHideInSidebar">
+                                <label for="setting_sidebar_local">
+                                    {{ $t('local_music') }}
+                                </label>
+                                <input type="checkbox" id="setting_sidebar_download" name="setting_sidebar_download"
+                                    v-model="hideInSidebar_download" @change="setHideInSidebar">
+                                <label for="setting_sidebar_download">
+                                    {{ $t('manage_download') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="play item" id="play">
@@ -352,7 +384,7 @@ import { Message } from '@/dual/YMessageC';
 import { useStore } from 'vuex';
 import { themes } from '@/utils/theme';
 import packageJson from '../../package.json';
-import { exportToJSON, importFromJSON, qualities, Settings } from '@/utils/setting';
+import { exportToJSON, importFromJSON, qualities, TSideBarItems } from '@/utils/setting';
 
 export default defineComponent({
     name: 'YSettingView',
@@ -431,6 +463,10 @@ export default defineComponent({
             localPaths: [] as string[],
             openAtLogin: false,
             autoPlay: false,
+            hideInSidebar_favorite: false as boolean,
+            hideInSidebar_album: false as boolean,
+            hideInSidebar_local: false as boolean,
+            hideInSidebar_download: false as boolean,
         }
     },
     methods: {
@@ -631,6 +667,14 @@ export default defineComponent({
             this.autoPlay = bool;
             this.setting.play.autoPlay = bool;
         },
+        setHideInSidebar() {
+            const hideInSidebar: TSideBarItems[] = [];
+            (['favorite', 'album', 'local', 'download'] as TSideBarItems[]).forEach((item: TSideBarItems) => {
+                if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
+            });
+            this.setting.display.hideInSidebar = hideInSidebar;
+            this.globalMsg.post('refresh-sidebar');
+        },
         async exportToJSON() {
             if (!window.electron?.isElectron) return;
             const json = exportToJSON(this.setting);
@@ -672,6 +716,9 @@ export default defineComponent({
             this.localPaths = this.setting.download.localPaths;
             this.openAtLogin = this.setting.system.openAtLogin;
             this.autoPlay = this.setting.play.autoPlay;
+            this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
+                this[`hideInSidebar_${item}`] = true;
+            });
             this.getDevices();
         }
     },
@@ -877,6 +924,27 @@ export default defineComponent({
                         flex-direction: column;
                         line-height: 32.1px;
                         align-items: start;
+                    }
+                    
+                    .item-sidebar-content {
+                        display: flex;
+                        flex-direction: column;
+                        flex-wrap: auto;
+                        
+                        .item-sidebar-content-title {
+                            text-align: left;
+                            margin: 0 0 10px 3px;
+                        }
+                        
+                        .item-sidebar-content-checks {
+                            display: flex;
+                            align-items: center;
+                            flex-direction: row;
+                            
+                            label {
+                                margin-right: 15px;
+                            }
+                        }
                     }
                 }
 

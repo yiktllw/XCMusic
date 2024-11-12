@@ -39,7 +39,7 @@ export type SettingGroup = {
 /**
  * 设置接口，用于获取智能提示
  */
-export interface Settings {
+export interface ISettings {
     /** 播放设置 */
     play: {
         /** 双击歌曲列表的行为 */
@@ -90,6 +90,8 @@ export interface Settings {
         sidebarWidth: number,
         /** 歌曲列表的专辑列宽度 */
         albumWidth: number,
+        /** 在侧边栏中，隐藏的元素 */
+        hideInSidebar: TSideBarItems[],
     },
     /** 标题栏设置 */
     titleBar: {
@@ -342,6 +344,17 @@ export const settingGroup: SettingGroup = {
                 return valid;
             },
         },
+        hideInSidebar: {
+            value: JSON.parse(localStorage.getItem('setting.display.hideInSidebar') ?? '[]'),
+            default: [],
+            validation: (value) => {
+                let valid = Array.isArray(value) && value.every((item: string) => sidebarItems.includes(item));
+                if (valid) {
+                    localStorage.setItem('setting.display.hideInSidebar', JSON.stringify(value));
+                }
+                return valid;
+            },
+        }
     },
     titleBar: {
         searchHistory: {
@@ -436,6 +449,15 @@ export const qualities = [
     'sky',
     'jymaster',
 ]
+
+const sidebarItems = [
+    'favorite',
+    'album',
+    'local',
+    'download',
+]
+
+export type TSideBarItems = 'favorite' | 'album' | 'local' | 'download';
 
 /** 
  * 设置类 

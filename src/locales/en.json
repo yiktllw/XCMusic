@@ -261,7 +261,9 @@
 		"display": {
 			"fullscreen": "Fullscreen",
 			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
-			"press_f11_to_fullscreen": "Press F11 to Fullscreen"
+			"hideInSidebar": "Hide In Sidebar",
+			"press_f11_to_fullscreen": "Press F11 to Fullscreen",
+			"sidebar": "Sidebar"
 		},
 		"download": {
 			"add": "Add Path",

@@ -261,7 +261,9 @@
 		"display": {
 			"fullscreen": "全屏",
 			"fullscreen_auto_zoom": "全屏时自动缩放",
-			"press_f11_to_fullscreen": "按下F11键进入全屏"
+			"hideInSidebar": "在侧边栏隐藏的功能",
+			"press_f11_to_fullscreen": "按下F11键进入全屏",
+			"sidebar": "侧边栏"
 		},
 		"download": {
 			"add": "添加路径",

@@ -6,32 +6,32 @@
                 @click="$router.push({ path: '/greeting' })" />
         </div>
         <YScroll class="yscroll">
-            <button class="big-button font-color-standard"
+            <button v-if="!hideInSidebar.includes('favorite')" class="big-button font-color-standard"
                 @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })">
                 <img src="@/assets/like2.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('playlist_view.my_favorite_musics') }}
                 </div>
             </button>
-            <button class="big-button font-color-standard" @click="$router.push({ path: '/subscribe/album' })">
+            <button v-if="!hideInSidebar.includes('album')" class="big-button font-color-standard" @click="$router.push({ path: '/subscribe/album' })">
                 <img src="@/assets/subscribe2.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('subscribed_album') }}
                 </div>
             </button>
-            <button class="big-button font-color-standard" @click="$router.push({ path: '/local' })">
+            <button v-if="!hideInSidebar.includes('local')" class="big-button font-color-standard" @click="$router.push({ path: '/local' })">
                 <img src="@/assets/local.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('local_music') }}
                 </div>
             </button>
-            <button class="big-button font-color-standard" @click="$router.push({ path: '/download' })">
+            <button v-if="!hideInSidebar.includes('download')" class="big-button font-color-standard" @click="$router.push({ path: '/download' })">
                 <img src="@/assets/download.svg" class="g-icon big-button-icon" />
                 <div class="big-button-text">
                     {{ $t('manage_download') }}
                 </div>
             </button>
-            <div class="split-line"></div>
+            <div v-if="hideInSidebar.length < 4" class="split-line"></div>
             <div class="created-playlist">
                 <button class="switch-user-playlist  font-color-main" @click="showMyPlaylist = !showMyPlaylist">
                     <span style="margin-right: 5px;">
@@ -104,6 +104,7 @@ import { useStore } from 'vuex';
 import YScroll from './YScroll.vue';
 import { IPlaylistCtxData } from '@/dual/YContextMenuItemC';
 import { IPlaylist } from '@/utils/login';
+import { TSideBarItems } from '@/utils/setting';
 
 export default defineComponent({
     name: 'YSidebar',
@@ -117,6 +118,7 @@ export default defineComponent({
             activeButtonId: 0,
             userSubscribes: [] as IPlaylist[],
             userPlaylists: [] as IPlaylist[],
+            hideInSidebar: [] as TSideBarItems[],
         };
     },
     props: {
@@ -202,7 +204,14 @@ export default defineComponent({
             func: () => {
                 this.activeButtonId = this.OpenedPlaylist.id;
             },
-        })
+        });
+        this.globalMsg.subscriber.on({
+            id: 'YSidebar',
+            type: 'refresh-sidebar',
+            func: () => {
+                this.hideInSidebar = this.setting.display.hideInSidebar;
+            },
+        });
     },
     beforeUnmount() {
         this.login.subscriber.offAll('YSidebar');
