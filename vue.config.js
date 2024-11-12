@@ -74,23 +74,18 @@ module.exports = defineConfig({
                     },
                 },
                 {
-                    test: /\.md$/,  // 添加对 .md 文件的处理规则
-                    use: 'raw-loader',  // 将 Markdown 文件作为纯文本导入
+                    test: /\.md$/,
+                    use: 'raw-loader',
+                },
+                {
+                    test: /\.txt$/,
+                    use: 'raw-loader',
                 },
             ],
         },
         devServer: {
             port: 4321,
             host: 'localhost',
-            // proxy: {
-            //     '/search': {
-            //         target: 'http://localhost:43210',
-            //         changeOrigin: true,
-            //         pathRewrite: {
-            //             '^/search': '/search'
-            //         }
-            //     },
-            // },
         }
     },
 });

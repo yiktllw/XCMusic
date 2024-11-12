@@ -28,6 +28,7 @@
             "shims-svg",
             "shims-vue",
             "md",
+            "txt",
         ]
     },
     "include": [

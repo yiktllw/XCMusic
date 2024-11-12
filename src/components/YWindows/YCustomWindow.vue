@@ -323,13 +323,15 @@
 import { defineComponent, ref } from 'vue';
 import YWindow from '../YWindow.vue';
 import YScroll from '../YScroll.vue';
-import { Theme, Theme2 } from '@/utils/theme';
+import { Theme, Theme1, Theme2 } from '@/utils/theme';
 import { useStore } from 'vuex';
 import { YColor } from '@/utils/color';
 import { darkThemeColors, hexToRgb } from '@/utils/color';
 import { Doc } from '@/utils/document';
 import { themes } from '@/utils/theme';
 import { Message } from '@/dual/YMessageC';
+import themecss from '@/utils/theme.txt'
+import { CSSClass } from '@/dual/YCustomWindow';
 
 export default defineComponent({
     name: 'YCustomWindow',
@@ -496,52 +498,97 @@ export default defineComponent({
         nextIndex() {
             this.nowBackgroundIndex = (this.nowBackgroundIndex + 1) % darkThemeColors.length;
         },
-        getAppThemes() {
-            const themeGroup = themes.map((theme) => {
-                return `.theme-${theme.value}`;
-            });
-            const styleTags = document.head.querySelectorAll('style');
-
+        getAppThemes(): Theme.IThemeCSS[] {
+            const classes = this.extractThemeClasses(themecss);
             let res: Theme.IThemeCSS[] = [];
+            // 遍历所有主题
+            for (const key in classes) {
+                const _theme = classes[key];
+                // 按照分号分割，并去掉空格
+                const _theme_lines = _theme.split(';').filter((item) => item.trim() !== '').map((item) => item.trim());
 
-            for (let styleTag of styleTags) {
-                if (!styleTag.sheet) {
-                    continue;
-                }
-                // 获取 <style> 标签中的 CSS 规则
-                const cssRules = styleTag.sheet.cssRules
+                const highlightTxt = '--highlight-color-rgb:';
+                const fontColorTxt = '--font-color-rgb:';
+                const backgroundTxt = '--background-color:';
+                const foregroundTxt = '--foreground-color:';
+                const panelBackgroundTxt = '--panel-background-color:';
+                const invertTxt = 'invert(';
 
-                for (let cssRule of cssRules) {
-                    // 判断是否为 CSSStyleRule 类型
-                    if (cssRule instanceof CSSStyleRule) {
-                        if (themeGroup.includes(cssRule.selectorText)) {
-                            const appTheme = themes.find((theme) => theme.value === cssRule.selectorText.slice(7));
-                            // 获取 CSSStyleDeclaration 对象
-                            const cssStyleDeclaration = cssRule.style
-                            const background = cssStyleDeclaration.getPropertyValue('--background-color').trim();
-                            const foreground = cssStyleDeclaration.getPropertyValue('--foreground-color').trim();
-                            const panelBackground = cssStyleDeclaration.getPropertyValue('--panel-background-color').trim();
-                            const highlightColorRgb = cssStyleDeclaration.getPropertyValue('--highlight-color-rgb')
-                            const fontColorRgb = cssStyleDeclaration.getPropertyValue('--font-color-rgb')
-                            const iconInvert = cssStyleDeclaration.getPropertyValue('--icon-invert').includes('invert(0)');
-                            const _theme: Theme.IThemeCSS = {
-                                name: appTheme!.display,
-                                type: iconInvert ? 'dark' : 'light',
-                                background: background,
-                                foreground: foreground,
-                                panelBackground: panelBackground,
-                                highlight: this.rgbStrToHex(highlightColorRgb),
-                                autoBackgroundType: (appTheme as Theme2).background ? 'other' : 'dark',
-                                fontColors: {
-                                    fontColorAll: this.rgbStrToHex(fontColorRgb),
-                                },
-                            }
-                            res.push(_theme);
-                        }
+                let display = key;
+                let highlight = '#fe3c5a';
+                let fontColorAll = '#ffffff';
+                let background = '#000000';
+                let forground = '#ffffff';
+                let panelBackground = '#333333';
+                let type: 'dark' | 'light' = 'dark';
+                let autoBackgroundType: 'dark' | 'other' = 'dark';
+
+                // 遍历一个类的所有行
+                for (const line in _theme_lines) {
+                    let lineContent = _theme_lines[line];
+
+                    // 获取数据
+                    if (lineContent.startsWith(highlightTxt)) {
+                        highlight = this.rgbStrToHex(lineContent.replace(highlightTxt, ''));
+                    } else if (lineContent.startsWith(fontColorTxt)) {
+                        fontColorAll = this.rgbStrToHex(lineContent.replace(fontColorTxt, ''));
+                    } else if (lineContent.startsWith(backgroundTxt)) {
+                        background = lineContent.replace(backgroundTxt, '').trim();
+                    } else if (lineContent.startsWith(foregroundTxt)) {
+                        forground = lineContent.replace(foregroundTxt, '').trim();
+                    } else if (lineContent.startsWith(panelBackgroundTxt)) {
+                        panelBackground = lineContent.replace(panelBackgroundTxt, '').trim();
+                    } else if (lineContent.includes(invertTxt)) {
+                        if (lineContent.includes('(0)'))
+                            type = 'dark';
+                        else
+                            type = 'light';
                     }
                 }
+
+                // 判断是否是自动背景，并获取显示名
+                for (const index in themes) {
+                    const theme = themes[index];
+                    const val = key.substring(6);
+                    if (theme.value === val) {
+                        if ((theme as Theme2).background) {
+                            autoBackgroundType = 'other';
+                        }
+                        display = theme.display;
+                    }
+                }
+
+                res.push({
+                    name: display,
+                    type,
+                    background,
+                    foreground: forground,
+                    panelBackground,
+                    highlight,
+                    autoBackgroundType,
+                    fontColors: {
+                        fontColorAll,
+                    },
+                });
             }
             return res;
+        },
+        extractThemeClasses(content: string): CSSClass {
+            const themeClasses: CSSClass = {};
+            const regex = /\.theme-[\w-]+\s*\{([^}]+)\}/g;
+            let match;
+
+            while ((match = regex.exec(content)) !== null) {
+                const [fullMatch, _classContent] = match;
+                const classContent = _classContent.replace(/(\r|\\r)/g, '').replace(/(\n|\\n)/g, '').trim();
+                const classNameMatch = fullMatch.match(/\.theme-[\w-]+/);
+                if (classNameMatch) {
+                    const className = classNameMatch[0].substring(1); // 去掉前面的 "."
+                    themeClasses[className] = classContent.trim(); // 去除多余的空格
+                }
+            }
+
+            return themeClasses;
         },
         rgbStrToHex(rgbStr: string) {
             const rgb = rgbStr.split(',').map((item) => parseInt(item));
