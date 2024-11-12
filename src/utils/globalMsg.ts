@@ -23,8 +23,11 @@ const events = [
 ]
 
 export interface IConfirm {
+    /** 显示在确认窗口的内容 */
     content: string;
+    /** 是否需要翻译 */
     needTranslate: boolean;
+    /** 确认后的回调函数 */
     callback: Function;
 }
 
