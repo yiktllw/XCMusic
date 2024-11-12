@@ -57,6 +57,8 @@
                                     {{ $t('create_custom_theme.theme_background_color') }}
                                 </div>
                                 <input class="input-ori" type="color" v-model="background" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('background')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item auto-background">
                                 <div class="label">
@@ -78,18 +80,24 @@
                                     {{ $t('create_custom_theme.theme_foreground_color') }}
                                 </div>
                                 <input class="input-ori" type="color" v-model="foreground" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('foreground')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item panel-background">
                                 <div class="label">
                                     {{ $t('create_custom_theme.theme_panel_color') }}
                                 </div>
                                 <input class="input-ori" type="color" v-model="panelBackground" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('panelBackground')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item highlight-color">
                                 <div class="label">
                                     {{ $t('create_custom_theme.highlight_color') }}
                                 </div>
                                 <input class="input-ori" type="color" v-model="highlightColor" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('highlightColor')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item font-color-type">
                                 <div class="label">
@@ -112,6 +120,8 @@
                                 </div>
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColorAll).fontColorAll" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('fontColorAll')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item font-color-primary" v-if="fontColorType === 'various'">
                                 <div class="label">
@@ -119,6 +129,8 @@
                                 </div>
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColor).fontColorMain" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('fontColorMain')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item font-color-high" v-if="fontColorType === 'various'">
                                 <div class="label">
@@ -126,6 +138,8 @@
                                 </div>
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColor).fontColorHigh" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('fontColorHigh')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item font-color-standard" v-if="fontColorType === 'various'">
                                 <div class="label">
@@ -133,6 +147,8 @@
                                 </div>
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColor).fontColorStandard" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('fontColorStandard')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item font-color-low" v-if="fontColorType === 'various'">
                                 <div class="label">
@@ -140,6 +156,8 @@
                                 </div>
                                 <input class="input-ori" type="color"
                                     v-model="(fontColors as Theme.IFontColor).fontColorLow" />
+                                <img src="@/assets/paste.svg" class="paste-img g-icon" @click="paste('fontColorLow')"
+                                    :title="$t('copy.click_to_paste')" />
                             </div>
                             <div class="check-item">
                                 <div class="label">
@@ -155,7 +173,7 @@
                                     {{ colorFromStr }}
                                 </div>
                                 <img src="@/assets/copy.svg" class="copy-img g-icon" @click="copy(colorFromStr)"
-                                    :title="$t('song_info.click_to_copy')" />
+                                    :title="$t('copy.click_to_copy')" />
                             </div>
                         </div>
                     </YScroll>
@@ -614,12 +632,28 @@ export default defineComponent({
         },
         copy(text: string) {
             navigator.clipboard.writeText(text).then(() => {
-                console.log('复制成功: ', text);
-                Message.post('success', `复制成功: ${text}`);
+                Message.post('success', `${this.$t('copy.copied')}${text}`);
             }, () => {
-                Message.post('error', `复制失败: ${text}`);
+                Message.post('error', `${this.$t('copy.copy_failed')}${text}`);
             });
         },
+        paste(target: 'background' | 'foreground' | 'panelBackground' | 'highlightColor' | 'fontColorAll' | 'fontColorMain' | 'fontColorHigh' | 'fontColorStandard' | 'fontColorLow') {
+            navigator.clipboard.readText().then((text) => {
+                if (YColor.isHexColor(text.trim())) {
+                    if (target === 'fontColorAll') {
+                        this.fontColors = { fontColorAll: text.trim() };
+                    } else if (target === 'fontColorMain' || target === 'fontColorHigh' || target === 'fontColorStandard' || target === 'fontColorLow') {
+                        (this.fontColors as Theme.IFontColor)[target] = text.trim();
+                    } else {
+                        this[target] = text.trim();
+                    }
+                } else {
+                    Message.post('error', `${this.$t('copy.paste_failed_invalid_data')}${text}`);
+                }
+            }, () => {
+                Message.post('error', this.$t('copy.paste_failed'));
+            });
+        }
     }
 })
 </script>
@@ -685,6 +719,18 @@ select {
 
                 .input-ori {
                     padding: 5px 10px;
+                }
+
+                .paste-img {
+                    width: 16px;
+                    height: 16px;
+                    cursor: pointer;
+                    margin-left: 10px;
+                    opacity: .7;
+
+                    &:hover {
+                        opacity: 1;
+                    }
                 }
             }
 

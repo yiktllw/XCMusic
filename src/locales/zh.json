@@ -28,6 +28,17 @@
 		"subscribe": "收藏到歌单",
 		"view_comment": "查看评论"
 	},
+	"copy": {
+		"click_to_copy": "点击复制",
+		"click_to_paste": "点击粘贴",
+		"copied": "复制成功: ",
+		"copy": "复制",
+		"copy_failed": "复制失败: ",
+		"paste": "粘贴",
+		"paste_failed": "粘贴失败",
+		"paste_failed_invalid_data": "粘贴失败:无效数据: ",
+		"pasted": "粘贴成功: "
+	},
 	"create_custom_theme": {
 		"color_from_str": "文字转颜色",
 		"font_color": "字体颜色",

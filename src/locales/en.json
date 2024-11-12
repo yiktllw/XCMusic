@@ -28,6 +28,17 @@
 		"subscribe": "Add to Playlist",
 		"view_comment": "View Comments"
 	},
+	"copy": {
+		"click_to_copy": "Click to Copy",
+		"click_to_paste": "Click to Paste",
+		"copied": "Copied",
+		"copy": "Copy",
+		"copy_failed": "Copy Failed",
+		"paste": "Paste",
+		"paste_failed": "Paste Failed",
+		"paste_failed_invalid_data": "Invalid Data",
+		"pasted": "Pasted"
+	},
 	"create_custom_theme": {
 		"color_from_str": "String To Color",
 		"font_color": "Font Color",

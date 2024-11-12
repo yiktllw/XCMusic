@@ -215,6 +215,10 @@ export namespace YColor {
         console.log('getColorFromThreeLetters: ', letters, 'color: ', result);
         return result;
     }
+    
+    export function isHexColor(hex: string): boolean {
+        return /^#[0-9A-Fa-f]{6}$/i.test(hex);
+    }
 }
 
 /**
