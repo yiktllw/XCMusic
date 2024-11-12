@@ -176,5 +176,6 @@ export class Subscriber {
      */
     clear() {
         this._subscribes = [];
+        this.globalIndex = 0;
     }
 }

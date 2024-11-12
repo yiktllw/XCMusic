@@ -2,7 +2,7 @@
 node_modules
 /dist
 demo
-
+*.code-workspace
 
 # local env files
 .env.local

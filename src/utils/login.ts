@@ -19,27 +19,34 @@ export interface IPlaylist {
 }
 
 export class Login {
-    _cookie: string | null;
-    _status: Ref<boolean> | boolean;
-    _userId: Ref<number | string | null> | number | string | null;
-    _userName: Ref<string | null> | string | null;
-    _likelist: Raw<number[]>;
-    _avatar: Ref<string | null> | string | null;
-    _userPlaylists: Reactive<IPlaylist[]>;
-    _userSubscribes: Reactive<IPlaylist[]>;
-    subscriber: Subscriber;
+    /** 登录凭证 */
+    _cookie: string = localStorage.getItem('login_cookie') ?? '';
+    /** 登录状态 */
+    _status: boolean = localStorage.getItem('login_cookie') ? true : false;
+    /** 用户ID */
+    _userId: string = localStorage.getItem('login_user_id') ?? '';
+    /** 用户名 */
+    _userName: string = localStorage.getItem('login_user_name') ?? '';
+    /** 用户喜欢的音乐 */
+    _likelist: Raw<number[]> = markRaw([]);
+    /** 用户头像 */
+    _avatar: string = localStorage.getItem('login_avatar') ?? '';
+    /** 用户创建的歌单 */
+    _userPlaylists: Reactive<IPlaylist[]> = reactive([]);
+    /** 用户订阅的歌单 */
+    _userSubscribes: Reactive<IPlaylist[]> = reactive([]);
+    /** 订阅事件 */
+    subscriber: Subscriber = markRaw(new Subscriber([
+        'userPlaylists',
+        'status',
+        'userId',
+        'userName',
+        'avatar',
+    ]));
+    /** 每隔一段时间，自动更新用户的歌单 */
     interval: NodeJS.Timeout;
     _userFavoriteId: number = 0;
     constructor() {
-        this._cookie = ((localStorage.getItem('login_cookie') ?? null));
-        this._status = ref(localStorage.getItem('login_cookie') ? true : false);
-        this._userId = ref(localStorage.getItem('login_user_id') ?? null);
-        this._userName = ref(localStorage.getItem('login_user_name') ?? null);
-        this._likelist = markRaw([]);
-        this._avatar = ref(localStorage.getItem('login_avatar') ?? null);
-        this._userPlaylists = reactive([]);
-        this._userSubscribes = reactive([]);
-        this.subscriber = markRaw(new Subscriber(['userPlaylists']));
         this.init();
         this.interval = setInterval(() => {
             if (this._cookie && this._userId) {
@@ -47,6 +54,7 @@ export class Login {
             }
         }, 1000 * 100);
     }
+    /** 初始化 */
     init() {
         if (this._cookie && (!this._userId || !this._userName || this._avatar)) {
             this.updateInfo();
@@ -55,17 +63,15 @@ export class Login {
             this.clear();
         }
     }
+    /** 更新信息 */
     async updateInfo() {
         // console.log('updateInfo');
         await useApi('/user/account', {
             cookie: this._cookie
         }).then(res => {
-            this._userId = res.profile.userId;
-            localStorage.setItem('login_user_id', res.profile.userId);
-            this._userName = res.profile.nickname;
-            localStorage.setItem('login_user_name', res.profile.nickname);
-            this._avatar = res.profile.avatarUrl + '?param=200y200';
-            localStorage.setItem('login_avatar', res.profile.avatarUrl + '?param=200y200');
+            this.userId = res.profile.userId;
+            this.userName = res.profile.nickname;
+            this.avatar = res.profile.avatarUrl + '?param=200y200';
         }).catch(error => {
             console.log(error);
         });
@@ -84,19 +90,17 @@ export class Login {
         window.location.reload();
     }
     clear() {
-        this._cookie = null;
-        localStorage.removeItem('login_cookie');
-        this._status = false;
-        localStorage.removeItem('login_user_id');
-        this._userId = null;
-        localStorage.removeItem('login_user_name');
-        this._userName = null;
+        /** 使用_cookie是为了不触发window.location.reload() */
+        this._cookie = '';
+        localStorage.setItem('login_cookie', '');
+        this.status = false;
+        this._userId = '';
+        this.userName = '';
         this._likelist = markRaw([]);
-        localStorage.removeItem('login_avatar');
-        this._avatar = null;
+        this.avatar = '';
         this._userPlaylists = markRaw([]);
         this._userSubscribes = markRaw([]);
-        this.subscriber = markRaw(new Subscriber(['userPlaylists']));
+        this.subscriber.clear();
     }
     get cookie() {
         return this._cookie;
@@ -104,26 +108,37 @@ export class Login {
     set cookie(value) {
         localStorage.setItem('login_cookie', value ?? '');
         this._cookie = value;
-        this._status = true;
+        this.status = true;
         this.updateInfo();
         window.location.reload();
     }
     get userId() {
         return this._userId;
     }
+    private set userId(value) {
+        if (value !== this._userId && value) {
+            this._userId = value
+            localStorage.setItem('login_user_id', value.toString());
+            this.subscriber.exec('userId');
+        }
+    }
     get userName() {
         return this._userName;
+    }
+    private set userName(value) {
+        if (value !== this._userName && value) {
+            this._userName = value;
+            localStorage.setItem('login_user_name', value);
+            this.subscriber.exec('userName');
+        }
     }
     get likelist() {
         return this._likelist;
     }
+    /** 重新加载用户喜欢的音乐 */
     async reloadLikelist() {
-        if (!this._cookie) {
-            return;
-        }
-        if (!this._userId) {
-            await this.updateInfo();
-        }
+        if (!this._cookie) return;
+        if (!this._userId) await this.updateInfo();
         useApi('/likelist', {
             cookie: this._cookie,
             uid: this._userId
@@ -136,8 +151,22 @@ export class Login {
     get status() {
         return this._status;
     }
+    private set status(value) {
+        if (typeof value === 'boolean' && value !== this._status) {
+            this._status = value;
+            localStorage.setItem('login_status', value ? 'true' : 'false');
+            this.subscriber.exec('status');
+        }
+    }
     get avatar() {
         return this._avatar;
+    }
+    private set avatar(value) {
+        if (value !== this._avatar && value) {
+            this._avatar = value;
+            localStorage.setItem('login_avatar', value);
+            this.subscriber.exec('avatar');
+        }
     }
     get userPlaylists() {
         return this._userPlaylists;
@@ -148,6 +177,7 @@ export class Login {
     get userFavoriteId() {
         return this._userFavoriteId;
     }
+    /** 刷新用户的歌单 */
     async refreshUserPlaylists() {
         if (!this._cookie) {
             return;

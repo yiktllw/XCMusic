@@ -64,13 +64,13 @@
         </div>
         <div class="buttons">
             <!-- 用户信息 -->
-            <button class="avatar" v-if="login.status && type === 'default'" @click="openUserPage">
-                <img class="avatarImg" :src="login.avatar as string" v-if="login.avatar" />
+            <button class="avatar" v-if="status && type === 'default'" @click="openUserPage">
+                <img class="avatarImg" :src="avatar as string" v-if="avatar" />
                 <div class="avatarImg avatarImgPlaceholder" v-else></div>
             </button>
             <button class="userInfo font-color-main" @click="userInfo" ref="user_info_menu_trigger"
                 v-if="type === 'default'">
-                <div class="userInfoTxt" v-if="login.status">
+                <div class="userInfoTxt" v-if="status">
                     {{ userNickName }}
                 </div>
                 <div class="userInfoTxt" v-else>
@@ -78,13 +78,6 @@
                 </div>
                 <img class="img-userInfo g-icon" src="../assets/more.svg" />
             </button>
-            <!-- 扫码登录 -->
-            <!-- <div v-if="showDropdown" ref="dropDownMenu" class="dropdown-menu">
-                <div class="login_text">
-                    {{ $t('titlebar.scanQRCodeToLogin') }}
-                </div>
-                <img :src="base64Image" />
-            </div> -->
             <!-- 用户名下拉菜单 -->
             <YPanel class="userInfoPanel" :trigger="user_info_menu_trigger ?? undefined" ref="user_info_panel"
                 :default-show="false" :slide-direction="1">
@@ -201,21 +194,36 @@ export default defineComponent({
     },
     data() {
         return {
+            /** 用于存储用户信息 */
             userProfile: {
                 follows: 0,
                 followeds: 0,
                 level: 0,
-            },    // 用于存储用户信息
-            showDropdown: false,    // 用于控制下拉登录菜单的显示
-            searchHistory: [] as string[],    // 用于存储搜索历史
-            base64Image: '',    // 用于存储 Base64 图片
-            userNickName: '用户昵称',   // 用于存储用户昵称
-            avatarSrc: '',      // 用于存储头像地址
-            searchInput: '',    // 用于存储搜索输入
-            qrKey: '',  // 用于存储二维码 key
-            searchSuggestions: [] as ISearchSuggestion[],  // 用于存储搜索建议
-            hotSearches: [] as IHotSearch[],    // 用于存储热搜榜
-            selectedSuggestion: 0,  // 用于存储选中的搜索建议
+            },
+            /** 用于存储头像 */
+            avatar: '',
+            /** 用于存储登录状态 */
+            status: false,
+            /** 用于控制下拉登录菜单的显示 */
+            showDropdown: false,
+            /** 用于存储搜索历史 */
+            searchHistory: [] as string[],
+            /** 用于存储 Base64 图片 */
+            base64Image: '',
+            /** 用于存储用户昵称 */
+            userNickName: '用户昵称',
+            /** 用于存储头像地址 */
+            avatarSrc: '',
+            /** 用于存储搜索输入 */
+            searchInput: '',
+            /** 用于存储二维码 key */
+            qrKey: '',
+            /** 用于存储搜索建议 */
+            searchSuggestions: [] as ISearchSuggestion[],
+            /** 用于存储热搜榜 */
+            hotSearches: [] as IHotSearch[],
+            /** 用于存储选中的搜索建议 */
+            selectedSuggestion: 0,
         };
     },
     watch: {
@@ -243,7 +251,7 @@ export default defineComponent({
                 this.$router.push({ path: `/user/${this.login.userId}` });
             }
         },
-        // 用户信息
+        /** 用户信息 */
         async userInfo(event: MouseEvent) {
             event.stopPropagation(); // 阻止事件冒泡以免立即触发外部点击处理器
             // 如果已登录，则打开用户信息窗口
@@ -297,19 +305,11 @@ export default defineComponent({
                 }
             }, 2000); // 停止轮询
         },
-
-        // 处理登录窗口的外部点击
-        handleOutsideClick(event: MouseEvent) {
-            const dropdownMenu = this.dropdownMenu;
-            if (dropdownMenu && !dropdownMenu.contains(event.target as Node)) {
-                this.showDropdown = false; // 隐藏下拉菜单
-            }
-        },
-        // 切换下拉菜单显示
+        /** 切换下拉菜单显示 */
         toggleDropdown() {
             this.showDropdown = !this.showDropdown;
         },
-        // 设置、最小化、最大化和关闭
+        /** 最小化 */
         minimize() {
             if (window.electron?.isElectron) {
                 window.electron.ipcRenderer.send('minimize');
@@ -317,6 +317,7 @@ export default defineComponent({
                 console.log('not in electron, cannot minimize');
             }
         },
+        /** 最大化 */
         maximize() {
             if (window.electron?.isElectron) {
                 window.electron.ipcRenderer.send('maximize');
@@ -324,6 +325,7 @@ export default defineComponent({
                 console.log('not in electron, cannot maximize');
             }
         },
+        /** 关闭 */
         close() {
             if (window.electron?.isElectron) {
                 const closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
@@ -341,7 +343,7 @@ export default defineComponent({
                 console.log('not in electron, cannot close');
             }
         },
-        // 搜索
+        /** 搜索事件 */
         handleSearch(event: KeyboardEvent) {
             this.search((event.target as HTMLInputElement).value);
         },
@@ -404,7 +406,6 @@ export default defineComponent({
             }
         },
         async init() {
-            document.addEventListener('click', this.handleOutsideClick);
             if (this.login.cookie) {
                 this.userNickName = this.login.userName as string;
                 this.avatarSrc = this.login.avatar as string;
@@ -420,7 +421,6 @@ export default defineComponent({
                 });
                 this.userProfile = userProfile.profile;
                 this.userProfile.level = userProfile.level;
-                // console.log('userProfile:', this.userProfile);
             }
         },
         highlightMatching(keyword: string) {
@@ -460,6 +460,22 @@ export default defineComponent({
     async mounted() {
         // 添加外部点击处理器
         await this.init();
+        this.avatar = this.login.avatar;
+        this.status = this.login.status;
+        this.login.subscriber.on({
+            id: 'YTitlebar',
+            type: 'status',
+            func: async () => {
+                this.avatar = this.login.avatar;
+            },
+        });
+        this.login.subscriber.on({
+            id: 'YTitlebar',
+            type: 'avatar',
+            func: async () => {
+                this.status = this.login.status;
+            },
+        });
         if (this.type === 'default') {
             await this.getHotSearches();
             this.searchHistory = this.setting.titleBar.searchHistory;
@@ -473,9 +489,8 @@ export default defineComponent({
         })
     },
     beforeUnmount() {
-        // 移除外部点击处理器
-        document.removeEventListener('click', this.handleOutsideClick);
         this.globalMsg.subscriber.offAll('YTitlebar');
+        this.login.subscriber.offAll('YTitlebar');
         this.search_panel = null;
         this.search_panel_trigger = null;
         this.search_input = null;
