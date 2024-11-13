@@ -725,7 +725,7 @@ export default defineComponent({
         console.error("Failed to update play count:", error);
         throw error;
       });
-      console.log("updatePlayCount:", result);
+      console.log("updatePlayCount:", JSON.stringify(result, null, 2));
     },
     // 处理歌手点击
     handleArtistClick(artistId: number | string) {

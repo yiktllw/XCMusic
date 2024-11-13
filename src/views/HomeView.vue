@@ -268,7 +268,7 @@ export default defineComponent({
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log(data);
+        console.log(JSON.stringify(data, null, 2));
         switch (data.from) {
           case "created-playlists":
             this.menu[3].display = true;
@@ -322,7 +322,7 @@ export default defineComponent({
         this.menu = songItems;
         if (data.from && data.from !== -1) {
           this.menu[this.menu.length - 1].display = true;
-          console.log("from:", data.from, this.menu);
+          console.log("from:", data.from, JSON.stringify(this.menu, null, 4));
         } else {
           this.menu[this.menu.length - 1].display = false;
         }
@@ -332,7 +332,7 @@ export default defineComponent({
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log(data);
+        console.log(JSON.stringify(data, null, 2));
         let commentCount = await this.getCommentCount(this.target.id);
         this.menu[4].label =
           this.$t("context.view_comment") + `(${commentCount})`;
@@ -340,7 +340,7 @@ export default defineComponent({
         this.trackIds = event.data.data.ids.filter((id: number | string) => {
           return !isLocal(id);
         });
-        console.log("ids: ", this.trackIds);
+        console.log("ids: ", JSON.stringify(this.trackIds, null, 4));
         if (this.trackIds.length === 0) return;
         this.showAddToPlaylist = true;
         this.showPreventContainer = true;
@@ -522,7 +522,7 @@ export default defineComponent({
               })
                 .then((res) => {
                   this.login.refreshUserPlaylists();
-                  console.log("Delete playlist:", res);
+                  console.log("Delete playlist:", JSON.stringify(res, null, 4));
                 })
                 .catch((err) => {
                   console.error("Error when delete playlist:", err);
@@ -549,7 +549,7 @@ export default defineComponent({
         cookie: this.login.cookie,
       })
         .then((res) => {
-          console.log("Track deleted from playlist:", res);
+          console.log("Track deleted from playlist:", JSON.stringify(res, null, 4));
           if (res.status === 200) {
             Message.post("success", this.$t("message.homeview.delete_success"));
           } else {

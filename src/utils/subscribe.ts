@@ -68,7 +68,7 @@ export class Subscriber {
    */
   updateSubscribe(globalIndex: string | number, func: Function) {
     let index = this._subscribes.findIndex(
-      (item) => item.globalIndex === globalIndex,
+      (item) => item.globalIndex === globalIndex
     );
     if (index !== -1) {
       this._subscribes[index].func = func;
@@ -83,7 +83,7 @@ export class Subscriber {
    */
   on({ id, type, func = () => {} }: SubscribeOptions) {
     if (typeof func !== "function") {
-      console.log("func is not a function: ", func);
+      console.log("func is not a function: ", JSON.stringify(func, null, 4));
       return;
     }
     if (id === "" || type === "") {
@@ -95,7 +95,7 @@ export class Subscriber {
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        this.allowedEvents,
+        [...this.allowedEvents]
       );
       return;
     }
@@ -111,7 +111,7 @@ export class Subscriber {
     // 如果有这个id的订阅
     else {
       let index = arrayWithId.findIndex(
-        (_item: { type: string | undefined }) => _item.type === type,
+        (_item: { type: string | undefined }) => _item.type === type
       );
       if (index === -1) {
         // 如果有这个id的订阅，但是没有这个type的订阅，则直接添加到订阅列表。
@@ -139,7 +139,7 @@ export class Subscriber {
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        this.allowedEvents,
+        [...this.allowedEvents]
       );
       return;
     }
@@ -149,7 +149,7 @@ export class Subscriber {
         if (item.type === type) {
           let index = this._subscribes.findIndex(
             (_item: { globalIndex: number }) =>
-              _item.globalIndex === item.globalIndex,
+              _item.globalIndex === item.globalIndex
           );
           this._subscribes.splice(index, 1);
         }
@@ -164,7 +164,7 @@ export class Subscriber {
     arrayWithId.forEach((item: { globalIndex: number }) => {
       let index = this._subscribes.findIndex(
         (_item: { globalIndex: number }) =>
-          _item.globalIndex === item.globalIndex,
+          _item.globalIndex === item.globalIndex
       );
       this._subscribes.splice(index, 1);
     });
@@ -179,7 +179,7 @@ export class Subscriber {
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        this.allowedEvents,
+        [...this.allowedEvents]
       );
       return;
     }

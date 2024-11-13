@@ -268,7 +268,6 @@ export default defineComponent({
           this.playlistsPage.onPageChange = () => {
             this.fetchPlaylists(false);
           };
-          console.log("fetchPlaylists", result.result.playlists);
         })
         .catch((err) => {
           console.log("fetchPlaylists", err);

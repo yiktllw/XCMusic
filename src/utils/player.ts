@@ -878,7 +878,7 @@ export class Player {
           "update playlist playcount: ",
           this._playlistId,
           "response",
-          res,
+          JSON.stringify(res, null, 4),
         );
       })
       .catch((err) => {

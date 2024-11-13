@@ -82,7 +82,6 @@ export default defineComponent({
         timestamp: new Date().getTime(),
       })
         .then((res) => {
-          console.log(res);
           if (res.code !== 200) {
             Message.post("error", this.$t("create_playlist.error"));
             return;

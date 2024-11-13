@@ -72,8 +72,6 @@ export default defineComponent({
         cookie: this.login.cookie,
       })
         .then((res) => {
-          console.log("Track added to playlist:", res);
-          console.log("status:", res.status);
           if (res.status !== 200) {
             Message.post("error", this.$t("song_added_failed"));
           } else {
