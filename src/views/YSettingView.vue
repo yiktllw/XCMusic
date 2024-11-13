@@ -961,7 +961,6 @@ export default defineComponent({
     width: calc(100% - 40px);
     text-align: left;
     position: absolute;
-    // background-color: var(--background-color);
 
     .title {
       font-size: 24px;

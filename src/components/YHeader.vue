@@ -89,7 +89,6 @@ export default defineComponent({
   top: 0px;
   z-index: 1;
   width: 100%;
-  backdrop-filter: blur(10px);
 
   .switcher-item {
     display: inline-flex;

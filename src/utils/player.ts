@@ -186,7 +186,6 @@ export class Player {
               func: () => {
                 const autoPlay = getStorage("setting.play.autoPlay");
                 this.playTrack(lastTrack, autoPlay);
-                console.log("Last track played", JSON.stringify(lastTrack, null, 4));
               },
             });
           }
