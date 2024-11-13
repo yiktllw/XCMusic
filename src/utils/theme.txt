@@ -1,176 +1,177 @@
 /*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
- * theme.txt 是在创建自定义主题时，获取预设使用的文件
+ * theme.scss 是主题颜色配置文件，与theme.ts配合使用
+ * 所有定义的主题都需要在theme.ts中进行注册
 *---------------------------------------------------------------*/
 
 // 定义暗色主题颜色
 .theme-dark {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #131319;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #2d2d36;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #131319;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #2d2d36;
+  --icon-invert: invert(0);
 }
 
 // 定义亮色主题颜色
 .theme-light {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 0, 0, 0;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #f7f9fc;
-    --foreground-color: #000000;
-    --foreground-color-rgb: 0, 0, 0;
-    --panel-background-color: #ffffff;
-    --icon-invert: invert(1);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 0, 0, 0;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #f7f9fc;
+  --foreground-color: #000000;
+  --foreground-color-rgb: 0, 0, 0;
+  --panel-background-color: #ffffff;
+  --icon-invert: invert(1);
 }
 
 .theme-dark-high-contrast {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #000000;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #0e141e;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #000000;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #0e141e;
+  --icon-invert: invert(0);
 }
 
 .theme-light-high-contrast {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 0, 0, 0;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #ffffff;
-    --foreground-color: #000000;
-    --foreground-color-rgb: 0, 0, 0;
-    --panel-background-color: #ffffff;
-    --icon-invert: invert(1);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 0, 0, 0;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #ffffff;
+  --foreground-color: #000000;
+  --foreground-color-rgb: 0, 0, 0;
+  --panel-background-color: #ffffff;
+  --icon-invert: invert(1);
 }
 
 .theme-yikt {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 0, 0, 0;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #f2cada;
-    --foreground-color: #000000;
-    --foreground-color-rgb: 0, 0, 0;
-    --panel-background-color: #ffddee;
-    --icon-invert: invert(1);
+  --highlight-color-rgb: 209, 79, 203;
+  --font-color-rgb: 0, 0, 0;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #4ad4be;
+  --foreground-color: #7e4520;
+  --foreground-color-rgb: 126, 69, 32;
+  --panel-background-color: #0daaa4;
+  --icon-invert: invert(1);
 }
 
 // 来自vscode的主题颜色
 
 .theme-material {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #283237;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #283237;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #283237;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #283237;
+  --icon-invert: invert(0);
 }
 
 .theme-onedark {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #292c33;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #22252a;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #292c33;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #22252a;
+  --icon-invert: invert(0);
 }
 
 .theme-solarized-light {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 0, 0, 0;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #fcf6e5;
-    --foreground-color: #000000;
-    --foreground-color-rgb: 0, 0, 0;
-    --panel-background-color: #ede8d7;
-    --icon-invert: invert(1);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 0, 0, 0;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #fcf6e5;
+  --foreground-color: #000000;
+  --foreground-color-rgb: 0, 0, 0;
+  --panel-background-color: #ede8d7;
+  --icon-invert: invert(1);
 }
 
 .theme-abyss {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #020c17;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #26273f;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #020c17;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #26273f;
+  --icon-invert: invert(0);
 }
 
 .theme-tomorrow-night-blue {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #0b254e;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #071d3d;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #0b254e;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #071d3d;
+  --icon-invert: invert(0);
 }
 
 .theme-monokai {
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #272823;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #1e1f1c;
-    --icon-invert: invert(0);
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #272823;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #1e1f1c;
+  --icon-invert: invert(0);
 }
 
-.theme-dracula{
-    --highlight-color-rgb: 254, 60, 90;
-    --font-color-rgb: 255, 255, 255;
-    --font-color-main: rgba(var(--font-color-rgb), 1);
-    --font-color-high: rgba(var(--font-color-rgb), 0.8);
-    --font-color-standard: rgba(var(--font-color-rgb), 0.6);
-    --font-color-low: rgba(var(--font-color-rgb), 0.4);
-    --background-color: #282a35;
-    --foreground-color: #ffffff;
-    --foreground-color-rgb: 255, 255, 255;
-    --panel-background-color: #21222b;
-    --icon-invert: invert(0);
+.theme-dracula {
+  --highlight-color-rgb: 254, 60, 90;
+  --font-color-rgb: 255, 255, 255;
+  --font-color-main: rgba(var(--font-color-rgb), 1);
+  --font-color-high: rgba(var(--font-color-rgb), 0.8);
+  --font-color-standard: rgba(var(--font-color-rgb), 0.6);
+  --font-color-low: rgba(var(--font-color-rgb), 0.4);
+  --background-color: #282a35;
+  --foreground-color: #ffffff;
+  --foreground-color-rgb: 255, 255, 255;
+  --panel-background-color: #21222b;
+  --icon-invert: invert(0);
 }

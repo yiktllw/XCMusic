@@ -63,16 +63,16 @@
 }
 
 .theme-yikt {
-  --highlight-color-rgb: 254, 60, 90;
+  --highlight-color-rgb: 209, 79, 203;
   --font-color-rgb: 0, 0, 0;
   --font-color-main: rgba(var(--font-color-rgb), 1);
   --font-color-high: rgba(var(--font-color-rgb), 0.8);
   --font-color-standard: rgba(var(--font-color-rgb), 0.6);
   --font-color-low: rgba(var(--font-color-rgb), 0.4);
-  --background-color: #f2cada;
-  --foreground-color: #000000;
-  --foreground-color-rgb: 0, 0, 0;
-  --panel-background-color: #ffddee;
+  --background-color: #4ad4be;
+  --foreground-color: #7e4520;
+  --foreground-color-rgb: 126, 69, 32;
+  --panel-background-color: #0daaa4;
   --icon-invert: invert(1);
 }
 

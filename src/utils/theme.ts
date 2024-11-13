@@ -193,8 +193,8 @@ export var themes: Array<Theme1 | Theme2> = [
   },
   {
     value: "yikt",
-    display: "yikt",
-    background: "#f2cada",
+    display: "yiktllw",
+    background: "#4ad4be",
   },
   {
     value: "material",

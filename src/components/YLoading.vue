@@ -25,7 +25,7 @@ export default defineComponent({
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border-top: 3px solid #90cf5b;
+  border-top: 3px solid rgb(var(--highlight-color-rgb));
   border-right: 3px solid transparent;
   -webkit-animation: rotation 1s linear infinite;
   animation: rotation 1s linear infinite;
