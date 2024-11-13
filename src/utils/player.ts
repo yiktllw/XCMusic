@@ -91,9 +91,8 @@ export class Player {
     this._audio = new Audio("");
     this._outputAudio = new Audio("");
     this._audio.onerror = () => this.handleAudioError(this._audio.error);
-    let localVolumeLeveling =
-      getStorage("setting.play.volume_leveling") ?? "true";
-    this._volume_leveling = localVolumeLeveling === "true" ? true : false;
+    let localVolumeLeveling = getStorage("setting.play.volume_leveling");
+    this._volume_leveling = localVolumeLeveling;
     this._audioContext = null;
     this._gainNode = null;
     // 初始化音量均衡控件
@@ -185,7 +184,7 @@ export class Player {
               type: "playerReady",
               func: () => {
                 const autoPlay = getStorage("setting.play.autoPlay");
-                this.playTrack(lastTrack, autoPlay);
+                this.playTrack(lastTrack, autoPlay, 1600);
               },
             });
           }
@@ -389,7 +388,7 @@ export class Player {
    * @param {Object} track 歌曲对象
    * @param {Boolean} autoPlay 是否自动播放
    */
-  async playTrack(track: ITrack, autoPlay: boolean = true) {
+  async playTrack(track: ITrack, autoPlay: boolean = true, delay: number = 0) {
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
       (_track) => _track.id === track.id
@@ -441,8 +440,15 @@ export class Player {
       if (autoPlay) {
         try {
           // 更新播放状态
-          await this._audio.play();
-          this.playState = "play";
+          if (delay > 0) {
+            setTimeout(() => {
+              this._audio.play();
+              this.playState = "play";
+            }, delay);
+          } else {
+            await this._audio.play();
+            this.playState = "play";
+          }
           autoPlayMsg = "Autoplay";
         } catch (error) {
           console.error(error);
@@ -610,23 +616,12 @@ export class Player {
       this._sourceNode.connect(this._gainNode);
       this._gainNode.connect(this._destination);
 
-      if (getStorage("setting.playui.spectrum") === "true") {
+      if (getStorage("setting.playui.spectrum")) {
         // 创建 AnalyserNode
         this._analyserNode = this._audioContext.createAnalyser();
         this._analyserNode.fftSize = 1024; // 设置 FFT 大小
 
-        // 创建高通和低通滤波器
-        const highpassFilter = this._audioContext.createBiquadFilter();
-        highpassFilter.type = "highpass";
-        highpassFilter.frequency.value = 20;
-
-        const lowpassFilter = this._audioContext.createBiquadFilter();
-        lowpassFilter.type = "lowpass";
-        lowpassFilter.frequency.value = 4400;
-
-        this._gainNode.connect(highpassFilter);
-        highpassFilter.connect(lowpassFilter);
-        lowpassFilter.connect(this._analyserNode);
+        this._gainNode.connect(this._analyserNode);
       }
 
       this._outputAudio.srcObject = this._destination.stream;
