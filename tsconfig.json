@@ -1,44 +1,29 @@
 {
-    "compilerOptions": {
-        "target": "es2021",
-        "module": "commonjs",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "Node",
-        "resolveJsonModule": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "src/*",
-            ],
-            "vuex": [
-                "./node_modules/vuex/types"
-            ],
-        },
-        "strict": true,
-        "skipLibCheck": true,
-        "allowJs": true,
-        "outDir": "./dist",
-        "typeRoots": [
-            "./node_modules/@types",
-            "./src/types",
-        ],
-        "types": [
-            "vuex",
-            "shims-svg",
-            "shims-vue",
-            "md",
-            "txt",
-        ]
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "vuex": ["./node_modules/vuex/types"]
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue",
-        "src/types/**/*.d.ts" 
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "strict": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["vuex", "shims-svg", "shims-vue", "md", "txt"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules"]
 }

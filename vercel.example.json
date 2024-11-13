@@ -1,11 +1,11 @@
 {
-    "builds": [
-        {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist_electron"
-            }
-        }
-    ]
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist_electron"
+      }
+    }
+  ]
 }

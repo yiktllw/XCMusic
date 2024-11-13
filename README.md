@@ -18,9 +18,9 @@
     <div align="center">
 
 [![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url]
-    </div>
-</p>
+</div>
 
+</p>
 
 ![image](https://github.com/user-attachments/assets/45fcabb2-8f89-434e-a8cc-7548a740c030)
 
@@ -37,6 +37,7 @@
 - [截图](#截图)
 
 ## 特性
+
 - 使用Vue3+Electron开发
 - 出于安全考虑，只支持手机扫码登录
 - 与网易云音乐3.0类似的布局
@@ -51,64 +52,74 @@
 **[⬆ 回到目录](#目录)**
 
 ## 待完成
+
 - [ ] 评论
-    - [ ] 点赞功能
-    - [ ] 楼中楼功能
+  - [ ] 点赞功能
+  - [ ] 楼中楼功能
 - [ ] 播放界面
-    - [ ] 点击歌词跳转功能
+  - [ ] 点击歌词跳转功能
 - [ ] 侧边栏
-    - [ ] 首页推荐
-    - [ ] 最近播放
+  - [ ] 首页推荐
+  - [ ] 最近播放
 - [ ] 歌单
-    - [ ] 多选操作,使用ctrl,shift完成多选,拖拽排序
-    - [ ] 处理无版权歌曲
-    - [ ] 收藏歌单，收藏专辑
+  - [ ] 多选操作,使用ctrl,shift完成多选,拖拽排序
+  - [ ] 处理无版权歌曲
+  - [ ] 收藏歌单，收藏专辑
 - [ ] 设置界面
-    - [x] 开机自启动功能
-    - [x] 启动时自动播放
-    - [ ] 快捷键
-    - [ ] 通知管理
-    - [x] 侧边栏内容管理
-    - [x] 导入、导出设置为JSON
+  - [x] 开机自启动功能
+  - [x] 启动时自动播放
+  - [ ] 快捷键
+  - [ ] 通知管理
+  - [x] 侧边栏内容管理
+  - [x] 导入、导出设置为JSON
 - [ ] 系统
-    - [ ] 完善系统托盘功能
+  - [ ] 完善系统托盘功能
 - [ ] 音乐云盘
 
 **[⬆ 回到目录](#目录)**
 
 ## 部署到vercel
+
 1. fork此项目
 2. 部署[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
 3. 新建vercel.json文件，写入:
+
 ```json
 {
-    "builds": [
-        {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist_electron" 
-            }
-        }
-    ]
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist_electron"
+      }
+    }
+  ]
 }
 ```
+
 4. 导入到vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的api地址。
 
 **[⬆ 回到目录](#目录)**
 
 ## 配置开发环境
+
 以下操作均基于Node.js，如果没有安装，请先安装[Node.js](https://nodejs.org/zh-cn)
 
 安装依赖
+
 ```shell
 npm install
 ```
+
 运行Electron程序
+
 ```shell
 npm run electron:serve
 ```
+
 编译为二进制程序
+
 ```shell
 npm run electron:build
 ```
@@ -125,13 +136,14 @@ npm run electron:build
 **[⬆ 回到目录](#目录)**
 
 ## 关于
-3. Für "Clara Josephine Schumann".
-<div/> 
 
-2. Prelude for TeXpert Code.
+3. Für "Clara Josephine Schumann".
 <div/>
 
-1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
+4. Prelude for TeXpert Code.
+<div/>
+
+5. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
 
 **[⬆ 回到目录](#目录)**
 
@@ -142,6 +154,7 @@ npm run electron:build
 **[⬆ 回到目录](#目录)**
 
 ## 截图
+
 ![image](https://github.com/user-attachments/assets/1ab7d31b-955a-4a49-b7c5-bf253fd92a61)
 
 ![image](https://github.com/user-attachments/assets/9ae95407-2a1b-470b-a1b5-4de008dc331a)
@@ -162,24 +175,29 @@ npm run electron:build
 
 ![image](https://github.com/user-attachments/assets/e7e17666-31d1-484a-98a7-18284c5b10af)
 
-
 **[⬆ 回到目录](#目录)**
+
 <!-- Contributors -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/yiktllw/XCMusic.svg
 [contributors-url]: https://github.com/yiktllw/XCMusic/graphs/contributors
 
 <!-- Forks -->
+
 [forks-shield]: https://img.shields.io/github/forks/yiktllw/XCMusic.svg
 [forks-url]: https://github.com/yiktllw/XCMusic/network/members
 
 <!-- Stars -->
+
 [stars-shield]: https://img.shields.io/github/stars/yiktllw/XCMusic.svg
 [stars-url]: https://github.com/yiktllw/XCMusic/stargazers
 
 <!-- Issues -->
+
 [issues-shield]: https://img.shields.io/github/issues/yiktllw/XCMusic.svg
 [issues-url]: https://github.com/yiktllw/XCMusic/issues
 
 <!-- License -->
+
 [license-shield]: https://img.shields.io/github/license/yiktllw/XCMusic.svg
 [license-url]: https://github.com/yiktllw/XCMusic/blob/master/LICENSE

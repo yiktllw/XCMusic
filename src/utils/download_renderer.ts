@@ -3,145 +3,169 @@
  * download_renderer.ts 为在渲染进程中下载歌曲的函数
  * 下载任务由主进程完成
  * Download类负责将下载任务添加到主进程，以及管理下载完成的歌曲
-*---------------------------------------------------------------*/
+ *---------------------------------------------------------------*/
 
-import indexDB from '@/utils/indexDB';
-import { Subscriber } from './subscribe';
-import { ITrack } from './tracks';
-import { IDownloadProgress } from './download';
-import { Song } from './api';
-import { getDownloadDirectory } from './setting';
+import indexDB from "@/utils/indexDB";
+import { Subscriber } from "./subscribe";
+import { ITrack } from "./tracks";
+import { IDownloadProgress } from "./download";
+import { Song } from "./api";
+import { getDownloadDirectory } from "./setting";
 
 export interface IDownloadedSong {
-    id: number;
-    name: string;
-    path: string;
+  id: number;
+  name: string;
+  path: string;
 }
 
 export class Download {
-    db: indexDB;
-    downloadedSongs: Array<IDownloadedSong>;
-    subscriber: Subscriber;
-    /**
-     * 正在下载的歌曲列表
-     */
-    downloading: IDownloadProgress[] = [];
-    /**
-     * 预订了下载任务的歌曲列表
-     */
-    private downloadlist: ITrack[] = [];
+  db: indexDB;
+  downloadedSongs: Array<IDownloadedSong>;
+  subscriber: Subscriber;
+  /**
+   * 正在下载的歌曲列表
+   */
+  downloading: IDownloadProgress[] = [];
+  /**
+   * 预订了下载任务的歌曲列表
+   */
+  private downloadlist: ITrack[] = [];
 
-    constructor() {
-        this.db = new indexDB('download', 'songs');
-        this.downloadedSongs = [];
-        this.subscriber = new Subscriber([
-            /** 已下载的歌曲 */
-            'downloaded-songs',
-            /** 下载中的歌曲 */
-            'downloading',
-            /** 预订了下载任务的歌曲 */
-            'downloadlist',
-        ]);
-        this.db.openDatabase().then(async () => {
-            this.downloadedSongs = await this.db.getAllSongs();
-            this.subscriber.exec('downloaded-songs');
-        });
-        if (window.electron?.isElectron) {
-            window.electron.ipcRenderer.on('download-song-reply', async (_filePath: string, data: {
-                filePath: string;
-                track: ITrack;
-            }) => {
-                const { filePath, track } = data;
-                await this.db.addDownloadedSong({
-                    id: track.id,
-                    name: track.name,
-                    path: filePath
-                });
-                this.downloadedSongs.push({
-                    id: track.id,
-                    name: track.name,
-                    path: filePath
-                });
-                this.downloading = this.downloading.filter(item => item.track.id !== track.id);
-                this.subscriber.exec('downloading');
-                this.subscriber.exec('downloaded-songs', track);
-            });
-            window.electron.ipcRenderer.on('download-progress', (data: IDownloadProgress) => {
-                const index = this.downloading.findIndex(item => item.track.id === data.track.id);
-                if (index !== -1) {
-                    this.downloading[index] = data;
-                }
-                this.subscriber.exec('downloading');
-            });
-            this.subscriber.on({
-                id: 'download_renderer',
-                type: 'downloading',
-                func: async () => {
-                    if (this.downloading.length === 0 && this.downloadlist.length > 0) {
-                        const song = this.downloadlist.shift();
-                        if (!song) return;
+  constructor() {
+    this.db = new indexDB("download", "songs");
+    this.downloadedSongs = [];
+    this.subscriber = new Subscriber([
+      /** 已下载的歌曲 */
+      "downloaded-songs",
+      /** 下载中的歌曲 */
+      "downloading",
+      /** 预订了下载任务的歌曲 */
+      "downloadlist",
+    ]);
+    this.db.openDatabase().then(async () => {
+      this.downloadedSongs = await this.db.getAllSongs();
+      this.subscriber.exec("downloaded-songs");
+    });
+    if (window.electron?.isElectron) {
+      window.electron.ipcRenderer.on(
+        "download-song-reply",
+        async (
+          _filePath: string,
+          data: {
+            filePath: string;
+            track: ITrack;
+          },
+        ) => {
+          const { filePath, track } = data;
+          await this.db.addDownloadedSong({
+            id: track.id,
+            name: track.name,
+            path: filePath,
+          });
+          this.downloadedSongs.push({
+            id: track.id,
+            name: track.name,
+            path: filePath,
+          });
+          this.downloading = this.downloading.filter(
+            (item) => item.track.id !== track.id,
+          );
+          this.subscriber.exec("downloading");
+          this.subscriber.exec("downloaded-songs", track);
+        },
+      );
+      window.electron.ipcRenderer.on(
+        "download-progress",
+        (data: IDownloadProgress) => {
+          const index = this.downloading.findIndex(
+            (item) => item.track.id === data.track.id,
+          );
+          if (index !== -1) {
+            this.downloading[index] = data;
+          }
+          this.subscriber.exec("downloading");
+        },
+      );
+      this.subscriber.on({
+        id: "download_renderer",
+        type: "downloading",
+        func: async () => {
+          if (this.downloading.length === 0 && this.downloadlist.length > 0) {
+            const song = this.downloadlist.shift();
+            if (!song) return;
 
-                        const url = await Song.getUrl(song.id, localStorage.getItem('setting.download.quality') ?? 'standard');
-                        const downloadDir = localStorage.getItem('setting.download.path') ?? getDownloadDirectory();
-                        if (!url || !downloadDir) return;
+            const url = await Song.getUrl(
+              song.id,
+              localStorage.getItem("setting.download.quality") ?? "standard",
+            );
+            const downloadDir =
+              localStorage.getItem("setting.download.path") ??
+              getDownloadDirectory();
+            if (!url || !downloadDir) return;
 
-                        this.add(url, song, downloadDir);
-                    }
-                }
-            })
-        }
+            this.add(url, song, downloadDir);
+          }
+        },
+      });
     }
+  }
 
-    Exec(type: string) {
-        this.subscriber.exec(type);
-    }
+  Exec(type: string) {
+    this.subscriber.exec(type);
+  }
 
-    add(url: string, track: ITrack, downloadDir: string) {
-        if (!window.electron?.isElectron) {
-            console.error('Not in Electron environment');
-            return;
-        }
-        if (this.downloading.some(item => item.track.id === track.id)) {
-            console.error('Song is already downloading: ', { ...track });
-            return;
-        }
-        window.electron.ipcRenderer.send('download-song', url, track, downloadDir);
-        this.downloading.push({
-            track: track,
-            percent: 0,
-        });
-        this.subscriber.exec('downloading');
+  add(url: string, track: ITrack, downloadDir: string) {
+    if (!window.electron?.isElectron) {
+      console.error("Not in Electron environment");
+      return;
     }
+    if (this.downloading.some((item) => item.track.id === track.id)) {
+      console.error("Song is already downloading: ", { ...track });
+      return;
+    }
+    window.electron.ipcRenderer.send("download-song", url, track, downloadDir);
+    this.downloading.push({
+      track: track,
+      percent: 0,
+    });
+    this.subscriber.exec("downloading");
+  }
 
-    addList(_list: ITrack[]) {
-        const list = _list.filter(item => !this.downloadlist.some(song => song.id === item.id) && !this.downloadedSongIds.includes(item.id));
-        if (list.length === 0) console.log('no new songs to download');
-        this.downloadlist.push(...list);
-        this.subscriber.exec('downloadlist');
-        this.subscriber.exec('downloading');
-    }
+  addList(_list: ITrack[]) {
+    const list = _list.filter(
+      (item) =>
+        !this.downloadlist.some((song) => song.id === item.id) &&
+        !this.downloadedSongIds.includes(item.id),
+    );
+    if (list.length === 0) console.log("no new songs to download");
+    this.downloadlist.push(...list);
+    this.subscriber.exec("downloadlist");
+    this.subscriber.exec("downloading");
+  }
 
-    async delete(id: number) {
-        if (!window.electron?.isElectron) {
-            console.error('Not in Electron environment');
-            return;
-        }
-        await this.db.deleteDownloadedSong(id);
-        this.downloadedSongs = this.downloadedSongs.filter(song => song.id !== id);
-        this.subscriber.exec('downloaded-songs');
+  async delete(id: number) {
+    if (!window.electron?.isElectron) {
+      console.error("Not in Electron environment");
+      return;
     }
+    await this.db.deleteDownloadedSong(id);
+    this.downloadedSongs = this.downloadedSongs.filter(
+      (song) => song.id !== id,
+    );
+    this.subscriber.exec("downloaded-songs");
+  }
 
-    async clear() {
-        if (!window.electron?.isElectron) {
-            console.error('Not in Electron environment');
-            return;
-        }
-        await this.db.clearDownloadStore();
-        this.downloadedSongs = [];
-        this.subscriber.exec('downloaded-songs');
+  async clear() {
+    if (!window.electron?.isElectron) {
+      console.error("Not in Electron environment");
+      return;
     }
+    await this.db.clearDownloadStore();
+    this.downloadedSongs = [];
+    this.subscriber.exec("downloaded-songs");
+  }
 
-    get downloadedSongIds() {
-        return this.downloadedSongs.map(song => song.id);
-    }
+  get downloadedSongIds() {
+    return this.downloadedSongs.map((song) => song.id);
+  }
 }

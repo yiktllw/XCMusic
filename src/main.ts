@@ -7,13 +7,13 @@
  * 2. store: 状态管理模块
  * 3. global.scss: 全局样式
  * 4. i18n: 多语言配置
-*---------------------------------------------------------------*/
+ *---------------------------------------------------------------*/
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import './assets/css/global.scss';
-import i18n from './i18n'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import "./assets/css/global.scss";
+import i18n from "./i18n";
 
-createApp(App).use(router).use(store).use(i18n).mount('#app')
+createApp(App).use(router).use(store).use(i18n).mount("#app");
