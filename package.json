@@ -5,6 +5,7 @@
     "name": "YiktLLW",
     "email": "yiktllw@qq.com"
   },
+  "license": "MIT",
   "version": "0.2.4",
   "private": true,
   "scripts": {

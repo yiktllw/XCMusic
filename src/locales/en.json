@@ -254,6 +254,7 @@
 		"appearance": {
 			"click_to_create_theme": "Click to create a custom theme.",
 			"custom": "Custom",
+			"playlist": "Playlist",
 			"showCoverInPlaylist": "Show Cover In Playlist"
 		},
 		"apply": "Apply",

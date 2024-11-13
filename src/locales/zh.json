@@ -254,6 +254,7 @@
 		"appearance": {
 			"click_to_create_theme": "点击创建自定义主题",
 			"custom": "自定义",
+			"playlist": "播放列表",
 			"showCoverInPlaylist": "在播放列表中显示封面"
 		},
 		"apply": "应用",

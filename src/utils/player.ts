@@ -582,17 +582,13 @@ export class Player {
         console.error(error);
       });
     }
-    if (response?.data[0].level === quality) {
-      let result = {
-        name: quality,
-        size: response.data[0].size,
-        gain: response.data[0].gain,
-        peak: response.data[0].peak,
-      };
-      return result;
-    } else {
-      return null;
-    }
+    let result = {
+      name: quality,
+      size: response.data[0].size,
+      gain: response.data[0].gain,
+      peak: response.data[0].peak,
+    };
+    return result;
   }
   /**
    * 初始化音频增益
