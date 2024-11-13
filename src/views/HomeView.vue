@@ -463,6 +463,11 @@ export default defineComponent({
           this.showPreventContainer = true;
           break;
         case "playlist-play":
+          Message.post(
+            "info",
+            "message.getting_playlist_tracks",
+            true,
+          );
           Playlist.getAllTracks(arg.target.id).then((res) => {
             this.player.playAll(res);
             Message.post(
@@ -472,6 +477,11 @@ export default defineComponent({
             );
           });
         case "playlist-addtoplaylist":
+          Message.post(
+            "info",
+            "message.getting_playlist_tracks",
+            true,
+          );
           Playlist.getAllTracks(arg.target.id).then((res) => {
             this.player.addPlaylist(res);
             Message.post(
@@ -482,6 +492,11 @@ export default defineComponent({
           });
           break;
         case "playlist-download":
+          Message.post(
+            "info",
+            "message.getting_playlist_tracks",
+            true,
+          );
           Playlist.getAllTracks(arg.target.id).then((res) => {
             this.download.addList(res);
             Message.post(
