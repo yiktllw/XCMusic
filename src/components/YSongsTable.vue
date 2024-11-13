@@ -186,7 +186,7 @@
                                 <div :id="`track-menu-2-${track.id}`" style="display: block;">
                                     <img v-if="likelist.includes(track.id)" src="../assets/likes.svg"
                                         style="width: 16.8px; height: 16.8px; padding-left:10px;    -webkit-user-drag: none; " />
-                                    <img v-else src="../assets/unlikes.svg"
+                                    <img v-else class="g-icon"src="../assets/unlikes.svg"
                                         style="width: 16.8px; height: 16.8px; padding-left:10px; opacity: 0.7;" />
                                 </div>
                             </div>
