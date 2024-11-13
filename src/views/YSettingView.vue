@@ -484,7 +484,9 @@
               <div class="content-item-title">
                 {{ $t("setting_view.about.author") }}
               </div>
-              <div class="content-item-content">YiktLLW</div>
+              <div class="content-item-content" @click="openAuthor">
+                <div class="github-link">YiktLLW</div>
+              </div>
             </div>
             <div class="content-item item-about-readme">
               <div class="content-item-title">
@@ -746,21 +748,19 @@ export default defineComponent({
       this.setting.download.quality = quality;
     },
     openGitRepo() {
-      if (!window.electron?.isElectron) {
-        return;
-      }
+      if (!window.electron?.isElectron) return;
       window.electron.shell.openExternal("https://github.com/yiktllw/XCMusic");
     },
+    openAuthor() {
+      if (!window.electron?.isElectron) return;
+      window.electron.shell.openExternal("https://github.com/yiktllw");
+    },
     openReadme() {
-      if (!window.electron?.isElectron) {
-        return;
-      }
+      if (!window.electron?.isElectron) return;
       this.$router.push({ path: "/markdown/README" });
     },
     openChangelog() {
-      if (!window.electron?.isElectron) {
-        return;
-      }
+      if (!window.electron?.isElectron) return;
       this.$router.push({ path: "/markdown/CHANGELOG" });
     },
     async getDevices() {
