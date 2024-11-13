@@ -198,12 +198,9 @@
             src="../assets/random.svg"
             :title="$t('playbar.random')"
           />
-          <img
+          <YListRandom
             v-if="playMode === 'listrandom'"
-            class="img-random img"
-            src="../assets/listrandom.svg"
             :title="$t('playbar.listrandom')"
-            style="opacity: 1"
           />
           <img
             v-if="playMode === 'loop'"
@@ -269,10 +266,7 @@
                 play_mode_panel?.tooglePanel();
               "
             >
-              <img
-                class="img-random img playMode-img"
-                src="../assets/listrandom.svg"
-              />
+              <YListRandom class="playMode-img" />
               {{ $t("playbar.listrandom") }}
             </div>
             <div
@@ -347,7 +341,7 @@
                       | 'hires'
                       | 'lossless'
                       | 'exhigh'
-                      | 'standard',
+                      | 'standard'
                   )
                 "
                 :style="{ opacity: quality.available ? 1 : 0.4 }"
@@ -491,6 +485,7 @@ import YTextBanner from "./YTextBanner.vue";
 import YScroll from "./YScroll.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ITrack } from "@/utils/tracks";
+import YListRandom from "./base/YListRandom.vue";
 
 export default defineComponent({
   name: "YPlaybar",
@@ -501,6 +496,7 @@ export default defineComponent({
     YProgressBarV,
     YTextBanner,
     YScroll,
+    YListRandom,
   },
   setup() {
     const quality_panel = ref<InstanceType<typeof YPanel> | null>();
@@ -671,7 +667,7 @@ export default defineComponent({
       forward ? this.player.next() : this.player.previous();
     },
     tooglePlayMode(
-      mode: "order" | "listloop" | "random" | "listrandom" | "loop",
+      mode: "order" | "listloop" | "random" | "listrandom" | "loop"
     ) {
       this.player.mode = mode;
       this.setting.play.mode = mode;
@@ -700,7 +696,7 @@ export default defineComponent({
         | "hires"
         | "lossless"
         | "exhigh"
-        | "standard",
+        | "standard"
     ) {
       console.log("setQuality:", quality);
       this.player.quality = quality;
@@ -783,7 +779,7 @@ export default defineComponent({
       this.download.add(
         url,
         this.player.currentTrack,
-        this.setting.download.path,
+        this.setting.download.path
       );
     },
   },
@@ -798,7 +794,7 @@ export default defineComponent({
         | "listloop"
         | "random"
         | "listrandom"
-        | "loop",
+        | "loop"
     );
     this.player.subscriber.on({
       id: "YPlaybar" + `${this.type}`,

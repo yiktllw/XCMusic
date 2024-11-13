@@ -3,18 +3,21 @@
     <div class="font-color-main" @click="$router.push({ path: '/audio/test' })">
       点击跳转到音频调试界面
     </div>
+    <YListRandom/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, markRaw, ref } from "vue";
+import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/YSongsTable.vue";
+import YListRandom from "@/components/base/YListRandom.vue";
 
 export default defineComponent({
   name: "YTestView",
   components: {
     YSongsTable,
+    YListRandom,
   },
   setup() {
     const store = useStore();
