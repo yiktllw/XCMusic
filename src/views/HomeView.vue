@@ -126,7 +126,7 @@ import {
   playlistItems,
   IMenuClick,
 } from "@/dual/YContextMenuItemC";
-import { playlist, useApi } from "@/utils/api";
+import { Playlist, useApi } from "@/utils/api";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
 import { ITrack } from "@/utils/tracks";
@@ -463,7 +463,7 @@ export default defineComponent({
           this.showPreventContainer = true;
           break;
         case "playlist-play":
-          playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id).then((res) => {
             this.player.playAll(res);
             Message.post(
               "success",
@@ -472,7 +472,7 @@ export default defineComponent({
             );
           });
         case "playlist-addtoplaylist":
-          playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id).then((res) => {
             this.player.addPlaylist(res);
             Message.post(
               "success",
@@ -482,7 +482,7 @@ export default defineComponent({
           });
           break;
         case "playlist-download":
-          playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id).then((res) => {
             this.download.addList(res);
             Message.post(
               "success",

@@ -33,6 +33,9 @@
           type="text"
           class="search-input font-color-main"
           @keydown.enter="handleSearch"
+          @keydown.escape="search_panel?.closePanel()"
+          @keydown.up="search_Up"
+          @keydown.down="search_Down"
           v-model="searchInput"
           @input="getSearchSuggestions"
           :placeholder="$t('titlebar.search') + '...'"
@@ -51,6 +54,7 @@
           src="../assets/clear2.svg"
           @click="
             searchInput = '';
+            search_input?.focus();
             search_panel?._showPanel();
           "
         />
@@ -94,7 +98,7 @@
                 {{ $t("titlebar.suggestedSearches") }}
               </div>
               <div
-                class="search-suggestion"
+                class="search-suggestion suggestion-to-select"
                 v-for="suggestion in searchSuggestions"
                 :title="suggestion.keyword"
                 @click="search(suggestion.keyword)"
@@ -240,8 +244,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useApi } from "@/utils/api";
-import { mapActions, useStore } from "vuex";
+import { Search, useApi } from "@/utils/api";
+import { useStore } from "vuex";
 import YPanel from "./YPanel.vue";
 import YScroll from "./YScroll.vue";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
@@ -251,7 +255,7 @@ export default defineComponent({
   emits: ["navigate-back", "navigate-forward", "user-login", "close-panel"],
   props: {
     type: {
-      type: String,
+      type: String as () => "default" | "play-ui",
       default: "default",
     },
   },
@@ -326,15 +330,11 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    ...mapActions(["updateLoginStatus"]),
-    // 后退和前进
     back() {
       this.$router.go(-1);
-      // console.log('back');
     },
     forward() {
       this.$router.go(1);
-      // console.log('forward');
     },
     async openUserPage() {
       if (this.login.status) {
@@ -383,7 +383,6 @@ export default defineComponent({
           this.showDropdown = false;
           this.globalMsg.post("close-login-window");
           clearInterval(interval);
-          // console.log('登录成功，cookie:', checkResponse.cookie);
           this.$emit("user-login");
           await this.init();
           this.login.cookie = checkResponse.cookie;
@@ -480,19 +479,10 @@ export default defineComponent({
     },
     async getSearchSuggestions(event: Event) {
       const searchText = (event.target as HTMLInputElement)?.value;
-      if (!searchText) {
-        this.searchSuggestions = [];
-        return;
-      }
-      let result = await useApi("/search/suggest", {
-        keywords: searchText,
-        type: "mobile",
-      }).catch((error) => {
-        console.error("Failed to get search suggestions:", error);
-      });
-      if (result.code === 200) {
-        console.log("get suggestions", result);
-        this.searchSuggestions = result.result.allMatch;
+      this.searchSuggestions = await Search.getSearchSuggestion(searchText);
+      // 确保选中的搜索建议不超出范围
+      if (this.selectedSuggestion >= this.searchSuggestions.length) {
+        this.selectedSuggestion = this.searchSuggestions.length - 1;
       }
     },
     async init() {
@@ -537,7 +527,7 @@ export default defineComponent({
     },
     deleteSearchHistory(item: string) {
       this.searchHistory = this.searchHistory.filter(
-        (history) => history !== item,
+        (history) => history !== item
       );
     },
     openAboutPage() {
@@ -547,6 +537,42 @@ export default defineComponent({
     openFollow(type: "follow" | "follower") {
       this.$router.push({ path: `/${type}/${this.login.userId}` });
       this.user_info_panel?.closePanel();
+    },
+    scrollToSuggestion() {
+      try {
+        const suggestions: HTMLElement[] =
+          this.search_panel?.$el.querySelectorAll(".suggestion-to-select");
+        suggestions.forEach((suggestion) => {
+          suggestion.classList.remove("focus");
+        });
+        const nowSelected = suggestions[this.selectedSuggestion];
+        if (!nowSelected) return;
+        nowSelected.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+        nowSelected.classList.add("focus");
+      } catch (error) {
+        console.error("Failed to scroll to suggestion:", error);
+      }
+    },
+    search_Up(event: KeyboardEvent) {
+      event.preventDefault();
+      if (this.selectedSuggestion > 0) {
+        this.selectedSuggestion--;
+        this.searchInput =
+          this.searchSuggestions[this.selectedSuggestion].keyword;
+        this.scrollToSuggestion();
+      }
+    },
+    search_Down(event: KeyboardEvent) {
+      event.preventDefault();
+      if (this.selectedSuggestion < this.searchSuggestions.length - 1) {
+        this.selectedSuggestion++;
+        this.searchInput =
+          this.searchSuggestions[this.selectedSuggestion].keyword;
+        this.scrollToSuggestion();
+      }
     },
   },
   async mounted() {
@@ -809,6 +835,10 @@ export default defineComponent({
           &:hover {
             background-color: rgba(var(--foreground-color-rgb), 0.1);
           }
+        }
+
+        .focus {
+          background-color: rgba(var(--foreground-color-rgb), 0.1);
         }
       }
     }

@@ -5,6 +5,9 @@
 
 export interface ISearchSuggestion {
   keyword: string;
+  type: number;
+  alg: string;
+  lastKeyword: string;
 }
 
 export interface IHotSearch {

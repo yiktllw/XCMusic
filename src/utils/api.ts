@@ -10,6 +10,7 @@
 
 import axios from "axios";
 import { Tracks } from "./tracks";
+import { ISearchSuggestion } from "@/dual/YTitlebar";
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -93,7 +94,7 @@ export async function toogleLike(id: number | string, status: boolean) {
   }
 }
 
-export namespace playlist {
+export namespace Playlist {
   /**
    * 获取某个歌单的全部歌曲
    * @param {number} playlistId 歌单id
@@ -183,5 +184,37 @@ export namespace Song {
         return "";
       });
     return url;
+  }
+}
+
+/**
+ * 搜索相关API
+ */
+export namespace Search {
+  /** 从关键词获取搜索建议 */
+  export async function getSearchSuggestion(keyword: string): Promise<ISearchSuggestion[]> {
+    // 如果关键词为空，直接返回空数组
+    if (keyword === "" || !keyword) {
+      console.log("Empty keyword");
+      return [];
+    }
+    interface Ires {
+      code: number;
+      result: {
+        allMatch: ISearchSuggestion[];
+      };
+    }
+    const res: Ires = await useApi("/search/suggest", {
+      keywords: keyword,
+      type: "mobile",
+    }).catch((error) => {
+      console.error("Failed to get search suggestion:", error);
+      return [];
+    });
+    if (res.code !== 200) {
+      console.log("Failed to get search suggestion:", res);
+      return [];
+    }
+    return res.result.allMatch;
   }
 }

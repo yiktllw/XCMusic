@@ -48,7 +48,7 @@
 import { defineComponent, ref } from "vue";
 import YWindow from "../YWindow.vue";
 import { IPlaylist } from "@/utils/login";
-import { playlist } from "@/utils/api";
+import { Playlist } from "@/utils/api";
 import { useStore } from "vuex";
 
 export default defineComponent({
@@ -83,7 +83,7 @@ export default defineComponent({
       this.$emit("new-window-state", val);
     },
     confirmModify() {
-      playlist.editPlaylist(this.id, this.name, this.desc).then(() => {
+      Playlist.editPlaylist(this.id, this.name, this.desc).then(() => {
         this.login.refreshUserPlaylists();
         this.window?.closeWindow();
       });

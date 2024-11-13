@@ -294,7 +294,7 @@ import YLoading from "@/components/YLoading.vue";
 import YComment from "@/components/YComment.vue";
 import { Message } from "@/dual/YMessageC";
 import { ITrack, Tracks } from "@/utils/tracks";
-import { playlist, useApi } from "@/utils/api";
+import { Playlist, useApi } from "@/utils/api";
 import { formatDate_yyyymmdd } from "@/utils/time";
 import { YColor } from "@/utils/color";
 import { Theme1, Theme2, themes } from "@/utils/theme";
@@ -599,7 +599,7 @@ export default defineComponent({
     // 获取当前页的歌曲列表
     async fetchTracks(id: number, page: number) {
       const limit = 1000;
-      let result = await playlist.fetchTracks(id, page, limit);
+      let result = await Playlist.fetchTracks(id, page, limit);
       return result;
     },
     // 设置背景颜色
