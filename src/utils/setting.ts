@@ -415,7 +415,7 @@ export const settingGroup: SettingGroup = {
   },
   system: {
     openAtLogin: {
-      value: getStorage("setting.system.openAtLogin") === "true",
+      value: getStorage("setting.system.openAtLogin") ?? false,
       default: false,
       validation: (value) => {
         let valid = false;
