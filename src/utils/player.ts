@@ -155,7 +155,7 @@ export class Player {
         "mode",
         "playerReady",
         "gain",
-      ]),
+      ])
     );
 
     this.db = new indexDB("ncm", "playlist");
@@ -184,10 +184,9 @@ export class Player {
               id: "indexDB",
               type: "playerReady",
               func: () => {
-                const autoPlay =
-                  getStorage("setting.play.autoPlay") === "true";
-                this.playTrack(JSON.parse(lastTrack), autoPlay);
-                console.log("Last track played", JSON.parse(lastTrack));
+                const autoPlay = getStorage("setting.play.autoPlay");
+                this.playTrack(lastTrack, autoPlay);
+                console.log("Last track played", JSON.stringify(lastTrack, null, 4));
               },
             });
           }
@@ -202,7 +201,7 @@ export class Player {
       id: "currentTrackStorage",
       type: "track",
       func: () => {
-        setStorage("currentTrack", JSON.stringify(this.currentTrack));
+        setStorage("currentTrack", this.currentTrack);
       },
     });
 
@@ -329,8 +328,8 @@ export class Player {
           0,
           Math.min(
             1,
-            parseFloat((this._currentTime / this._duration).toFixed(3)),
-          ),
+            parseFloat((this._currentTime / this._duration).toFixed(3))
+          )
         );
         this.subscriber.exec("time");
         this.subscriber.exec("trackReady");
@@ -372,7 +371,7 @@ export class Player {
           name: this.currentTrack.name,
         },
         "\nurl:",
-        url,
+        url
       );
     } catch (error) {
       console.error(
@@ -382,7 +381,7 @@ export class Player {
           name: this.currentTrack.name,
         },
         "\n",
-        error,
+        error
       );
     }
   }
@@ -394,7 +393,7 @@ export class Player {
   async playTrack(track: ITrack, autoPlay: boolean = true) {
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
-      (_track) => _track.id === track.id,
+      (_track) => _track.id === track.id
     );
     if (trackIndex === -1) {
       // 如果不在播放列表中则添加到播放列表
@@ -461,7 +460,7 @@ export class Player {
         "gain message: \n",
         gainMsg,
         "\n",
-        autoPlayMsg,
+        autoPlayMsg
       );
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
@@ -543,7 +542,7 @@ export class Player {
             ...this.currentTrack,
             [abbr]: res,
           };
-        }),
+        })
       );
     }
     // 执行所有请求
@@ -558,7 +557,7 @@ export class Player {
    */
   async getQuality(
     id: number | string,
-    quality: string,
+    quality: string
   ): Promise<QualityInfo | null> {
     if (isLocal(id)) return null;
     let response = null;
@@ -600,7 +599,7 @@ export class Player {
 
       // 创建一个新的音频源
       this._sourceNode = this._audioContext.createMediaElementSource(
-        this._audio,
+        this._audio
       );
 
       // 创建一个增益节点
@@ -645,8 +644,7 @@ export class Player {
     if (this._history[this._historyIndex + direction]) {
       // 如果历史记录中有上一首/下一首歌曲
       this._current = this._playlist.findIndex(
-        (track) =>
-          track.id === this._history[this._historyIndex + direction].id,
+        (track) => track.id === this._history[this._historyIndex + direction].id
       );
       this._historyIndex += direction;
       this.subscriber.exec("history");
@@ -770,7 +768,7 @@ export class Player {
           this._playlist.splice(
             Math.floor(Math.random() * this.playlistCount),
             0,
-            track,
+            track
           );
         });
       } else {
@@ -781,7 +779,7 @@ export class Player {
     // 找到当前歌曲的索引
     if (ori_track) {
       this._current = this._playlist.findIndex(
-        (track) => track.id === ori_track.id,
+        (track) => track.id === ori_track.id
       );
     }
     if (playFirst) {
@@ -808,7 +806,7 @@ export class Player {
   nextPlay(track: ITrack) {
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
-      (_track) => _track.id === track.id,
+      (_track) => _track.id === track.id
     );
     if (trackIndex !== -1) {
       // 如果在播放列表中，则将其移动到下一首
@@ -847,7 +845,7 @@ export class Player {
   addTrack(value: ITrack) {
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
-      (_track) => _track.id === value.id,
+      (_track) => _track.id === value.id
     );
     if (trackIndex === -1) {
       // 如果不在播放列表中则添加到下一首
@@ -878,7 +876,7 @@ export class Player {
           "update playlist playcount: ",
           this._playlistId,
           "response",
-          JSON.stringify(res, null, 4),
+          JSON.stringify(res, null, 4)
         );
       })
       .catch((err) => {
@@ -1014,12 +1012,12 @@ export class Player {
       let ori_track = this._playlist[this._current];
       // 按照原始索引排序
       this._playlist = this._playlist.sort(
-        (a, b) => a.originalIndex - b.originalIndex,
+        (a, b) => a.originalIndex - b.originalIndex
       );
       // 找到当前歌曲的索引
       if (ori_track) {
         this._current = this._playlist.findIndex(
-          (track) => track.id === ori_track.id,
+          (track) => track.id === ori_track.id
         );
       }
     } else if (value === "listrandom") {
@@ -1031,7 +1029,7 @@ export class Player {
       // 找到当前歌曲的索引
       if (ori_track) {
         this._current = this._playlist.findIndex(
-          (track) => track.id === ori_track.id,
+          (track) => track.id === ori_track.id
         );
       }
     }
@@ -1091,7 +1089,7 @@ export class Player {
             () => {
               this.reloadUrl();
             },
-            1000 * 60 * 20,
+            1000 * 60 * 20
           );
         } else {
           if (this.reloadInterval) {
@@ -1300,7 +1298,7 @@ export class Player {
       | "hires"
       | "jyeffect"
       | "sky"
-      | "jymaster",
+      | "jymaster"
   ) {
     if (qualities.includes(value)) {
       this._quality = value;
@@ -1326,7 +1324,7 @@ export class Player {
     | "quality.local" {
     if (
       store.state.download.downloadedSongs.some(
-        (song) => song.id == this.currentTrack?.id,
+        (song) => song.id == this.currentTrack?.id
       )
     ) {
       return "quality.local";
