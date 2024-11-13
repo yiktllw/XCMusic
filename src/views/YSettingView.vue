@@ -436,11 +436,17 @@
               {{ $t("setting_view.about.backup") }}
             </div>
             <div class="content-item-content backup-content">
-              <div class="export backup-content-item" @click="exportToJSON">
+              <div class="export backup-content-item" @click="exportToJSON_Setting">
                 {{ $t("setting_view.about.export") }}
               </div>
-              <div class="import backup-content-item" @click="importFromJSON">
+              <div class="import backup-content-item" @click="importFromJSON_Setting">
                 {{ $t("setting_view.about.import") }}
+              </div>
+              <div class="export backup-content-item" @click="exportToJSON_Download">
+                {{ $t("setting_view.about.export_download") }}
+              </div>
+              <div class="import backup-content-item" @click="importFromJSON_Download">
+                {{ $t("setting_view.about.import_download") }}
               </div>
             </div>
           </div>
@@ -502,6 +508,7 @@ import {
   qualities,
   TSideBarItems,
 } from "@/utils/setting";
+import { ISaveJSONData } from "@/dual/YSettingView";
 
 export default defineComponent({
   name: "YSettingView",
@@ -518,6 +525,7 @@ export default defineComponent({
       header,
       setting: store.state.setting,
       player: store.state.player,
+      download: store.state.download,
       globalMsg: store.state.globalMsg,
     };
   },
@@ -802,12 +810,16 @@ export default defineComponent({
       this.setting.display.hideInSidebar = hideInSidebar;
       this.globalMsg.post("refresh-sidebar");
     },
-    async exportToJSON() {
+    async exportToJSON_Setting() {
       if (!window.electron?.isElectron) return;
       const json = exportToJSON(this.setting);
+      const data : ISaveJSONData = {
+        json: json,
+        name: "XCMusic_Setting.json",
+      }
       const savedPath = await window.electron.ipcRenderer.invoke(
         "save-json",
-        json,
+        data,
       );
       if (savedPath) {
         Message.post("success", this.$t("setting_view.about.export_success"));
@@ -815,7 +827,24 @@ export default defineComponent({
         Message.post("error", this.$t("setting_view.about.export_fail"));
       }
     },
-    async importFromJSON() {
+    async exportToJSON_Download() {
+      if (!window.electron?.isElectron) return;
+      const json = this.download.exportToJSON();
+      const data: ISaveJSONData = {
+        json: json,
+        name: "XCMusic_Downloads.json",
+      }
+      const savedPath = await window.electron.ipcRenderer.invoke(
+        "save-json",
+        data,
+      );
+      if (savedPath) {
+        Message.post("success", this.$t("setting_view.about.export_success"));
+      } else {
+        Message.post("error", this.$t("setting_view.about.export_fail"));
+      }
+    },
+    async importFromJSON_Setting() {
       if (!window.electron?.isElectron) return;
       const json = await window.electron.ipcRenderer.invoke("open-json");
       if (json) {
@@ -825,6 +854,16 @@ export default defineComponent({
         Message.post("error", this.$t("setting_view.about.import_no_file"));
       }
       this.init();
+    },
+    async importFromJSON_Download() {
+      if (!window.electron?.isElectron) return;
+      const json = await window.electron.ipcRenderer.invoke("open-json");
+      if (json) {
+        this.download.importFromJSON(json);
+        Message.post("success", this.$t("setting_view.about.import_success"));
+      } else {
+        Message.post("error", this.$t("setting_view.about.import_no_file"));
+      }
     },
     init() {
       YColor.setBackgroundColorTheme();
@@ -1025,6 +1064,9 @@ export default defineComponent({
             display: flex;
             flex-direction: row;
             align-items: center;
+            flex-wrap: wrap;
+            line-height: 30px;
+            max-width: 200px;
 
             .backup-content-item {
               cursor: pointer;
