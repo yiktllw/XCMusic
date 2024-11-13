@@ -7,6 +7,7 @@
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
+import { getStorage, setStorage } from "./render_storage";
 import { Theme1, Theme2 } from "./theme";
 import { themes } from "./theme";
 let fs: any, path: any, os: any;
@@ -115,18 +116,18 @@ export interface ISettings {
 export const settingGroup: SettingGroup = {
   play: {
     dbclick: {
-      value: localStorage.getItem("setting.play.dbclick") ?? "all",
+      value: getStorage("setting.play.dbclick") ?? "all",
       default: "all",
       validation: (value) => {
         let valid = ["all", "single"].includes(value);
         if (valid) {
-          localStorage.setItem("setting.play.dbclick", value);
+          setStorage("setting.play.dbclick", value);
         }
         return valid;
       },
     },
     volume_leveling: {
-      value: localStorage.getItem("setting.play.volume_leveling") ?? true,
+      value: getStorage("setting.play.volume_leveling") ?? true,
       default: true,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -134,67 +135,67 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          localStorage.setItem("setting.play.volume_leveling", value);
+          setStorage("setting.play.volume_leveling", value);
         } else if (valid2) {
-          localStorage.setItem("setting.play.volume_leveling", value);
+          setStorage("setting.play.volume_leveling", value);
           valid = true;
         }
         return valid;
       },
     },
     volume: {
-      value: localStorage.getItem("setting.play.volume") ?? 1,
+      value: getStorage("setting.play.volume") ?? 1,
       default: 1,
       type: "number",
       validation: (value) => {
         let valid = typeof value === "number" && value >= 0 && value <= 1;
         if (valid) {
-          localStorage.setItem("setting.play.volume", value);
+          setStorage("setting.play.volume", value);
         }
         return valid;
       },
     },
     mode: {
-      value: localStorage.getItem("setting.play.mode") ?? "order",
+      value: getStorage("setting.play.mode") ?? "order",
       default: "order",
       validation: (value) => {
         let valid = typeof value === "string" && modes.includes(value);
         if (valid) {
-          localStorage.setItem("setting.play.mode", value);
+          setStorage("setting.play.mode", value);
         }
         return valid;
       },
     },
     quality: {
-      value: localStorage.getItem("setting.play.quality") ?? "standard",
+      value: getStorage("setting.play.quality") ?? "standard",
       default: "standard",
       validation: (value) => {
         let valid = typeof value === "string" && qualities.includes(value);
         if (valid) {
-          localStorage.setItem("setting.play.quality", value);
+          setStorage("setting.play.quality", value);
         }
         return valid;
       },
     },
     device: {
-      value: localStorage.getItem("setting.play.device") ?? "default",
+      value: getStorage("setting.play.device") ?? "default",
       default: "default",
       validation: (value) => {
         let valid = typeof value === "string";
         if (valid) {
-          localStorage.setItem("setting.play.device", value);
+          setStorage("setting.play.device", value);
         }
         return valid;
       },
     },
     autoPlay: {
-      value: localStorage.getItem("setting.play.autoPlay") === "true",
+      value: getStorage("setting.play.autoPlay") ?? false,
       default: false,
       validation: (value) => {
         let valid = validBoolean(value);
         if (valid) {
           value = strToBool(value);
-          localStorage.setItem("setting.play.autoPlay", value);
+          setStorage("setting.play.autoPlay", value);
         }
         return valid;
       },
@@ -202,7 +203,7 @@ export const settingGroup: SettingGroup = {
   },
   playui: {
     spectrum: {
-      value: localStorage.getItem("setting.playui.spectrum") ?? false,
+      value: getStorage("setting.playui.spectrum") ?? false,
       default: false,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -210,9 +211,9 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          localStorage.setItem("setting.playui.spectrum", value);
+          setStorage("setting.playui.spectrum", value);
         } else if (valid2) {
-          localStorage.setItem("setting.playui.spectrum", value);
+          setStorage("setting.playui.spectrum", value);
           valid = true;
         }
         return valid;
@@ -221,42 +222,36 @@ export const settingGroup: SettingGroup = {
   },
   download: {
     path: {
-      value:
-        localStorage.getItem("setting.download.path") ?? getDownloadDirectory(),
+      value: getStorage("setting.download.path") ?? getDownloadDirectory(),
       default: getDownloadDirectory(),
       validation: (value) => {
         let valid = typeof value === "string" && isValidDirectory(value);
         if (valid) {
-          localStorage.setItem("setting.download.path", value);
+          setStorage("setting.download.path", value);
         }
         return valid;
       },
     },
     quality: {
-      value: localStorage.getItem("setting.download.quality") ?? "standard",
+      value: getStorage("setting.download.quality") ?? "standard",
       default: "standard",
       validation: (value) => {
         let valid = typeof value === "string" && qualities.includes(value);
         if (valid) {
-          localStorage.setItem("setting.download.quality", value);
+          setStorage("setting.download.quality", value);
         }
         return valid;
       },
     },
     localPaths: {
-      value: JSON.parse(
-        localStorage.getItem("setting.download.localPaths") ?? "[]",
-      ),
+      value: getStorage("setting.download.localPaths") ?? [],
       default: [],
       validation: (value) => {
         let valid =
           Array.isArray(value) &&
           value.every((path: string) => isValidDirectory(path));
         if (valid) {
-          localStorage.setItem(
-            "setting.download.localPaths",
-            JSON.stringify(value),
-          );
+          setStorage("setting.download.localPaths", value);
         }
         return valid;
       },
@@ -264,60 +259,53 @@ export const settingGroup: SettingGroup = {
   },
   display: {
     language: {
-      value: localStorage.getItem("setting.display.language") ?? "zh",
+      value: getStorage("setting.display.language") ?? "zh",
       default: "zh",
       validation: (value) => {
         let valid = ["zh", "en"].includes(value);
         if (valid) {
-          localStorage.setItem("setting.display.language", value);
+          setStorage("setting.display.language", value);
         }
         return valid;
       },
     },
     theme: {
-      value: localStorage.getItem("setting.display.theme") ?? "dark",
+      value: getStorage("setting.display.theme") ?? "dark",
       default: "dark",
       validation: (value) => {
         const userCustomThemes: Array<{
           data: Theme1 | Theme2;
           classContent: string;
-        }> = JSON.parse(
-          localStorage.getItem("setting.display.userCustomThemes") ?? "[]",
-        );
+        }> = getStorage("setting.display.userCustomThemes") ?? [];
         let valid =
           typeof value === "string" &&
           (themes.some((theme) => theme.value === value) ||
             userCustomThemes.some((theme) => theme.data.value === value));
         if (valid) {
-          localStorage.setItem("setting.display.theme", value);
+          setStorage("setting.display.theme", value);
         }
         return valid;
       },
     },
     userCustomThemes: {
-      value: JSON.parse(
-        localStorage.getItem("setting.display.userCustomThemes") ?? "[]",
-      ),
+      value: getStorage("setting.display.userCustomThemes") ?? [],
       default: [],
       validation: (value) => {
         let valid = Array.isArray(value);
         if (valid) {
-          localStorage.setItem(
-            "setting.display.userCustomThemes",
-            JSON.stringify(value),
-          );
+          setStorage("setting.display.userCustomThemes", value);
         }
         return valid;
       },
     },
     zoom: {
-      value: localStorage.getItem("setting.display.zoom") ?? 1,
+      value: getStorage("setting.display.zoom") ?? 1,
       default: 1,
       type: "number",
       validation: (value) => {
         let valid = typeof value === "number" && value >= 0.5 && value <= 2;
         if (valid) {
-          localStorage.setItem("setting.display.zoom", value);
+          setStorage("setting.display.zoom", value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send("zoom", value);
           }
@@ -326,8 +314,7 @@ export const settingGroup: SettingGroup = {
       },
     },
     fullscreenAutoZoom: {
-      value:
-        localStorage.getItem("setting.display.fullscreenAutoZoom") ?? false,
+      value: getStorage("setting.display.fullscreenAutoZoom") ?? false,
       default: false,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -335,54 +322,49 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          localStorage.setItem("setting.display.fullscreenAutoZoom", value);
+          setStorage("setting.display.fullscreenAutoZoom", value);
         } else if (valid2) {
-          localStorage.setItem("setting.display.fullscreenAutoZoom", value);
+          setStorage("setting.display.fullscreenAutoZoom", value);
           valid = true;
         }
         return valid;
       },
     },
     sidebarWidth: {
-      value: localStorage.getItem("setting.display.sidebarWidth") ?? 200,
+      value: getStorage("setting.display.sidebarWidth") ?? 200,
       default: 200,
       type: "number",
       nosave: true,
       validation: (value) => {
         let valid = typeof value === "number" && value >= 180 && value <= 260;
         if (valid) {
-          localStorage.setItem("setting.display.sidebarWidth", value);
+          setStorage("setting.display.sidebarWidth", value);
         }
         return valid;
       },
     },
     albumWidth: {
-      value: localStorage.getItem("setting.display.albumWidth") ?? 230,
+      value: getStorage("setting.display.albumWidth") ?? 230,
       default: 230,
       type: "number",
       nosave: true,
       validation: (value) => {
         let valid = typeof value === "number" && value >= 200 && value <= 400;
         if (valid) {
-          localStorage.setItem("setting.display.albumWidth", value);
+          setStorage("setting.display.albumWidth", value);
         }
         return valid;
       },
     },
     hideInSidebar: {
-      value: JSON.parse(
-        localStorage.getItem("setting.display.hideInSidebar") ?? "[]",
-      ),
+      value: getStorage("setting.display.hideInSidebar") ?? [],
       default: [],
       validation: (value) => {
         let valid =
           Array.isArray(value) &&
           value.every((item: string) => sidebarItems.includes(item));
         if (valid) {
-          localStorage.setItem(
-            "setting.display.hideInSidebar",
-            JSON.stringify(value),
-          );
+          setStorage("setting.display.hideInSidebar", value);
         }
         return valid;
       },
@@ -390,32 +372,31 @@ export const settingGroup: SettingGroup = {
   },
   titleBar: {
     searchHistory: {
-      value:
-        JSON.parse(localStorage.getItem("setting.searchHistory") || "[]") ?? [],
+      value: getStorage("setting.searchHistory") ?? [],
       default: [],
       nosave: true,
       validation: (value) => {
         let valid = Array.isArray(value);
         if (valid) {
-          localStorage.setItem("setting.searchHistory", JSON.stringify(value));
+          setStorage("setting.searchHistory", value);
         }
         return valid;
       },
     },
     closeButton: {
-      value: localStorage.getItem("setting.titleBar.closeButton") ?? "minimize",
+      value: getStorage("setting.titleBar.closeButton") ?? "minimize",
       default: "minimize",
       validation: (value) => {
         let valid =
           typeof value === "string" && ["quit", "minimize"].includes(value);
         if (valid) {
-          localStorage.setItem("setting.titleBar.closeButton", value);
+          setStorage("setting.titleBar.closeButton", value);
         }
         return valid;
       },
     },
     closeAlwaysAsk: {
-      value: localStorage.getItem("setting.titleBar.closeAlwaysAsk") ?? true,
+      value: getStorage("setting.titleBar.closeAlwaysAsk") ?? true,
       default: true,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -423,9 +404,9 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          localStorage.setItem("setting.titleBar.closeAlwaysAsk", value);
+          setStorage("setting.titleBar.closeAlwaysAsk", value);
         } else if (valid2) {
-          localStorage.setItem("setting.titleBar.closeAlwaysAsk", value);
+          setStorage("setting.titleBar.closeAlwaysAsk", value);
           valid = true;
         }
         return valid;
@@ -434,7 +415,7 @@ export const settingGroup: SettingGroup = {
   },
   system: {
     openAtLogin: {
-      value: localStorage.getItem("setting.system.openAtLogin") === "true",
+      value: getStorage("setting.system.openAtLogin") === "true",
       default: false,
       validation: (value) => {
         let valid = false;
@@ -442,7 +423,7 @@ export const settingGroup: SettingGroup = {
 
         // 将value转换为boolean并得知是否有效
         if (isBool) {
-          localStorage.setItem("setting.system.openAtLogin", value);
+          setStorage("setting.system.openAtLogin", value);
           valid = true;
         } else if (typeof value === "string") {
           value = value.toLowerCase();

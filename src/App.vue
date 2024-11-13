@@ -6,6 +6,7 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import { Doc } from "./utils/document";
+import { getStorage } from "./utils/render_storage";
 
 export default defineComponent({
   name: "App",
@@ -22,11 +23,10 @@ export default defineComponent({
     if (window.electron?.isElectron) {
       window.electron.ipcRenderer.send(
         "zoom",
-        parseFloat(this.setting.display.zoom.toString()),
+        parseFloat(this.setting.display.zoom.toString())
       );
       window.electron.ipcRenderer.on("fullscreen-window-size", (event) => {
-        const autoScale =
-          localStorage.getItem("setting.display.fullscreenAutoZoom") === "true";
+        const autoScale = getStorage("setting.display.fullscreenAutoZoom");
         if (!autoScale) return;
         const { width, height } = event;
         const scalex = width / 1280;
@@ -38,7 +38,7 @@ export default defineComponent({
       window.electron.ipcRenderer.on("leave-fullscreen", () => {
         window.electron.ipcRenderer.send(
           "zoom",
-          parseFloat(this.setting.display.zoom.toString()),
+          parseFloat(this.setting.display.zoom.toString())
         );
       });
     }

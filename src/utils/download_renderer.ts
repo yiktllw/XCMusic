@@ -12,6 +12,7 @@ import { ITrack } from "./tracks";
 import { IDownloadProgress } from "./download";
 import { Song } from "./api";
 import { exportToJSON, getDownloadDirectory } from "./setting";
+import { getStorage } from "./render_storage";
 
 export interface IDownloadedSong {
   id: number;
@@ -97,10 +98,10 @@ export class Download {
 
             const url = await Song.getUrl(
               song.id,
-              localStorage.getItem("setting.download.quality") ?? "standard"
+              getStorage("setting.download.quality") ?? "standard"
             );
             const downloadDir =
-              localStorage.getItem("setting.download.path") ??
+              getStorage("setting.download.path") ??
               getDownloadDirectory();
             if (!url || !downloadDir) return;
 

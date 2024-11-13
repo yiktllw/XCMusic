@@ -11,6 +11,7 @@
 import axios from "axios";
 import { Tracks } from "./tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
+import { getStorage } from "./render_storage";
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -88,9 +89,9 @@ export async function setLike(
  */
 export async function toogleLike(id: number | string, status: boolean) {
   if (status) {
-    await setLike(id, false, localStorage.getItem("login_cookie") ?? "");
+    await setLike(id, false, getStorage("login_cookie") ?? "");
   } else {
-    await setLike(id, true, localStorage.getItem("login_cookie") ?? "");
+    await setLike(id, true, getStorage("login_cookie") ?? "");
   }
 }
 
@@ -157,7 +158,7 @@ export namespace Playlist {
    * @param desc 歌单描述
    */
   export async function editPlaylist(id: number, name: string, desc: string) {
-    const cookie = localStorage.getItem("login_cookie");
+    const cookie = getStorage("login_cookie");
     if (!cookie) console.error("No login cookie found");
     await useApi("/playlist/update", {
       id: id,
@@ -176,7 +177,7 @@ export namespace Song {
     const url: string = await useApi("/song/url/v1", {
       id: id,
       level: level,
-      cookie: localStorage.getItem("login_cookie") ?? undefined,
+      cookie: getStorage("login_cookie") ?? undefined,
     })
       .then((res) => res.data[0].url)
       .catch((err) => {

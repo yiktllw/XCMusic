@@ -22,6 +22,7 @@ import i18n from "@/i18n";
 import { isLocal } from "./localTracks_renderer";
 import { qualities } from "./setting";
 import { ITrack } from "./tracks";
+import { getStorage, setStorage } from "./render_storage";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
   fs = window.api.fs;
@@ -91,7 +92,7 @@ export class Player {
     this._outputAudio = new Audio("");
     this._audio.onerror = () => this.handleAudioError(this._audio.error);
     let localVolumeLeveling =
-      localStorage.getItem("setting.play.volume_leveling") ?? "true";
+      getStorage("setting.play.volume_leveling") ?? "true";
     this._volume_leveling = localVolumeLeveling === "true" ? true : false;
     this._audioContext = null;
     this._gainNode = null;
@@ -177,14 +178,14 @@ export class Player {
           if (this._mode === "listrandom") {
             this._playlist = this._playlist.sort(() => Math.random() - 0.5);
           }
-          const lastTrack = localStorage.getItem("currentTrack");
+          const lastTrack = getStorage("currentTrack");
           if (lastTrack) {
             this.subscriber.on({
               id: "indexDB",
               type: "playerReady",
               func: () => {
                 const autoPlay =
-                  localStorage.getItem("setting.play.autoPlay") === "true";
+                  getStorage("setting.play.autoPlay") === "true";
                 this.playTrack(JSON.parse(lastTrack), autoPlay);
                 console.log("Last track played", JSON.parse(lastTrack));
               },
@@ -201,7 +202,7 @@ export class Player {
       id: "currentTrackStorage",
       type: "track",
       func: () => {
-        localStorage.setItem("currentTrack", JSON.stringify(this.currentTrack));
+        setStorage("currentTrack", JSON.stringify(this.currentTrack));
       },
     });
 
@@ -561,11 +562,11 @@ export class Player {
   ): Promise<QualityInfo | null> {
     if (isLocal(id)) return null;
     let response = null;
-    if (localStorage.getItem("login_cookie")) {
+    if (getStorage("login_cookie")) {
       response = await useApi("/song/url/v1", {
         id: id,
         level: quality,
-        cookie: localStorage.getItem("login_cookie"),
+        cookie: getStorage("login_cookie"),
       }).catch((error) => {
         console.error(error);
       });
@@ -611,7 +612,7 @@ export class Player {
       this._sourceNode.connect(this._gainNode);
       this._gainNode.connect(this._destination);
 
-      if (localStorage.getItem("setting.playui.spectrum") === "true") {
+      if (getStorage("setting.playui.spectrum") === "true") {
         // 创建 AnalyserNode
         this._analyserNode = this._audioContext.createAnalyser();
         this._analyserNode.fftSize = 1024; // 设置 FFT 大小
@@ -633,7 +634,7 @@ export class Player {
       this._outputAudio.srcObject = this._destination.stream;
       this._outputAudio.play();
 
-      this.setDevice(localStorage.getItem("setting.play.device") ?? "default");
+      this.setDevice(getStorage("setting.play.device") ?? "default");
     }
   }
   /**
@@ -867,10 +868,10 @@ export class Player {
    * 更新歌单播放数据
    */
   async updatePlaycount() {
-    if (!localStorage.getItem("login_cookie")) return;
+    if (!getStorage("login_cookie")) return;
     await useApi("/playlist/update/playcount", {
       id: this._playlistId,
-      cookie: localStorage.getItem("login_cookie"),
+      cookie: getStorage("login_cookie"),
     })
       .then((res) => {
         console.log(
@@ -891,13 +892,13 @@ export class Player {
   async scrobble(id: number) {
     return;
     // 此接口已弃用
-    if (!localStorage.getItem("login_cookie")) return;
+    if (!getStorage("login_cookie")) return;
     if ((this._playlistId as number) > 0) {
       await useApi("/scrobble", {
         id: id,
         time: this._currentTime,
         sourceId: this._playlistId,
-        cookie: localStorage.getItem("login_cookie"),
+        cookie: getStorage("login_cookie"),
       })
         .then(() => {
           // console.log('update song playcount: ', id, 'time', this._currentTime, 'response: ', res);
@@ -909,7 +910,7 @@ export class Player {
       await useApi("/scrobble", {
         id: id,
         time: this._currentTime,
-        cookie: localStorage.getItem("login_cookie"),
+        cookie: getStorage("login_cookie"),
       })
         .then(() => {
           // console.log('update song playcount: ', id, 'response: ', res);
@@ -1131,11 +1132,11 @@ export class Player {
         if (song) store.state.download.delete(song.id);
       }
     }
-    if (localStorage.getItem("login_cookie")) {
+    if (getStorage("login_cookie")) {
       response = await useApi("/song/url/v1", {
         id: id,
         level: this.quality,
-        cookie: localStorage.getItem("login_cookie"),
+        cookie: getStorage("login_cookie"),
       }).catch((error) => {
         console.error(error);
       });

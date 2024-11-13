@@ -9,6 +9,7 @@
 
 import Color from "color";
 import { Theme1, Theme2, themes } from "./theme";
+import { getStorage } from "./render_storage";
 
 type COLOR = {
   r: number;
@@ -59,7 +60,7 @@ export namespace YColor {
         data: Theme1 | Theme2;
         classContent: string;
       }> = JSON.parse(
-        localStorage.getItem("setting.display.userCustomThemes") ?? "[]",
+        getStorage("setting.display.userCustomThemes") ?? "[]",
       );
       let _res = userCustomThemes.find(
         (theme) => theme.data.value === themeValue,
