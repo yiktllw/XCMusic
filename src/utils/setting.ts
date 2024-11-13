@@ -93,6 +93,8 @@ export interface ISettings {
     albumWidth: number;
     /** 在侧边栏中，隐藏的元素 */
     hideInSidebar: TSideBarItems[];
+    /** 是否在播放列表中显示封面 */
+    showCoverInPlaylist: boolean;
   };
   /** 标题栏设置 */
   titleBar: {
@@ -365,6 +367,17 @@ export const settingGroup: SettingGroup = {
           value.every((item: string) => sidebarItems.includes(item));
         if (valid) {
           setStorage("setting.display.hideInSidebar", value);
+        }
+        return valid;
+      },
+    },
+    showCoverInPlaylist: {
+      value: getStorage("setting.display.showCoverInPlaylist") ?? true,
+      default: true,
+      validation: (value) => {
+        let valid = typeof value === "boolean";
+        if (valid) {
+          setStorage("setting.display.showCoverInPlaylist", value);
         }
         return valid;
       },

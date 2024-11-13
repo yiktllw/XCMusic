@@ -243,8 +243,8 @@
 			"export_download": "Export Downloaded Songs",
 			"export_fail": "Export To JSON Failed",
 			"export_success": "Export To JSON Successfully",
-			"import_download": "Import Downloaded Songs",
 			"import": "Import Settings From JSON",
+			"import_download": "Import Downloaded Songs",
 			"import_no_file": "No File Selected",
 			"import_success": "Imported Successfully",
 			"readme": "Readme",
@@ -253,7 +253,8 @@
 		},
 		"appearance": {
 			"click_to_create_theme": "Click to create a custom theme.",
-			"custom": "Custom"
+			"custom": "Custom",
+			"showCoverInPlaylist": "Show Cover In Playlist"
 		},
 		"apply": "Apply",
 		"click_to_reload": "Click to reload window.",

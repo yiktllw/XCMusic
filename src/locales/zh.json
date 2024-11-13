@@ -243,8 +243,8 @@
 			"export_download": "导出已下载的歌曲信息",
 			"export_fail": "导出失败",
 			"export_success": "导出成功",
-			"import_download": "导入已下载的歌曲信息",
 			"import": "导入设置",
+			"import_download": "导入已下载的歌曲信息",
 			"import_no_file": "请选择一个文件",
 			"import_success": "导入成功",
 			"readme": "介绍",
@@ -253,7 +253,8 @@
 		},
 		"appearance": {
 			"click_to_create_theme": "点击创建自定义主题",
-			"custom": "自定义"
+			"custom": "自定义",
+			"showCoverInPlaylist": "在播放列表中显示封面"
 		},
 		"apply": "应用",
 		"click_to_reload": "点击重新加载窗口",

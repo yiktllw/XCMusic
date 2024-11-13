@@ -938,6 +938,16 @@ export default defineComponent({
           index = i;
         }
       }
+      const containerHeight = this.scroll!.$el.clientHeight;
+      if (
+        scrollTop >=
+        this.rectData[this.rectData.length - 1] -
+          containerHeight +
+          this.rectData[0] -
+          30
+      ) {
+        index = this.rectData.length - 1;
+      }
       this.header!.setPosition(this.switcher[index].position);
     });
   },

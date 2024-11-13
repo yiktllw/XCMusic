@@ -62,12 +62,15 @@ export default defineComponent({
   data() {
     return {
       position: "",
+      timeoutId: null as NodeJS.Timeout | null,
     };
   },
   methods: {
     handleSwitcher(position: string) {
-      this.position = position;
       this.$emit("new-position", position);
+      this.timeoutId = setTimeout(() => {
+        this.position = position;
+      }, 16 * 2);
     },
     setPosition(position: string) {
       this.position = position;
@@ -75,6 +78,9 @@ export default defineComponent({
   },
   mounted() {
     this.position = (this.switcher as SwitcherItem[])[0].position;
+  },
+  beforeUnmount() {
+    if (this.timeoutId) clearTimeout(this.timeoutId);
   },
 });
 </script>
