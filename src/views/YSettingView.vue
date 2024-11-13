@@ -10,487 +10,510 @@
         ></YHeader>
       </div>
     </div>
-    <div class="main font-color-main">
-      <div class="normal item" id="normal">
-        <div class="normal-title item-title">
-          {{ $t("header.setting_view.normal") }}
-        </div>
-        <div class="normal-content item-content">
-          <div class="content-item item-languige">
-            <div class="content-item-title">
-              {{ $t("setting_view.language") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="radio"
-                id="setting_zh"
-                name="language"
-                value="zh"
-                v-model="language"
-                @change="switchToLanguage('zh')"
-              />
-              <label for="setting_zh"> 简体中文 </label>
-              <input
-                type="radio"
-                id="setting_en"
-                name="language"
-                value="en"
-                v-model="language"
-                @change="switchToLanguage('en')"
-              />
-              <label for="setting_en"> English </label>
-            </div>
+    <YScroll
+      :style="{
+        maxHeight: 'calc(100vh - 280px)',
+        marginTop: '110px',
+        width: '100%',
+      }"
+      ref="scroll"
+    >
+      <div class="main font-color-main">
+        <div class="normal item" id="normal">
+          <div class="normal-title item-title">
+            {{ $t("header.setting_view.normal") }}
           </div>
-          <div class="content-item">
-            <div class="content-item-title">
-              {{ $t("setting_view.open_sys") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="checkbox"
-                id="setting_open_at_login"
-                name="open_at_login"
-                v-model="openAtLogin"
-                @change="setOpenAtLogin(openAtLogin)"
-              />
-              <label for="setting_open_at_login">
-                {{ $t("setting_view.open_at_login") }}
-              </label>
-            </div>
-          </div>
-          <div class="content-item close-item">
-            <div class="content-item-title">
-              {{ $t("setting_view.close") }}
-            </div>
-            <div class="content-item-content item-content-close">
-              <div class="close-item1">
+          <div class="normal-content item-content">
+            <div class="content-item item-languige">
+              <div class="content-item-title">
+                {{ $t("setting_view.language") }}
+              </div>
+              <div class="content-item-content">
                 <input
                   type="radio"
-                  id="setting_minimize"
-                  name="close"
-                  value="minimize"
-                  v-model="closeBehavior"
-                  @change="setClose('minimize')"
+                  id="setting_zh"
+                  name="language"
+                  value="zh"
+                  v-model="language"
+                  @change="switchToLanguage('zh')"
                 />
-                <label for="setting_minimize">
-                  {{ $t("setting_view.close_to_minimize") }}
-                </label>
-              </div>
-              <div class="close-item2">
+                <label for="setting_zh"> 简体中文 </label>
                 <input
                   type="radio"
-                  id="setting_close"
-                  name="close"
-                  value="quit"
-                  v-model="closeBehavior"
-                  @change="setClose('quit')"
+                  id="setting_en"
+                  name="language"
+                  value="en"
+                  v-model="language"
+                  @change="switchToLanguage('en')"
                 />
-                <label for="setting_close">
-                  {{ $t("setting_view.close_to_quit") }}
-                </label>
+                <label for="setting_en"> English </label>
               </div>
-              <div class="always-ask">
+            </div>
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.open_sys") }}
+              </div>
+              <div class="content-item-content">
                 <input
                   type="checkbox"
-                  id="setting_always_ask"
-                  name="always_ask"
-                  v-model="closeAlwaysAsk"
-                  @change="setAlwaysAsk(closeAlwaysAsk)"
+                  id="setting_open_at_login"
+                  name="open_at_login"
+                  v-model="openAtLogin"
+                  @change="setOpenAtLogin(openAtLogin)"
                 />
-                <label for="setting_always_ask">
-                  {{ $t("setting_view.close_always_ask") }}
+                <label for="setting_open_at_login">
+                  {{ $t("setting_view.open_at_login") }}
                 </label>
               </div>
             </div>
-          </div>
-          <div class="content-item">
-            <div class="content-item-title">
-              {{ $t("setting_view.reload") }}
-            </div>
-            <div class="content-item-content">
-              <div class="reload-item" @click="reloadWindow">
-                {{ $t("setting_view.click_to_reload") }}
+            <div class="content-item close-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.close") }}
+              </div>
+              <div class="content-item-content item-content-close">
+                <div class="close-item1">
+                  <input
+                    type="radio"
+                    id="setting_minimize"
+                    name="close"
+                    value="minimize"
+                    v-model="closeBehavior"
+                    @change="setClose('minimize')"
+                  />
+                  <label for="setting_minimize">
+                    {{ $t("setting_view.close_to_minimize") }}
+                  </label>
+                </div>
+                <div class="close-item2">
+                  <input
+                    type="radio"
+                    id="setting_close"
+                    name="close"
+                    value="quit"
+                    v-model="closeBehavior"
+                    @change="setClose('quit')"
+                  />
+                  <label for="setting_close">
+                    {{ $t("setting_view.close_to_quit") }}
+                  </label>
+                </div>
+                <div class="always-ask">
+                  <input
+                    type="checkbox"
+                    id="setting_always_ask"
+                    name="always_ask"
+                    v-model="closeAlwaysAsk"
+                    @change="setAlwaysAsk(closeAlwaysAsk)"
+                  />
+                  <label for="setting_always_ask">
+                    {{ $t("setting_view.close_always_ask") }}
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="appearance item" id="appearance">
-        <div class="appearance-title item-title">
-          {{ $t("header.setting_view.appearance") }}
-        </div>
-        <div class="appearance-content item-content">
-          <div class="content-item item-theme">
-            <div class="content-item-title item-theme-title">
-              {{ $t("setting_view.theme") }}
-            </div>
-            <div class="content-item-content">
-              <select v-model="theme" @change="handleTheme">
-                <option v-for="item in themes" :value="item.value">
-                  {{
-                    [
-                      "setting_view.theme_name.dark",
-                      "setting_view.theme_name.dark_high_contrast",
-                      "setting_view.theme_name.light",
-                      "setting_view.theme_name.light_high_contrast",
-                    ].includes(item.display)
-                      ? $t(item.display)
-                      : item.display
-                  }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="content-item item-custom">
-            <div class="content-item-title">
-              {{ $t("setting_view.appearance.custom") }}
-            </div>
-            <div class="content-item-content">
-              <div class="custom-text" @click="openCustomWindow">
-                {{ $t("setting_view.appearance.click_to_create_theme") }}
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.reload") }}
               </div>
-            </div>
-          </div>
-          <div class="content-item item-zoom">
-            <div class="content-item-title item-zoom-title">
-              {{ $t("setting_view.zoom") }}
-            </div>
-            <div class="zoom-item">
-              <div class="item-zoom-content">
-                <input
-                  type="number"
-                  min="50"
-                  max="200"
-                  step="5"
-                  v-model="zoom"
-                />
-                <div class="zoom-apply" @click="handleZoom">
-                  {{ $t("setting_view.apply") }}
+              <div class="content-item-content">
+                <div class="reload-item" @click="reloadWindow">
+                  {{ $t("setting_view.click_to_reload") }}
                 </div>
               </div>
             </div>
           </div>
-          <div class="content-item item-fullscreen-auto-zoom">
-            <div class="content-item-title">
-              {{ $t("setting_view.display.fullscreen") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="checkbox"
-                id="setting_auto_zoom"
-                name="auto_zoom"
-                v-model="auto_zoom"
-                @change="setAutoZoom(auto_zoom)"
-              />
-              <label
-                for="setting_auto_zoom"
-                :title="$t('setting_view.display.press_f11_to_fullscreen')"
-              >
-                {{ $t("setting_view.display.fullscreen_auto_zoom") }}
-                <span class="font-color-low">
-                  ({{ $t("setting_view.display.press_f11_to_fullscreen") }})
-                </span>
-              </label>
-            </div>
-          </div>
-          <div class="content-item item-sidebar">
-            <div class="content-item-title">
-              {{ $t("setting_view.display.sidebar") }}
-            </div>
-            <div class="content-item-content item-sidebar-content">
-              <div class="item-sidebar-content-title">
-                {{ $t("setting_view.display.hideInSidebar") }}
-              </div>
-              <div class="item-sidebar-content-checks">
-                <input
-                  type="checkbox"
-                  id="setting_sidebar_favorite"
-                  name="setting_sidebar_favorite"
-                  v-model="hideInSidebar_favorite"
-                  @change="setHideInSidebar"
-                />
-                <label for="setting_sidebar_favorite">
-                  {{ $t("playlist_view.my_favorite_musics") }}
-                </label>
-                <input
-                  type="checkbox"
-                  id="setting_sidebar_album"
-                  name="setting_sidebar_album"
-                  v-model="hideInSidebar_album"
-                  @change="setHideInSidebar"
-                />
-                <label for="setting_sidebar_album">
-                  {{ $t("subscribed_album") }}
-                </label>
-                <input
-                  type="checkbox"
-                  id="setting_sidebar_local"
-                  name="setting_sidebar_local"
-                  v-model="hideInSidebar_local"
-                  @change="setHideInSidebar"
-                />
-                <label for="setting_sidebar_local">
-                  {{ $t("local_music") }}
-                </label>
-                <input
-                  type="checkbox"
-                  id="setting_sidebar_download"
-                  name="setting_sidebar_download"
-                  v-model="hideInSidebar_download"
-                  @change="setHideInSidebar"
-                />
-                <label for="setting_sidebar_download">
-                  {{ $t("manage_download") }}
-                </label>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="play item" id="play">
-        <div class="play-title item-title">
-          {{ $t("header.setting_view.play") }}
-        </div>
-        <div class="play-content item-content">
-          <div class="content-item">
-            <div class="content-item-title">
-              {{ $t("setting_view.play.launch") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="checkbox"
-                id="setting_auto_play"
-                name="auto_play"
-                v-model="autoPlay"
-                @change="setAutoPlay(autoPlay)"
-              />
-              <label for="setting_auto_play">
-                {{ $t("setting_view.play.auto_play") }}
-              </label>
-            </div>
+        <div class="appearance item" id="appearance">
+          <div class="appearance-title item-title">
+            {{ $t("header.setting_view.appearance") }}
           </div>
-          <div class="content-item item-play-volume_leveling">
-            <div class="content-item-title">
-              {{ $t("setting_view.play.volume_leveling") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="checkbox"
-                id="setting_volume_leveling"
-                name="volume_leveling"
-                v-model="volume_leveling"
-                @change="setVolumeLeveling(volume_leveling)"
-              />
-              <label for="setting_volume_leveling">
-                {{ $t("setting_view.play.volume_leveling_content") }}
-              </label>
-            </div>
-          </div>
-          <div class="content-item item-playui">
-            <div class="content-item-title">
-              {{ $t("setting_view.play.playui") }}
-            </div>
-            <div class="content-item-content">
-              <input
-                type="checkbox"
-                id="setting_spectrum"
-                name="spectrum"
-                v-model="spectrum"
-                @change="setSpectrum(spectrum)"
-              />
-              <label for="setting_spectrum">
-                {{ $t("setting_view.play.show_spectrum") }}
-              </label>
-            </div>
-          </div>
-          <div class="content-item item-play-dbclick">
-            <div class="content-item-title">
-              {{ $t("setting_view.play.dbclick") }}
-            </div>
-            <div class="content-item-content item-play-dbclick-content">
-              <div class="dbclick-item1">
-                <input
-                  type="radio"
-                  id="setting_play-dbclick"
-                  name="play"
-                  value="all"
-                  v-model="dbclick"
-                  @change="setDbClick('all')"
-                />
-                <label for="setting_play-dbclick">
-                  {{ $t("setting_view.play.dbclick_playall") }}
-                </label>
+          <div class="appearance-content item-content">
+            <div class="content-item item-theme">
+              <div class="content-item-title item-theme-title">
+                {{ $t("setting_view.theme") }}
               </div>
-              <div class="dbclick-item2">
-                <input
-                  type="radio"
-                  id="setting_play-click"
-                  name="play"
-                  value="single"
-                  v-model="dbclick"
-                  @change="setDbClick('single')"
-                />
-                <label for="setting_play-click">
-                  {{ $t("setting_view.play.dbclick_playsingle") }}
-                </label>
+              <div class="content-item-content">
+                <select v-model="theme" @change="handleTheme">
+                  <option v-for="item in themes" :value="item.value">
+                    {{
+                      [
+                        "setting_view.theme_name.dark",
+                        "setting_view.theme_name.dark_high_contrast",
+                        "setting_view.theme_name.light",
+                        "setting_view.theme_name.light_high_contrast",
+                      ].includes(item.display)
+                        ? $t(item.display)
+                        : item.display
+                    }}
+                  </option>
+                </select>
               </div>
             </div>
-          </div>
-          <div class="content-item">
-            <div class="content-item-title">
-              {{ $t("setting_view.play.device") }}
+            <div class="content-item item-custom">
+              <div class="content-item-title">
+                {{ $t("setting_view.appearance.custom") }}
+              </div>
+              <div class="content-item-content">
+                <div class="custom-text" @click="openCustomWindow">
+                  {{ $t("setting_view.appearance.click_to_create_theme") }}
+                </div>
+              </div>
             </div>
-            <div class="content-item-content">
-              <select
-                v-model="selectedDevice"
-                @change="selectAudioOutputDevice(selectedDevice)"
-              >
-                <option
-                  v-for="device in devices"
-                  :key="device.deviceId"
-                  :value="device.deviceId"
+            <div class="content-item item-zoom">
+              <div class="content-item-title item-zoom-title">
+                {{ $t("setting_view.zoom") }}
+              </div>
+              <div class="zoom-item">
+                <div class="item-zoom-content">
+                  <input
+                    type="number"
+                    min="50"
+                    max="200"
+                    step="5"
+                    v-model="zoom"
+                  />
+                  <div class="zoom-apply" @click="handleZoom">
+                    {{ $t("setting_view.apply") }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="content-item item-fullscreen-auto-zoom">
+              <div class="content-item-title">
+                {{ $t("setting_view.display.fullscreen") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_auto_zoom"
+                  name="auto_zoom"
+                  v-model="auto_zoom"
+                  @change="setAutoZoom(auto_zoom)"
+                />
+                <label
+                  for="setting_auto_zoom"
+                  :title="$t('setting_view.display.press_f11_to_fullscreen')"
                 >
-                  {{ device.label }}
-                </option>
-              </select>
+                  {{ $t("setting_view.display.fullscreen_auto_zoom") }}
+                  <span class="font-color-low">
+                    ({{ $t("setting_view.display.press_f11_to_fullscreen") }})
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="content-item item-sidebar">
+              <div class="content-item-title">
+                {{ $t("setting_view.display.sidebar") }}
+              </div>
+              <div class="content-item-content item-sidebar-content">
+                <div class="item-sidebar-content-title">
+                  {{ $t("setting_view.display.hideInSidebar") }}
+                </div>
+                <div class="item-sidebar-content-checks">
+                  <input
+                    type="checkbox"
+                    id="setting_sidebar_favorite"
+                    name="setting_sidebar_favorite"
+                    v-model="hideInSidebar_favorite"
+                    @change="setHideInSidebar"
+                  />
+                  <label for="setting_sidebar_favorite">
+                    {{ $t("playlist_view.my_favorite_musics") }}
+                  </label>
+                  <input
+                    type="checkbox"
+                    id="setting_sidebar_album"
+                    name="setting_sidebar_album"
+                    v-model="hideInSidebar_album"
+                    @change="setHideInSidebar"
+                  />
+                  <label for="setting_sidebar_album">
+                    {{ $t("subscribed_album") }}
+                  </label>
+                  <input
+                    type="checkbox"
+                    id="setting_sidebar_local"
+                    name="setting_sidebar_local"
+                    v-model="hideInSidebar_local"
+                    @change="setHideInSidebar"
+                  />
+                  <label for="setting_sidebar_local">
+                    {{ $t("local_music") }}
+                  </label>
+                  <input
+                    type="checkbox"
+                    id="setting_sidebar_download"
+                    name="setting_sidebar_download"
+                    v-model="hideInSidebar_download"
+                    @change="setHideInSidebar"
+                  />
+                  <label for="setting_sidebar_download">
+                    {{ $t("manage_download") }}
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="download item" id="download">
-        <div class="download-title item-title">
-          {{ $t("header.setting_view.download") }}
-        </div>
-        <div class="download-content item-content">
-          <div class="content-item item-download-quality">
-            <div class="content-item-title">
-              {{ $t("setting_view.download.quality") }}
+        <div class="play item" id="play">
+          <div class="play-title item-title">
+            {{ $t("header.setting_view.play") }}
+          </div>
+          <div class="play-content item-content">
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.launch") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_auto_play"
+                  name="auto_play"
+                  v-model="autoPlay"
+                  @change="setAutoPlay(autoPlay)"
+                />
+                <label for="setting_auto_play">
+                  {{ $t("setting_view.play.auto_play") }}
+                </label>
+              </div>
             </div>
-            <div class="content-item-content download-quality-item">
-              <select
-                v-model="quality"
-                @change="setQuality(($event.target as HTMLSelectElement).value)"
-              >
-                <option
-                  v-for="quality_item in qualities"
-                  :key="quality_item"
-                  :value="quality_item"
+            <div class="content-item item-play-volume_leveling">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.volume_leveling") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_volume_leveling"
+                  name="volume_leveling"
+                  v-model="volume_leveling"
+                  @change="setVolumeLeveling(volume_leveling)"
+                />
+                <label for="setting_volume_leveling">
+                  {{ $t("setting_view.play.volume_leveling_content") }}
+                </label>
+              </div>
+            </div>
+            <div class="content-item item-playui">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.playui") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_spectrum"
+                  name="spectrum"
+                  v-model="spectrum"
+                  @change="setSpectrum(spectrum)"
+                />
+                <label for="setting_spectrum">
+                  {{ $t("setting_view.play.show_spectrum") }}
+                </label>
+              </div>
+            </div>
+            <div class="content-item item-play-dbclick">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.dbclick") }}
+              </div>
+              <div class="content-item-content item-play-dbclick-content">
+                <div class="dbclick-item1">
+                  <input
+                    type="radio"
+                    id="setting_play-dbclick"
+                    name="play"
+                    value="all"
+                    v-model="dbclick"
+                    @change="setDbClick('all')"
+                  />
+                  <label for="setting_play-dbclick">
+                    {{ $t("setting_view.play.dbclick_playall") }}
+                  </label>
+                </div>
+                <div class="dbclick-item2">
+                  <input
+                    type="radio"
+                    id="setting_play-click"
+                    name="play"
+                    value="single"
+                    v-model="dbclick"
+                    @change="setDbClick('single')"
+                  />
+                  <label for="setting_play-click">
+                    {{ $t("setting_view.play.dbclick_playsingle") }}
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.device") }}
+              </div>
+              <div class="content-item-content">
+                <select
+                  v-model="selectedDevice"
+                  @change="selectAudioOutputDevice(selectedDevice)"
                 >
-                  {{ $t(`quality.${quality_item}`) }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="content-item item-download-path">
-            <div class="content-item-title">
-              {{ $t("setting_view.download.path") }}
-            </div>
-            <div class="content-item-content download-path-content">
-              <input type="text" v-model="downloadPath" />
-              <div class="select-file" @click="selectFile">
-                {{ $t("setting_view.download.select") }}
+                  <option
+                    v-for="device in devices"
+                    :key="device.deviceId"
+                    :value="device.deviceId"
+                  >
+                    {{ device.label }}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
-          <div class="content-item item-download-local">
-            <div class="content-item-title">
-              {{ $t("setting_view.download.local") }}
-            </div>
-            <div
-              class="content-item-content local-path-content download-path-content"
-            >
-              <div class="head">
-                <div class="head-item add-path" @click="addPath">
-                  {{ $t("setting_view.download.add") }}
-                </div>
-                <div class="head-item clear-path" @click="clearPath">
-                  {{ $t("setting_view.download.clear") }}
-                </div>
+        </div>
+        <div class="download item" id="download">
+          <div class="download-title item-title">
+            {{ $t("header.setting_view.download") }}
+          </div>
+          <div class="download-content item-content">
+            <div class="content-item item-download-quality">
+              <div class="content-item-title">
+                {{ $t("setting_view.download.quality") }}
               </div>
-              <div
-                class="path-item"
-                v-for="(path, index) in localPaths"
-                :key="path"
-              >
-                <input type="text" v-model="localPaths[index]" />
-                <div class="select-file" @click="setPath(index)">
+              <div class="content-item-content download-quality-item">
+                <select
+                  v-model="quality"
+                  @change="
+                    setQuality(($event.target as HTMLSelectElement).value)
+                  "
+                >
+                  <option
+                    v-for="quality_item in qualities"
+                    :key="quality_item"
+                    :value="quality_item"
+                  >
+                    {{ $t(`quality.${quality_item}`) }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="content-item item-download-path">
+              <div class="content-item-title">
+                {{ $t("setting_view.download.path") }}
+              </div>
+              <div class="content-item-content download-path-content">
+                <input type="text" v-model="downloadPath" />
+                <div class="select-file" @click="selectFile">
                   {{ $t("setting_view.download.select") }}
                 </div>
-                <img
-                  src="../assets/delete.svg"
-                  class="g-icon delete-img"
-                  @click="deletePath(index)"
-                />
+              </div>
+            </div>
+            <div class="content-item item-download-local">
+              <div class="content-item-title">
+                {{ $t("setting_view.download.local") }}
+              </div>
+              <div
+                class="content-item-content local-path-content download-path-content"
+              >
+                <div class="head">
+                  <div class="head-item add-path" @click="addPath">
+                    {{ $t("setting_view.download.add") }}
+                  </div>
+                  <div class="head-item clear-path" @click="clearPath">
+                    {{ $t("setting_view.download.clear") }}
+                  </div>
+                </div>
+                <div
+                  class="path-item"
+                  v-for="(path, index) in localPaths"
+                  :key="path"
+                >
+                  <input type="text" v-model="localPaths[index]" />
+                  <div class="select-file" @click="setPath(index)">
+                    {{ $t("setting_view.download.select") }}
+                  </div>
+                  <img
+                    src="../assets/delete.svg"
+                    class="g-icon delete-img"
+                    @click="deletePath(index)"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about item" id="about">
+          <div class="about-title item-title">
+            {{ $t("header.setting_view.about") }}
+          </div>
+          <div class="about-content item-content">
+            <div class="content-item item-backup">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.backup") }}
+              </div>
+              <div class="content-item-content backup-content">
+                <div
+                  class="export backup-content-item"
+                  @click="exportToJSON_Setting"
+                >
+                  {{ $t("setting_view.about.export") }}
+                </div>
+                <div
+                  class="import backup-content-item"
+                  @click="importFromJSON_Setting"
+                >
+                  {{ $t("setting_view.about.import") }}
+                </div>
+                <div
+                  class="export backup-content-item"
+                  @click="exportToJSON_Download"
+                >
+                  {{ $t("setting_view.about.export_download") }}
+                </div>
+                <div
+                  class="import backup-content-item"
+                  @click="importFromJSON_Download"
+                >
+                  {{ $t("setting_view.about.import_download") }}
+                </div>
+              </div>
+            </div>
+            <div class="content-item item-about-version">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.version") }}
+              </div>
+              <div class="content-item-content">
+                {{ version }}
+              </div>
+            </div>
+            <div class="content-item item-about-author">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.author") }}
+              </div>
+              <div class="content-item-content">YiktLLW</div>
+            </div>
+            <div class="content-item item-about-readme">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.readme") }}
+              </div>
+              <div class="content-item-content" @click="openReadme">
+                <div class="github-link">README</div>
+              </div>
+            </div>
+            <div class="content-item item-about-changelog">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.changelog") }}
+              </div>
+              <div class="content-item-content" @click="openChangelog">
+                <div class="github-link">CHANGELOG</div>
+              </div>
+            </div>
+            <div class="content-item item-about-github">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.source_code") }}
+              </div>
+              <div class="content-item-content">
+                <div class="github-link" @click="openGitRepo">GitHub</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="about item" id="about">
-        <div class="about-title item-title">
-          {{ $t("header.setting_view.about") }}
-        </div>
-        <div class="about-content item-content">
-          <div class="content-item item-backup">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.backup") }}
-            </div>
-            <div class="content-item-content backup-content">
-              <div class="export backup-content-item" @click="exportToJSON_Setting">
-                {{ $t("setting_view.about.export") }}
-              </div>
-              <div class="import backup-content-item" @click="importFromJSON_Setting">
-                {{ $t("setting_view.about.import") }}
-              </div>
-              <div class="export backup-content-item" @click="exportToJSON_Download">
-                {{ $t("setting_view.about.export_download") }}
-              </div>
-              <div class="import backup-content-item" @click="importFromJSON_Download">
-                {{ $t("setting_view.about.import_download") }}
-              </div>
-            </div>
-          </div>
-          <div class="content-item item-about-version">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.version") }}
-            </div>
-            <div class="content-item-content">
-              {{ version }}
-            </div>
-          </div>
-          <div class="content-item item-about-author">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.author") }}
-            </div>
-            <div class="content-item-content">YiktLLW</div>
-          </div>
-          <div class="content-item item-about-readme">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.readme") }}
-            </div>
-            <div class="content-item-content" @click="openReadme">
-              <div class="github-link">README</div>
-            </div>
-          </div>
-          <div class="content-item item-about-changelog">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.changelog") }}
-            </div>
-            <div class="content-item-content" @click="openChangelog">
-              <div class="github-link">CHANGELOG</div>
-            </div>
-          </div>
-          <div class="content-item item-about-github">
-            <div class="content-item-title">
-              {{ $t("setting_view.about.source_code") }}
-            </div>
-            <div class="content-item-content">
-              <div class="github-link" @click="openGitRepo">GitHub</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </YScroll>
   </div>
 </template>
 
@@ -509,19 +532,23 @@ import {
   TSideBarItems,
 } from "@/utils/setting";
 import { ISaveJSONData } from "@/dual/YSettingView";
+import YScroll from "@/components/YScroll.vue";
 
 export default defineComponent({
   name: "YSettingView",
   components: {
     YHeader,
+    YScroll,
   },
   setup() {
     const store = useStore();
     const main = ref<HTMLElement | null>(null);
+    const scroll = ref<typeof YScroll | null>(null);
     const header = ref<typeof YHeader | null>(null);
 
     return {
       main,
+      scroll,
       header,
       setting: store.state.setting,
       player: store.state.player,
@@ -591,17 +618,19 @@ export default defineComponent({
       hideInSidebar_album: false as boolean,
       hideInSidebar_local: false as boolean,
       hideInSidebar_download: false as boolean,
+      rectData: [] as number[],
     };
   },
   methods: {
     handleSwitcher(position: string) {
-      const scroll = document.querySelector(`#yscroll-display-area`);
-      const dom = this.main?.querySelector(`#${position}`);
-      const firstDom = this.main?.querySelector("#normal");
-      if (!dom || !scroll || !firstDom) return;
-      const scrollTop =
-        (dom as HTMLElement).offsetTop - (firstDom as HTMLElement).offsetTop;
-      scroll.scrollTo({ top: scrollTop, behavior: "smooth" });
+      // const scroll = document.querySelector(`#yscroll-display-area`);
+      // const dom = this.main?.querySelector(`#${position}`);
+      // const firstDom = this.main?.querySelector("#normal");
+      // if (!dom || !scroll || !firstDom) return;
+      // const scrollTop =
+      //   (dom as HTMLElement).offsetTop - (firstDom as HTMLElement).offsetTop;
+      // scroll.scrollTo({ top: scrollTop, behavior: "smooth" });
+      this.scroll!.scrollToQuery(`#${position}`);
     },
     handleTheme(e: Event) {
       this.switchToTheme((e.target as HTMLInputElement)?.value);
@@ -630,7 +659,7 @@ export default defineComponent({
       } catch (error) {
         Message.post(
           "error",
-          this.$t("message.setting_view.zoom_range_50_200"),
+          this.$t("message.setting_view.zoom_range_50_200")
         );
       }
     },
@@ -712,7 +741,7 @@ export default defineComponent({
       } else {
         Message.post(
           "info",
-          this.$t("message.setting_view.download.only_desktop"),
+          this.$t("message.setting_view.download.only_desktop")
         );
       }
     },
@@ -743,7 +772,7 @@ export default defineComponent({
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         this.devices = devices.filter(
-          (device) => device.kind === "audiooutput",
+          (device) => device.kind === "audiooutput"
         );
         this.selectedDevice = this.player.device;
         // console.log('Audio device Ids:', this.devices.map(device => device.deviceId));
@@ -788,7 +817,7 @@ export default defineComponent({
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {
           return item.data;
-        },
+        }
       );
       this.themes = themes.concat(userCustomThemes);
     },
@@ -805,7 +834,7 @@ export default defineComponent({
       (["favorite", "album", "local", "download"] as TSideBarItems[]).forEach(
         (item: TSideBarItems) => {
           if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
-        },
+        }
       );
       this.setting.display.hideInSidebar = hideInSidebar;
       this.globalMsg.post("refresh-sidebar");
@@ -813,13 +842,13 @@ export default defineComponent({
     async exportToJSON_Setting() {
       if (!window.electron?.isElectron) return;
       const json = exportToJSON(this.setting);
-      const data : ISaveJSONData = {
+      const data: ISaveJSONData = {
         json: json,
         name: "XCMusic_Setting.json",
-      }
+      };
       const savedPath = await window.electron.ipcRenderer.invoke(
         "save-json",
-        data,
+        data
       );
       if (savedPath) {
         Message.post("success", this.$t("setting_view.about.export_success"));
@@ -833,10 +862,10 @@ export default defineComponent({
       const data: ISaveJSONData = {
         json: json,
         name: "XCMusic_Downloads.json",
-      }
+      };
       const savedPath = await window.electron.ipcRenderer.invoke(
         "save-json",
-        data,
+        data
       );
       if (savedPath) {
         Message.post("success", this.$t("setting_view.about.export_success"));
@@ -865,13 +894,20 @@ export default defineComponent({
         Message.post("error", this.$t("setting_view.about.import_no_file"));
       }
     },
+    initRectData() {
+      this.switcher.forEach((item) => {
+        const dom = this.main?.querySelector(`#${item.position}`);
+        if (!dom) return;
+        this.rectData.push(dom.getBoundingClientRect().top);
+      });
+    },
     init() {
       YColor.setBackgroundColorTheme();
       this.theme = this.setting.display.theme;
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {
           return item.data;
-        },
+        }
       );
       this.themes = this.themes.concat(userCustomThemes);
       this.zoom = this.setting.display.zoom * 100;
@@ -891,10 +927,22 @@ export default defineComponent({
         this[`hideInSidebar_${item}`] = true;
       });
       this.getDevices();
+      this.initRectData();
     },
   },
   mounted() {
     this.init();
+    this.scroll!.addScrollEndListener((event: Event) => {
+      if (event.type !== "scroll") return;
+      let index = 0;
+      const scrollTop = this.scroll!.$el.scrollTop;
+      for (let i = this.rectData.length - 1; i >= 0; i--) {
+        if (scrollTop <= this.rectData[i] - this.rectData[0] + 30) {
+          index = i;
+        }
+      }
+      this.header!.setPosition(this.switcher[index].position);
+    });
   },
   beforeUnmount() {
     this.globalMsg.subscriber.offAll("YSettingView");
@@ -933,7 +981,6 @@ export default defineComponent({
   .main {
     display: flex;
     flex-direction: column;
-    margin-top: 120px;
 
     .item {
       display: flex;

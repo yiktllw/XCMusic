@@ -1,13 +1,60 @@
 <template>
-  <div class="scrollable">
+  <div class="scrollable" ref="main">
     <slot></slot>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 export default defineComponent({
   name: "YScroll",
+  setup() {
+    const main = ref<HTMLElement | null>(null);
+    return { main };
+  },
+  data() {
+    return {
+      disposable: [] as ((e: Event) => void)[],
+      scrollTimeout: null as NodeJS.Timeout | null,
+    };
+  },
+  methods: {
+    scrollToTop() {
+      this.main!.scrollTop = 0;
+    },
+    scrollToBottom() {
+      this.main!.scrollTop = this.main!.scrollHeight;
+    },
+    scrollToQuery(query: string) {
+      try {
+        const el = this.main!.querySelector(query);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    handleScrollEnd(event: Event) {
+      this.disposable.forEach((callback) => callback(event));
+    },
+    handleScroll(event: Event) {
+      if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = setTimeout(() => {
+        this.handleScrollEnd(event);
+      }, 150);
+    },
+    addScrollEndListener(callback: (e: Event) => void) {
+      this.disposable.push(callback);
+    },
+  },
+  mounted() {
+    this.main!.addEventListener("scroll", this.handleScroll);
+  },
+  beforeUnmount() {
+    this.main?.removeEventListener("scroll", this.handleScroll);
+    this.main = null;
+  },
 });
 </script>
 
