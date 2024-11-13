@@ -664,24 +664,29 @@ export default defineComponent({
         }
         // 歌手名称
         const trackArtist = track.ar
-          .map((artist) => artist.name.toLowerCase())
+          .map((artist) => {
+            if (!artist.name) {
+              return '';
+            }
+            artist.name.toLowerCase();
+          })
           .join(" / ");
         // 歌手别名
         const trackArtistTns = track.ar
           .map((artist) => (artist.tns[0] ? artist.tns[0].toLowerCase() : ""))
           .join("/");
         // 专辑名称
-        const trackAlbum = track.al.name.toLowerCase();
+        const trackAlbum = track.al.name?.toLowerCase();
         // 专辑别名
         const trackAlbumTns = track.al.tns[0]
           ? track.al.tns[0].toLowerCase()
           : "";
         return (
-          trackName.includes(query) ||
+          trackName?.includes(query) ||
           trackNameTns.includes(query) ||
           trackArtistTns.includes(query) ||
           trackArtist.includes(query) ||
-          trackAlbum.includes(query) ||
+          trackAlbum?.includes(query) ||
           trackAlbumTns.includes(query)
         );
       });
