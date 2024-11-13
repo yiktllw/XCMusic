@@ -16,6 +16,7 @@
         marginTop: '110px',
         width: '100%',
       }"
+      :need-listener="true"
       ref="scroll"
     >
       <div class="main font-color-main">

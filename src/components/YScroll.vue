@@ -12,6 +12,12 @@ export default defineComponent({
     const main = ref<HTMLElement | null>(null);
     return { main };
   },
+  props: {
+    needListener: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       disposable: [] as ((e: Event) => void)[],
@@ -49,7 +55,8 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.main!.addEventListener("scroll", this.handleScroll);
+    if (this.needListener)
+      this.main!.addEventListener("scroll", this.handleScroll);
   },
   beforeUnmount() {
     this.main?.removeEventListener("scroll", this.handleScroll);

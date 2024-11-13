@@ -592,6 +592,7 @@ export default defineComponent({
     await this.init();
     this.avatar = this.login.avatar;
     this.status = this.login.status;
+    this.userNickName = this.login.userName;
     this.login.subscriber.on({
       id: "YTitlebar",
       type: "status",
@@ -604,6 +605,13 @@ export default defineComponent({
       type: "avatar",
       func: async () => {
         this.status = this.login.status;
+      },
+    });
+    this.login.subscriber.on({
+      id: "YTitlebar",
+      type: "userName",
+      func: async () => {
+        this.userNickName = this.login.userName;
       },
     });
     if (this.type === "default") {
