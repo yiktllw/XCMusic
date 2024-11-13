@@ -219,6 +219,24 @@ export namespace YColor {
   }
 
   /**
+   * 设置背景颜色为HEX颜色，简化版
+   */
+  export function setBackgroundColorHex2(hex: string) {
+    try {
+      const setting_theme = getStorage("setting.display.theme");
+      if (!setting_theme) return;
+      const theme = YColor.findTheme(setting_theme);
+      YColor.setBackgroundColorHex(
+        YColor.stringToHexColor(hex),
+        (theme as Theme1).type,
+        (theme as Theme2).background
+      );
+    } catch (error) {
+      console.error("Error set background color from hex: ", error);
+    }
+  }
+
+  /**
    * 从三个字母中获取HEX颜色
    */
   export function getColorFromThreeLetters(letters: string): string {

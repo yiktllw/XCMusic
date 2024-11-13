@@ -12,7 +12,7 @@
     </div>
     <YScroll
       :style="{
-        maxHeight: 'calc(100vh - 280px)',
+        maxHeight: 'calc(100vh - 260px)',
         marginTop: '110px',
         width: '100%',
       }"
@@ -533,6 +533,8 @@ import {
 } from "@/utils/setting";
 import { ISaveJSONData } from "@/dual/YSettingView";
 import YScroll from "@/components/YScroll.vue";
+/** 用于生成设置界面的背景色 */
+const str = "setting_view";
 
 export default defineComponent({
   name: "YSettingView",
@@ -623,13 +625,6 @@ export default defineComponent({
   },
   methods: {
     handleSwitcher(position: string) {
-      // const scroll = document.querySelector(`#yscroll-display-area`);
-      // const dom = this.main?.querySelector(`#${position}`);
-      // const firstDom = this.main?.querySelector("#normal");
-      // if (!dom || !scroll || !firstDom) return;
-      // const scrollTop =
-      //   (dom as HTMLElement).offsetTop - (firstDom as HTMLElement).offsetTop;
-      // scroll.scrollTo({ top: scrollTop, behavior: "smooth" });
       this.scroll!.scrollToQuery(`#${position}`);
     },
     handleTheme(e: Event) {
@@ -639,6 +634,7 @@ export default defineComponent({
       this.theme = theme;
       document.body.className = `theme-${this.theme}`;
       this.setting.display.theme = this.theme;
+      YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
     },
     setClose(behavior: "minimize" | "quit") {
       this.closeBehavior = behavior;
@@ -902,7 +898,7 @@ export default defineComponent({
       });
     },
     init() {
-      YColor.setBackgroundColorTheme();
+      YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
       this.theme = this.setting.display.theme;
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {
@@ -956,7 +952,7 @@ export default defineComponent({
 .setting {
   display: flex;
   width: inherit;
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 0px 10px;
 
   .header {
     display: flex;
@@ -964,7 +960,7 @@ export default defineComponent({
     width: calc(100% - 40px);
     text-align: left;
     position: absolute;
-    background-color: var(--background-color);
+    // background-color: var(--background-color);
 
     .title {
       font-size: 24px;
