@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/yiktllw/XCMusic/compare/v0.2.3...v0.2.4) (2024-11-13)
+
+
+### Features
+
+* 更改yikt主题的颜色 ([c12f9f8](https://github.com/yiktllw/XCMusic/commit/c12f9f8dad248bfb1a8b2e61b26784214fceb46e))
+* 将列表随机的图标颜色更改为强调色 ([7f00140](https://github.com/yiktllw/XCMusic/commit/7f0014062bf4fced8a3bf92d36bd578c8d6ef33f))
+* 禁用所有按钮与tab的交互 ([771a2d8](https://github.com/yiktllw/XCMusic/commit/771a2d8f331af257fca21dbbb43b0f484bc36ecc))
+* 实现导入、导出已下载歌曲信息 ([ab5e43d](https://github.com/yiktllw/XCMusic/commit/ab5e43db42dd3ad160b65698fdb3e0e8cebcc38a))
+* 添加歌单右键菜单的提示 ([8aba7e0](https://github.com/yiktllw/XCMusic/commit/8aba7e0c3f4d4af5df18b7271973b7a9aae8aba9))
+* 新增: 设置-关于-作者的github链接； ([83bd9a6](https://github.com/yiktllw/XCMusic/commit/83bd9a634c7f9bffa4894d598f1ebf5e10f4f3b1))
+* 新增: 设置-外观-在侧边栏隐藏的功能 ([f16ad9f](https://github.com/yiktllw/XCMusic/commit/f16ad9f75ad2b111d9b72db9c86e7c3675b5136e))
+* 优化设置界面背景颜色 ([b7e7360](https://github.com/yiktllw/XCMusic/commit/b7e7360760eb046afcac26d511fe2f58d9cd62a6))
+* 优化设置页面交互 ([3d116c0](https://github.com/yiktllw/XCMusic/commit/3d116c00cfcc0daf5ad803ade5585655f9887f5b))
+* 增强搜索栏的交互效果 ([ce72813](https://github.com/yiktllw/XCMusic/commit/ce7281340cc6c8e7b520d8af69d1bbc39daad19c))
+* 自定义主题: 实现粘贴颜色 ([bad00cf](https://github.com/yiktllw/XCMusic/commit/bad00cf2746a469dab84d9c67adad42dfa619788))
+
+
+### Bug Fixes
+
+* 修复登录时不会马上显示用户名和头像的bug ([5ad4e92](https://github.com/yiktllw/XCMusic/commit/5ad4e92e49dada4e2db58778d96ed01f34d9f96c))
+* 修复登录时用户名没有显示的bug；优化性能 ([87986ab](https://github.com/yiktllw/XCMusic/commit/87986abd53d377c3f94c34a88976db17ad696c9a))
+* 修复亮色主题下，喜欢图标颜色异常的bug ([9a7fabc](https://github.com/yiktllw/XCMusic/commit/9a7fabc08159bd010571005ee35160ece083de92))
+* 修复设置背景颜色错误 ([5a0edc2](https://github.com/yiktllw/XCMusic/commit/5a0edc26cfa01636a314c1637607dc75a551b9da))
+* 修复生产环境下无法获取自定义主题预设的问题 ([1f2c515](https://github.com/yiktllw/XCMusic/commit/1f2c5155a2c72144ed9591d47ce125c4af1c80f9))
+
 ### [0.2.3](https://github.com/yiktllw/XCMusic/compare/v0.2.2...v0.2.3) (2024-11-11)
 
 ### Features
