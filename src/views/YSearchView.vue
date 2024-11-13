@@ -32,6 +32,7 @@
     <!-- 导航 -->
     <div class="switcher">
       <button
+        :tabindex="-1"
         class="switcher-item"
         v-for="(item, index) in switcher"
         @click="handleSwitcher(item.position)"
@@ -225,12 +226,12 @@ export default defineComponent({
             new Tracks({
               url: "/cloudsearch?type=1",
               tracks: result.result.songs,
-            }).tracks,
+            }).tracks
           );
           this.switcher[0].total = result.result.songCount;
           if (newPageInstance) {
             this.songsPage = new YPageC(
-              Math.ceil(result.result.songCount / 100),
+              Math.ceil(result.result.songCount / 100)
             );
           }
           this.songsPage.onPageChange = () => {
@@ -256,12 +257,12 @@ export default defineComponent({
                 ...playlist,
                 _picUrl: playlist.coverImgUrl + "?param=40y40",
               };
-            },
+            }
           );
           this.switcher[2].total = result.result.playlistCount;
           if (newPageInstance) {
             this.playlistsPage = new YPageC(
-              Math.ceil(result.result.playlistCount / 100),
+              Math.ceil(result.result.playlistCount / 100)
             );
           }
           this.playlistsPage.onPageChange = () => {
@@ -288,12 +289,12 @@ export default defineComponent({
                 ...album,
                 _picUrl: album.picUrl + "?param=80y80",
               };
-            },
+            }
           );
           this.switcher[1].total = result.result.albumCount;
           if (newPageInstance) {
             this.albumsPage = new YPageC(
-              Math.ceil(result.result.albumCount / 100),
+              Math.ceil(result.result.albumCount / 100)
             );
           }
           this.albumsPage.onPageChange = () => {
@@ -319,12 +320,12 @@ export default defineComponent({
                 ...artist,
                 _picUrl: artist.picUrl + "?param=130y130",
               };
-            },
+            }
           );
           this.switcher[3].total = result.result.artistCount;
           if (newPageInstance) {
             this.artistsPage = new YPageC(
-              Math.ceil(result.result.artistCount / 100),
+              Math.ceil(result.result.artistCount / 100)
             );
           }
           this.artistsPage.onPageChange = () => {
@@ -347,12 +348,12 @@ export default defineComponent({
             new Tracks({
               url: "/cloudsearch?type=1006",
               tracks: result.result.songs,
-            }).tracks,
+            }).tracks
           );
           this.switcher[4].total = result.result.songCount;
           if (newPageInstance) {
             this.lyricsPage = new YPageC(
-              Math.ceil(result.result.songCount / 100),
+              Math.ceil(result.result.songCount / 100)
             );
           }
           this.lyricsPage.onPageChange = () => {
@@ -378,12 +379,12 @@ export default defineComponent({
                 ...user,
                 _picUrl: user.avatarUrl + "?param=130y130",
               };
-            },
+            }
           );
           this.switcher[5].total = result.result.userprofileCount;
           if (newPageInstance) {
             this.usersPage = new YPageC(
-              Math.ceil(result.result.userprofileCount / 100),
+              Math.ceil(result.result.userprofileCount / 100)
             );
           }
           this.usersPage.onPageChange = () => {

@@ -48,10 +48,10 @@
           </div>
         </div>
         <div class="buttons">
-          <button @click="cancel">
+          <button :tabindex="-1" @click="cancel">
             {{ $t("cancel") }}
           </button>
-          <button @click="ensure">
+          <button :tabindex="-1" @click="ensure">
             {{ $t("confirm.title") }}
           </button>
         </div>
@@ -106,7 +106,7 @@ export default defineComponent({
     ensure() {
       if (window.electron?.isElectron) {
         window.electron.ipcRenderer.send(
-          this.closeBehavior === "minimize" ? "close" : "quit",
+          this.closeBehavior === "minimize" ? "close" : "quit"
         );
         this.window?.closeWindow();
       }

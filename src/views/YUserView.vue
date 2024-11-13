@@ -69,6 +69,7 @@
     <div class="switcher font-color-standard">
       <!-- 导航元素 -->
       <button
+        :tabindex="-1"
         class="switcher-item font-color-standard"
         v-for="(item, index) in user.switcher"
         @click="handleSwitcher(item.position)"
@@ -293,7 +294,7 @@ export default defineComponent({
         | "subscribedPlaylist"
         | "song"
         | "album"
-        | "detail",
+        | "detail"
     ) {
       console.log("switch position", position);
       this.user!.position = position;
@@ -507,7 +508,7 @@ export default defineComponent({
             new Tracks({
               url: "/api/v2/artist/songs",
               tracks: response.songs,
-            }).tracks,
+            }).tracks
           );
         })
         .catch((err) => {
@@ -552,7 +553,7 @@ export default defineComponent({
           this.user.picUrl,
           document,
           (theme as Theme1).type,
-          (theme as Theme2).background,
+          (theme as Theme2).background
         );
       }
     } catch (error) {

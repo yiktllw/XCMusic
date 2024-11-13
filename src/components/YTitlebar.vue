@@ -3,6 +3,7 @@
     <!-- 后退和前进按钮 -->
     <div class="buttons arrows">
       <button
+        :tabindex="-1"
         class="back"
         @click="back"
         :title="$t('titlebar.back')"
@@ -11,6 +12,7 @@
         <img class="img arrow g-icon" src="../assets/backarrow.svg" />
       </button>
       <button
+        :tabindex="-1"
         class="forward"
         @click="forward"
         :title="$t('titlebar.forward')"
@@ -124,6 +126,7 @@
     <div class="buttons">
       <!-- 用户信息 -->
       <button
+        :tabindex="-1"
         class="avatar"
         v-if="status && type === 'default'"
         @click="openUserPage"
@@ -132,6 +135,7 @@
         <div class="avatarImg avatarImgPlaceholder" v-else></div>
       </button>
       <button
+        :tabindex="-1"
         class="userInfo font-color-main"
         @click="userInfo"
         ref="user_info_menu_trigger"
@@ -214,6 +218,7 @@
       </YPanel>
       <!-- 设置、最小化、最大化和关闭按钮 -->
       <button
+        :tabindex="-1"
         class="settings"
         @click="$router.push({ path: '/setting' })"
         :title="$t('titlebar.settings')"
@@ -222,6 +227,7 @@
         <img class="img settings g-icon" src="../assets/settings.svg" />
       </button>
       <button
+        :tabindex="-1"
         class="minimize"
         @click="minimize"
         :title="$t('titlebar.minimize')"
@@ -229,13 +235,19 @@
         <img class="img minimize g-icon" src="../assets/min.svg" />
       </button>
       <button
+        :tabindex="-1"
         class="maximize"
         @click="maximize"
         :title="$t('titlebar.maximize')"
       >
         <img class="img maximize g-icon" src="../assets/max.svg" />
       </button>
-      <button class="close" @click="close" :title="$t('titlebar.close')">
+      <button
+        :tabindex="-1"
+        class="close"
+        @click="close"
+        :title="$t('titlebar.close')"
+      >
         <img class="img close g-icon" src="../assets/close.svg" />
       </button>
     </div>

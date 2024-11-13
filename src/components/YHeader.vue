@@ -2,6 +2,7 @@
   <div class="switcher font-color-standard">
     <!-- 导航元素 -->
     <button
+      :tabindex="-1"
       class="switcher-item"
       v-for="(item, index) in switcher"
       @click="handleSwitcher(item.position)"

@@ -101,7 +101,7 @@
             <!-- 4 歌单按钮 -->
             <div class="play-buttons">
               <!-- 5 播放按钮 -->
-              <button class="play-button" @click="playAll">
+              <button :tabindex="-1" class="play-button" @click="playAll">
                 <img
                   src="../assets/play.svg"
                   style="width: 15px; height: 15px; padding-right: 5px"
@@ -111,7 +111,11 @@
                 </span>
               </button>
               <!-- 5 添加到播放列表按钮 -->
-              <button class="add-button" @click="addPlaylistToQueue">
+              <button
+                :tabindex="-1"
+                class="add-button"
+                @click="addPlaylistToQueue"
+              >
                 <img
                   class="g-icon"
                   src="../assets/addtoplaylist.svg"
@@ -120,7 +124,11 @@
                 {{ $t("playlist_view.add_to_playlist") }}
               </button>
               <!-- 5 下载按钮 -->
-              <button class="download-button" @click="downloadPlaylist">
+              <button
+                :tabindex="-1"
+                class="download-button"
+                @click="downloadPlaylist"
+              >
                 <img
                   class="g-icon"
                   src="../assets/download.svg"
@@ -129,7 +137,11 @@
                 {{ $t("playlist_view.download") }}
               </button>
               <!-- 5 多选按钮 -->
-              <button class="multichoice-button" @click="multiChoice">
+              <button
+                :tabindex="-1"
+                class="multichoice-button"
+                @click="multiChoice"
+              >
                 <img
                   class="g-icon"
                   src="../assets/multichoice.svg"
@@ -145,13 +157,13 @@
                   @keydown.enter="
                     handleSearch(
                       ($event.target as HTMLInputElement).value,
-                      true,
+                      true
                     )
                   "
                   @input="
                     handleSearch(
                       ($event.target as HTMLInputElement).value,
-                      false,
+                      false
                     )
                   "
                   :placeholder="$t('playlist_view.search') + '...'"
@@ -175,7 +187,11 @@
         <!-- 3 歌曲 -->
         <div class="orient-songs">
           <!-- 4 歌曲按钮 -->
-          <button class="orient-button" @click="orient = 'songs'">
+          <button
+            :tabindex="-1"
+            class="orient-button"
+            @click="orient = 'songs'"
+          >
             <span
               style="font-size: 16px; color: var(--font-color-main)"
               :style="{
@@ -221,7 +237,11 @@
         <!-- 3 评论 -->
         <div class="orient-comments">
           <!-- 4 评论按钮 -->
-          <button class="orient-button" @click="orient = 'comments'">
+          <button
+            :tabindex="-1"
+            class="orient-button"
+            @click="orient = 'comments'"
+          >
             <span
               style="font-size: 16px"
               :style="{
@@ -414,7 +434,7 @@ export default defineComponent({
   beforeRouteLeave(
     to: RouteLocationNormalized,
     from: RouteLocationNormalized,
-    next: NavigationGuardNext,
+    next: NavigationGuardNext
   ) {
     const mainScroll = document.getElementById("yscroll-display-area");
     window.savedPositions[from.path] = {
@@ -446,7 +466,7 @@ export default defineComponent({
                 this.playlist.playCount = response.playlist.playCount;
                 // 创建时间
                 this.playlist.createTime = formatDate_yyyymmdd(
-                  response.playlist.createTime,
+                  response.playlist.createTime
                 );
                 // 创建者ID
                 this.playlist.createrId = response.playlist.userId;
@@ -512,7 +532,7 @@ export default defineComponent({
                 this.playlist.coverImgUrl = response.album.picUrl;
                 // 创建时间
                 this.playlist.createTime = formatDate_yyyymmdd(
-                  response.album.publishTime,
+                  response.album.publishTime
                 );
                 // 创建者ID
                 this.playlist.artists = response.album.artists;
@@ -527,7 +547,7 @@ export default defineComponent({
                       needIndex: true,
                       reels: response.showreels,
                     },
-                  }).tracks,
+                  }).tracks
                 );
                 this.playlist.alReels = response.showreels;
                 // 更新歌曲列表
@@ -548,7 +568,7 @@ export default defineComponent({
                     // 我喜欢的音乐
                     if (myFavoriteId.playlist[0].id == id) {
                       this.playlist.name = this.$t(
-                        "playlist_view.my_favorite_musics",
+                        "playlist_view.my_favorite_musics"
                       );
                     }
                     return myFavoriteId;
@@ -588,7 +608,7 @@ export default defineComponent({
             return;
           }
           this.playlist.tracks = this.playlist.tracks.concat(
-            ...addedTracksArray,
+            ...addedTracksArray
           );
           this.updateTracks();
         }
@@ -610,7 +630,7 @@ export default defineComponent({
           this.playlist.coverImgUrl,
           document,
           (theme as Theme1).type,
-          (theme as Theme2).background,
+          (theme as Theme2).background
         );
       } catch (error) {
         console.error("Failed to set background color:", error);
@@ -674,7 +694,7 @@ export default defineComponent({
       this.player.playAll(playlist);
       Message.post(
         "success",
-        this.$t("message.playlist_view.added_to_playlist"),
+        this.$t("message.playlist_view.added_to_playlist")
       );
       if (this.type === "playlist") {
         await this.updatePlayCount();
@@ -685,7 +705,7 @@ export default defineComponent({
       this.player.addPlaylist(this.playlist.tracks);
       Message.post(
         "success",
-        this.$t("message.playlist_view.added_to_playlist"),
+        this.$t("message.playlist_view.added_to_playlist")
       );
     },
     // 播放歌曲

@@ -473,6 +473,7 @@
                 }"
               >
                 <button
+                  :tabindex="-1"
                   class="play-button"
                   :style="{
                     backgroundColor: highlightColor,
@@ -493,7 +494,11 @@
             </div>
           </div>
         </div>
-        <button class="create font-size-large" @click="createTheme">
+        <button
+          :tabindex="-1"
+          class="create font-size-large"
+          @click="createTheme"
+        >
           {{ $t("create_playlist.create") }}
         </button>
       </div>
@@ -636,7 +641,7 @@ export default defineComponent({
       } else {
         return YColor.getLightThemeColor(
           darkThemeColors[this.nowBackgroundIndex],
-          this.background,
+          this.background
         );
       }
     },
@@ -721,7 +726,7 @@ export default defineComponent({
             highlight = this.rgbStrToHex(lineContent.replace(highlightTxt, ""));
           } else if (lineContent.startsWith(fontColorTxt)) {
             fontColorAll = this.rgbStrToHex(
-              lineContent.replace(fontColorTxt, ""),
+              lineContent.replace(fontColorTxt, "")
             );
           } else if (lineContent.startsWith(backgroundTxt)) {
             background = lineContent.replace(backgroundTxt, "").trim();
@@ -813,7 +818,7 @@ export default defineComponent({
         },
         () => {
           Message.post("error", `${this.$t("copy.copy_failed")}${text}`);
-        },
+        }
       );
     },
     paste(
@@ -826,7 +831,7 @@ export default defineComponent({
         | "fontColorMain"
         | "fontColorHigh"
         | "fontColorStandard"
-        | "fontColorLow",
+        | "fontColorLow"
     ) {
       navigator.clipboard.readText().then(
         (text) => {
@@ -846,13 +851,13 @@ export default defineComponent({
           } else {
             Message.post(
               "error",
-              `${this.$t("copy.paste_failed_invalid_data")}${text}`,
+              `${this.$t("copy.paste_failed_invalid_data")}${text}`
             );
           }
         },
         () => {
           Message.post("error", this.$t("copy.paste_failed"));
-        },
+        }
       );
     },
   },

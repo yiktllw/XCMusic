@@ -21,6 +21,7 @@
     <YScroll class="yscroll">
       <button
         v-if="!hideInSidebar.includes('favorite')"
+        :tabindex="-1"
         class="big-button font-color-standard"
         @click="$router.push({ path: `/playlist/${login.userFavoriteId}` })"
       >
@@ -30,6 +31,7 @@
         </div>
       </button>
       <button
+        :tabindex="-1"
         v-if="!hideInSidebar.includes('album')"
         class="big-button font-color-standard"
         @click="$router.push({ path: '/subscribe/album' })"
@@ -40,6 +42,7 @@
         </div>
       </button>
       <button
+        :tabindex="-1"
         v-if="!hideInSidebar.includes('local')"
         class="big-button font-color-standard"
         @click="$router.push({ path: '/local' })"
@@ -50,6 +53,7 @@
         </div>
       </button>
       <button
+        :tabindex="-1"
         v-if="!hideInSidebar.includes('download')"
         class="big-button font-color-standard"
         @click="$router.push({ path: '/download' })"
@@ -62,6 +66,7 @@
       <div v-if="hideInSidebar.length < 4" class="split-line"></div>
       <div class="created-playlist">
         <button
+          :tabindex="-1"
           class="switch-user-playlist font-color-main"
           @click="showMyPlaylist = !showMyPlaylist"
         >
@@ -95,6 +100,7 @@
       <transition name="slide-fade">
         <div class="fade-container" v-if="showMyPlaylist">
           <button
+            :tabindex="-1"
             class="playlist-button font-color-main"
             v-for="button in userPlaylists"
             :key="button.id"
@@ -114,6 +120,7 @@
         </div>
       </transition>
       <button
+        :tabindex="-1"
         class="switch-user-playlist font-color-main"
         @click="showMySubscribedPlaylist = !showMySubscribedPlaylist"
       >
@@ -141,6 +148,7 @@
       <transition name="slide-fade">
         <div class="fade-container" v-if="showMySubscribedPlaylist">
           <button
+            :tabindex="-1"
             class="playlist-button font-color-main"
             v-for="button in userSubscribes"
             :key="button.id"
@@ -244,7 +252,7 @@ export default defineComponent({
     openCtxMenu(
       event: MouseEvent,
       id: number,
-      from: "created-playlists" | "subscribed-playlists",
+      from: "created-playlists" | "subscribed-playlists"
     ) {
       event.preventDefault();
       const playlist =

@@ -119,6 +119,7 @@
         <!-- 3 喜欢按钮 -->
         <button
           class="button like-button"
+          :tabindex="-1"
           @click="_toogleLike(likelist.includes(currentTrack?.id ?? 0))"
         >
           <img
@@ -137,6 +138,7 @@
         <!-- 3 上一首按钮 -->
         <button
           class="button previous-button"
+          :tabindex="-1"
           @click="goTo('backwards')"
           :title="$t('playbar.previous')"
         >
@@ -145,6 +147,7 @@
         <!-- 3 播放/暂停按钮 -->
         <button
           class="button play-button"
+          :tabindex="-1"
           @click="tooglePlayState"
           :title="
             playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')
@@ -164,6 +167,7 @@
         <!-- 3 下一首按钮 -->
         <button
           class="button next-button"
+          :tabindex="-1"
           @click="goTo('forward')"
           :title="$t('playbar.next')"
         >
@@ -172,6 +176,7 @@
         <!-- 3 播放模式按钮 -->
         <button
           class="button playMode-button"
+          :tabindex="-1"
           @click="play_mode_panel?.tooglePanel()"
           ref="play_mode_panel_trigger"
         >

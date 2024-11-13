@@ -5,7 +5,7 @@
       <!-- 4 歌曲序号-表头 -->
       <div class="songsCounter" v-if="showTrackCounter">
         <!-- 5 歌曲序号-表头按钮 -->
-        <button class="header-button header-counter">
+        <button :tabindex="-1" class="header-button header-counter">
           <span>#</span>
         </button>
       </div>
@@ -13,6 +13,7 @@
       <div class="songsName" v-if="showTrackTitle">
         <!-- 5 标题排序按钮 -->
         <button
+          :tabindex="-1"
           :disabled="!resortable"
           class="header-button"
           @click="handleSort"
@@ -47,6 +48,7 @@
       >
         <!-- 5 专辑排序按钮 -->
         <button
+          :tabindex="-1"
           :disabled="!resortable"
           class="header-button"
           @click="handleSort_Album"
@@ -68,7 +70,7 @@
       </div>
       <!-- 4 喜欢-表头 -->
       <div class="likes" v-if="showTrackLikes">
-        <button class="header-button">
+        <button :tabindex="-1" class="header-button">
           <span>
             {{ $t("songs_table.like") }}
           </span>
@@ -78,6 +80,7 @@
       <div class="songsDuration" v-if="showTrackDuration">
         <!-- 5 时长排序按钮 -->
         <button
+          :tabindex="-1"
           :disabled="!resortable"
           class="header-button"
           @click="handleSort_Duration"
@@ -101,7 +104,7 @@
       </div>
       <!-- 4 热度-表头 -->
       <div class="popularity" v-if="showTrackPopularity">
-        <button class="header-button">
+        <button :tabindex="-1" class="header-button">
           <span>
             {{ $t("songs_table.popularity") }}
           </span>
@@ -109,7 +112,7 @@
       </div>
       <!-- 4 听歌次数-表头 -->
       <div class="listen-count" v-if="showListenCount">
-        <button class="header-button">
+        <button :tabindex="-1" class="header-button">
           <span>
             {{ $t("songs_table.listen_count") }}
           </span>
@@ -121,7 +124,7 @@
       <template
         v-for="(track, index) in tracks.slice(
           (page.current - 1) * limit,
-          page.current * limit,
+          page.current * limit
         )"
       >
         <div
@@ -287,6 +290,7 @@
               >
                 <!-- 6 专辑按钮 -->
                 <button
+                  :tabindex="-1"
                   class="album-button font-color-standard ul-button"
                   :id="`album-${track.al.id}`"
                   :title="
@@ -502,7 +506,7 @@ export default defineComponent({
       () => props.modelValue,
       (newValue) => {
         tracks.value = newValue;
-      },
+      }
     );
 
     const main = ref<HTMLElement | null>(null);
@@ -834,14 +838,14 @@ export default defineComponent({
           console.log("按时间升序排序");
           // 处理按时间升序排序逻辑
           this.tracks.sort(
-            (a, b) => parseFloat(a.dt.toString()) - parseFloat(b.dt.toString()),
+            (a, b) => parseFloat(a.dt.toString()) - parseFloat(b.dt.toString())
           );
           break;
         case "albumDesc":
           console.log("按时间降序排序");
           // 处理按时间降序排序逻辑
           this.tracks.sort(
-            (a, b) => parseFloat(b.dt.toString()) - parseFloat(a.dt.toString()),
+            (a, b) => parseFloat(b.dt.toString()) - parseFloat(a.dt.toString())
           );
           break;
         default:
@@ -940,7 +944,7 @@ export default defineComponent({
       // 在id为YPlaybar.vue时，会有多个dom
       this.trackMouseLeave(this.hoverTrackId);
       let doms = this.main?.querySelectorAll(
-        `#track-menu-${id}`,
+        `#track-menu-${id}`
       ) as unknown as HTMLElement[];
       if (doms) doms.forEach((dom) => (dom.style.display = "flex"));
 
@@ -948,14 +952,14 @@ export default defineComponent({
       if (this.id !== "YPlaybar.vue") return;
 
       let domToBeHidden = this.main?.querySelector(
-        `#track-menu-2-${id}`,
+        `#track-menu-2-${id}`
       ) as HTMLElement;
       if (domToBeHidden) domToBeHidden.style.display = "none";
     },
     trackMouseLeave(id: number) {
       // 在id为YPlaybar.vue时，会有多个dom
       let doms = this.main?.querySelectorAll(
-        `#track-menu-${id}`,
+        `#track-menu-${id}`
       ) as unknown as HTMLElement[];
       if (doms) doms.forEach((dom) => (dom.style.display = "none"));
 
@@ -964,7 +968,7 @@ export default defineComponent({
       if (this.id !== "YPlaybar.vue") return;
 
       let domToBeShown = this.main?.querySelector(
-        `#track-menu-2-${id}`,
+        `#track-menu-2-${id}`
       ) as HTMLElement;
       if (domToBeShown) domToBeShown.style.display = "block";
     },
@@ -1036,7 +1040,7 @@ export default defineComponent({
             });
             Message.post(
               "success",
-              this.$t("message.playlist_view.scrolled_to_current_track"),
+              this.$t("message.playlist_view.scrolled_to_current_track")
             );
           }
           rowElement = null;

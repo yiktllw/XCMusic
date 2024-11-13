@@ -11,10 +11,10 @@
           {{ confirm.needTranslate ? $t(confirm.content) : confirm.content }}
         </div>
         <div class="buttons">
-          <button @click="cancel">
+          <button :tabindex="-1" @click="cancel">
             {{ $t("cancel") }}
           </button>
-          <button @click="ensure">
+          <button :tabindex="-1" @click="ensure">
             {{ $t("confirm.title") }}
           </button>
         </div>

@@ -63,7 +63,7 @@
         @keydown.enter="goto()"
       />
       <span>/ &nbsp;{{ page.total }} &nbsp;</span>
-      <button class="font-size-std" @click="goto()">跳转</button>
+      <button :tabindex="-1" class="font-size-std" @click="goto()">跳转</button>
     </div>
   </div>
 </template>
@@ -97,7 +97,7 @@ export default defineComponent({
       () => props.modelValue,
       (newValue) => {
         page.value = newValue;
-      },
+      }
     );
 
     return {

@@ -32,10 +32,18 @@
           ></textarea>
         </div>
         <div class="buttons">
-          <button class="create cancel font-size-large" @click="cancel">
+          <button
+            :tabindex="-1"
+            class="create cancel font-size-large"
+            @click="cancel"
+          >
             {{ $t("cancel") }}
           </button>
-          <button class="create font-size-large" @click="confirmModify">
+          <button
+            :tabindex="-1"
+            class="create font-size-large"
+            @click="confirmModify"
+          >
             {{ $t("confirm.title") }}
           </button>
         </div>

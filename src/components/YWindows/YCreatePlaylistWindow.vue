@@ -20,7 +20,11 @@
             {{ $t("create_playlist.private") }}
           </label>
         </div>
-        <button class="create font-size-large" @click="createPlaylist">
+        <button
+          :tabindex="-1"
+          class="create font-size-large"
+          @click="createPlaylist"
+        >
           {{ $t("create_playlist.create") }}
         </button>
       </div>

@@ -2,7 +2,7 @@
   <div class="subwindow">
     <div class="subwindow-header">
       <div class="subwindow-controls">
-        <button @click="closeSubwindow">X</button>
+        <button :tabindex="-1" @click="closeSubwindow">X</button>
       </div>
     </div>
     <div class="subwindow-content">
