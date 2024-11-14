@@ -1,67 +1,68 @@
 <template>
   <!-- 滚动容器 -->
-  <YScroll style="max-height: 100%">
-    <div class="search-info">
-      <div class="search-info-title font-color-main">
-        {{ $t("search_view.search_info_before") }}
-        「&nbsp;{{ search }}&nbsp;」
-        <span class="font-color-high" style="font-size: 16px">
-          {{ $t("search_view.search_info_after") }}
-          <span v-if="position === 'song'">
-            {{ switcher[0].total }}{{ $t("search_view.songs") }}
-          </span>
-          <span v-else-if="position === 'album'">
-            {{ switcher[1].total }}{{ $t("search_view.albums") }}
-          </span>
-          <span v-else-if="position === 'playlist'">
-            {{ switcher[2].total }}{{ $t("search_view.playlists") }}
-          </span>
-          <span v-else-if="position === 'artist'">
-            {{ switcher[3].total }} {{ $t("search_view.artists") }}
-          </span>
-          <span v-else-if="position === 'lyric'">
-            {{ switcher[4].total }}{{ $t("search_view.songs") }}
-          </span>
-          <span v-else-if="position === 'user'">
-            {{ switcher[5].total }}{{ $t("search_view.users") }}
-          </span>
+  <div class="search-info">
+    <div class="search-info-title font-color-main">
+      {{ $t("search_view.search_info_before") }}
+      「&nbsp;{{ search }}&nbsp;」
+      <span class="font-color-high" style="font-size: 16px">
+        {{ $t("search_view.search_info_after") }}
+        <span v-if="position === 'song'">
+          {{ switcher[0].total }}{{ $t("search_view.songs") }}
         </span>
-      </div>
-      <div class="search-info-detail font-color-main"></div>
+        <span v-else-if="position === 'album'">
+          {{ switcher[1].total }}{{ $t("search_view.albums") }}
+        </span>
+        <span v-else-if="position === 'playlist'">
+          {{ switcher[2].total }}{{ $t("search_view.playlists") }}
+        </span>
+        <span v-else-if="position === 'artist'">
+          {{ switcher[3].total }} {{ $t("search_view.artists") }}
+        </span>
+        <span v-else-if="position === 'lyric'">
+          {{ switcher[4].total }}{{ $t("search_view.songs") }}
+        </span>
+        <span v-else-if="position === 'user'">
+          {{ switcher[5].total }}{{ $t("search_view.users") }}
+        </span>
+      </span>
     </div>
-    <!-- 导航 -->
-    <div class="switcher">
-      <button
-        :tabindex="-1"
-        class="switcher-item"
-        v-for="(item, index) in switcher"
-        @click="handleSwitcher(item.position)"
+    <div class="search-info-detail font-color-main"></div>
+  </div>
+  <!-- 导航 -->
+  <div class="switcher">
+    <button
+      :tabindex="-1"
+      class="switcher-item"
+      v-for="(item, index) in switcher"
+      @click="handleSwitcher(item.position)"
+    >
+      <span
+        style="font-size: 16px; color: #fff"
+        :style="{
+          'font-weight': item.position === position ? 'bold' : '500',
+          color:
+            item.position === position
+              ? 'var(--font-color-main)'
+              : 'var(--font-color-standard)',
+        }"
       >
-        <span
-          style="font-size: 16px; color: #fff"
-          :style="{
-            'font-weight': item.position === position ? 'bold' : '500',
-            color:
-              item.position === position
-                ? 'var(--font-color-main)'
-                : 'var(--font-color-standard)',
-          }"
-        >
-          {{ $t(item.display) }}
-        </span>
-        <div
-          class="choosed"
-          style="
-            transform: translate(7px, 4px);
-            width: 60%;
-            height: 4px;
-            border-radius: 2px;
-          "
-          v-if="item.position === position"
-        ></div>
-      </button>
-    </div>
-    <!-- 内容 -->
+        {{ $t(item.display) }}
+      </span>
+      <div
+        class="choosed"
+        style="
+          transform: translate(7px, 4px);
+          width: 60%;
+          height: 4px;
+          border-radius: 2px;
+        "
+        v-if="item.position === position"
+      ></div>
+    </button>
+  </div>
+  <YScroll :style="{
+    maxHeight: 'calc(100vh - 230px)',
+  }">
     <div class="content">
       <!-- 歌曲 -->
       <div class="songs" v-if="position === 'song'">
@@ -106,6 +107,7 @@
       </div>
     </div>
   </YScroll>
+  <!-- 内容 -->
 </template>
 
 <script lang="ts">
@@ -425,7 +427,7 @@ export default defineComponent({
   mounted() {
     this.fetchData(this.position);
     // 设置背景颜色
-    YColor.setBackgroundColorTheme();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Searchview"));
     // 当前位置为默认位置时, 跳转到上次搜索位置
     this.position === "default"
       ? this.$router.push({
@@ -462,8 +464,8 @@ export default defineComponent({
   top: 0px;
   z-index: 1;
   width: 100%;
-  background-color: var(--background-color);
-  backdrop-filter: blur(10px);
+  // background-color: var(--background-color);
+  // backdrop-filter: blur(10px);
 
   .switcher-item {
     height: 20px;
