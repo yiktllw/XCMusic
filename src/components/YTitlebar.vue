@@ -56,6 +56,7 @@
           src="../assets/clear2.svg"
           @click="
             searchInput = '';
+            searchSuggestions = [];
             search_input?.focus();
             search_panel?._showPanel();
           "
