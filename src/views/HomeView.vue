@@ -468,7 +468,7 @@ export default defineComponent({
             "message.getting_playlist_tracks",
             true,
           );
-          Playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
             this.player.playAll(res);
             Message.post(
               "success",
@@ -482,7 +482,7 @@ export default defineComponent({
             "message.getting_playlist_tracks",
             true,
           );
-          Playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
             this.player.addPlaylist(res);
             Message.post(
               "success",
@@ -497,7 +497,7 @@ export default defineComponent({
             "message.getting_playlist_tracks",
             true,
           );
-          Playlist.getAllTracks(arg.target.id).then((res) => {
+          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
             this.download.addList(res);
             Message.post(
               "success",

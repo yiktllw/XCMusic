@@ -451,7 +451,7 @@ export default defineComponent({
         if (this.type === "playlist") {
           // 获取歌单详情
           requests = [
-            useApi(`/playlist/detail?id=${id}`)
+            Playlist.getDetail(id)
               .then((response) => {
                 if (id !== this.playlistId) {
                   return;

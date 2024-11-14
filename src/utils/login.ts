@@ -13,9 +13,15 @@ import { UserPlaylist } from "@/dual/login";
 import { getStorage, setStorage } from "./render_storage";
 
 export interface IPlaylist {
+  /** 歌单名 */
   name: string;
+  /** 侧边栏使用，显示在按钮的内容 */
   label: string;
+  /** 歌单ID */
   id: number;
+  /** 歌曲数量 */
+  trackCount: number;
+  /** 歌单图片 */
   img: string;
 }
 
@@ -201,6 +207,7 @@ export class Login {
               name: playlist.name,
               label: playlist.name,
               id: playlist.id,
+              trackCount: playlist.trackCount,
               img: playlist.coverImgUrl,
             });
           } else {
@@ -208,6 +215,7 @@ export class Login {
               name: playlist.name,
               label: playlist.name,
               id: playlist.id,
+              trackCount: playlist.trackCount,
               img: playlist.coverImgUrl,
             });
           }

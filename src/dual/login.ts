@@ -10,5 +10,6 @@ export interface UserPlaylist {
   name: string;
   id: number;
   coverImgUrl: string;
+  trackCount: number;
   subscribed: boolean;
 }

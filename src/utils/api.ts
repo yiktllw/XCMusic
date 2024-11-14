@@ -12,6 +12,7 @@ import axios from "axios";
 import { Tracks } from "./tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "./render_storage";
+import { IPlaylist } from "./api.interface";
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -37,7 +38,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // 自定义 API 请求函数
@@ -49,7 +50,7 @@ apiClient.interceptors.request.use(
  */
 export async function useApi(
   relativePath: string,
-  params?: Object,
+  params?: Object
 ): Promise<any> {
   try {
     const response = await apiClient.get(relativePath, { params });
@@ -69,7 +70,7 @@ export async function useApi(
 export async function setLike(
   id: number | string,
   like: boolean,
-  cookie: string,
+  cookie: string
 ) {
   let result = await useApi("/like", {
     id: id,
@@ -97,20 +98,37 @@ export async function toogleLike(id: number | string, status: boolean) {
 
 export namespace Playlist {
   /**
+   * 获取某个歌单的信息，这个接口的返回信息量很大，谨慎使用
+   */
+  export async function getDetail(
+    id: number
+  ): Promise<IPlaylist.DetailResponse> {
+    const cookie = getStorage("login_cookie");
+    const params: IPlaylist.DetailParams = { id: id };
+    if (cookie && cookie.length > 0) params["cookie"] = cookie;
+    let res = await useApi("/playlist/detail", params).catch((error) => {
+      console.error("Failed to get playlist detail:", error);
+    });
+    return res;
+  }
+  /**
    * 获取某个歌单的全部歌曲
    * @param {number} playlistId 歌单id
    */
-  export async function getAllTracks(playlistId: number) {
+  export async function getAllTracks(playlistId: number, _trackCount?: number) {
     let trackCount = 0;
-    await useApi("/playlist/detail", {
-      id: playlistId,
-    })
-      .then((res) => {
-        trackCount = res.playlist.trackCount;
-      })
-      .catch((error) => {
-        console.error("Failed to fetch playlist detail:", error);
-      });
+    if (!_trackCount) {
+      console.log("Fetching track count");
+      await getDetail(playlistId)
+        .then((res) => {
+          trackCount = res.playlist.trackCount;
+        })
+        .catch((error) => {
+          console.error("Failed to fetch playlist detail:", error);
+        });
+    } else {
+      trackCount = _trackCount;
+    }
     const limit = 1000;
     let pageCount = Math.ceil(trackCount / limit);
     let requests = [];
@@ -131,7 +149,7 @@ export namespace Playlist {
   export async function fetchTracks(
     playlistId: number,
     page: number,
-    limit: number = 500,
+    limit: number = 500
   ) {
     let offset = (page - 1) * limit;
     let getTracks = await useApi("/playlist/track/all", {
@@ -193,7 +211,9 @@ export namespace Song {
  */
 export namespace Search {
   /** 从关键词获取搜索建议 */
-  export async function getSearchSuggestion(keyword: string): Promise<ISearchSuggestion[]> {
+  export async function getSearchSuggestion(
+    keyword: string
+  ): Promise<ISearchSuggestion[]> {
     // 如果关键词为空，直接返回空数组
     if (keyword === "" || !keyword) {
       console.log("Empty keyword");
