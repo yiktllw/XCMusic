@@ -229,13 +229,13 @@ export namespace Search {
       keywords: keyword,
       type: "mobile",
     }).catch((error) => {
-      console.error("Failed to get search suggestion:", error);
+      console.error("Failed to get search suggestion(net):", error);
       return [];
     });
     if (res.code !== 200) {
       console.log("Failed to get search suggestion:", res);
       return [];
     }
-    return res.result.allMatch;
+    return res.result.allMatch ?? [];
   }
 }

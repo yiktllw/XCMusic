@@ -2,13 +2,13 @@ import { ITrack } from "./tracks";
 
 export namespace IPlaylist {
 
-  /** playlist/detail的参数 */
+  /** /playlist/detail的参数 */
   export interface DetailParams {
     id: number;
     cookie?: string;
   }
 
-  /** playlist/detail的返回信息 */
+  /** /playlist/detail的返回信息 */
   export interface DetailResponse {
     /** 200为成功 */
     code: number;
