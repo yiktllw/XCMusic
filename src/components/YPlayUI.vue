@@ -245,7 +245,7 @@ import { defineComponent, ref } from "vue";
 import { LrcItem, LrcItem2, Lyrics, YrcItem } from "@/utils/lyric";
 import { useStore } from "vuex";
 import { useApi } from "@/utils/api";
-import { getColorFromImg } from "@/utils/color";
+import { getColorFromImg, YColor } from "@/utils/color";
 import YSpecCanvas from "./YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ICreative, SheetList, SongWikiSummary } from "@/dual/YPlayUI";
@@ -557,16 +557,18 @@ export default defineComponent({
       await getColorFromImg(
         this.track.al.picUrl + "?param=50y50",
         document
-      ).then((color) => {
-        if (!color) {
-          if (this.playuiContainer) {
-            this.playuiContainer.style.background = "var(--background-color)";
-          }
-          return;
-        }
+      ).then((_color) => {
+        // 确保颜色存在
+        let color;
+        if (!_color) color = YColor.hexToRgb(YColor.stringToHexColor("TXC"));
+        else color = _color;
+
+        // 设置背景颜色
         if (this.playuiContainer) {
           this.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * 0.321}, ${color.g * 0.321}, ${color.b * 0.321}) 100%)`;
         }
+
+        // 设置进度条颜色
         let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
         if (progressDOM) {
           progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .4321), rgb(${color.r}, ${color.g}, ${color.b} ))`;

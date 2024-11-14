@@ -23,7 +23,7 @@
 
 </p>
 
-![image](https://github.com/user-attachments/assets/45fcabb2-8f89-434e-a8cc-7548a740c030)
+![image](https://github.com/user-attachments/assets/1ab7d31b-955a-4a49-b7c5-bf253fd92a61)
 
 ## 目录
 
@@ -157,7 +157,7 @@ npm run electron:build
 
 ## 截图
 
-![image](https://github.com/user-attachments/assets/1ab7d31b-955a-4a49-b7c5-bf253fd92a61)
+![image](https://github.com/user-attachments/assets/45fcabb2-8f89-434e-a8cc-7548a740c030)
 
 ![image](https://github.com/user-attachments/assets/9ae95407-2a1b-470b-a1b5-4de008dc331a)
 
