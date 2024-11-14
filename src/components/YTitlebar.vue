@@ -262,6 +262,8 @@ import YPanel from "./YPanel.vue";
 import YScroll from "./YScroll.vue";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
 
+let QRInterval: NodeJS.Timeout | null = null;
+
 export default defineComponent({
   name: "YTitlebar",
   emits: ["navigate-back", "navigate-forward", "user-login", "close-panel"],
@@ -383,7 +385,7 @@ export default defineComponent({
     },
     // 轮询二维码状态
     async pollQRCodeStatus() {
-      const interval = setInterval(async () => {
+      QRInterval = setInterval(async () => {
         let checkResponse = await useApi("/login/qr/check", {
           key: this.qrKey,
           timestamp: new Date().getTime(),
@@ -394,15 +396,15 @@ export default defineComponent({
           // 关闭扫码窗口
           this.showDropdown = false;
           this.globalMsg.post("close-login-window");
-          clearInterval(interval);
+          if (QRInterval) clearInterval(QRInterval);
           this.$emit("user-login");
           await this.init();
           this.login.cookie = checkResponse.cookie;
         }
       }, 2000); // 每2秒轮询一次
       setInterval(() => {
-        if (this.showDropdown === false) {
-          clearInterval(interval);
+        if (this.showDropdown === false && QRInterval) {
+          clearInterval(QRInterval);
         }
       }, 2000); // 停止轮询
     },
@@ -627,6 +629,7 @@ export default defineComponent({
     });
   },
   beforeUnmount() {
+    if (QRInterval) clearInterval(QRInterval);
     this.globalMsg.subscriber.offAll("YTitlebar");
     this.login.subscriber.offAll("YTitlebar");
     this.search_panel = null;

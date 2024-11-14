@@ -548,29 +548,6 @@ export default defineComponent({
         };
       }
     },
-    preset(val) {
-      this.fontColorType = "single";
-      this.highlightColor = "#fe3c5a";
-      if (val === "light") {
-        this.type = "light";
-        this.background = "#ffffff";
-        this.autoBackgroundType = "other";
-        this.foreground = "#000000";
-        this.panelBackground = "#eeeeee";
-        this.fontColors = {
-          fontColorAll: "#000000",
-        };
-      } else if (val === "dark") {
-        this.type = "dark";
-        this.background = "#000000";
-        this.autoBackgroundType = "dark";
-        this.foreground = "#ffffff";
-        this.panelBackground = "#333333";
-        this.fontColors = {
-          fontColorAll: "#ffffff",
-        };
-      }
-    },
   },
   data() {
     return {
@@ -800,9 +777,12 @@ export default defineComponent({
       this.panelBackground = theme.panelBackground;
       this.highlightColor = theme.highlight;
       this.autoBackgroundType = theme.autoBackgroundType;
-      this.fontColors = theme.fontColors;
+      this.$nextTick(() => {
+        this.fontColors = theme.fontColors;
+      });
     },
     handlePresetChange() {
+      this.fontColorType = "single";
       const theme = this.appThemes.find((item) => item.name === this.preset);
       if (theme) {
         this.applyTheme(theme);

@@ -2,6 +2,7 @@
 node_modules
 /dist
 demo
+*.txc
 *.code-workspace
 
 # local env files
