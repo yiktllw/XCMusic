@@ -321,7 +321,7 @@ export default defineComponent({
           this.listenCount?.resourceExt.musicTotalPlayDto.playCount +
           "次·" +
           this.formatDuration(
-            this.listenCount?.resourceExt.musicTotalPlayDto.duration,
+            this.listenCount?.resourceExt.musicTotalPlayDto.duration
           )
         );
       }
@@ -538,7 +538,7 @@ export default defineComponent({
       p0: number,
       p1: number,
       p2: number,
-      p3: number,
+      p3: number
     ): number {
       const u = 1 - t;
       return 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t;
@@ -556,7 +556,7 @@ export default defineComponent({
       }
       await getColorFromImg(
         this.track.al.picUrl + "?param=50y50",
-        document,
+        document
       ).then((color) => {
         if (!color) {
           if (this.playuiContainer) {
@@ -664,9 +664,10 @@ export default defineComponent({
     }
     this.player.subscriber.on({
       id: "YPlayUI",
+      type: "allTime",
       func: () => {
         this.currentTime = parseInt(
-          (this.player.currentTime * 1000).toString(),
+          (this.player.currentTime * 1000).toString()
         );
         if (this.lyrics) {
           for (let i = 0; i < this.lyrics.length; i++) {
@@ -686,7 +687,6 @@ export default defineComponent({
           }
         }
       },
-      type: "allTime",
     });
     this.globalMsg.subscriber.on({
       id: "YPlayUI",

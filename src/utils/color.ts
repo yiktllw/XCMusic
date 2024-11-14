@@ -155,7 +155,8 @@ export namespace YColor {
     imgSrc: string,
     document: Document,
     colorThemeType: COLOR_THEME_TYPE | undefined,
-    themeBackground: string = "#131319"
+    themeBackground: string = "#131319",
+    nullColorCallback?: () => void
   ) {
     getColorFromImg(imgSrc, document).then((color) => {
       if (color) {
@@ -181,7 +182,8 @@ export namespace YColor {
             `linear-gradient(180deg, rgb(${themeColorRGB.r}, ${themeColorRGB.g}, ${themeColorRGB.b}) 0%,  var(--background-color) 500px, var(--background-color) 100%)`;
         }
       } else {
-        setBackgroundColorTheme();
+        if (nullColorCallback) nullColorCallback();
+        else setBackgroundColorTheme();
       }
     });
   }

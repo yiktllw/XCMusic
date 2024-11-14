@@ -553,7 +553,10 @@ export default defineComponent({
           this.user.picUrl,
           document,
           (theme as Theme1).type,
-          (theme as Theme2).background
+          (theme as Theme2).background,
+        () => {
+          YColor.setBackgroundColorHex2(YColor.stringToHexColor("userview"));
+        },
         );
       }
     } catch (error) {
