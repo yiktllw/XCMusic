@@ -4,9 +4,9 @@
     ref="big_frame"
     @mousemove="handleMousemove"
     @mouseleave="HideInfo"
-    @click="onClick"
+    @mousedown="onMouseDown"
   >
-    <div class="progress-bar" ref="progress_bar" v-if="true">
+    <div class="progress-bar" ref="progress_bar">
       <div
         :class="showTrack ? 'progress-fill' : 'progress-no-track'"
         :style="{
@@ -17,7 +17,9 @@
       <div
         class="progress-pointer"
         v-if="showTrack"
-        :style="{ left: 'calc(' + progress * 100 + '%' + ' - 7px )' }"
+        :style="{
+          left: 'calc(' + progress * 100 + '%' + ' - 7px )',
+        }"
         @mousedown="startSetProgress"
         @mouseup="endSetProgress"
       ></div>
@@ -48,6 +50,7 @@ export default defineComponent({
         return value >= 0 && value <= 1;
       },
     },
+    /** 是否显示轨道 */
     showTrack: {
       type: Boolean,
       default: true,
@@ -74,7 +77,7 @@ export default defineComponent({
       () => props.modelValue,
       (newValue) => {
         progress.value = newValue;
-      },
+      }
     );
 
     const progress_bar = ref<HTMLElement | null>(null);
@@ -100,6 +103,7 @@ export default defineComponent({
   },
   watch: {
     progress(newValue, oldValue) {
+      // 在进度条归零(下一首)时，暂时移除动画
       if (newValue === 0) {
         this.big_frame?.classList.remove("ani");
         this.$nextTick(() => {
@@ -129,15 +133,11 @@ export default defineComponent({
     updateProgressEvent(e: MouseEvent) {
       this.updateProgress(e.clientX);
     },
-    onClick(e: MouseEvent) {
+    onMouseDown(e: MouseEvent) {
       this.big_frame?.classList.remove("ani");
       this.updateProgress(e.clientX);
-      this.$emit("set-progress-end");
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.big_frame?.classList.add("ani");
-        }, 500);
-      });
+      window.addEventListener("mousemove", this.updateProgressEvent);
+      window.addEventListener("mouseup", this.endSetProgress);
     },
     startSetProgress() {
       window.addEventListener("mousemove", this.updateProgressEvent);
@@ -146,6 +146,11 @@ export default defineComponent({
     endSetProgress() {
       window.removeEventListener("mousemove", this.updateProgressEvent);
       this.$emit("set-progress-end");
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.big_frame?.classList.add("ani");
+        }, 500);
+      });
     },
     formatDuration(progress: number) {
       let duration = Math.floor(progress * this.totalTime * 1000);
