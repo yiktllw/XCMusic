@@ -268,7 +268,7 @@ export default defineComponent({
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log(JSON.stringify(data, null, 2));
+        console.log(JSON.stringify(data, null, 4));
         switch (data.from) {
           case "created-playlists":
             this.menu[3].display = true;
@@ -322,7 +322,7 @@ export default defineComponent({
         this.menu = songItems;
         if (data.from && data.from !== -1) {
           this.menu[this.menu.length - 1].display = true;
-          console.log("from:", data.from, JSON.stringify(this.menu, null, 4));
+          console.log("from:", data.from, this.menu);
         } else {
           this.menu[this.menu.length - 1].display = false;
         }
@@ -332,7 +332,11 @@ export default defineComponent({
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log(JSON.stringify(data, null, 2));
+        console.log({
+          x: data.x,
+          y: data.y,
+          track: JSON.parse(data.track),
+        });
         let commentCount = await this.getCommentCount(this.target.id);
         this.menu[4].label =
           this.$t("context.view_comment") + `(${commentCount})`;
@@ -418,7 +422,7 @@ export default defineComponent({
           this.player.nextPlay(arg.target);
           Message.post(
             "success",
-            this.$t("message.homeview.add_to_playlist_success"),
+            this.$t("message.homeview.add_to_playlist_success")
           );
           break;
         case "song-comment":
@@ -439,13 +443,13 @@ export default defineComponent({
                 Message.post(
                   "success",
                   this.$t("message.homeview.linkCopied") +
-                    `: https://music.163.com/song?id=${arg.target.id}`,
+                    `: https://music.163.com/song?id=${arg.target.id}`
                 );
               })
               .catch((error) => {
                 Message.post(
                   "error",
-                  `${this.$t("message.homeview.errorToCopyLink")}: ${error}`,
+                  `${this.$t("message.homeview.errorToCopyLink")}: ${error}`
                 );
               });
           }
@@ -463,45 +467,42 @@ export default defineComponent({
           this.showPreventContainer = true;
           break;
         case "playlist-play":
-          Message.post(
-            "info",
-            "message.getting_playlist_tracks",
-            true,
-          );
-          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
+          Message.post("info", "message.getting_playlist_tracks", true);
+          Playlist.getAllTracks(
+            arg.target.id,
+            arg.target.playlist.trackCount
+          ).then((res) => {
             this.player.playAll(res);
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",
-              true,
+              true
             );
           });
         case "playlist-addtoplaylist":
-          Message.post(
-            "info",
-            "message.getting_playlist_tracks",
-            true,
-          );
-          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
+          Message.post("info", "message.getting_playlist_tracks", true);
+          Playlist.getAllTracks(
+            arg.target.id,
+            arg.target.playlist.trackCount
+          ).then((res) => {
             this.player.addPlaylist(res);
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",
-              true,
+              true
             );
           });
           break;
         case "playlist-download":
-          Message.post(
-            "info",
-            "message.getting_playlist_tracks",
-            true,
-          );
-          Playlist.getAllTracks(arg.target.id, arg.target.playlist.trackCount).then((res) => {
+          Message.post("info", "message.getting_playlist_tracks", true);
+          Playlist.getAllTracks(
+            arg.target.id,
+            arg.target.playlist.trackCount
+          ).then((res) => {
             this.download.addList(res);
             Message.post(
               "success",
-              this.$t("playlist_view.list_added_to_download"),
+              this.$t("playlist_view.list_added_to_download")
             );
           });
           break;
@@ -537,7 +538,7 @@ export default defineComponent({
     },
     async deleteFromPlaylist(
       trackId: string | number,
-      playlistId: string | number,
+      playlistId: string | number
     ) {
       if (playlistId === -1) {
         return;
@@ -549,21 +550,24 @@ export default defineComponent({
         cookie: this.login.cookie,
       })
         .then((res) => {
-          console.log("Track deleted from playlist:", JSON.stringify(res, null, 4));
+          console.log(
+            "Track deleted from playlist:",
+            JSON.stringify(res, null, 4)
+          );
           if (res.status === 200) {
             Message.post("success", this.$t("message.homeview.delete_success"));
           } else {
             Message.post(
               "error",
               this.$t("message.homeview.delete_fail") +
-                `: ${res.message ?? res.status ?? this.$t("message.homeview.unknown_reason")}`,
+                `: ${res.message ?? res.status ?? this.$t("message.homeview.unknown_reason")}`
             );
           }
         })
         .catch((error) => {
           Message.post(
             "error",
-            this.$t("message.homeview.delete_fail") + `: ${error}`,
+            this.$t("message.homeview.delete_fail") + `: ${error}`
           );
         });
     },
