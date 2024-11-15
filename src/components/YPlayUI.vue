@@ -147,7 +147,7 @@
         </div>
       </div>
       <div class="play-bar">
-        <!-- <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" /> -->
+        <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" />
       </div>
       <div class="spectrum-canvas">
         <YSpecCanvas />
