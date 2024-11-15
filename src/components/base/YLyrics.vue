@@ -40,6 +40,8 @@ let timeAnime = 0;
 
 interface ILyric {
   lines: Array<string>;
+  /** 用于yrc，记录换行发生的index */
+  breakLineOn: Array<number>;
 }
 
 export default defineComponent({
@@ -162,7 +164,7 @@ export default defineComponent({
       this.canvas = this.main!.querySelector(
         "#lyrics-canvas"
       ) as HTMLCanvasElement;
-      this.canvas.width = 500 * scale;
+      this.canvas.width = 600 * scale;
       this.canvas.height = 600 * scale;
       this.ctx = this.canvas.getContext("2d");
 
@@ -174,6 +176,9 @@ export default defineComponent({
         const index = this.getIndex(this.timeNow * 1000);
         if (index !== this.currentLyricIndex) {
           this.currentLyricIndex = index;
+          this.drawLyrics(now.y);
+        }
+        if (this.lyrics[0]?.type === "yrc") {
           this.drawLyrics(now.y);
         }
         timeAnime = requestAnimationFrame(time);
@@ -260,18 +265,177 @@ export default defineComponent({
         // 跳过不在显示范围内的歌词
         const dist = this.lineY[i] - now.y;
         if (Math.abs(dist) > this.canvas.height / 2 + lineHeight) continue;
+
+        // 开始绘制的位置
         const startY = this.lineY[i] - scrollY + this.canvas.height / 2;
+
         if (this.formattedLyrics[i].lines.length === 1) {
+          // 绘制无分行的歌词
           const text = this.formattedLyrics[i].lines[0];
-          this.ctx.fillStyle = this.dyToColor(dist); // 设置颜色
+
+          // 颜色动画和字体大小动画
+          this.ctx.fillStyle = this.dyToColor(dist);
           this.ctx.font = `bold ${this.dyToSize(dist)}px Avenir, Helvetica, Arial, sans-serif`;
-          this.ctx.fillText(text, 0, startY); // 绘制歌词
+
+          let drawDone = false;
+
+          if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
+            // 逐字歌词动画
+            this.ctx.save();
+            this.ctx.fillStyle = "rgb(120, 120, 120)";
+            const data = this.lyrics[i] as YrcItem;
+            if (data.duration) {
+              // 找到当前时间所在的词
+              let index = -1;
+              // 拼接这一行的歌词
+              let tmpLine = "";
+              for (let j = 0; j < data.words.length; j++) {
+                const word = data.words[j];
+                tmpLine += word.text;
+                if (
+                  this.timeNow * 1000 > word.startTime &&
+                  this.timeNow * 1000 < word.duration + word.startTime
+                ) {
+                  index = j;
+                  break;
+                }
+              }
+              if (index !== -1) {
+                const wordWidth = this.ctx.measureText(
+                  data.words[index].text
+                ).width;
+                const tmpLineWidth = this.ctx.measureText(tmpLine).width;
+                const progress =
+                  (this.timeNow * 1000 - data.words[index].startTime) /
+                  data.words[index].duration;
+                const x = tmpLineWidth - wordWidth + wordWidth * progress;
+
+                // 绘制被裁剪的白色文字
+                this.ctx.save();
+
+                this.ctx.beginPath();
+                this.ctx.rect(
+                  0,
+                  startY - lineHeight,
+                  x,
+                  startY + lineHeight + 10
+                );
+                this.ctx.clip();
+
+                this.ctx.fillStyle = this.dyToColor(dist);
+                this.ctx.fillText(text, 0, startY);
+                drawDone = true;
+
+                this.ctx.restore();
+
+                // 绘制被裁剪的底色文字
+                this.ctx.beginPath();
+                this.ctx.rect(
+                  x,
+                  startY - lineHeight,
+                  this.canvas.height,
+                  startY + lineHeight + 10
+                );
+                this.ctx.clip();
+                this.ctx.fillText(text, 0, startY);
+              }
+            }
+            this.ctx.restore();
+          }
+          // 绘制这一行歌词
+          if (!drawDone) this.ctx.fillText(text, 0, startY);
         } else {
+          // 绘制有分行的歌词
           for (let j = 0; j < this.formattedLyrics[i].lines.length; j++) {
             const text = this.formattedLyrics[i].lines[j];
-            this.ctx.fillStyle = this.dyToColor(dist); // 设置颜色
+
+            // 颜色动画和字体大小动画
+            this.ctx.fillStyle = this.dyToColor(dist);
             this.ctx.font = `bold ${this.dyToSize(dist)}px Avenir, Helvetica, Arial, sans-serif`;
-            this.ctx.fillText(text, 0, startY + j * smallLineHeight); // 绘制歌词
+
+            let drawDone = false;
+
+            if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
+              // 逐字歌词动画
+              this.ctx.save();
+              this.ctx.fillStyle = "rgb(120, 120, 120)";
+              const data = this.lyrics[i] as YrcItem;
+              if (data.duration) {
+                // 找到当前时间所在的词
+                let index = -1;
+                // 拼接这一行的歌词
+                let tmpLine = "";
+                for (let k = 0; k < data.words.length; k++) {
+                  // 如果是这一行的词
+                  const word = data.words[k];
+
+                  if (
+                    k <=
+                      (this.formattedLyrics[i].breakLineOn[j] ??
+                        data.words.length) &&
+                    k >= (this.formattedLyrics[i].breakLineOn[j - 1] ?? 0)
+                  ) {
+                    tmpLine += word.text;
+                  }
+                  if (
+                    this.timeNow * 1000 > word.startTime &&
+                    this.timeNow * 1000 < word.duration + word.startTime
+                  ) {
+                    index = k;
+                    break;
+                  }
+                }
+                if (index !== -1) {
+                  const wordWidth = this.ctx.measureText(
+                    data.words[index].text
+                  ).width;
+                  const tmpLineWidth = this.ctx.measureText(tmpLine).width;
+                  // console.log(j, tmpLine, tmpLineWidth, this.formattedLyrics[i].breakLineOn);
+                  const progress =
+                    (this.timeNow * 1000 - data.words[index].startTime) /
+                    data.words[index].duration;
+                  let x = tmpLineWidth - wordWidth + wordWidth * progress;
+
+                  // 如果已经换到下一行，x 重置为最大
+                  if (index >= this.formattedLyrics[i].breakLineOn[j]) {
+                    x = tmpLineWidth;
+                  }
+
+                  // 绘制被裁剪的白色文字
+                  this.ctx.save();
+
+                  this.ctx.beginPath();
+                  this.ctx.rect(
+                    0,
+                    startY - smallLineHeight + j * smallLineHeight,
+                    x,
+                    startY + smallLineHeight * j
+                  );
+                  this.ctx.clip();
+
+                  this.ctx.fillStyle = this.dyToColor(dist);
+                  this.ctx.fillText(text, 0, startY + j * smallLineHeight);
+                  drawDone = true;
+
+                  this.ctx.restore();
+
+                  // 绘制被裁剪的底色文字
+                  this.ctx.beginPath();
+                  this.ctx.rect(
+                    x,
+                    startY - smallLineHeight + j * smallLineHeight,
+                    this.canvas.height,
+                    startY + smallLineHeight * j
+                  );
+                  this.ctx.clip();
+                  this.ctx.fillText(text, 0, startY + j * smallLineHeight);
+                }
+              }
+              this.ctx.restore();
+            }
+            // 绘制这一行歌词
+            if (!drawDone)
+              this.ctx.fillText(text, 0, startY + j * smallLineHeight);
           }
         }
       }
@@ -302,7 +466,8 @@ export default defineComponent({
         if (lyric.type === "lrc" && Array.isArray(lyric.content)) {
           // 如果是 lrc，且content是数组(特殊内容)
           res.push({
-            lines: [lyric.content.map((line) => line.tx).join("")],
+            lines: [lyric.content.map((line) => line.tx).join(" ")],
+            breakLineOn: [0],
           });
         } else if (lyric.type === "lrc") {
           // 如果是 lrc，且content是字符串
@@ -329,6 +494,7 @@ export default defineComponent({
           // 返回结果
           res.push({
             lines: result,
+            breakLineOn: [0],
           });
         }
         if (lyric.type === "yrc") {
@@ -336,11 +502,14 @@ export default defineComponent({
 
           let singleLine = "";
 
+          let breakLineOn = [] as Array<number>;
+
           for (let i = 0; i < lyric.words.length; i++) {
             if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
               singleLine += lyric.words[i].text;
             } else {
               singleLine += lyric.words[i].text;
+              breakLineOn.push(i);
               result.push(singleLine);
               singleLine = "";
             }
@@ -349,6 +518,7 @@ export default defineComponent({
           result.push(singleLine);
           res.push({
             lines: result,
+            breakLineOn,
           });
         }
       }
@@ -360,11 +530,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .main {
-  width: 500px;
+  width: 600px;
   height: 600px;
 
   .canvas {
-    width: 500px;
+    width: 600px;
     height: 600px;
   }
 }
