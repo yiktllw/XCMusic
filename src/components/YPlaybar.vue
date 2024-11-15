@@ -463,6 +463,7 @@
                 :canSendPlaylist="false"
                 :limit="500"
                 :id="'YPlaybar.vue'"
+                :scroll-to-current-track-on-mount="true"
                 ref="songstable"
               />
             </YScroll>

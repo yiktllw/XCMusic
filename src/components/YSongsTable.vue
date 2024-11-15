@@ -498,6 +498,10 @@ export default defineComponent({
       type: Array as () => AlReels[],
       default: () => [],
     },
+    scrollToCurrentTrackOnMount: {
+      type: Boolean,
+      default: false,
+    },
   },
   name: "YSongsTable",
   setup(props: { modelValue: Array<ITrack> }) {
@@ -611,6 +615,12 @@ export default defineComponent({
   async mounted() {
     if (this.login.status && this.login.likelist?.length === 0)
       this.login.reloadLikelist();
+
+    if (this.scrollToCurrentTrackOnMount) {
+      this.$nextTick(() => {
+        this.scrollToCurrentTrack(false);
+      });
+    }
 
     this.alWidth = this.setting.display.albumWidth;
     this.nowPlaying = this.player.currentTrack?.id ?? 0;
@@ -1035,7 +1045,7 @@ export default defineComponent({
           let rowElement = this.main?.querySelector(".current_play_item");
           if (rowElement) {
             rowElement.scrollIntoView({
-              behavior: smooth ? "smooth" : "auto",
+              behavior: smooth ? "smooth" : "instant",
               block: "center",
             });
             Message.post(
