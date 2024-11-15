@@ -1,3 +1,9 @@
+<!---------------------------------------------------------------
+- YiktLLW .. 2025-03-21 .. Johannes Brahms
+- YLyrics.vue是用纯ts和canvas实现的歌词组件
+- 为了更高效、可控地绘制歌词，同时也为了避免创建大量dom节点。
+- ts部分较复杂，待优化
+--------------------------------------------------------------->
 <template>
   <div class="main" ref="main">
     <canvas id="lyrics-canvas" class="canvas" />
@@ -43,6 +49,9 @@ interface ILyric {
   /** 用于yrc，记录换行发生的index */
   breakLineOn: Array<number>;
 }
+
+let wheelLastY = 0;
+let wheelTimeout: NodeJS.Timeout | null = null;
 
 export default defineComponent({
   name: "YLyrics",
@@ -91,6 +100,7 @@ export default defineComponent({
     this.player.subscriber.offAll("YLyrics");
     cancelAnimationFrame(scrollAnime.anime);
     cancelAnimationFrame(timeAnime);
+    if (wheelTimeout) clearTimeout(wheelTimeout);
   },
   watch: {
     lyrics(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
@@ -104,14 +114,23 @@ export default defineComponent({
   methods: {
     /** 处理鼠标滚动事件 */
     handleWheel(e: WheelEvent) {
-      let y = now.y;
-      y += e.deltaY;
+      const t = 300;
+      if (wheelTimeout) clearTimeout(wheelTimeout);
+      let y
+      if (wheelLastY === 0) y = now.y;
+      else y = wheelLastY;
+      y += e.deltaY / 2;
+      wheelLastY = y;
       if (
         this.canvas &&
         y > this.lineY[0] - this.canvas?.height / 2 &&
         y < this.lineY[this.lineY.length - 1] + this.canvas?.height / 2
-      )
-        this.scrollTo(y, 1);
+      ) {
+        this.scrollTo(y, t);
+        wheelTimeout = setTimeout(() => {
+          wheelLastY = 0;
+        }, t);
+      }
     },
     /** 处理歌词变动事件 */
     handleLyricsChange(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
