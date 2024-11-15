@@ -12,7 +12,7 @@ type QualityInfo = {
 };
 
 import { markRaw } from "vue";
-import { useApi } from "./api";
+import { Lyrics, useApi } from "./api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { Message } from "@/dual/YMessageC";
@@ -23,6 +23,7 @@ import { isLocal } from "./localTracks_renderer";
 import { qualities } from "./setting";
 import { ITrack } from "./tracks";
 import { getStorage, setStorage } from "./render_storage";
+import { LrcItem, LrcItem2, YrcItem } from "./lyric";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
   fs = window.api.fs;
@@ -31,35 +32,35 @@ if (window.electron?.isElectron) {
 
 export class Player {
   /** 音频对象 */
-  _audio: HTMLAudioElement;
+  _audio: HTMLAudioElement = new Audio();
   /** 因为_audio连接到了_audioContext，无法直接设置_audio的输出设备，所以需要一个新的音频对象来设置输出设备 */
-  _outputAudio: HTMLAudioElement;
+  _outputAudio: HTMLAudioElement = new Audio();
   /** 音频上下文，用于设置增益 */
-  _audioContext: AudioContext | null;
+  _audioContext: AudioContext | null = null;
   /** 增益节点，用于设置音量均衡 */
-  _gainNode: GainNode | null;
+  _gainNode: GainNode | null = null;
   /** 播放列表 */
-  _playlist: ITrack[];
+  _playlist: ITrack[] = [];
   /** 歌单ID */
-  _playlistId: number | string;
+  _playlistId: number | string = 0;
   /** 当前播放的歌曲索引 */
-  _current: number;
+  _current: number = 0;
   /** 播放模式 */
-  _mode: "order" | "listloop" | "random" | "loop" | "listrandom";
+  _mode: "order" | "listloop" | "random" | "loop" | "listrandom" = "order";
   /** 播放历史 */
-  _history: ITrack[];
+  _history: ITrack[] = [];
   /** 播放历史索引 */
-  _historyIndex: number;
+  _historyIndex: number = 0;
   /** 播放状态 */
-  _playState: "play" | "pause";
+  _playState: "play" | "pause" = "pause";
   /** 音量 */
-  _volume: number;
+  _volume: number = 1;
   /** 当前播放时间 */
-  _currentTime: number | string;
+  _currentTime: number | string = 0;
   /** 播放进度 */
-  _progress: number | string;
+  _progress: number | string = 0;
   /** 歌曲总时长 */
-  _duration: number | string;
+  _duration: number | string = 0;
   /** 音质 */
   _quality:
     | "standard"
@@ -69,18 +70,37 @@ export class Player {
     | "hires"
     | "jyeffect"
     | "sky"
-    | "jymaster";
-  _volume_leveling: boolean;
+    | "jymaster" = "exhigh";
+  /** 是否开启音量均衡功能 */
+  _volume_leveling: boolean = getStorage("setting.play.volume_leveling");
+  /** 歌词 */
+  _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
   /** 点歌功能 */
   songPicker: SongPicker | undefined;
   /** 更新时间的定时器 */
-  _updateTime: null | NodeJS.Timeout;
+  _updateTime: null | NodeJS.Timeout = null;
   /** 订阅事件 */
-  subscriber: Subscriber;
+  subscriber: Subscriber = markRaw(
+    new Subscriber([
+      "playState",
+      "playlist",
+      "track",
+      "trackReady",
+      "lyrics",
+      "time",
+      "allTime",
+      "quality",
+      "volume",
+      "history",
+      "mode",
+      "playerReady",
+      "gain",
+    ])
+  );
   /** IndexDB, 用于存储播放列表 */
-  db: indexDB;
+  db: indexDB = new indexDB("ncm", "playlist");
   reloadInterval: null | NodeJS.Timeout = null;
-  _mediaSessionInit: boolean;
+  _mediaSessionInit: boolean = false;
   /** 是否初始化设备 */
   deviceInit: boolean = false;
   _sourceNode: MediaElementAudioSourceNode | undefined;
@@ -88,34 +108,9 @@ export class Player {
   _analyserNode: AnalyserNode | undefined;
   noUrlCount: number = 0;
   constructor() {
-    this._audio = new Audio("");
-    this._outputAudio = new Audio("");
     this._audio.onerror = () => this.handleAudioError(this._audio.error);
-    let localVolumeLeveling = getStorage("setting.play.volume_leveling");
-    this._volume_leveling = localVolumeLeveling;
-    this._audioContext = null;
-    this._gainNode = null;
     // 初始化音量均衡控件
     this.initAudioContext();
-
-    this._playlist = [];
-    this._playlistId = 0;
-    this._current = 0;
-
-    this._mode = "order";
-
-    this._history = [];
-    this._historyIndex = 0;
-
-    this._playState = "pause";
-
-    this._volume = 1;
-
-    this._currentTime = 0;
-    this._progress = 0;
-    this._duration = 0;
-
-    this._quality = "exhigh";
 
     // 点歌功能
     if (window.electron?.isElectron) {
@@ -138,26 +133,6 @@ export class Player {
       });
     }
 
-    this._updateTime = null;
-
-    this.subscriber = markRaw(
-      new Subscriber([
-        "playState",
-        "playlist",
-        "track",
-        "trackReady",
-        "time",
-        "allTime",
-        "quality",
-        "volume",
-        "history",
-        "mode",
-        "playerReady",
-        "gain",
-      ])
-    );
-
-    this.db = new indexDB("ncm", "playlist");
     this.db.openDatabase().then(() => {
       // console.log('Database opened');
       this.subscriber.on({
@@ -202,8 +177,17 @@ export class Player {
         setStorage("currentTrack", this.currentTrack);
       },
     });
-
-    this._mediaSessionInit = false;
+    
+    this.subscriber.on({
+      id: "player",
+      type: "track",
+      func: () => {
+        if (!this.currentTrack?.id) return;
+        Lyrics.get(this.currentTrack.id).then((_lyrics) => {
+          this.lyrics = _lyrics;
+        });
+      },
+    })
     this.initMediaSession();
 
     setTimeout(() => {
@@ -1456,5 +1440,15 @@ export class Player {
     if (this.playState === "play") {
       await this._audio.play();
     }
+  }
+  /**
+   * 获取歌词
+   */
+  get lyrics() {
+    return this._lyrics;
+  }
+  private set lyrics(value) {
+    this._lyrics = value;
+    this.subscriber.exec("lyrics");
   }
 }

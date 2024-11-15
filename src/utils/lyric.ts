@@ -7,11 +7,13 @@
  *---------------------------------------------------------------*/
 
 export interface LrcItem {
+  type: "lrc";
   startTime: number;
   content: string;
 }
 
 export interface LrcItem2 {
+  type: "lrc";
   startTime: number;
   content: Array<{
     li: string;
@@ -20,6 +22,7 @@ export interface LrcItem2 {
 }
 
 export interface YrcItem {
+  type: "yrc";
   startTime: number;
   duration?: number;
   words: Array<{
@@ -44,7 +47,7 @@ export class Lyrics {
         "Unsupported lyric type:",
         type,
         "Supported types:",
-        this.#allowTypes,
+        this.#allowTypes
       );
     }
     if (type === "yrc") {
@@ -62,6 +65,7 @@ export class Lyrics {
     const lines = yrc.split("\n"); // 将yrc内容按行分割
     const lyrics: YrcItem[] = [
       {
+        type: "yrc",
         startTime: 0,
         duration: 0,
         words: [{ startTime: 0, duration: 0, text: "" }],
@@ -96,6 +100,7 @@ export class Lyrics {
         }
 
         lyrics.push({
+          type: "yrc",
           startTime,
           duration,
           words: wordEntries,
@@ -104,6 +109,7 @@ export class Lyrics {
         try {
           const obj = JSON.parse(line);
           lyrics.push({
+            type: "yrc",
             startTime: obj.t,
             words: obj.c.map((item: { tx: string }) => ({ text: item.tx })),
           });
@@ -127,6 +133,7 @@ export class Lyrics {
     // 存储解析结果的数组
     const lyrics: LrcItem[] = [
       {
+        type: 'lrc',
         startTime: 0,
         content: "",
       },
@@ -140,6 +147,7 @@ export class Lyrics {
         // 如果成功解析为 JSON 格式，则将其添加到结果数组
         if (jsonData && typeof jsonData === "object") {
           lyrics.push({
+            type: "lrc",
             startTime: jsonData.t,
             content: jsonData.c,
           });
@@ -168,6 +176,7 @@ export class Lyrics {
 
         // 将歌词文本转化为歌词片段对象
         const lyricItem = {
+          type: "lrc" as "lrc",
           startTime: timeInMillis,
           content: lyricText,
         };

@@ -58,90 +58,9 @@
               {{ $t("playui.sheet") }}
             </div>
           </div>
-          <YScroll
-            class="yscroll"
-            v-if="position === 'lyric'"
-            style="height: calc(100vh - 350px); margin-left: 5px"
-            ref="lyricContainer"
-          >
-            <div
-              class="lyric font-color-standard"
-              v-if="position === 'lyric' && lyrics"
-            >
-              <div class="lyric-a">
-                <div class="before-lyric" />
-                <div
-                  class="lyric-line"
-                  v-for="(line, index) in lyrics"
-                  :class="lineClass(index)"
-                  :style="{
-                    transform:
-                      index === currentLine ? 'scale(1.375)' : 'scale(1)',
-                    transition: ` color, transform 0.5s ease`,
-                  }"
-                >
-                  <span
-                    v-if="(line as LrcItem).content"
-                    :style="{
-                      color:
-                        index === currentLine
-                          ? 'var(--font-color-main)'
-                          : 'var(--font-color-standard)',
-                      transition: `color 0.5s ease`,
-                    }"
-                  >
-                    <span v-if="typeof (line as LrcItem).content !== 'string'">
-                      <span v-for="content in (line as LrcItem2).content">
-                        <img
-                          v-if="content.li"
-                          :src="content.li + '?param=22y22'"
-                          style="border-radius: 10px; margin: 0 2px -4px 8px"
-                        />
-                        {{ content.tx }}
-                      </span>
-                    </span>
-                    <span v-else>
-                      {{ (line as LrcItem).content }}
-                    </span>
-                  </span>
-                  <span v-else-if="(line as YrcItem).words" class="yrc-line">
-                    <span
-                      v-for="(word, windex) in (line as YrcItem).words"
-                      :style="{}"
-                      class="yrc-line-item"
-                    >
-                      <span class="item-ori">
-                        {{ word.text }}
-                      </span>
-                      <span
-                        class="item-standard font-color-standard"
-                        v-if="index >= currentLine"
-                      >
-                        {{ word.text }}
-                      </span>
-                      <span
-                        class="item-white font-color-main"
-                        :style="{
-                          transition: `clip-path ${(word.duration ?? 0) + (word.startTime ?? line.startTime) > currentTime ? (word.duration ?? 0) / 1000 : 0}s linear, color 0.5s ease`,
-                          clipPath:
-                            word.startTime <= currentTime
-                              ? 'inset(0 0% 0 0)'
-                              : 'inset(0 100% 0 0)',
-                          color:
-                            index === currentLine
-                              ? 'var(--font-color-main)'
-                              : 'var(--font-color-standard)',
-                        }"
-                      >
-                        {{ word.text }}
-                      </span>
-                    </span>
-                  </span>
-                </div>
-                <div class="after-lyric" />
-              </div>
-            </div>
-          </YScroll>
+          <div class="lyrics" v-if="position === 'lyric'">
+            <YLyrics class="ylyrics" />
+          </div>
           <YScroll v-else style="height: calc(100vh - 350px); margin-left: 5px">
             <div class="wiki font-color-main" v-if="position === 'wiki'">
               <div class="wiki-content">
@@ -228,7 +147,7 @@
         </div>
       </div>
       <div class="play-bar">
-        <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" />
+        <!-- <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" /> -->
       </div>
       <div class="spectrum-canvas">
         <YSpecCanvas />
@@ -242,13 +161,13 @@ import YPlaybar from "./YPlaybar.vue";
 import YTitlebar from "./YTitlebar.vue";
 import YScroll from "./YScroll.vue";
 import { defineComponent, ref } from "vue";
-import { LrcItem, LrcItem2, Lyrics, YrcItem } from "@/utils/lyric";
 import { useStore } from "vuex";
 import { useApi } from "@/utils/api";
 import { getColorFromImg, YColor } from "@/utils/color";
 import YSpecCanvas from "./YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ICreative, SheetList, SongWikiSummary } from "@/dual/YPlayUI";
+import YLyrics from "./base/YLyrics.vue";
 
 export default defineComponent({
   name: "YPlayUI",
@@ -257,6 +176,7 @@ export default defineComponent({
     YPlaybar,
     YScroll,
     YSpecCanvas,
+    YLyrics,
   },
   setup() {
     const lyricContainer = ref<InstanceType<typeof YScroll> | null>();
@@ -380,7 +300,6 @@ export default defineComponent({
         ],
       },
       position: "lyric",
-      lyrics: null as Array<LrcItem | YrcItem | LrcItem2> | null,
       firstListen: null as SongWikiSummary.IFirstListen | null,
       songWiki: null as SongWikiSummary.IWikiSummary | null,
       sheets: null as SheetList.ISheet[] | null,
@@ -396,7 +315,6 @@ export default defineComponent({
       if (newVal) {
         this.$emit("show-panel");
         this.$nextTick(() => {
-          this.scrollToCurrentLine();
           this.setBackgroundColor();
         });
       } else {
@@ -405,16 +323,8 @@ export default defineComponent({
         }, 300);
       }
     },
-    currentLine() {
-      this.$nextTick(() => {
-        this.scrollToCurrentLine();
-      });
-    },
     position(newPos) {
       if (newPos === "lyric") {
-        this.$nextTick(() => {
-          this.scrollToCurrentLine();
-        });
       } else if (newPos === "wiki") {
         this.$nextTick(() => {
           const container = this.lyricContainer?.$el;
@@ -444,111 +354,12 @@ export default defineComponent({
     tooglePanel() {
       this.show = !this.show;
     },
-    async getLyrics(id: number | string) {
-      if (!id || isLocal(id)) return;
-      await useApi("/lyric/new", {
-        id: id,
-      })
-        .then((res) => {
-          if (res?.yrc) {
-            this.lyrics = new Lyrics({
-              type: "yrc",
-              data: res.yrc.lyric,
-            }).lyrics;
-          } else if (res?.lrc) {
-            this.lyrics = new Lyrics({
-              type: "lrc",
-              data: res.lrc.lyric,
-            }).lyrics;
-          } else {
-            this.lyrics = null;
-          }
-        })
-        .catch((error) => {
-          console.error("Failed to get lyrics:", error);
-        });
-    },
     lineClass(index: number) {
       if (index === this.currentLine) {
         return "current-line";
       } else {
         return "far-line";
       }
-    },
-    scrollToCurrentLine() {
-      // 确保 ref 存在，并且有 lyrics 内容
-      if (!this.lyricContainer?.$el || !this.lyrics?.length) {
-        return;
-      }
-      const container = this.lyricContainer.$el;
-      const currentLineElement =
-        container.getElementsByClassName("current-line")[0];
-
-      // 如果当前行元素存在
-      if (currentLineElement) {
-        // 计算当前行在容器中的位置
-        const containerHeight = container.clientHeight;
-        const lineHeight = 38;
-        const lineTopOffset = currentLineElement.offsetTop;
-
-        // 设置滚动条位置，使当前行居中显示
-        let scrollTop = lineTopOffset - 0.5 * containerHeight - 4 * lineHeight;
-        let scrollTopNow = container.scrollTop;
-
-        // 如果已有动画在进行，取消当前动画
-        if (this.scrollAnimationFrame) {
-          cancelAnimationFrame(this.scrollAnimationFrame);
-        }
-
-        // 动画参数
-        const duration = 500; // 动画持续时间
-
-        // 动画循环
-        const animateScroll = (currentTime: number) => {
-          // 如果是第一次调用，设置 startTime
-          if (!this.startTime) {
-            this.startTime = currentTime; // 将当前时间设置为 startTime
-          }
-
-          // 计算已经过的时间
-          const elapsed = currentTime - this.startTime;
-          const t = Math.min(elapsed / duration, 1); // 计算动画进度 (0 - 1)
-          const easeT = this.ease(t); // 应用缓动
-
-          // 计算当前的 scrollTop 值
-          const currentScrollTop =
-            scrollTopNow + (scrollTop - scrollTopNow) * easeT;
-          container.scrollTop = currentScrollTop;
-
-          // 如果动画尚未结束，继续请求下一个动画帧
-          if (t < 1) {
-            this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
-          } else {
-            this.scrollAnimationFrame = null; // 动画完成后重置动画 ID
-            this.startTime = null; // 重置 startTime
-          }
-        };
-
-        // 启动动画
-        this.scrollAnimationFrame = requestAnimationFrame(animateScroll);
-      }
-    },
-    cubicBezier(
-      t: number,
-      p0: number,
-      p1: number,
-      p2: number,
-      p3: number
-    ): number {
-      const u = 1 - t;
-      return 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t;
-    },
-    ease(t: number): number {
-      let res = this.cubicBezier(t, 0.0, 0.0, 0.58, 1.0);
-
-      res = Math.max(0, Math.min(1, res));
-      // console.log(res);
-      return res;
     },
     async setBackgroundColor() {
       if (!this.track?.al?.picUrl) {
@@ -642,54 +453,21 @@ export default defineComponent({
       id: "YPlayUI",
       func: async () => {
         this.track = this.player.currentTrack;
-        this.scrollToCurrentLine();
         let requests = [
           this.setBackgroundColor(),
-          this.getLyrics(this.player.currentTrack.id),
           this.getWiki(),
           this.getSheets(),
         ];
         await Promise.all(requests);
         this.currentLine = 0;
-        this.$nextTick(() => {
-          this.scrollToCurrentLine();
-        });
       },
       type: "track",
     });
-    if (this.player.currentTrack?.id && isLocal(this.player.currentTrack?.id)) {
-      await this.getLyrics(this.player.currentTrack.id);
+    if (this.player.currentTrack?.id && isLocal(this.player.currentTrack?.id))
       await this.getWiki();
-    }
     if (this.player.currentTrack) {
       this.currentTime = parseInt((this.player.currentTime * 1000).toString());
     }
-    this.player.subscriber.on({
-      id: "YPlayUI",
-      type: "allTime",
-      func: () => {
-        this.currentTime = parseInt(
-          (this.player.currentTime * 1000).toString()
-        );
-        if (this.lyrics) {
-          for (let i = 0; i < this.lyrics.length; i++) {
-            if (this.lyrics[i]?.startTime > this.currentTime) {
-              if (this.currentLine !== i - 1) {
-                this.currentLine = i - 1;
-              }
-              break;
-            }
-          }
-          if (
-            this.lyrics[this.lyrics.length - 1]?.startTime < this.currentTime
-          ) {
-            if (this.currentLine !== this.lyrics.length - 1) {
-              this.currentLine = this.lyrics.length - 1;
-            }
-          }
-        }
-      },
-    });
     this.globalMsg.subscriber.on({
       id: "YPlayUI",
       type: "close-playui",
@@ -834,80 +612,12 @@ export default defineComponent({
         }
       }
 
-      .yscroll {
-        mask-image: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0.1) 0%,
-          rgba(0, 0, 0, 0.2) 10%,
-          rgba(0, 0, 0, 0.4) 20%,
-          rgba(0, 0, 0, 0.6) 30%,
-          rgba(0, 0, 0, 1) 50%,
-          rgba(0, 0, 0, 0.6) 70%,
-          rgba(0, 0, 0, 0.4) 80%,
-          rgba(0, 0, 0, 0.2) 90%,
-          rgba(0, 0, 0, 0.1) 100%
-        );
-      }
-
-      .lyric {
-        width: 43.21vw;
-
-        .lyric-a {
-          transition:
-            color,
-            opacity 0.3s;
-
-          .before-lyric {
-            height: calc(25vh - 16px);
-          }
-
-          .after-lyric {
-            height: calc(25vh - 16px);
-          }
-
-          .lyric-line {
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 7px 0 7px 0;
-            width: 72%;
-            text-align: left;
-            transform-origin: left center;
-            line-height: 1.5;
-
-            .yrc-line {
-              .yrc-line-item {
-                position: relative;
-                overflow: hidden;
-
-                .item-ori {
-                  opacity: 0;
-                }
-
-                .item-standard {
-                  top: 0;
-                  left: 0;
-                  position: absolute;
-                }
-
-                .item-white {
-                  top: 0;
-                  left: 0;
-                  position: absolute;
-                  color: var(--font-color-main);
-                  clip-path: inset(0 100% 0 0);
-                }
-              }
-            }
-          }
-
-          .current-line {
-            opacity: 1;
-          }
-
-          .far-line {
-            opacity: 1;
-          }
+      .lyrics {
+        max-height: calc(100vh - 350px);
+        overflow: hidden;
+        
+        .ylyrics {
+          margin: calc((100vh - 350px) / 2 - 300px) 0 0 0;
         }
       }
 

@@ -15,6 +15,9 @@ import router from "./router";
 import store from "./store";
 import "./assets/css/global.scss";
 import i18n from "./i18n";
+import { log } from "./utils/log";
+
+window.log = log;
 
 const app = createApp(App);
 app.use(router);

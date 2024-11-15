@@ -69,5 +69,7 @@ declare global {
     api: api;
     savedPositions: savedPositions;
     test: any;
+    /** 安全地向控制台输出内容 */
+    log: (...args: any[]) => void;
   }
 }

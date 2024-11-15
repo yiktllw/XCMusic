@@ -13,6 +13,8 @@ import { Tracks } from "./tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "./render_storage";
 import { IPlaylist } from "./api.interface";
+import { isLocal } from "./localTracks_renderer";
+import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "./lyric";
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -237,5 +239,40 @@ export namespace Search {
       return [];
     }
     return res.result.allMatch ?? [];
+  }
+}
+
+/**
+ * 歌单相关API
+ */
+export namespace Lyrics {
+  /**
+   * 获取歌词
+   */
+  export async function get(
+    id: number
+  ): Promise<Array<LrcItem | YrcItem | LrcItem2>> {
+    let lrc: Array<LrcItem | LrcItem2 | YrcItem> = [];
+    if (!id || isLocal(id)) return [];
+    await useApi("/lyric/new", {
+      id: id,
+    })
+      .then((res) => {
+        if (res?.yrc) {
+          lrc = new _Lyrics({
+            type: "yrc",
+            data: res.yrc.lyric,
+          }).lyrics;
+        } else if (res?.lrc) {
+          lrc = new _Lyrics({
+            type: "lrc",
+            data: res.lrc.lyric,
+          }).lyrics;
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to get lyrics:", error);
+      });
+    return lrc;
   }
 }
