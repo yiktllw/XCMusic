@@ -257,17 +257,20 @@ export default defineComponent({
       // // 绘制已显示的歌词
 
       for (let i = 0; i < this.formattedLyrics.length; i++) {
+        // 跳过不在显示范围内的歌词
+        const dist = this.lineY[i] - now.y;
+        if (Math.abs(dist) > this.canvas.height / 2 + lineHeight) continue;
         const startY = this.lineY[i] - scrollY + this.canvas.height / 2;
         if (this.formattedLyrics[i].lines.length === 1) {
           const text = this.formattedLyrics[i].lines[0];
-          this.ctx.fillStyle = this.dyToColor(this.lineY[i] - now.y); // 设置颜色
-          this.ctx.font = `bold ${this.dyToSize(this.lineY[i] - now.y)}px Avenir, Helvetica, Arial, sans-serif`;
+          this.ctx.fillStyle = this.dyToColor(dist); // 设置颜色
+          this.ctx.font = `bold ${this.dyToSize(dist)}px Avenir, Helvetica, Arial, sans-serif`;
           this.ctx.fillText(text, 0, startY); // 绘制歌词
         } else {
           for (let j = 0; j < this.formattedLyrics[i].lines.length; j++) {
             const text = this.formattedLyrics[i].lines[j];
-            this.ctx.fillStyle = this.dyToColor(this.lineY[i] - now.y); // 设置颜色
-            this.ctx.font = `bold ${this.dyToSize(this.lineY[i] - now.y)}px Avenir, Helvetica, Arial, sans-serif`;
+            this.ctx.fillStyle = this.dyToColor(dist); // 设置颜色
+            this.ctx.font = `bold ${this.dyToSize(dist)}px Avenir, Helvetica, Arial, sans-serif`;
             this.ctx.fillText(text, 0, startY + j * smallLineHeight); // 绘制歌词
           }
         }
