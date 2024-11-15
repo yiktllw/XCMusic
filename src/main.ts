@@ -16,4 +16,8 @@ import store from "./store";
 import "./assets/css/global.scss";
 import i18n from "./i18n";
 
-createApp(App).use(router).use(store).use(i18n).mount("#app");
+const app = createApp(App);
+app.use(router);
+app.use(store);
+app.use(i18n);
+app.mount("#app");
