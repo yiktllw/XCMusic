@@ -74,6 +74,8 @@ export default defineComponent({
       currentLyricIndex: -1,
       lastLyricIndex: -1,
       lineY: [] as Array<number>,
+      noScroll: false,
+      noScrollTimeout: null as NodeJS.Timeout | null,
     };
   },
   mounted() {
@@ -107,6 +109,7 @@ export default defineComponent({
       this.handleLyricsChange(newVal);
     },
     currentLyricIndex() {
+      if (this.noScroll) return;
       this.scrollTo(this.lineY[this.currentLyricIndex], 600);
       this.lastLyricIndex = this.currentLyricIndex;
     },
@@ -114,18 +117,24 @@ export default defineComponent({
   methods: {
     /** 处理鼠标滚动事件 */
     handleWheel(e: WheelEvent) {
+      if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
+      this.noScroll = true;
+      this.noScrollTimeout = setTimeout(() => {
+        this.noScroll = false;
+        this.scrollTo(this.lineY[this.currentLyricIndex], 600);
+      }, 2000);
       const t = 300;
       if (wheelTimeout) clearTimeout(wheelTimeout);
-      let y
+      let y;
       if (wheelLastY === 0) y = now.y;
       else y = wheelLastY;
       y += e.deltaY / 2;
-      wheelLastY = y;
       if (
         this.canvas &&
-        y > this.lineY[0] - this.canvas?.height / 2 &&
-        y < this.lineY[this.lineY.length - 1] + this.canvas?.height / 2
+        y > this.lineY[0] &&
+        y < this.lineY[this.lineY.length - 1]
       ) {
+        wheelLastY = y;
         this.scrollTo(y, t);
         wheelTimeout = setTimeout(() => {
           wheelLastY = 0;
