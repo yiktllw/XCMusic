@@ -23,7 +23,7 @@
 
 </p>
 
-![image](https://github.com/user-attachments/assets/1ab7d31b-955a-4a49-b7c5-bf253fd92a61)
+![image](https://github.com/user-attachments/assets/883a0c2d-5ed2-4d3b-acd3-8c867820b5ba)
 
 ## 目录
 
