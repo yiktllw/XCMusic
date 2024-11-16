@@ -48,6 +48,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 app.commandLine.appendSwitch("js-flags", "--max-old-space-size=512");
 app.commandLine.appendSwitch("js-flags", "--max-new-space-size=256");
+// app.disableHardwareAcceleration();
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
 

@@ -88,7 +88,6 @@ export class Player {
       "trackReady",
       "lyrics",
       "time",
-      "allTime",
       "quality",
       "volume",
       "history",
@@ -177,7 +176,7 @@ export class Player {
         setStorage("currentTrack", this.currentTrack);
       },
     });
-    
+
     this.subscriber.on({
       id: "player",
       type: "track",
@@ -187,7 +186,7 @@ export class Player {
           this.lyrics = _lyrics;
         });
       },
-    })
+    });
     this.initMediaSession();
 
     setTimeout(() => {
@@ -315,22 +314,12 @@ export class Player {
         );
         this.subscriber.exec("time");
         this.subscriber.exec("trackReady");
-      } else if (
-        this.playState === "play" &&
-        this._currentTime !== this._audio.currentTime
-      ) {
-        // 如果毫秒数发生了变化
-        this._currentTime = this._audio.currentTime;
-        this._progress = (
-          this._currentTime / (this._duration as number)
-        ).toFixed(3);
-        this.subscriber.exec("allTime");
       }
 
-      this._updateTime = setTimeout(update, 50); // 递归调用 setTimeout
+      this._updateTime = setTimeout(update, 300); // 递归调用 setTimeout
     };
 
-    this._updateTime = setTimeout(update, 50); // 初次调用
+    this._updateTime = setTimeout(update, 300); // 初次调用
   }
   /**
    * 由于网易云音乐限制，单个url的有效时间为20分钟，超出时间需要重新获取url

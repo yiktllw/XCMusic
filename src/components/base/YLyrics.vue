@@ -80,13 +80,16 @@ export default defineComponent({
   },
   mounted() {
     this.initLyricsAnimation();
+
     this.main!.addEventListener("wheel", this.handleWheel);
+
     this.$nextTick(() => {
       now.y = 0;
       this.drawLyrics(0);
       this.formattedLyrics = this.formatLyrics(this.lyrics);
       this.handleLyricsChange(this.lyrics);
     });
+
     this.lyrics = this.player.lyrics;
     this.player.subscriber.on({
       id: "YLyrics",
@@ -99,10 +102,14 @@ export default defineComponent({
   beforeUnmount() {
     this.main!.removeEventListener("wheel", this.handleWheel);
     this.main = null;
+
     this.player.subscriber.offAll("YLyrics");
+
     cancelAnimationFrame(scrollAnime.anime);
     cancelAnimationFrame(timeAnime);
+
     if (wheelTimeout) clearTimeout(wheelTimeout);
+    if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
   },
   watch: {
     lyrics(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
@@ -117,23 +124,31 @@ export default defineComponent({
   methods: {
     /** 处理鼠标滚动事件 */
     handleWheel(e: WheelEvent) {
+      // 在用户操作的2秒内，不再自动滚动
       if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
       this.noScroll = true;
       this.noScrollTimeout = setTimeout(() => {
         this.noScroll = false;
         this.scrollTo(this.lineY[this.currentLyricIndex], 600);
       }, 2000);
+
+      // 滚动的时间
       const t = 300;
+
       if (wheelTimeout) clearTimeout(wheelTimeout);
+
+      // 计算滚动的位置
       let y;
       if (wheelLastY === 0) y = now.y;
       else y = wheelLastY;
       y += e.deltaY / 2;
+
       if (
         this.canvas &&
         y > this.lineY[0] &&
         y < this.lineY[this.lineY.length - 1]
       ) {
+        // 如果滚动位置在歌词范围内，滚动
         wheelLastY = y;
         this.scrollTo(y, t);
         wheelTimeout = setTimeout(() => {
@@ -168,7 +183,7 @@ export default defineComponent({
         this.drawLyrics(now.y);
       });
     },
-    /** 从现在歌曲的播放时间获取歌词的索引 */
+    /** 从现在歌曲的播放时间获取歌词的索引，更高效 */
     getIndex(time: number): number {
       if (this.lyrics.length === 0) return -1;
       if (
@@ -182,6 +197,7 @@ export default defineComponent({
       ) {
         return this.lastLyricIndex + 1;
       } else {
+        // 遍历查找
         for (let i = 0; i < this.lyrics.length; i++)
           if (this.lyrics[i].startTime > time) return i - 1;
         return this.lyrics.length - 1;
@@ -205,17 +221,13 @@ export default defineComponent({
         if (index !== this.currentLyricIndex) {
           this.currentLyricIndex = index;
           this.drawLyrics(now.y);
-        }
-        if (this.lyrics[0]?.type === "yrc") {
+        } else if (this.lyrics[0]?.type === "yrc") {
+          // 逐字歌词每一帧都要更新
           this.drawLyrics(now.y);
         }
         timeAnime = requestAnimationFrame(time);
       };
       time();
-      // this.scrollTo(900, 800);
-      // setTimeout(() => {
-      //   this.scrollTo(1800, 800);
-      // }, 400);
     },
 
     /**
@@ -312,6 +324,7 @@ export default defineComponent({
             this.ctx.save();
             this.ctx.fillStyle = "rgb(120, 120, 120)";
             const data = this.lyrics[i] as YrcItem;
+
             if (data.duration) {
               // 找到当前时间所在的词
               let index = -1;
@@ -328,19 +341,25 @@ export default defineComponent({
                   break;
                 }
               }
+
               if (index !== -1) {
+                // 计算当前词的宽度
                 const wordWidth = this.ctx.measureText(
                   data.words[index].text
                 ).width;
+                // 计算当前行的宽度
                 const tmpLineWidth = this.ctx.measureText(tmpLine).width;
+                // 计算当前词的进度
                 const progress =
                   (this.timeNow * 1000 - data.words[index].startTime) /
                   data.words[index].duration;
+                // 计算当前词的位置
                 const x = tmpLineWidth - wordWidth + wordWidth * progress;
 
                 // 绘制被裁剪的白色文字
                 this.ctx.save();
 
+                // 裁剪
                 this.ctx.beginPath();
                 this.ctx.rect(
                   0,
@@ -350,6 +369,7 @@ export default defineComponent({
                 );
                 this.ctx.clip();
 
+                // 绘制
                 this.ctx.fillStyle = this.dyToColor(dist);
                 this.ctx.fillText(text, 0, startY);
                 drawDone = true;
@@ -373,7 +393,7 @@ export default defineComponent({
           // 绘制这一行歌词
           if (!drawDone) this.ctx.fillText(text, 0, startY);
         } else {
-          // 绘制有分行的歌词
+          // 绘制有分行(过长)的逐字歌词
           for (let j = 0; j < this.formattedLyrics[i].lines.length; j++) {
             const text = this.formattedLyrics[i].lines[j];
 
@@ -394,7 +414,6 @@ export default defineComponent({
                 // 拼接这一行的歌词
                 let tmpLine = "";
                 for (let k = 0; k < data.words.length; k++) {
-                  // 如果是这一行的词
                   const word = data.words[k];
 
                   if (
@@ -403,25 +422,31 @@ export default defineComponent({
                         data.words.length) &&
                     k >= (this.formattedLyrics[i].breakLineOn[j - 1] ?? 0)
                   ) {
+                    // 如果是这一分行的词
                     tmpLine += word.text;
                   }
                   if (
                     this.timeNow * 1000 > word.startTime &&
                     this.timeNow * 1000 < word.duration + word.startTime
                   ) {
+                    // 找到当前词在YrcItem中的索引
                     index = k;
                     break;
                   }
                 }
+                // 如果找到了当前词
                 if (index !== -1) {
+                  // 计算当前词的宽度
                   const wordWidth = this.ctx.measureText(
                     data.words[index].text
                   ).width;
+                  // 计算当前行的宽度
                   const tmpLineWidth = this.ctx.measureText(tmpLine).width;
-                  // console.log(j, tmpLine, tmpLineWidth, this.formattedLyrics[i].breakLineOn);
+                  // 计算当前词的进度
                   const progress =
                     (this.timeNow * 1000 - data.words[index].startTime) /
                     data.words[index].duration;
+                  // 计算当前词的位置
                   let x = tmpLineWidth - wordWidth + wordWidth * progress;
 
                   // 如果已经换到下一行，x 重置为最大
@@ -432,6 +457,7 @@ export default defineComponent({
                   // 绘制被裁剪的白色文字
                   this.ctx.save();
 
+                  // 裁剪
                   this.ctx.beginPath();
                   this.ctx.rect(
                     0,
@@ -441,6 +467,7 @@ export default defineComponent({
                   );
                   this.ctx.clip();
 
+                  // 绘制
                   this.ctx.fillStyle = this.dyToColor(dist);
                   this.ctx.fillText(text, 0, startY + j * smallLineHeight);
                   drawDone = true;
@@ -469,19 +496,29 @@ export default defineComponent({
       }
     },
 
+    /** 根据与中间位置的差值计算颜色 */
     dyToColor(dy: number) {
       const ratio = Math.abs(dy) / lineHeight;
+      // 如果超过2倍行高，颜色为灰色
       if (ratio > 2) return "rgb(120, 120, 120)";
+      // 如果小于0.1倍行高，颜色为白色
       else if (ratio < 0.1) return "rgb(255, 255, 255)";
+      // 否则，颜色渐变
       let color = 255 - (Math.abs(dy) / lineHeight) * 120;
+      // 颜色不小于120
       if (color < 120) color = 120;
+
       return `rgb(${color}, ${color}, ${color})`;
     },
 
+    /** 根据与中间位置的差值计算字体大小 */
     dyToSize(dy: number) {
       const ratio = Math.abs(dy) / lineHeight;
+      // 如果超过1倍行高，字体大小为20
       if (ratio > 1) return 20 * scale;
+      // 如果小于0.1倍行高，字体大小为25
       else if (ratio < 0.1) return 25 * scale;
+      // 否则，字体大小渐变
       return 25 * scale - ratio * 5 * scale;
     },
 
@@ -532,6 +569,7 @@ export default defineComponent({
 
           let breakLineOn = [] as Array<number>;
 
+          // 遍历每个词，如果当前行的宽度小于500，就继续添加词，否则就换行
           for (let i = 0; i < lyric.words.length; i++) {
             if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
               singleLine += lyric.words[i].text;
