@@ -25,22 +25,14 @@ export default defineComponent({
         "zoom",
         parseFloat(this.setting.display.zoom.toString())
       );
-      window.electron.ipcRenderer.on("fullscreen-window-size", (event) => {
-        const autoScale = getStorage("setting.display.fullscreenAutoZoom");
-        if (!autoScale) return;
-        const { width, height } = event;
-        const scalex = width / 1280;
-        const scaley = height / 800;
-        const scale = Math.min(scalex, scaley);
-        console.log("fullscreen size: ", width, height, "scale: ", scale);
-        window.electron.ipcRenderer.send("zoom", scale);
-      });
-      window.electron.ipcRenderer.on("leave-fullscreen", () => {
-        window.electron.ipcRenderer.send(
-          "zoom",
-          parseFloat(this.setting.display.zoom.toString())
-        );
-      });
+      window.electron.ipcRenderer.on(
+        "fullscreen-window-size",
+        this.handleFullScreen
+      );
+      window.electron.ipcRenderer.on(
+        "leave-fullscreen",
+        this.handleLeaveFullScreen
+      );
     }
     // 初始化用户自定义主题
     Doc.updateDocumentClassBySetting(this.setting.display.userCustomThemes);
@@ -50,6 +42,36 @@ export default defineComponent({
     this.$i18n.locale = this.setting.display.language;
     // 初始化用来控制滚动位置的全局变量
     window.savedPositions = {};
+  },
+  beforeUnmount() {
+    if (window.electron?.isElectron) {
+      window.electron.ipcRenderer.removeListener(
+        "fullscreen-window-size",
+        this.handleFullScreen
+      );
+      window.electron.ipcRenderer.removeListener(
+        "leave-fullscreen",
+        this.handleLeaveFullScreen
+      );
+    }
+  },
+  methods: {
+    handleFullScreen(event: { width: number; height: number }) {
+      const autoScale = getStorage("setting.display.fullscreenAutoZoom");
+      if (!autoScale) return;
+      const { width, height } = event;
+      const scalex = width / 1177;
+      const scaley = height / 777;
+      const scale = Math.min(scalex, scaley);
+      console.log("fullscreen size: ", width, height, "scale: ", scale);
+      window.electron.ipcRenderer.send("zoom", scale);
+    },
+    handleLeaveFullScreen() {
+      window.electron.ipcRenderer.send(
+        "zoom",
+        parseFloat(this.setting.display.zoom.toString())
+      );
+    },
   },
 });
 </script>

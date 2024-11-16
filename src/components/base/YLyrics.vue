@@ -17,12 +17,11 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
-const scale =
-  window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
+let scale = window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
 // 行高
-const lineHeight = 59 * scale;
-const smallLineHeight = 30 * scale;
-const MAX_LINE_WIDTH = 350 * scale; // 一行歌词的最大宽度
+let lineHeight = 59 * scale;
+let smallLineHeight = 30 * scale;
+let MAX_LINE_WIDTH = 350 * scale; // 一行歌词的最大宽度
 
 /** 缓动函数 */
 function easeInOutCubic(t: number) {
@@ -102,6 +101,8 @@ export default defineComponent({
         this.lyrics = this.player.lyrics;
       },
     });
+    
+    this.setScale();
   },
   beforeUnmount() {
     this.main!.removeEventListener("wheel", this.handleWheel);
@@ -114,6 +115,7 @@ export default defineComponent({
 
     if (wheelTimeout) clearTimeout(wheelTimeout);
     if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
+    
   },
   watch: {
     lyrics(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
@@ -126,6 +128,17 @@ export default defineComponent({
     },
   },
   methods: {
+    setScale() {
+      scale =
+        window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
+      // 行高
+      lineHeight = 59 * scale;
+      smallLineHeight = 30 * scale;
+      MAX_LINE_WIDTH = 350 * scale; // 一行歌词的最大宽度
+      
+      this.canvas!.width = 600 * scale;
+      this.canvas!.height = 600 * scale;
+    },
     /** 处理鼠标滚动事件 */
     handleWheel(e: WheelEvent) {
       // 在用户操作的2秒内，不再自动滚动

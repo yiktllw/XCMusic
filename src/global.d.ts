@@ -26,6 +26,8 @@ interface electron {
     on(channel: string, listener: (event: any, ...args: any[]) => void): void;
     once(channel: string, listener: (event: any, ...args: any[]) => void): void;
     invoke(channel: string, data?: any): Promise<any>;
+    removeListener(channel: string, listener: (event: any, ...args: any[]) => void): void;
+    removeAllListeners(channel: string): void;
   };
   isElectron: boolean;
   shell: shell;

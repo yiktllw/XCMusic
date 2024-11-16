@@ -20,6 +20,7 @@
  * 16. path
  * 17. os
  * 18. crypto
+ * 19. ipcRenderer.removeEventListener
  *---------------------------------------------------------------*/
 
 const { contextBridge, ipcRenderer, shell } = require("electron");
@@ -28,6 +29,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const crypto = require("crypto");
+const { removeAllListeners } = require("process");
 
 contextBridge.exposeInMainWorld("api", {
   pathJoin: (...args) => path.join(...args), // 暴露 path.join
@@ -55,6 +57,9 @@ contextBridge.exposeInMainWorld("electron", {
     once: (channel, func) =>
       ipcRenderer.once(channel, (event, ...args) => func(...args)),
     invoke: (channel, data) => ipcRenderer.invoke(channel, data),
+    removeListener: (channel, func) =>
+      ipcRenderer.removeListener(channel, func),
+    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   },
   isElectron: true,
   shell: shell,

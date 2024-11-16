@@ -522,12 +522,13 @@ export default defineComponent({
       }
 
       .track-info {
-        margin: 20px 0px 0px 0px;
+        margin: 30px 0px 0px 0px;
         width: 40vh;
         max-width: 40vw;
         display: flex;
         flex-direction: column;
         align-items: start;
+        gap: 9px;
 
         .track-name {
           text-align: left;
@@ -613,11 +614,12 @@ export default defineComponent({
       }
 
       .lyrics {
-        max-height: calc(100vh - 300px);
+        max-height: calc(100vh - 350px);
         overflow: hidden;
+        padding: 0 0 00px 0;
         
         .ylyrics {
-          margin: calc((100vh - 300px) / 2 - 300px) 0 0 0;
+          margin: calc((100vh - 350px) / 2 - 285px) 0 0 0;
         }
       }
 
