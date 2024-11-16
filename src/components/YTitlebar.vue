@@ -795,7 +795,6 @@ export default defineComponent({
               text-align: left;
               cursor: pointer;
               padding: 6px;
-              white-space: nowrap;
 
               &:hover {
                 background-color: rgba(var(--foreground-color-rgb), 0.1);
