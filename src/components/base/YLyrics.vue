@@ -101,7 +101,7 @@ export default defineComponent({
         this.lyrics = this.player.lyrics;
       },
     });
-    
+
     this.setScale();
   },
   beforeUnmount() {
@@ -115,7 +115,6 @@ export default defineComponent({
 
     if (wheelTimeout) clearTimeout(wheelTimeout);
     if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
-    
   },
   watch: {
     lyrics(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
@@ -135,7 +134,7 @@ export default defineComponent({
       lineHeight = 59 * scale;
       smallLineHeight = 30 * scale;
       MAX_LINE_WIDTH = 350 * scale; // 一行歌词的最大宽度
-      
+
       this.canvas!.width = 600 * scale;
       this.canvas!.height = 600 * scale;
     },
@@ -352,7 +351,7 @@ export default defineComponent({
                 tmpLine += word.text;
                 if (
                   this.timeNow * 1000 > word.startTime &&
-                  this.timeNow * 1000 < word.duration + word.startTime
+                  (this.timeNow * 1000 < word.duration + word.startTime || this.timeNow * 1000 < data.words[j + 1]?.startTime) 
                 ) {
                   index = j;
                   break;

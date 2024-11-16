@@ -11,7 +11,7 @@ import { Subscriber } from "./subscribe";
 import { ITrack } from "./tracks";
 import { IDownloadProgress } from "./download";
 import { Song } from "./api";
-import { exportToJSON, getDownloadDirectory } from "./setting";
+import { getDownloadDirectory } from "./setting";
 import { getStorage } from "./render_storage";
 
 export interface IDownloadedSong {

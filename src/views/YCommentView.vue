@@ -66,6 +66,7 @@ export default defineComponent({
     id(newId) {
       this.track =
         this.type === "song" ? new YTrackC(newId) : new YTrackC(null);
+      this.track.init();
       this.track.onTrackLoaded = async () => {
         await this.trackLoaded();
       };
@@ -90,7 +91,7 @@ export default defineComponent({
           this.track.picUrl,
           document,
           (theme as Theme1).type,
-          (theme as Theme2).background,
+          (theme as Theme2).background
         );
       } catch (error) {
         console.error("YCommentView", error);

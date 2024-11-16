@@ -581,6 +581,7 @@ export default defineComponent({
       display: flex;
       align-items: start;
       flex-direction: column;
+      padding-bottom: 30px;
 
       .switcher {
         display: flex;

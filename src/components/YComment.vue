@@ -1,5 +1,6 @@
 <template>
-  <div class="comment-main">
+  <YLoading v-if="loading" />
+  <div v-else class="comment-main">
     <div class="header">
       <div class="header-left">
         <div class="font-size-larger" v-if="showHeader">
@@ -86,6 +87,7 @@ import { defineComponent } from "vue";
 import YPage from "./YPage.vue";
 import { YCommentC, Types } from "@/dual/YCommentC";
 import { formatDate_yyyymmdd } from "../utils/time";
+import YLoading from "./YLoading.vue";
 
 export default defineComponent({
   name: "YComment",
@@ -105,10 +107,20 @@ export default defineComponent({
   },
   components: {
     YPage,
+    YLoading,
+  },
+  watch: {
+    type() {
+      this.refresh();
+    },
+    id() {
+      this.refresh();
+    },
   },
   data() {
     return {
       cmt: new YCommentC(this.type as Types, this.id),
+      loading: true,
     };
   },
   methods: {
@@ -118,9 +130,18 @@ export default defineComponent({
     openUserPage(id: number | string) {
       this.$router.push({ path: `/user/${id}` });
     },
+    refresh() {
+      this.loading = true;
+      this.cmt = new YCommentC(this.type as Types, this.id);
+      this.cmt.initData().then(() => {
+        this.loading = false;
+      });
+    },
   },
   mounted() {
-    this.cmt.initData();
+    this.cmt.initData().then(() => {
+      this.loading = false;
+    });
   },
 });
 </script>
