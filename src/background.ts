@@ -39,8 +39,8 @@ interface WindowState {
 const store = new Store<WindowState>();
 // 从 store 中获取窗口的大小和位置
 const windowState: WindowState = store.get("windowState", {
-  width: 1200,
-  height: 750,
+  width: 1234,
+  height: 810,
 });
 
 protocol.registerSchemesAsPrivileged([

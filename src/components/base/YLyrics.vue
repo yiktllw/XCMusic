@@ -17,9 +17,10 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
-const scale = window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
+const scale =
+  window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
 // 行高
-const lineHeight = 50 * scale;
+const lineHeight = 59 * scale;
 const smallLineHeight = 30 * scale;
 const MAX_LINE_WIDTH = 350 * scale; // 一行歌词的最大宽度
 
@@ -52,6 +53,9 @@ interface ILyric {
 
 let wheelLastY = 0;
 let wheelTimeout: NodeJS.Timeout | null = null;
+
+const fontColor = "#ffffff";
+const fontColor2 = "rgba(255, 255, 255, 0.3)";
 
 export default defineComponent({
   name: "YLyrics",
@@ -322,7 +326,7 @@ export default defineComponent({
           if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
             // 逐字歌词动画
             this.ctx.save();
-            this.ctx.fillStyle = "rgb(120, 120, 120)";
+            this.ctx.fillStyle = fontColor2;
             const data = this.lyrics[i] as YrcItem;
 
             if (data.duration) {
@@ -406,7 +410,7 @@ export default defineComponent({
             if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
               // 逐字歌词动画
               this.ctx.save();
-              this.ctx.fillStyle = "rgb(120, 120, 120)";
+              this.ctx.fillStyle = fontColor2;
               const data = this.lyrics[i] as YrcItem;
               if (data.duration) {
                 // 找到当前时间所在的词
@@ -498,17 +502,15 @@ export default defineComponent({
 
     /** 根据与中间位置的差值计算颜色 */
     dyToColor(dy: number) {
-      const ratio = Math.abs(dy) / lineHeight;
+      const ratio = Math.abs(dy) / smallLineHeight;
       // 如果超过2倍行高，颜色为灰色
-      if (ratio > 2) return "rgb(120, 120, 120)";
+      if (ratio > 1) return fontColor2;
       // 如果小于0.1倍行高，颜色为白色
-      else if (ratio < 0.1) return "rgb(255, 255, 255)";
+      else if (ratio < 0.1) return fontColor;
       // 否则，颜色渐变
-      let color = 255 - (Math.abs(dy) / lineHeight) * 120;
-      // 颜色不小于120
-      if (color < 120) color = 120;
+      let alpha = 1.07 - ratio * 0.77;
 
-      return `rgb(${color}, ${color}, ${color})`;
+      return `rgba(255, 255, 255, ${alpha})`;
     },
 
     /** 根据与中间位置的差值计算字体大小 */

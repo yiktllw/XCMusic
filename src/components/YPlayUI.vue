@@ -587,7 +587,7 @@ export default defineComponent({
         background-color: rgba(var(--foreground-color-rgb), 0.1);
         border-radius: 20px;
         padding: 3px 3px;
-        margin: 0 0 10px 0;
+        margin: 0 0 20px 0;
 
         .switcher-item {
           display: flex;
@@ -613,11 +613,11 @@ export default defineComponent({
       }
 
       .lyrics {
-        max-height: calc(100vh - 350px);
+        max-height: calc(100vh - 300px);
         overflow: hidden;
         
         .ylyrics {
-          margin: calc((100vh - 350px) / 2 - 300px) 0 0 0;
+          margin: calc((100vh - 300px) / 2 - 300px) 0 0 0;
         }
       }
 
