@@ -17,7 +17,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
-const scale = window.devicePixelRatio * getStorage("setting.display.zoom");
+const scale = window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
 // 行高
 const lineHeight = 50 * scale;
 const smallLineHeight = 30 * scale;
