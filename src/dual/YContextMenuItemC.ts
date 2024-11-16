@@ -150,7 +150,7 @@ export const songItems = [
   }),
   new YContextMenuItemC({
     label: "context.delete_from_playlist",
-    icon: require("@/assets/edit.svg"),
+    icon: require("@/assets/delete.svg"),
     role: "song-delete",
     showSeparator: false,
     display: false,
