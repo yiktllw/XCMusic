@@ -93,6 +93,14 @@ export default defineComponent({
       noSelect,
     };
   },
+  mounted() {
+    this.big_frame?.classList.remove("ani");
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.big_frame?.classList.add("ani");
+      }, 500);
+    });
+  },
   beforeUnmount() {
     window.removeEventListener("mousemove", this.updateProgressEvent);
     window.removeEventListener("mouseup", this.endSetProgress);
