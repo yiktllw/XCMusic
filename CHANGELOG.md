@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/yiktllw/XCMusic/compare/v0.2.4...v0.2.5) (2024-11-16)
+
+
+### Features
+
+* 实现纯js的逐字歌词 ([1349f29](https://github.com/yiktllw/XCMusic/commit/1349f291b1046fde14566c2ce347f63ed067873d))
+* 实现鼠标平滑滚动歌词 ([af8273e](https://github.com/yiktllw/XCMusic/commit/af8273ec52709ae417493c5362bfb6908eea2034))
+* 用纯js+canvas重写歌词(逐行) ([9da4d92](https://github.com/yiktllw/XCMusic/commit/9da4d9292643aa924fdf45dbeafa650872b248b2))
+* 优化播放界面的进度条控制 ([9915ca2](https://github.com/yiktllw/XCMusic/commit/9915ca2d4abb5c31e73b821ccd4864306ffd86cc))
+* 优化播放界面显示效果 ([6e7b0e4](https://github.com/yiktllw/XCMusic/commit/6e7b0e45e0fe4a090a6efa87744364cde390d762))
+* 优化播放列表的启动 ([1a71b8f](https://github.com/yiktllw/XCMusic/commit/1a71b8fe09d7bf38e441d96ae2d95fab8352285f))
+* 优化侧边栏-右键菜单的api调用速度 ([db361ff](https://github.com/yiktllw/XCMusic/commit/db361ff57ab4f0172aeda9404794b844ec46e046))
+* 优化设置页面动画 ([a6f3762](https://github.com/yiktllw/XCMusic/commit/a6f37620be79cff0b8ad081407b0abf4b6d0c435))
+* 优化搜索-歌词的显示效果 ([36dc66b](https://github.com/yiktllw/XCMusic/commit/36dc66b70d113ccdc1d0467a99979e59998ecce2))
+* 优化搜索界面显示效果 ([b9da25c](https://github.com/yiktllw/XCMusic/commit/b9da25c8da4a13c3d2df63040b5afb18b50892a7))
+* 优化音量均衡功能 ([0551756](https://github.com/yiktllw/XCMusic/commit/0551756ad3f4ad49502cd87e51bda1f3b55a2e0e))
+* 优化用户界面显示效果 ([dda9e56](https://github.com/yiktllw/XCMusic/commit/dda9e5632d1fd025916f25de8a5ead0448d4e7a6))
+* 在用户操作时，中断歌词自动滚动 ([a86c51e](https://github.com/yiktllw/XCMusic/commit/a86c51e04a1c3a54622c486a8e0a2852d88e6a4f))
+* 只绘制可见范围内的歌词 ([1a6310e](https://github.com/yiktllw/XCMusic/commit/1a6310ecc1809852ae627245302ef55eb120269b))
+
+
+### Bug Fixes
+
+* 启动时，添加1.6秒的开始播放延迟，以解决音频不稳定问题。 ([bea7081](https://github.com/yiktllw/XCMusic/commit/bea70814ef7995ece95c08e31392d2f4f40cf466))
+* 修复开机自启动失效问题 ([1774507](https://github.com/yiktllw/XCMusic/commit/17745074440e278af2a4fd9eab08d82e5ac769bb))
+* 修复了搜索歌单时，处理云盘歌曲的错误 ([8aac369](https://github.com/yiktllw/XCMusic/commit/8aac3690a9c285220dddc8538cab9c869f147db5))
+* 修复清空搜索时，仍然有搜索建议的bug ([a131308](https://github.com/yiktllw/XCMusic/commit/a1313081f0efccb4192fcaf0059aab96f0ff3c0f))
+* 修复搜索时，猜你想搜索结果为空引发的错误 ([559e087](https://github.com/yiktllw/XCMusic/commit/559e0873993293a0790b412a166c22f9facc4979))
+* 修复在设置界面打开播放界面时的显示异常 ([b4c9253](https://github.com/yiktllw/XCMusic/commit/b4c9253781be5cb7750e9573920d95c92ba08047))
+* 修复自定义主题界面不能正确获取强调色和字体颜色预设异常的bug ([f37b14c](https://github.com/yiktllw/XCMusic/commit/f37b14c7d4ee127522f96c72a6d0863bd1d292e3))
+* 修复自动播放失效的问题 ([b85fb2a](https://github.com/yiktllw/XCMusic/commit/b85fb2af07c046e2368160fd46bcebadfe16cf05))
+* typo ([138584c](https://github.com/yiktllw/XCMusic/commit/138584cd924f2dd54896ffd813f4a3ed2296105b))
+
 ### [0.2.4](https://github.com/yiktllw/XCMusic/compare/v0.2.3...v0.2.4) (2024-11-13)
 
 
