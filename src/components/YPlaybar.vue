@@ -91,12 +91,14 @@
             v-if="!downloadedSongIds.includes(currentTrack?.id ?? 0)"
             @click="downloadCurrentTrack"
           />
-          <div class="song-comment">
+          <div
+            class="song-comment"
+            @click="handleCommentClick(currentTrack?.id ?? 0)"
+          >
             <img
               class="img-comment play-info-ico g-icon"
               src="../assets/comment2.svg"
               :title="$t('context.view_comment')"
-              @click="handleCommentClick(currentTrack?.id ?? 0)"
             />
             <div class="song-comment-num">
               {{ currentTrackComment }}
