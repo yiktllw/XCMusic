@@ -101,8 +101,7 @@ export class Download {
               getStorage("setting.download.quality") ?? "standard"
             );
             const downloadDir =
-              getStorage("setting.download.path") ??
-              getDownloadDirectory();
+              getStorage("setting.download.path") ?? getDownloadDirectory();
             if (!url || !downloadDir) return;
 
             this.add(url, song, downloadDir);
@@ -179,14 +178,14 @@ export class Download {
    * 获取已下载歌曲的JSON字符串
    */
   exportToJSON() {
-    const json = JSON.stringify(this.downloadedSongs, null, '\t');
+    const json = JSON.stringify(this.downloadedSongs, null, "\t");
     return json;
   }
 
   /**
    * 从JSON字符串导入已下载歌曲
    */
-  importFromJSON(json: string) {
+  async importFromJSON(json: string) {
     const songs: IDownloadedSong[] = JSON.parse(json);
     if (!Array.isArray(songs)) return;
     if (songs.length === 0) return;
@@ -198,11 +197,20 @@ export class Download {
       return;
 
     // 检查是否有重复的歌曲
+    let pushRequests: Array<Promise<void>> = [];
     songs.forEach((song) => {
       if (!this.downloadedSongIds.includes(song.id)) {
         this.downloadedSongs.push(song);
+        pushRequests.push(
+          this.db.addDownloadedSong({
+            id: song.id,
+            name: song.name,
+            path: song.path,
+          })
+        );
       }
-    })
+    });
+    await Promise.all(pushRequests);
     this.subscriber.exec("downloaded-songs");
   }
 
