@@ -36,19 +36,40 @@ interface WindowState {
   height: number;
 }
 
-const store = new Store<WindowState>();
+interface AppStore {
+  windowState: WindowState;
+  disableGpu: boolean;
+}
+
+const store = new Store<AppStore>();
 // 从 store 中获取窗口的大小和位置
-const windowState: WindowState = store.get("windowState", {
+const windowState = store.get("windowState", {
   width: 1177,
   height: 777,
 });
 
+// 是否禁用 GPU 加速
+const disableGpu = store.get("disableGpu", false);
+if (disableGpu) {
+  app.disableHardwareAcceleration();
+}
+ipcMain.on("disable-gpu", () => {
+  store.set("disableGpu", true);
+});
+ipcMain.on("enable-gpu", () => {
+  store.set("disableGpu", false);
+});
+
+
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
-app.commandLine.appendSwitch("js-flags", "--max-old-space-size=512");
-app.commandLine.appendSwitch("js-flags", "--max-new-space-size=256");
-// app.disableHardwareAcceleration();
+// if (process.env.NODE_ENV === "development") {
+//   app.commandLine.appendSwitch("remote-debugging-port", "9222");
+//   app.commandLine.appendSwitch("inspect", "9229");
+// }
+// app.commandLine.appendSwitch("--inspect=9229");
+
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
 

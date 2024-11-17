@@ -905,8 +905,6 @@ export default defineComponent({
       display: flex;
       align-items: center;
       flex-direction: row;
-      transition: all 0.3s ease;
-      margin: 0;
       opacity: 0.5;
 
       .userInfoTxt {
@@ -918,30 +916,11 @@ export default defineComponent({
         width: 14px;
         height: 14px;
         margin-right: 10px;
-        -webkit-user-drag: none;
       }
 
       &:hover {
         cursor: pointer;
         opacity: 1;
-      }
-    }
-
-    .dropdown-menu {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: var(--panel-background-color);
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-
-      img {
-        max-width: 150px;
-        max-height: 150px;
-        border-radius: 5px;
       }
     }
 

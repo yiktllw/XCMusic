@@ -109,6 +109,7 @@ export interface ISettings {
   system: {
     /** 开机自启动 */
     openAtLogin: boolean;
+    disableGpuAcceleration: boolean;
   };
 }
 
@@ -453,6 +454,22 @@ export const settingGroup: SettingGroup = {
           window.electron.ipcRenderer.send("open-at-login", value);
         }
 
+        return valid;
+      },
+    },
+    disableGpuAcceleration: {
+      value: getStorage("setting.system.disableGpuAcceleration") ?? false,
+      default: false,
+      validation: (value) => {
+        let valid = typeof value === "boolean";
+        if (valid) {
+          setStorage("setting.system.disableGpuAcceleration", value);
+          if (window.electron?.isElectron) {
+            window.electron.ipcRenderer.send(
+              value ? "disable-gpu" : "enable-gpu"
+            );
+          }
+        }
         return valid;
       },
     },

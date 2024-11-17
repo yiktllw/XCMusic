@@ -1078,6 +1078,7 @@ export default defineComponent({
           align-items: center;
           position: relative;
           opacity: 0.6;
+          cursor: pointer;
 
           &:hover {
             opacity: 1;

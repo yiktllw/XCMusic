@@ -114,6 +114,22 @@
             </div>
             <div class="content-item">
               <div class="content-item-title">
+                {{ $t("setting_view.gpu") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_disable_gpu"
+                  v-model="disableGpu"
+                  @change="setDisableGpu(disableGpu)"
+                />
+                <label for="setting_disable_gpu">
+                  {{ $t("setting_view.disable_gpu") }}
+                </label>
+              </div>
+            </div>
+            <div class="content-item">
+              <div class="content-item-title">
                 {{ $t("setting_view.reload") }}
               </div>
               <div class="content-item-content">
@@ -624,6 +640,7 @@ export default defineComponent({
       hideInSidebar_local: false as boolean,
       hideInSidebar_download: false as boolean,
       rectData: [] as number[],
+      disableGpu: false,
     };
   },
   methods: {
@@ -822,6 +839,11 @@ export default defineComponent({
       this.openAtLogin = bool;
       this.setting.system.openAtLogin = bool;
     },
+    setDisableGpu(bool: boolean) {
+      this.setting.system.disableGpuAcceleration = bool;
+      this.disableGpu = this.setting.system.disableGpuAcceleration;
+      Message.post("info", this.$t("setting_view.work_after_restart_app"));
+    },
     setAutoPlay(bool: boolean) {
       this.autoPlay = bool;
       this.setting.play.autoPlay = bool;
@@ -923,6 +945,7 @@ export default defineComponent({
       this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
         this[`hideInSidebar_${item}`] = true;
       });
+      this.disableGpu = this.setting.system.disableGpuAcceleration;
       this.getDevices();
       this.initRectData();
     },

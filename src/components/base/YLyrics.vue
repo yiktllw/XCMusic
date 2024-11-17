@@ -115,6 +115,10 @@ export default defineComponent({
 
     if (wheelTimeout) clearTimeout(wheelTimeout);
     if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
+
+    this.ctx?.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+    this.canvas = null;
+    this.ctx = null;
   },
   watch: {
     lyrics(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
@@ -351,7 +355,8 @@ export default defineComponent({
                 tmpLine += word.text;
                 if (
                   this.timeNow * 1000 > word.startTime &&
-                  (this.timeNow * 1000 < word.duration + word.startTime || this.timeNow * 1000 < data.words[j + 1]?.startTime) 
+                  (this.timeNow * 1000 < word.duration + word.startTime ||
+                    this.timeNow * 1000 < data.words[j + 1]?.startTime)
                 ) {
                   index = j;
                   break;

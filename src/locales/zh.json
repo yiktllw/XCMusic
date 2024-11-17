@@ -263,6 +263,7 @@
 		"close_always_ask": "关闭前总是询问",
 		"close_to_minimize": "点击关闭按钮时，最小化到托盘",
 		"close_to_quit": "点击关闭按钮时，退出程序",
+		"disable_gpu": "禁用GPU加速",
 		"display": {
 			"fullscreen": "全屏",
 			"fullscreen_auto_zoom": "全屏时自动缩放",
@@ -280,6 +281,7 @@
 			"quality": "下载音质",
 			"select": "选择路径"
 		},
+		"gpu": "硬件",
 		"language": "语言",
 		"open_at_login": "开机自启动",
 		"open_sys": "开机",
@@ -304,6 +306,7 @@
 			"light_high_contrast": "亮色高对比度"
 		},
 		"work_after_reload_window": "重新加载窗口后生效",
+		"work_after_restart_app": "重启应用后生效",
 		"zoom": "缩放"
 	},
 	"settings": "设置",

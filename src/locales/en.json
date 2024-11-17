@@ -263,6 +263,7 @@
 		"close_always_ask": "Always ask before closing",
 		"close_to_minimize": "Close to Hide.",
 		"close_to_quit": "Close to Quit.",
+		"disable_gpu": "Disable Hardware Acceleration",
 		"display": {
 			"fullscreen": "Fullscreen",
 			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
@@ -280,6 +281,7 @@
 			"quality": "Quality",
 			"select": "Select"
 		},
+		"gpu": "GPU",
 		"language": "Language",
 		"open_at_login": "Open at Login",
 		"open_sys": "System",
@@ -304,6 +306,7 @@
 			"light_high_contrast": "Light High Contrast"
 		},
 		"work_after_reload_window": "The changes will take effect after the window is reloaded.",
+		"work_after_restart_app": "The changes will take effect after the app is restarted.",
 		"zoom": "Zoom"
 	},
 	"settings": "Settings",

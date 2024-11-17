@@ -11,11 +11,17 @@ const routes = [
         path: "about",
         name: "about",
         component: () => import("../views/AboutView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "greeting",
         name: "Greeting",
         component: () => import("../views/YGreetingView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "playlist/:id",
@@ -37,6 +43,9 @@ const routes = [
           playlistId: Number(route.params.id),
           type: "album",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "search/:search/:position",
@@ -46,6 +55,9 @@ const routes = [
           search: route.params.search,
           position: route.params.position,
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "user/:id",
@@ -55,6 +67,9 @@ const routes = [
           userId: Number(route.params.id),
           type: "user",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "artist/:id",
@@ -64,11 +79,17 @@ const routes = [
           userId: Number(route.params.id),
           type: "artist",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "test",
         name: "Test",
         component: () => import("../views/YTestView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "user_songs_rank/:uid",
@@ -77,6 +98,9 @@ const routes = [
         props: (route) => ({
           userId: Number(route.params.uid),
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "comment/song/:id",
@@ -86,6 +110,9 @@ const routes = [
           id: Number(route.params.id),
           type: "song",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "comment/album/:id",
@@ -95,6 +122,9 @@ const routes = [
           id: Number(route.params.id),
           type: "album",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "comment/playlist/:id",
@@ -104,11 +134,17 @@ const routes = [
           id: Number(route.params.id),
           type: "playlist",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "setting",
         name: "Setting",
         component: () => import("../views/YSettingView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "markdown/:file",
@@ -117,6 +153,9 @@ const routes = [
         props: (route) => ({
           file: route.params.file,
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "sheet/:id",
@@ -125,6 +164,9 @@ const routes = [
         props: (route) => ({
           sheetId: Number(route.params.id),
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "follow/:id",
@@ -134,6 +176,9 @@ const routes = [
           uid: Number(route.params.id),
           type: "follows",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "follower/:id",
@@ -143,26 +188,41 @@ const routes = [
           uid: Number(route.params.id),
           type: "followers",
         }),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "subscribe/album",
         name: "SubscribeAlbum",
         component: () => import("../views/YSubscribedAlbumView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "local",
         name: "Local",
         component: () => import("../views/YLocalSongsView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "download",
         name: "Download",
         component: () => import("../views/YDownloadView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
       {
         path: "audio/test",
         name: "AudioTest",
         component: () => import("../views/YAudioView.vue"),
+        meta: {
+          keepAlive: false,
+        },
       },
     ],
   },
