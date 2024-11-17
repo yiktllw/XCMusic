@@ -37,7 +37,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    YColor.setBackgroundColorTheme();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("收藏的专辑     "))
     this.getUserSubscribedAlbums(true);
   },
   watch: {

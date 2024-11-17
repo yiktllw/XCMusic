@@ -72,7 +72,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorTheme();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Downloaded Music   "));
     this.getDownloadedTracks();
     this.download.subscriber.on({
       id: "YLocalSongsView",

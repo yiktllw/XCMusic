@@ -77,7 +77,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorTheme();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor(this.file === "README" ? "README" : "CHANGELOG"));
     this.md?.addEventListener("click", this.handleLinkClick);
   },
   beforeUnmount() {

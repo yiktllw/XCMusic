@@ -64,7 +64,7 @@ export default defineComponent({
       let res: musicFile[] = [];
       for (const path of paths)
         res = res.concat(
-          await window.electron.ipcRenderer.invoke("get-local-tracks", path),
+          await window.electron.ipcRenderer.invoke("get-local-tracks", path)
         );
       this.localTracks = new Tracks({
         url: "local",
@@ -74,7 +74,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorTheme();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Local Music     "));
     this.init();
     this.localPaths = toRaw(this.setting.download.localPaths);
   },

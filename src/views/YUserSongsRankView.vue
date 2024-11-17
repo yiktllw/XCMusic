@@ -20,6 +20,7 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import { ITrack, Tracks } from "@/utils/tracks";
 import { useApi } from "@/utils/api";
 import { useStore } from "vuex";
+import { YColor } from "@/utils/color";
 
 export default defineComponent({
   name: "YUserSongsRank",
@@ -102,8 +103,9 @@ export default defineComponent({
         });
     },
   },
-  async mounted() {
-    await this.fetchUserSongsRank();
+  mounted() {
+    this.fetchUserSongsRank();
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("songs rank"));
   },
 });
 </script>

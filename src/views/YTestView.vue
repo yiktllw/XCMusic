@@ -29,7 +29,7 @@ export default defineComponent({
     return {};
   },
   methods: {},
-  async mounted() {
+  mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
   },
   beforeUnmount() {},
