@@ -144,8 +144,9 @@ export default defineComponent({
     },
     /** 处理鼠标滚动事件 */
     handleWheel(e: WheelEvent) {
-      // 在用户操作的2秒内，不再自动滚动
       if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
+
+      // 在用户操作的2秒内，不再自动滚动
       this.noScroll = true;
       this.noScrollTimeout = setTimeout(() => {
         this.noScroll = false;
@@ -159,18 +160,17 @@ export default defineComponent({
 
       // 计算滚动的位置
       let y;
-      if (wheelLastY === 0) y = now.y;
+      if (wheelLastY === 0) y = now.y + e.deltaY / 4;
       else y = wheelLastY;
       y += e.deltaY / 2;
 
-      if (
-        this.canvas &&
-        y > this.lineY[0] &&
-        y < this.lineY[this.lineY.length - 1]
-      ) {
+      if (this.canvas) {
         // 如果滚动位置在歌词范围内，滚动
-        wheelLastY = y;
-        this.scrollTo(y, t);
+        wheelLastY = Math.max(
+          Math.min(y, this.lineY[this.lineY.length - 1]),
+          this.lineY[0]
+        );
+        this.scrollTo(wheelLastY, t);
         wheelTimeout = setTimeout(() => {
           wheelLastY = 0;
         }, t);

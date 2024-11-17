@@ -65,6 +65,8 @@ export default defineComponent({
     return {
       mouseProgress: 0,
       showInfo: false,
+      recentMouseMove: false,
+      recentMouseMoveTimer: null as NodeJS.Timeout | null,
     };
   },
   emits: ["update:modelValue", "set-progress-end"],
@@ -104,10 +106,13 @@ export default defineComponent({
   beforeUnmount() {
     window.removeEventListener("mousemove", this.updateProgressEvent);
     window.removeEventListener("mouseup", this.endSetProgress);
+
     this.progress_bar = null;
     this.big_frame = null;
     this.progressDOM = null;
     this.noSelect = null;
+
+    if (this.recentMouseMoveTimer) clearTimeout(this.recentMouseMoveTimer);
   },
   watch: {
     progress(newValue, oldValue) {
@@ -165,9 +170,14 @@ export default defineComponent({
       return formatDuration_mmss(duration);
     },
     handleMousemove(event: MouseEvent) {
+      if (this.recentMouseMove) return;
+      this.recentMouseMoveTimer = setTimeout(() => {
+        this.recentMouseMove = false;
+      }, 1000 / 60);
       this.mouseProgress =
         event.clientX / (this.big_frame?.getBoundingClientRect().width || 100);
       this.showInfo = true;
+      this.recentMouseMove = true;
     },
     HideInfo() {
       this.showInfo = false;

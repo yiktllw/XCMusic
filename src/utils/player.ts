@@ -376,10 +376,6 @@ export class Player {
       await this.playTrack(track);
     } else {
       // 如果在播放列表中
-      // 更新上一首歌曲的播放信息
-      if (this.currentTrack?.id) {
-        await this.scrobble(this.currentTrack.id);
-      }
 
       // 更新当前播放的歌曲位置
       this._current = trackIndex;
@@ -845,41 +841,6 @@ export class Player {
       .catch((err) => {
         console.log("update playlist playcount error: ", err);
       });
-  }
-  /**
-   * 更新歌曲播放数据(此网易云音乐接口可能已弃用)
-   * @param {Number} id 歌曲ID
-   */
-  async scrobble(id: number) {
-    return;
-    // 此接口已弃用
-    if (!getStorage("login_cookie")) return;
-    if ((this._playlistId as number) > 0) {
-      await useApi("/scrobble", {
-        id: id,
-        time: this._currentTime,
-        sourceId: this._playlistId,
-        cookie: getStorage("login_cookie"),
-      })
-        .then(() => {
-          // console.log('update song playcount: ', id, 'time', this._currentTime, 'response: ', res);
-        })
-        .catch((err) => {
-          console.log("update song playcount error: ", err);
-        });
-    } else {
-      await useApi("/scrobble", {
-        id: id,
-        time: this._currentTime,
-        cookie: getStorage("login_cookie"),
-      })
-        .then(() => {
-          // console.log('update song playcount: ', id, 'response: ', res);
-        })
-        .catch((err) => {
-          console.log("update song playcount error: ", err);
-        });
-    }
   }
   /**
    * 获取当前歌曲的位置

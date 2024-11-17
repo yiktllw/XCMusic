@@ -825,7 +825,7 @@ export default defineComponent({
               }
 
               .delete-button {
-                background-color: rgba(var(--foreground-color-rgb), 0.1);
+                background-color: rgba(var(--foreground-color-rgb), 0.30);
               }
             }
           }

@@ -112,11 +112,24 @@ export namespace YColor {
     // 背景的 RGB 值
     const backgroundColor = YColor.hexToRgb(background);
 
-    // 计算与背景之间 1/3 的颜色
+    // 计算与背景之间的折中颜色
+    /** 得到新颜色的比例 */
+    const ratio = 0.8;
+    /** 新颜色的与背景色的最大偏差 */
+    const maxSaturation = 30;
     const closerColor = {
-      r: Math.round(rgb.r + (backgroundColor.r - rgb.r) * 0.8),
-      g: Math.round(rgb.g + (backgroundColor.g - rgb.g) * 0.8),
-      b: Math.round(rgb.b + (backgroundColor.b - rgb.b) * 0.8),
+      r: Math.max(
+        Math.round(rgb.r + (backgroundColor.r - rgb.r) * ratio),
+        backgroundColor.r - maxSaturation
+      ),
+      g: Math.max(
+        Math.round(rgb.g + (backgroundColor.g - rgb.g) * ratio),
+        backgroundColor.g - maxSaturation
+      ),
+      b: Math.max(
+        Math.round(rgb.b + (backgroundColor.b - rgb.b) * ratio),
+        backgroundColor.b - maxSaturation
+      ),
     };
 
     // 将 RGB 转换回 HEX 格式

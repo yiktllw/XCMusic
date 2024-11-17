@@ -473,6 +473,7 @@ export default defineComponent({
             arg.target.playlist.trackCount
           ).then((res) => {
             this.player.playAll(res);
+            this.player.playlistId = arg.target.id;
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",
@@ -486,6 +487,7 @@ export default defineComponent({
             arg.target.playlist.trackCount
           ).then((res) => {
             this.player.addPlaylist(res);
+            this.player.playlistId = arg.target.id;
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",

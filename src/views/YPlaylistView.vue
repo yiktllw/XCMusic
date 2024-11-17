@@ -697,6 +697,7 @@ export default defineComponent({
       // 预处理歌单
       let playlist = preparePlaylist(this.playlist.tracks);
       this.player.playAll(playlist);
+      this.player.playlistId = this.playlistId;
       Message.post(
         "success",
         this.$t("message.playlist_view.added_to_playlist")
@@ -708,6 +709,7 @@ export default defineComponent({
     // 添加到播放列表
     async addPlaylistToQueue() {
       this.player.addPlaylist(this.playlist.tracks);
+      this.player.playlistId = this.playlistId;
       Message.post(
         "success",
         this.$t("message.playlist_view.added_to_playlist")
@@ -717,6 +719,7 @@ export default defineComponent({
     async playSongs(track: ITrack) {
       console.log("playSongs");
       await this.player.playTrack(track);
+      this.player.playlistId = this.playlistId;
       this.player.playState = "play";
       if (this.type === "playlist") {
         await this.updatePlayCount();
