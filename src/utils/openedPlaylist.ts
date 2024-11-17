@@ -3,7 +3,7 @@
  *  openedPlaylist.ts 用于存储侧边栏打开的歌单
  *---------------------------------------------------------------*/
 
-import { Subscriber } from "./subscribe";
+import { Subscriber } from "@/utils/subscribe";
 
 export class OpenedPlaylist {
   _id: number;

@@ -7,12 +7,12 @@
  *---------------------------------------------------------------*/
 
 import indexDB from "@/utils/indexDB";
-import { Subscriber } from "./subscribe";
-import { ITrack } from "./tracks";
-import { IDownloadProgress } from "./download";
-import { Song } from "./api";
-import { getDownloadDirectory } from "./setting";
-import { getStorage } from "./render_storage";
+import { Subscriber } from "@/utils/subscribe";
+import { ITrack } from "@/utils/tracks";
+import { IDownloadProgress } from "@/utils/download";
+import { Song } from "@/utils/api";
+import { getDownloadDirectory } from "@/utils/setting";
+import { getStorage } from "@/utils/render_storage";
 
 export interface IDownloadedSong {
   id: number;

@@ -102,13 +102,13 @@
 </template>
 
 <script lang="ts">
-import YDisplayArea from "@/components/YDisplayArea.vue";
-import YSidebar from "../components/YSidebar.vue";
-import YTitlebar from "../components/YTitlebar.vue";
-import YPlaybar from "../components/YPlaybar.vue";
-import YContextMenu from "@/components/YContextMenu.vue";
-import YMessage from "@/components/YMessage.vue";
-import YPlayUI from "@/components/YPlayUI.vue";
+import YDisplayArea from "@/components/UI/YDisplayArea.vue";
+import YSidebar from "@/components/UI/YSidebar.vue";
+import YTitlebar from "@/components/UI/YTitlebar.vue";
+import YPlaybar from "@/components/UI/YPlaybar.vue";
+import YContextMenu from "@/components/base/YContextMenu.vue";
+import YMessage from "@/components/base/YMessage.vue";
+import YPlayUI from "@/components/UI/YPlayUI.vue";
 import YAddToPlaylist from "@/components/YWindows/YAddToPlaylist.vue";
 import YSongInfo from "@/components/YWindows/YSongInfo.vue";
 import YCreatePlaylist from "@/components/YWindows/YCreatePlaylistWindow.vue";

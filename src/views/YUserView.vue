@@ -215,12 +215,12 @@
 </template>
 
 <script lang="ts">
-import YScroll from "@/components/YScroll.vue";
-import YPlaylistList from "@/components/YPlaylistList.vue";
-import YPlaylistBiglist from "@/components/YPlaylistBiglist.vue";
-import YSongsTable from "@/components/YSongsTable.vue";
-import YLoading from "@/components/YLoading.vue";
-import YPage from "@/components/YPage.vue";
+import YScroll from "@/components/base/YScroll.vue";
+import YPlaylistList from "@/components/list/YPlaylistList.vue";
+import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
+import YLoading from "@/components/base/YLoading.vue";
+import YPage from "@/components/base/YPage.vue";
 import { Tracks } from "@/utils/tracks";
 import { useApi } from "@/utils/api";
 import { YColor } from "@/utils/color";

@@ -4,10 +4,9 @@
  *---------------------------------------------------------------*/
 
 import { ipcMain, BrowserWindow, dialog, app } from "electron";
-import { Download } from "./download";
-import { scanMusicDirectory } from "./localTracks";
-import { ITrack } from "./tracks";
-import { event } from "@yiktllw/ncm-api";
+import { Download } from "@/utils/download";
+import { scanMusicDirectory } from "@/utils/localTracks";
+import { ITrack } from "@/utils/tracks";
 import * as fs from "fs";
 import * as path from "path";
 import { ISaveJSONData } from "@/dual/YSettingView";

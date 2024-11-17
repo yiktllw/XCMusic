@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import YComment from "@/components/YComment.vue";
+import YComment from "@/components/list/YComment.vue";
 import { YTrackC } from "@/dual/YTrackC";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";

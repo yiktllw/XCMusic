@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import YWindow from "../YWindow.vue";
+import YWindow from "@/components/base/YWindow.vue";
 
 export default defineComponent({
   name: "YLoginWindow",

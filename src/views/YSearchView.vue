@@ -111,16 +111,16 @@
 </template>
 
 <script lang="ts">
-import YSongsTable from "@/components/YSongsTable.vue";
-import YPlaylistList from "@/components/YPlaylistList.vue";
-import YArtistList from "@/components/YArtistList.vue";
-import YSearchLyrics from "@/components/YSearchLyrics.vue";
-import YScroll from "@/components/YScroll.vue";
-import YPage from "@/components/YPage.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
+import YPlaylistList from "@/components/list/YPlaylistList.vue";
+import YArtistList from "@/components/list/YArtistList.vue";
+import YSearchLyrics from "@/components/list/YSearchLyrics.vue";
+import YScroll from "@/components/base/YScroll.vue";
+import YPage from "@/components/base/YPage.vue";
 import { Tracks, ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
-import { useApi } from "../utils/api";
+import { useApi } from "@/utils/api";
 import { markRaw, defineComponent } from "vue";
 
 export default defineComponent({

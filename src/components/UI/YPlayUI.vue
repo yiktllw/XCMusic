@@ -157,17 +157,17 @@
 </template>
 
 <script lang="ts">
-import YPlaybar from "./YPlaybar.vue";
-import YTitlebar from "./YTitlebar.vue";
-import YScroll from "./YScroll.vue";
+import YPlaybar from "@/components/UI/YPlaybar.vue";
+import YTitlebar from "@/components/UI/YTitlebar.vue";
+import YScroll from "@/components/base/YScroll.vue";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import { useApi } from "@/utils/api";
 import { getColorFromImg, YColor } from "@/utils/color";
-import YSpecCanvas from "./YSpecCanvas.vue";
+import YSpecCanvas from "@/components/base/YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ICreative, SheetList, SongWikiSummary } from "@/dual/YPlayUI";
-import YLyrics from "./base/YLyrics.vue";
+import YLyrics from "@/components/base/YLyrics.vue";
 
 export default defineComponent({
   name: "YPlayUI",
@@ -618,7 +618,7 @@ export default defineComponent({
         max-height: calc(100vh - 350px);
         overflow: hidden;
         padding: 0 0 00px 0;
-        
+
         .ylyrics {
           margin: calc((100vh - 350px) / 2 - 285px) 0 0 0;
         }

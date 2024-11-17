@@ -43,8 +43,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { YContextMenuItemC } from "../dual/YContextMenuItemC";
-import YPanel from "./YPanel.vue";
+import { YContextMenuItemC } from "@/dual/YContextMenuItemC";
+import YPanel from "@/components/base/YPanel.vue";
 
 export default defineComponent({
   name: "YContextMenu",

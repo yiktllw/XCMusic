@@ -32,11 +32,11 @@
 <script lang="ts">
 import { defineComponent, toRaw } from "vue";
 import { useStore } from "vuex";
-import YSongsTable from "@/components/YSongsTable.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
 import { ITrack, Tracks } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { musicFile } from "@/utils/localTracks";
-import YLoading from "@/components/YLoading.vue";
+import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({
   name: "YLocalSongsView",

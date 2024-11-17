@@ -24,7 +24,7 @@
           <div class="gradient-overlay" v-if="type === 'playlist'"></div>
           <!-- 4 播放次数 -->
           <div class="play-info" v-if="type === 'playlist'">
-            <img src="../assets/play.svg" class="play-icon" />
+            <img src="@/assets/play.svg" class="play-icon" />
             <span class="play-count">{{ playlist.playCount }}</span>
           </div>
         </div>
@@ -103,7 +103,7 @@
               <!-- 5 播放按钮 -->
               <button :tabindex="-1" class="play-button" @click="playAll">
                 <img
-                  src="../assets/play.svg"
+                  src="@/assets/play.svg"
                   style="width: 15px; height: 15px; padding-right: 5px"
                 />
                 <span style="padding-bottom: 2px">
@@ -118,7 +118,7 @@
               >
                 <img
                   class="g-icon"
-                  src="../assets/addtoplaylist.svg"
+                  src="@/assets/addtoplaylist.svg"
                   style="width: 15px; height: 15px; padding-right: 5px"
                 />
                 {{ $t("playlist_view.add_to_playlist") }}
@@ -131,7 +131,7 @@
               >
                 <img
                   class="g-icon"
-                  src="../assets/download.svg"
+                  src="@/assets/download.svg"
                   style="width: 15px; height: 15px; padding-right: 5px"
                 />
                 {{ $t("playlist_view.download") }}
@@ -144,7 +144,7 @@
               >
                 <img
                   class="g-icon"
-                  src="../assets/multichoice.svg"
+                  src="@/assets/multichoice.svg"
                   style="width: 15px; height: 15px; padding-right: 5px"
                 />
                 {{ $t("playlist_view.multi_select") }}
@@ -170,11 +170,11 @@
                   spellcheck="false"
                   v-model="searchQuery"
                 />
-                <img src="../assets/search.svg" class="img-search g-icon" />
+                <img src="@/assets/search.svg" class="img-search g-icon" />
                 <img
                   v-if="searchQuery !== ''"
                   class="img-clear"
-                  src="../assets/clear2.svg"
+                  src="@/assets/clear2.svg"
                   @click="searchQuery = ''"
                 />
               </div>
@@ -301,7 +301,7 @@
       <!-- 2 滚动按钮 -->
       <div class="scroll-buttons">
         <div class="button" @click="scrollToCurrentTrack">
-          <img src="../assets/position.svg" class="g-icon" />
+          <img src="@/assets/position.svg" class="g-icon" />
         </div>
       </div>
     </div>
@@ -309,9 +309,9 @@
 </template>
 
 <script lang="ts">
-import YSongsTable from "@/components/YSongsTable.vue";
-import YLoading from "@/components/YLoading.vue";
-import YComment from "@/components/YComment.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
+import YLoading from "@/components/base/YLoading.vue";
+import YComment from "@/components/list/YComment.vue";
 import { Message } from "@/dual/YMessageC";
 import { ITrack, Tracks } from "@/utils/tracks";
 import { Playlist, useApi } from "@/utils/api";

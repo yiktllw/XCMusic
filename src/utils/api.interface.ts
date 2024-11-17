@@ -1,4 +1,4 @@
-import { ITrack } from "./tracks";
+import { ITrack } from "@/utils/tracks";
 
 export namespace IPlaylist {
 

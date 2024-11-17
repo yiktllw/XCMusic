@@ -5,7 +5,7 @@
  * Tracks类会将歌曲列表处理成统一的格式
  *---------------------------------------------------------------*/
 
-import { useApi } from "./api";
+import { useApi } from "@/utils/api";
 function generateUniqueString(address: string): string {
   const crypto = window.api?.crypto;
   if (!crypto) {

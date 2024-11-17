@@ -17,7 +17,7 @@
           class="play-info"
           v-if="type === 'playlist' && playlist.playCount !== 0"
         >
-          <img src="../assets/play.svg" class="play-icon" />
+          <img src="@/assets/play.svg" class="play-icon" />
           <span class="play-count">{{ playlist.playCount }}</span>
         </div>
       </div>
@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { IPlaylist } from "../dual/YPlaylistList";
+import { IPlaylist } from "@/dual/YPlaylistList";
 export default defineComponent({
   name: "YPlaylistBiglist",
   props: {

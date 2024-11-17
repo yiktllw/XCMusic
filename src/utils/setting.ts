@@ -7,9 +7,8 @@
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
-import { getStorage, setStorage } from "./render_storage";
-import { Theme1, Theme2 } from "./theme";
-import { themes } from "./theme";
+import { getStorage, setStorage } from "@/utils/render_storage";
+import { Theme1, Theme2, themes } from "@/utils/theme";
 let fs: any, path: any, os: any;
 
 if (window.electron?.isElectron) {

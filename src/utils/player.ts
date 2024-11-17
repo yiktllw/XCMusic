@@ -12,18 +12,18 @@ type QualityInfo = {
 };
 
 import { markRaw } from "vue";
-import { Lyrics, useApi } from "./api";
+import { Lyrics, useApi } from "@/utils/api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
-import { isLocal } from "./localTracks_renderer";
-import { qualities } from "./setting";
-import { ITrack } from "./tracks";
-import { getStorage, setStorage } from "./render_storage";
-import { LrcItem, LrcItem2, YrcItem } from "./lyric";
+import { isLocal } from "@/utils/localTracks_renderer";
+import { qualities } from "@/utils/setting";
+import { ITrack } from "@/utils/tracks";
+import { getStorage, setStorage } from "@/utils/render_storage";
+import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
   fs = window.api.fs;

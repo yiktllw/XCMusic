@@ -9,7 +9,7 @@
         :title="$t('titlebar.back')"
         v-if="type === 'default'"
       >
-        <img class="img arrow g-icon" src="../assets/backarrow.svg" />
+        <img class="img arrow g-icon" src="@/assets/backarrow.svg" />
       </button>
       <button
         :tabindex="-1"
@@ -18,14 +18,14 @@
         :title="$t('titlebar.forward')"
         v-if="type === 'default'"
       >
-        <img class="img arrow g-icon" src="../assets/forwardarrow.svg" />
+        <img class="img arrow g-icon" src="@/assets/forwardarrow.svg" />
       </button>
       <div
         v-else-if="type === 'play-ui'"
         class="close-button"
         @click="$emit('close-panel')"
       >
-        <img class="img-close-panel g-icon" src="../assets/more.svg" />
+        <img class="img-close-panel g-icon" src="@/assets/more.svg" />
       </div>
     </div>
     <!-- 搜索栏 -->
@@ -47,13 +47,13 @@
         />
         <img
           class="img-search g-icon"
-          src="../assets/search.svg"
+          src="@/assets/search.svg"
           @click="search(searchInput)"
         />
         <img
           v-if="searchInput !== ''"
           class="img-clear g-icon"
-          src="../assets/clear2.svg"
+          src="@/assets/clear2.svg"
           @click="
             searchInput = '';
             searchSuggestions = [];
@@ -88,7 +88,7 @@
                     {{ str }}
                   </span>
                   <div class="delete-button" @click="deleteSearchHistory(str)">
-                    <img class="img-delete g-icon" src="../assets/close.svg" />
+                    <img class="img-delete g-icon" src="@/assets/close.svg" />
                   </div>
                 </div>
               </div>
@@ -148,7 +148,7 @@
         <div class="userInfoTxt" v-else>
           {{ $t("titlebar.notLoggedIn") }}
         </div>
-        <img class="img-userInfo g-icon" src="../assets/more.svg" />
+        <img class="img-userInfo g-icon" src="@/assets/more.svg" />
       </button>
       <!-- 用户名下拉菜单 -->
       <YPanel
@@ -225,7 +225,7 @@
         :title="$t('titlebar.settings')"
         v-if="type === 'default'"
       >
-        <img class="img settings g-icon" src="../assets/settings.svg" />
+        <img class="img settings g-icon" src="@/assets/settings.svg" />
       </button>
       <button
         :tabindex="-1"
@@ -233,7 +233,7 @@
         @click="minimize"
         :title="$t('titlebar.minimize')"
       >
-        <img class="img minimize g-icon" src="../assets/min.svg" />
+        <img class="img minimize g-icon" src="@/assets/min.svg" />
       </button>
       <button
         :tabindex="-1"
@@ -241,7 +241,7 @@
         @click="maximize"
         :title="$t('titlebar.maximize')"
       >
-        <img class="img maximize g-icon" src="../assets/max.svg" />
+        <img class="img maximize g-icon" src="@/assets/max.svg" />
       </button>
       <button
         :tabindex="-1"
@@ -249,7 +249,7 @@
         @click="close"
         :title="$t('titlebar.close')"
       >
-        <img class="img close g-icon" src="../assets/close.svg" />
+        <img class="img close g-icon" src="@/assets/close.svg" />
       </button>
     </div>
   </div>
@@ -259,8 +259,8 @@
 import { defineComponent, ref } from "vue";
 import { Search, useApi } from "@/utils/api";
 import { useStore } from "vuex";
-import YPanel from "./YPanel.vue";
-import YScroll from "./YScroll.vue";
+import YPanel from "@/components/base/YPanel.vue";
+import YScroll from "@/components/base/YScroll.vue";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
 
 let QRInterval: NodeJS.Timeout | null = null;

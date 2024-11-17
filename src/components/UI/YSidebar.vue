@@ -93,7 +93,7 @@
         </button>
         <img
           class="add-img g-icon"
-          src="../assets/add.svg"
+          src="@/assets/add.svg"
           @click="createPlaylist"
         />
       </div>
@@ -178,7 +178,7 @@
 import { Message } from "@/dual/YMessageC";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
-import YScroll from "./YScroll.vue";
+import YScroll from "@/components/base/YScroll.vue";
 import { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
 import { IPlaylist } from "@/utils/login";
 import { TSideBarItems } from "@/utils/setting";

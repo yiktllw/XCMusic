@@ -8,8 +8,8 @@
  *---------------------------------------------------------------*/
 
 import Color from "color";
-import { Theme1, Theme2, themes } from "./theme";
-import { getStorage } from "./render_storage";
+import { Theme1, Theme2, themes } from "@/utils/theme";
+import { getStorage } from "@/utils/render_storage";
 
 type COLOR = {
   r: number;

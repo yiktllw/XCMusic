@@ -9,8 +9,8 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import { useApi } from "@/utils/api";
-import YArtistList from "@/components/YArtistList.vue";
-import YPage from "@/components/YPage.vue";
+import YArtistList from "@/components/list/YArtistList.vue";
+import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
 import { IArtist } from "@/dual/YArtistList";

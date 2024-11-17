@@ -4,7 +4,7 @@
  * 用于为某些歌曲数组添加 url 字段和 originalIndex 字段
  *---------------------------------------------------------------*/
 
-import { ITrack } from "./tracks";
+import { ITrack } from "@/utils/tracks";
 
 /**
  * 准备播放列表, 为每个歌曲添加 url 字段和 originalIndex 字段

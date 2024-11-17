@@ -84,10 +84,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import YPage from "./YPage.vue";
+import YPage from "@/components/base/YPage.vue";
 import { YCommentC, Types } from "@/dual/YCommentC";
-import { formatDate_yyyymmdd } from "../utils/time";
-import YLoading from "./YLoading.vue";
+import { formatDate_yyyymmdd } from "@/utils/time";
+import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({
   name: "YComment",

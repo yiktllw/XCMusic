@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import YSongsTable from "./YSongsTable.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
 import { ITrack } from "@/utils/tracks";
 
 export default defineComponent({

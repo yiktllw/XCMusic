@@ -3,7 +3,7 @@
  * YArtistList.ts 为YArtistList组件配套的处理工具
  *---------------------------------------------------------------*/
 
-import { IPlaylist } from "./YPlaylistList";
+import { IPlaylist } from "@/dual/YPlaylistList";
 import { ITrack } from "@/utils/tracks";
 
 /**

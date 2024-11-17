@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import YScroll from "./YScroll.vue";
+import YScroll from "@/components/base/YScroll.vue";
 
 export default defineComponent({
   name: "YDisplayarea",

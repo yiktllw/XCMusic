@@ -27,7 +27,7 @@ import {
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
-import { startNeteaseMusicApi } from "./electron/services";
+import { startNeteaseMusicApi } from "@/electron/services";
 import * as path from "path";
 import Store from "electron-store";
 
@@ -271,4 +271,4 @@ if (isDevelopment) {
  * 此处导入所有与ipcMain相关的事件
  */
 
-import "./utils/rendererEvents";
+import "@/utils/rendererEvents";

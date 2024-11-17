@@ -5,8 +5,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import { Doc } from "./utils/document";
-import { getStorage } from "./utils/render_storage";
+import { Doc } from "@/utils/document";
+import { getStorage } from "@/utils/render_storage";
 
 export default defineComponent({
   name: "App",

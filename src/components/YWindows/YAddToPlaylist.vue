@@ -26,8 +26,8 @@
 </template>
 
 <script lang="ts">
-import YWindow from "@/components/YWindow.vue";
-import YScroll from "@/components/YScroll.vue";
+import YWindow from "@/components/base/YWindow.vue";
+import YScroll from "@/components/base/YScroll.vue";
 import { defineComponent, ref } from "vue";
 import { Message } from "@/dual/YMessageC";
 import { useApi } from "@/utils/api";

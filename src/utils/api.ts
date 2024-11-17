@@ -9,12 +9,12 @@
  *---------------------------------------------------------------*/
 
 import axios from "axios";
-import { Tracks } from "./tracks";
+import { Tracks } from "@/utils/tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
-import { getStorage } from "./render_storage";
-import { IPlaylist } from "./api.interface";
-import { isLocal } from "./localTracks_renderer";
-import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "./lyric";
+import { getStorage } from "@/utils/render_storage";
+import { IPlaylist } from "@/utils/api.interface";
+import { isLocal } from "@/utils/localTracks_renderer";
+import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
 
 // 创建 Axios 实例
 const apiClient = axios.create({

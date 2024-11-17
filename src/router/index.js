@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/HomeView.vue";
 
 const routes = [
   {
@@ -10,7 +10,7 @@ const routes = [
       {
         path: "about",
         name: "about",
-        component: () => import("../views/AboutView.vue"),
+        component: () => import("@/views/AboutView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -18,7 +18,7 @@ const routes = [
       {
         path: "greeting",
         name: "Greeting",
-        component: () => import("../views/YGreetingView.vue"),
+        component: () => import("@/views/YGreetingView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -26,7 +26,7 @@ const routes = [
       {
         path: "playlist/:id",
         name: "Playlist",
-        component: () => import("../views/YPlaylistView.vue"),
+        component: () => import("@/views/YPlaylistView.vue"),
         props: (route) => ({
           playlistId: Number(route.params.id),
           type: "playlist",
@@ -38,7 +38,7 @@ const routes = [
       {
         path: "album/:id",
         name: "Album",
-        component: () => import("../views/YPlaylistView.vue"),
+        component: () => import("@/views/YPlaylistView.vue"),
         props: (route) => ({
           playlistId: Number(route.params.id),
           type: "album",
@@ -50,7 +50,7 @@ const routes = [
       {
         path: "search/:search/:position",
         name: "Search",
-        component: () => import("../views/YSearchView.vue"),
+        component: () => import("@/views/YSearchView.vue"),
         props: (route) => ({
           search: route.params.search,
           position: route.params.position,
@@ -62,7 +62,7 @@ const routes = [
       {
         path: "user/:id",
         name: "UserPage",
-        component: () => import("../views/YUserView.vue"),
+        component: () => import("@/views/YUserView.vue"),
         props: (route) => ({
           userId: Number(route.params.id),
           type: "user",
@@ -74,7 +74,7 @@ const routes = [
       {
         path: "artist/:id",
         name: "Artist",
-        component: () => import("../views/YUserView.vue"),
+        component: () => import("@/views/YUserView.vue"),
         props: (route) => ({
           userId: Number(route.params.id),
           type: "artist",
@@ -86,7 +86,7 @@ const routes = [
       {
         path: "test",
         name: "Test",
-        component: () => import("../views/YTestView.vue"),
+        component: () => import("@/views/YTestView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -94,7 +94,7 @@ const routes = [
       {
         path: "user_songs_rank/:uid",
         name: "UserSongsRank",
-        component: () => import("../views/YUserSongsRankView.vue"),
+        component: () => import("@/views/YUserSongsRankView.vue"),
         props: (route) => ({
           userId: Number(route.params.uid),
         }),
@@ -105,7 +105,7 @@ const routes = [
       {
         path: "comment/song/:id",
         name: "SongComment",
-        component: () => import("../views/YCommentView.vue"),
+        component: () => import("@/views/YCommentView.vue"),
         props: (route) => ({
           id: Number(route.params.id),
           type: "song",
@@ -117,7 +117,7 @@ const routes = [
       {
         path: "comment/album/:id",
         name: "AlbumComment",
-        component: () => import("../views/YCommentView.vue"),
+        component: () => import("@/views/YCommentView.vue"),
         props: (route) => ({
           id: Number(route.params.id),
           type: "album",
@@ -129,7 +129,7 @@ const routes = [
       {
         path: "comment/playlist/:id",
         name: "PlaylistComment",
-        component: () => import("../views/YCommentView.vue"),
+        component: () => import("@/views/YCommentView.vue"),
         props: (route) => ({
           id: Number(route.params.id),
           type: "playlist",
@@ -141,7 +141,7 @@ const routes = [
       {
         path: "setting",
         name: "Setting",
-        component: () => import("../views/YSettingView.vue"),
+        component: () => import("@/views/YSettingView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -149,7 +149,7 @@ const routes = [
       {
         path: "markdown/:file",
         name: "Markdown",
-        component: () => import("../views/YMarkdownView.vue"),
+        component: () => import("@/views/YMarkdownView.vue"),
         props: (route) => ({
           file: route.params.file,
         }),
@@ -160,7 +160,7 @@ const routes = [
       {
         path: "sheet/:id",
         name: "Sheet",
-        component: () => import("../views/YSheetView.vue"),
+        component: () => import("@/views/YSheetView.vue"),
         props: (route) => ({
           sheetId: Number(route.params.id),
         }),
@@ -171,7 +171,7 @@ const routes = [
       {
         path: "follow/:id",
         name: "Follow",
-        component: () => import("../views/YFollowView.vue"),
+        component: () => import("@/views/YFollowView.vue"),
         props: (route) => ({
           uid: Number(route.params.id),
           type: "follows",
@@ -183,7 +183,7 @@ const routes = [
       {
         path: "follower/:id",
         name: "Follower",
-        component: () => import("../views/YFollowView.vue"),
+        component: () => import("@/views/YFollowView.vue"),
         props: (route) => ({
           uid: Number(route.params.id),
           type: "followers",
@@ -195,7 +195,7 @@ const routes = [
       {
         path: "subscribe/album",
         name: "SubscribeAlbum",
-        component: () => import("../views/YSubscribedAlbumView.vue"),
+        component: () => import("@/views/YSubscribedAlbumView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -203,7 +203,7 @@ const routes = [
       {
         path: "local",
         name: "Local",
-        component: () => import("../views/YLocalSongsView.vue"),
+        component: () => import("@/views/YLocalSongsView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -211,7 +211,7 @@ const routes = [
       {
         path: "download",
         name: "Download",
-        component: () => import("../views/YDownloadView.vue"),
+        component: () => import("@/views/YDownloadView.vue"),
         meta: {
           keepAlive: false,
         },
@@ -219,7 +219,7 @@ const routes = [
       {
         path: "audio/test",
         name: "AudioTest",
-        component: () => import("../views/YAudioView.vue"),
+        component: () => import("@/views/YAudioView.vue"),
         meta: {
           keepAlive: false,
         },

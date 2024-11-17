@@ -12,9 +12,9 @@
 import { defineComponent } from "vue";
 import { useApi } from "@/utils/api";
 import { YPageC } from "@/dual/YPageC";
-import YPage from "@/components/YPage.vue";
+import YPage from "@/components/base/YPage.vue";
 import { useStore } from "vuex";
-import YPlaylistBiglist from "@/components/YPlaylistBiglist.vue";
+import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import { YColor } from "@/utils/color";
 import { IPlaylist } from "@/dual/YPlaylistList";
 

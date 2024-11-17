@@ -1,9 +1,9 @@
 <template>
   <!--欢迎界面-->
   <div class="container">
-    <img src="../assets/xc-up.svg" class="up-img g-icon" />
-    <img src="../assets/xc.svg" class="full-width-image g-icon" />
-    <img src="../assets/xc-down.svg" class="down-img g-icon" />
+    <img src="@/assets/xc-up.svg" class="up-img g-icon" />
+    <img src="@/assets/xc.svg" class="full-width-image g-icon" />
+    <img src="@/assets/xc-down.svg" class="down-img g-icon" />
   </div>
 </template>
 

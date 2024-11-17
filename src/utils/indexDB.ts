@@ -6,8 +6,8 @@
  * 2. 存储、获取播放列表
  * 3. 管理已经下载的歌曲信息
  *---------------------------------------------------------------*/
-import { IDownloadedSong } from "./download_renderer";
-import { ITrack } from "./tracks";
+import { IDownloadedSong } from "@/utils/download_renderer";
+import { ITrack } from "@/utils/tracks";
 
 class IndexedDB {
   dbName: string;

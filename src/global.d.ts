@@ -12,7 +12,7 @@
  *  -test: any;
  *---------------------------------------------------------------*/
 
-import { Setting } from "./utils/setting";
+import { Setting } from "@/utils/setting";
 import { shell } from "electron";
 import * as fs from "fs";
 import * as path from "path";

@@ -6,7 +6,7 @@
  * 2. 要求用户确认某些操作
  *---------------------------------------------------------------*/
 
-import { Subscriber } from "./subscribe";
+import { Subscriber } from "@/utils/subscribe";
 
 const events = [
   "create-playlist",

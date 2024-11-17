@@ -4,7 +4,7 @@
  *---------------------------------------------------------------*/
 
 import { useApi } from "@/utils/api";
-import { YPageC } from "./YPageC";
+import { YPageC } from "@/dual/YPageC";
 import { isLocal } from "@/utils/localTracks_renderer";
 export type Types = "song" | "playlist" | "album";
 

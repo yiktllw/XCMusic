@@ -4,7 +4,7 @@
  * 主要用于自定义主题
  *---------------------------------------------------------------*/
 
-import { Theme1, Theme2 } from "./theme";
+import { Theme1, Theme2 } from "@/utils/theme";
 
 export namespace Doc {
   /**

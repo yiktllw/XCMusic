@@ -444,7 +444,7 @@
                     {{ $t("setting_view.download.select") }}
                   </div>
                   <img
-                    src="../assets/delete.svg"
+                    src="@/assets/delete.svg"
                     class="g-icon delete-img"
                     @click="deletePath(index)"
                   />
@@ -539,11 +539,11 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { YColor } from "@/utils/color";
-import YHeader from "@/components/YHeader.vue";
+import YHeader from "@/components/base/YHeader.vue";
 import { Message } from "@/dual/YMessageC";
 import { useStore } from "vuex";
 import { themes } from "@/utils/theme";
-import packageJson from "../../package.json";
+import packageJson from "@/../package.json";
 import {
   exportToJSON,
   importFromJSON,
@@ -551,7 +551,7 @@ import {
   TSideBarItems,
 } from "@/utils/setting";
 import { ISaveJSONData } from "@/dual/YSettingView";
-import YScroll from "@/components/YScroll.vue";
+import YScroll from "@/components/base/YScroll.vue";
 /** 用于生成设置界面的背景色 */
 const str = "setting_view";
 

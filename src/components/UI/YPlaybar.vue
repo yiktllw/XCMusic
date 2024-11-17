@@ -23,7 +23,7 @@
           <!-- 3 封面 -->
           <img
             class="img-cover img"
-            :src="currentTrackCover ?? require('../assets/song.svg')"
+            :src="currentTrackCover ?? require('@/assets/song.svg')"
           />
           <div
             v-if="currentTrack"
@@ -33,7 +33,7 @@
             <div class="open-panel-overlay"></div>
             <img
               class="img-cover img img-open-panel"
-              src="../assets/less.svg"
+              src="@/assets/less.svg"
             />
           </div>
           <!-- 4 播放信息文本 -->
@@ -70,23 +70,23 @@
             class="close-button"
             @click="$emit('close-panel')"
           >
-            <img class="img-close-panel g-icon" src="../assets/more.svg" />
+            <img class="img-close-panel g-icon" src="@/assets/more.svg" />
           </div>
           <img
             class="img-info play-info-ico g-icon"
-            src="../assets/info.svg"
+            src="@/assets/info.svg"
             :title="$t('playbar.song_info')"
             @click="openInfoPanel"
           />
           <img
             class="img-subscribe play-info-ico g-icon"
-            src="../assets/subscribe.svg"
+            src="@/assets/subscribe.svg"
             :title="$t('context.subscribe')"
             @click="handleSubscribe"
           />
           <img
             class="img-download play-info-ico g-icon"
-            src="../assets/smalldownload.svg"
+            src="@/assets/smalldownload.svg"
             :title="$t('context.download')"
             v-if="!downloadedSongIds.includes(currentTrack?.id ?? 0)"
             @click="downloadCurrentTrack"
@@ -97,7 +97,7 @@
           >
             <img
               class="img-comment play-info-ico g-icon"
-              src="../assets/comment2.svg"
+              src="@/assets/comment2.svg"
               :title="$t('context.view_comment')"
             />
             <div class="song-comment-num">
@@ -126,14 +126,14 @@
         >
           <img
             class="img-like img"
-            src="../assets/likes.svg"
+            src="@/assets/likes.svg"
             v-if="likelist.includes(currentTrack?.id ?? 0)"
             :title="$t('playbar.cancel_like')"
           />
           <img
             v-else
             class="img-like img g-icon"
-            src="../assets/unlikes.svg"
+            src="@/assets/unlikes.svg"
             :title="$t('playbar.like')"
           />
         </button>
@@ -144,7 +144,7 @@
           @click="goTo('backwards')"
           :title="$t('playbar.previous')"
         >
-          <img class="img-previous img g-icon" src="../assets/previous.svg" />
+          <img class="img-previous img g-icon" src="@/assets/previous.svg" />
         </button>
         <!-- 3 播放/暂停按钮 -->
         <button
@@ -158,12 +158,12 @@
           <img
             v-show="playState === 'pause'"
             class="img-play img"
-            src="../assets/play.svg"
+            src="@/assets/play.svg"
           />
           <img
             v-show="playState === 'play'"
             class="img-pause img"
-            src="../assets/pause.svg"
+            src="@/assets/pause.svg"
           />
         </button>
         <!-- 3 下一首按钮 -->
@@ -173,7 +173,7 @@
           @click="goTo('forward')"
           :title="$t('playbar.next')"
         >
-          <img class="img-next img g-icon" src="../assets/next.svg" />
+          <img class="img-next img g-icon" src="@/assets/next.svg" />
         </button>
         <!-- 3 播放模式按钮 -->
         <button
@@ -185,19 +185,19 @@
           <img
             v-if="playMode === 'order'"
             class="img-order img g-icon"
-            src="../assets/order.svg"
+            src="@/assets/order.svg"
             :title="$t('playbar.order')"
           />
           <img
             v-if="playMode === 'listloop'"
             class="img-listloop img g-icon"
-            src="../assets/listloop.svg"
+            src="@/assets/listloop.svg"
             :title="$t('playbar.listloop')"
           />
           <img
             v-if="playMode === 'random'"
             class="img-random img g-icon"
-            src="../assets/random.svg"
+            src="@/assets/random.svg"
             :title="$t('playbar.random')"
           />
           <YListRandom
@@ -207,7 +207,7 @@
           <img
             v-if="playMode === 'loop'"
             class="img-loop img g-icon"
-            src="../assets/loop.svg"
+            src="@/assets/loop.svg"
             :title="$t('playbar.loop')"
           />
         </button>
@@ -231,7 +231,7 @@
             >
               <img
                 class="img-order img g-icon playMode-img"
-                src="../assets/order.svg"
+                src="@/assets/order.svg"
               />
               {{ $t("playbar.order") }}
             </div>
@@ -244,7 +244,7 @@
             >
               <img
                 class="img-listloop img playMode-img g-icon"
-                src="../assets/listloop.svg"
+                src="@/assets/listloop.svg"
               />
               {{ $t("playbar.listloop") }}
             </div>
@@ -257,7 +257,7 @@
             >
               <img
                 class="img-random img playMode-img g-icon"
-                src="../assets/random.svg"
+                src="@/assets/random.svg"
               />
               {{ $t("playbar.random") }}
             </div>
@@ -280,7 +280,7 @@
             >
               <img
                 class="img-loop img playMode-img g-icon"
-                src="../assets/loop.svg"
+                src="@/assets/loop.svg"
               />
               {{ $t("playbar.loop") }}
             </div>
@@ -361,7 +361,7 @@
         <!-- 音量按钮 -->
         <img
           class="img volume-img g-icon"
-          src="../assets/volume.svg"
+          src="@/assets/volume.svg"
           style="width: 22px; height: 22px; margin-right: 10px"
           :title="$t('playbar.volume')"
           ref="volume_panel_trigger"
@@ -395,7 +395,7 @@
         <!-- 播放列表按钮 -->
         <img
           class="img playlist-img g-icon"
-          src="../assets/playlist.svg"
+          src="@/assets/playlist.svg"
           style="width: 20px; height: 20px; margin-left: 10px"
           @click="playlist_panel?.tooglePanel"
           :title="$t('playbar.playlist')"
@@ -432,7 +432,7 @@
                 <span @click="player.clearPlaylist()" style="cursor: pointer">
                   <img
                     class="g-icon"
-                    src="../assets/delete.svg"
+                    src="@/assets/delete.svg"
                     style="
                       width: 20px;
                       height: 20px;
@@ -480,15 +480,15 @@
 import { defineComponent, ref } from "vue";
 import { toogleLike, useApi } from "@/utils/api";
 import { useStore } from "vuex";
-import YSongsTable from "./YSongsTable.vue";
-import YPanel from "./YPanel.vue";
-import YProgressBar from "./YProgressBar.vue";
-import YProgressBarV from "./YProgressBarV.vue";
-import YTextBanner from "./YTextBanner.vue";
-import YScroll from "./YScroll.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
+import YPanel from "@/components/base/YPanel.vue";
+import YProgressBar from "@/components/base/YProgressBar.vue";
+import YProgressBarV from "@/components/base/YProgressBarV.vue";
+import YTextBanner from "@/components/base/YTextBanner.vue";
+import YScroll from "@/components/base/YScroll.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ITrack } from "@/utils/tracks";
-import YListRandom from "./base/YListRandom.vue";
+import YListRandom from "@/components/base/YListRandom.vue";
 
 export default defineComponent({
   name: "YPlaybar",

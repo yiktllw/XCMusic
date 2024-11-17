@@ -7,11 +7,11 @@
  * 在网页端，此类不会被使用
  *---------------------------------------------------------------*/
 
-import { YTrackC } from "../dual/YTrackC";
+import { YTrackC } from "@/dual/YTrackC";
 import { useApi } from "@/utils/api";
-import { Subscriber } from "./subscribe";
+import { Subscriber } from "@/utils//subscribe";
 import { markRaw } from "vue";
-import { ITrack } from "./tracks";
+import { ITrack } from "@/utils/tracks";
 
 export class SongPicker {
   homeDir: string;

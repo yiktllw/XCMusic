@@ -1,8 +1,8 @@
 import { createStore } from "vuex"; // 使用 createStore 创建 Vuex store
-import { Player } from "../utils/player"; // 引入 Player 类
-import { Login } from "../utils/login";
-import { Setting, ISettings } from "../utils/setting";
-import { OpenedPlaylist } from "../utils/openedPlaylist";
+import { Player } from "@/utils/player"; // 引入 Player 类
+import { Login } from "@/utils/login";
+import { Setting, ISettings } from "@/utils/setting";
+import { OpenedPlaylist } from "@/utils/openedPlaylist";
 import { markRaw, Raw } from "vue";
 import { Download } from "@/utils/download_renderer";
 import { GlobalMsg } from "@/utils/globalMsg";

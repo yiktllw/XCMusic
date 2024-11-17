@@ -7,10 +7,10 @@
  *---------------------------------------------------------------*/
 
 import { Subscriber } from "@/utils/subscribe";
-import { useApi } from "./api";
+import { useApi } from "@/utils/api";
 import { ref, reactive, markRaw, Ref, Raw, Reactive } from "vue";
 import { UserPlaylist } from "@/dual/login";
-import { getStorage, setStorage } from "./render_storage";
+import { getStorage, setStorage } from "@/utils/render_storage";
 
 export interface IPlaylist {
   /** 歌单名 */

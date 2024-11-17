@@ -10,12 +10,12 @@
  *---------------------------------------------------------------*/
 
 import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import App from "@/App.vue";
+import router from "@/router";
+import store from "@/store";
 import "./assets/css/global.scss";
-import i18n from "./i18n";
-import { log } from "./utils/log";
+import i18n from "@/i18n";
+import { log } from "@/utils/log";
 
 window.log = log;
 

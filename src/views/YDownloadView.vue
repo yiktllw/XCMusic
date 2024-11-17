@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import YSongsTable from "@/components/YSongsTable.vue";
+import YSongsTable from "@/components/list/YSongsTable.vue";
 import { ITrack, TrackIds } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { ITrackWithProgress } from "@/dual/YLocalSongsView";

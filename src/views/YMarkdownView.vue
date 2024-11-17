@@ -5,8 +5,8 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { marked } from "marked";
-import README from "../../README.md";
-import CHANGELOG from "../../CHANGELOG.md";
+import README from "@/../README.md";
+import CHANGELOG from "@/../CHANGELOG.md";
 import { YColor } from "@/utils/color";
 
 let path: null | any = null,

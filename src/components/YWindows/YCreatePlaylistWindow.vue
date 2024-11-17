@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import YWindow from "../YWindow.vue";
+import YWindow from "@/components/base/YWindow.vue";
 import { useApi } from "@/utils/api";
 import { Message } from "@/dual/YMessageC";
 import { useStore } from "vuex";
