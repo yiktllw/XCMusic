@@ -75,20 +75,20 @@
             ({{ userPlaylists.length }})
           </span>
           <div class="switch-user-playlist-icon-container">
-            <transition name="rotate">
+            <!-- <transition name="rotate"> -->
               <img
                 class="switch-user-playlist-icon g-icon"
                 v-if="showMyPlaylist"
                 src="@/assets/less.svg"
               />
-            </transition>
-            <transition name="rotate2">
+            <!-- </transition> -->
+            <!-- <transition name="rotate2"> -->
               <img
                 class="switch-user-playlist-icon g-icon"
                 v-if="!showMyPlaylist"
                 src="@/assets/more.svg"
               />
-            </transition>
+            <!-- </transition> -->
           </div>
         </button>
         <img
@@ -97,7 +97,7 @@
           @click="createPlaylist"
         />
       </div>
-      <transition name="slide-fade">
+      <!-- <transition name="slide-fade"> -->
         <div class="fade-container" v-if="showMyPlaylist">
           <button
             :tabindex="-1"
@@ -118,7 +118,7 @@
             <div class="playlist-button-text">{{ button.label }}</div>
           </button>
         </div>
-      </transition>
+      <!-- </transition> -->
       <button
         :tabindex="-1"
         class="switch-user-playlist font-color-main"
@@ -129,23 +129,23 @@
           ({{ userSubscribes.length }})
         </span>
         <div class="switch-user-playlist-icon-container">
-          <transition name="rotate">
+          <!-- <transition name="rotate"> -->
             <img
               class="switch-user-playlist-icon g-icon"
               v-if="showMySubscribedPlaylist"
               src="@/assets/less.svg"
             />
-          </transition>
-          <transition name="rotate2">
+          <!-- </transition> -->
+          <!-- <transition name="rotate2"> -->
             <img
               class="switch-user-playlist-icon g-icon"
               v-if="!showMySubscribedPlaylist"
               src="@/assets/more.svg"
             />
-          </transition>
+          <!-- </transition> -->
         </div>
       </button>
-      <transition name="slide-fade">
+      <!-- <transition name="slide-fade"> -->
         <div class="fade-container" v-if="showMySubscribedPlaylist">
           <button
             :tabindex="-1"
@@ -168,7 +168,7 @@
             <div class="playlist-button-text">{{ button.label }}</div>
           </button>
         </div>
-      </transition>
+      <!-- </transition> -->
     </YScroll>
   </div>
   <div class="resizer" @mousedown="initResize"></div>

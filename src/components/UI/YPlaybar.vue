@@ -644,7 +644,7 @@ export default defineComponent({
       return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     },
     // 切换喜欢状态
-    async _toogleLike(status: boolean) {
+    _toogleLike(status: boolean) {
       if (!this.player.currentTrack) {
         return;
       }
@@ -654,7 +654,7 @@ export default defineComponent({
         console.log("Local track, cannot like");
         return;
       }
-      await toogleLike(this.player.currentTrack.id, status);
+      toogleLike(this.player.currentTrack.id, status);
       if (this.login.status) {
         this.login.reloadLikelist();
       }

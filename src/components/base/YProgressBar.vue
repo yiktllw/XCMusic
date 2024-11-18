@@ -7,12 +7,13 @@
     @mousedown="onMouseDown"
   >
     <div class="progress-bar" ref="progress_bar">
+      <div v-if="!showTrack" class="progress-no-track" ref="progressDOM"></div>
       <div
-        :class="showTrack ? 'progress-fill' : 'progress-no-track'"
+        v-else
+        class="progress-fill"
         :style="{
-          clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)`,
+          clipPath: 'inset( 0 ' + (100 - progress * 100) + '% 0 0 round 20px )',
         }"
-        :ref="showTrack ? 'noSelect' : 'progressDOM'"
       ></div>
       <div
         class="progress-pointer"
@@ -41,6 +42,7 @@
 import { defineComponent } from "vue";
 import { formatDuration_mmss } from "@/utils/time";
 import { ref, watch } from "vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
   props: {
@@ -67,6 +69,7 @@ export default defineComponent({
       showInfo: false,
       recentMouseMove: false,
       recentMouseMoveTimer: null as NodeJS.Timeout | null,
+      aniFrame: null as number | null,
     };
   },
   emits: ["update:modelValue", "set-progress-end"],
@@ -86,6 +89,7 @@ export default defineComponent({
     const big_frame = ref<HTMLElement | null>(null);
     const progressDOM = ref<HTMLElement | null>(null);
     const noSelect = ref<HTMLElement | null>(null);
+    const store = useStore();
 
     return {
       progress,
@@ -93,6 +97,7 @@ export default defineComponent({
       big_frame,
       progressDOM,
       noSelect,
+      player: store.state.player,
     };
   },
   mounted() {
@@ -102,6 +107,7 @@ export default defineComponent({
         this.big_frame?.classList.add("ani");
       }, 500);
     });
+    this.startFluentProgress();
   },
   beforeUnmount() {
     window.removeEventListener("mousemove", this.updateProgressEvent);
@@ -113,21 +119,22 @@ export default defineComponent({
     this.noSelect = null;
 
     if (this.recentMouseMoveTimer) clearTimeout(this.recentMouseMoveTimer);
-  },
-  watch: {
-    progress(newValue, oldValue) {
-      // 在进度条归零(下一首)时，暂时移除动画
-      if (newValue === 0) {
-        this.big_frame?.classList.remove("ani");
-        this.$nextTick(() => {
-          setTimeout(() => {
-            this.big_frame?.classList.add("ani");
-          }, 500);
-        });
-      }
-    },
+
+    if (this.aniFrame) cancelAnimationFrame(this.aniFrame);
   },
   methods: {
+    startFluentProgress() {
+      const ani = () => {
+        if (!this.progressDOM) return;
+        const progress = Math.min(
+          this.player._audio.currentTime / this.player._audio.duration,
+          1
+        );
+        this.progressDOM.style.clipPath = `inset( 0 ${100 - progress * 100}% 0 0 round 20px)`;
+        this.aniFrame = requestAnimationFrame(ani);
+      };
+      ani();
+    },
     updateProgress(x: number) {
       let rect = null;
       rect = this.progress_bar?.getBoundingClientRect();
@@ -147,7 +154,6 @@ export default defineComponent({
       this.updateProgress(e.clientX);
     },
     onMouseDown(e: MouseEvent) {
-      this.big_frame?.classList.remove("ani");
       this.updateProgress(e.clientX);
       window.addEventListener("mousemove", this.updateProgressEvent);
       window.addEventListener("mouseup", this.endSetProgress);
@@ -159,11 +165,6 @@ export default defineComponent({
     endSetProgress() {
       window.removeEventListener("mousemove", this.updateProgressEvent);
       this.$emit("set-progress-end");
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.big_frame?.classList.add("ani");
-        }, 500);
-      });
     },
     formatDuration(progress: number) {
       let duration = Math.floor(progress * this.totalTime * 1000);
@@ -187,10 +188,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.ani {
-  --transition-track-time: 1s;
-}
-
 .progress-bigframe {
   display: flex;
   width: 100%;
@@ -226,7 +223,6 @@ export default defineComponent({
       background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
       border-radius: 10px;
       transition:
-        clip-path var(--transition-track-time) linear,
         height 0.3s ease,
         transform 0.3s ease;
     }
