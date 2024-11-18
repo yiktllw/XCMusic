@@ -96,7 +96,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="wiki-song">
+                <div class="wiki-song" v-if="creatives.length > 0">
                   <div class="wiki-song-title">
                     {{ songWiki?.uiElement.mainTitle.title }}
                   </div>
@@ -118,6 +118,17 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div
+                class="no-wiki"
+                v-if="
+                  creatives.length === 0 &&
+                  (firstListen?.creatives?.length ?? 0) === 0
+                "
+              >
+                <div class="txt">
+                  {{ $t("playui.noWiki") }}
                 </div>
               </div>
             </div>
@@ -626,6 +637,7 @@ export default defineComponent({
 
       .wiki {
         width: 43.21vw;
+        height: 100%;
 
         .wiki-content {
           width: 100%;
@@ -735,6 +747,17 @@ export default defineComponent({
                 }
               }
             }
+          }
+        }
+        .no-wiki {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+
+          .txt {
+            font-size: 20px;
+            font-weight: bold;
           }
         }
       }
