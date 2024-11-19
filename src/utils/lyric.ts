@@ -120,6 +120,8 @@ export class Lyrics {
       }
     }
 
+    // 第一句歌词的开始时间为0
+    lyrics[0].startTime = 0;
     return lyrics;
   }
   /**
@@ -135,6 +137,7 @@ export class Lyrics {
       {
         type: "lrc",
         startTime: 0,
+        // 如果没有歌词内容，则显示“暂无歌词”
         content: "暂无歌词",
       },
     ];
@@ -187,7 +190,8 @@ export class Lyrics {
     });
 
     if (lyrics.length > 1) lyrics.splice(0, 1);
-    if (lyrics.length === 1) lyrics[0].startTime = 0;
+    // 第一句歌词的开始时间为0
+    lyrics[0].startTime = 0;
     return lyrics;
   }
 }
