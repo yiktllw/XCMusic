@@ -60,6 +60,7 @@
         :min="1"
         :max="page.total"
         v-model="tempPage"
+        placeholder="1"
         @keydown.enter="goto()"
       />
       <span>/ &nbsp;{{ page.total }} &nbsp;</span>
@@ -164,7 +165,7 @@ export default defineComponent({
   }
 
   .currentPage {
-    color: rgb(200, 136, 166);
+    color: rgb(var(--highlight-color-rgb));
   }
 
   .arrow-img {
@@ -178,7 +179,7 @@ export default defineComponent({
   padding-bottom: 10px;
 
   input {
-    width: 16px;
+    width: 26px;
     background-color: transparent;
     border: none;
     text-decoration: underline;
