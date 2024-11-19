@@ -78,7 +78,6 @@
               <div class="search-history-items">
                 <div
                   v-for="str in searchHistory"
-                  :key="str"
                   class="item-container"
                 >
                   <span

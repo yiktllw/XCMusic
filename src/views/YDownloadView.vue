@@ -6,7 +6,6 @@
     <div class="downloading font-color-high" v-if="downloading.length > 0">
       <div
         v-for="item in downloading"
-        :key="`${item.track.id}--${downloadingKey}`"
         class="downloading-item"
       >
         <div class="downloading-item-info">

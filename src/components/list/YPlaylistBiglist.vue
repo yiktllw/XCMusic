@@ -3,7 +3,6 @@
     <div
       class="playlist-item"
       v-for="playlist in playlists"
-      :key="playlist.id"
       @click="openPlaylist(playlist.id)"
     >
       <div class="playlist-item-cover" :title="playlist.name">

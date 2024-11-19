@@ -370,11 +370,7 @@
                   v-model="selectedDevice"
                   @change="selectAudioOutputDevice(selectedDevice)"
                 >
-                  <option
-                    v-for="device in devices"
-                    :key="device.deviceId"
-                    :value="device.deviceId"
-                  >
+                  <option v-for="device in devices" :value="device.deviceId">
                     {{ device.label }}
                   </option>
                 </select>
@@ -400,7 +396,6 @@
                 >
                   <option
                     v-for="quality_item in qualities"
-                    :key="quality_item"
                     :value="quality_item"
                   >
                     {{ $t(`quality.${quality_item}`) }}
@@ -434,11 +429,7 @@
                     {{ $t("setting_view.download.clear") }}
                   </div>
                 </div>
-                <div
-                  class="path-item"
-                  v-for="(path, index) in localPaths"
-                  :key="path"
-                >
+                <div class="path-item" v-for="(path, index) in localPaths">
                   <input type="text" v-model="localPaths[index]" />
                   <div class="select-file" @click="setPath(index)">
                     {{ $t("setting_view.download.select") }}

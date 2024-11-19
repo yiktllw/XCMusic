@@ -11,7 +11,6 @@
           <div
             class="playlist"
             v-for="playlist in login.userPlaylists"
-            :key="playlist.id"
             @click="addToPlaylist(playlist.id)"
           >
             <img class="img" :src="playlist.img + '?param=100y100'" />

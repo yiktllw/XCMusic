@@ -153,7 +153,6 @@
           <div
             class="reels-other font-color-standard"
             v-for="artist in alReels[track.reelIndex]?.otherArtists"
-            :key="artist"
           >
             <span>
               {{ artist }}

@@ -51,7 +51,6 @@
       <div
         class="playlists-item"
         v-for="(playlist, index) in playlists"
-        :key="playlist.id"
         @click="openPlaylist(playlist.id)"
       >
         <!-- 5 歌单序号 -->

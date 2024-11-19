@@ -39,7 +39,6 @@
       <div
         class="comment-item"
         v-for="(comment, index) in cmt.comments"
-        :key="comment.commentId"
       >
         <div class="content">
           <div

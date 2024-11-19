@@ -11,6 +11,7 @@
  * 7. 监听退出事件
  * 8. 监听第二个实例
  * 9. 存储窗口的大小和位置
+ * 10. 禁用 GPU 加速
  *---------------------------------------------------------------*/
 
 "use strict";
@@ -25,7 +26,6 @@ import {
   screen,
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
 import { startNeteaseMusicApi } from "@/electron/services";
 import * as path from "path";
@@ -150,14 +150,6 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS3_DEVTOOLS);
-    } catch (e: any) {
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
   let requests = [createWindow(), startNeteaseMusicApi()];
   await Promise.all(requests).catch((err) => {
     console.error(err);

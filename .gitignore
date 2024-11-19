@@ -4,6 +4,7 @@ node_modules
 demo
 *.txc
 *.code-workspace
+/wasm-lrc/target
 
 # local env files
 .env.local

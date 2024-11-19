@@ -19,7 +19,6 @@
         <div class="track-artist">
           歌手:&nbsp;<span
             v-for="(artist, index) in track.ar"
-            :key="artist.id"
             :title="artist.name"
             @click="openArtist(artist.id)"
           >

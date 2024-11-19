@@ -9,7 +9,7 @@
           {{ $t("localsongs.addpaths") + " :" }}
         </div>
         <div class="path-list font-color-high">
-          <div class="path-item" v-for="path in localPaths" :key="path">
+          <div class="path-item" v-for="path in localPaths">
             {{ path }}
           </div>
         </div>

@@ -76,18 +76,18 @@
           </span>
           <div class="switch-user-playlist-icon-container">
             <!-- <transition name="rotate"> -->
-              <img
-                class="switch-user-playlist-icon g-icon"
-                v-if="showMyPlaylist"
-                src="@/assets/less.svg"
-              />
+            <img
+              class="switch-user-playlist-icon g-icon"
+              v-if="showMyPlaylist"
+              src="@/assets/less.svg"
+            />
             <!-- </transition> -->
             <!-- <transition name="rotate2"> -->
-              <img
-                class="switch-user-playlist-icon g-icon"
-                v-if="!showMyPlaylist"
-                src="@/assets/more.svg"
-              />
+            <img
+              class="switch-user-playlist-icon g-icon"
+              v-if="!showMyPlaylist"
+              src="@/assets/more.svg"
+            />
             <!-- </transition> -->
           </div>
         </button>
@@ -98,26 +98,25 @@
         />
       </div>
       <!-- <transition name="slide-fade"> -->
-        <div class="fade-container" v-if="showMyPlaylist">
-          <button
-            :tabindex="-1"
-            class="playlist-button font-color-main"
-            v-for="button in userPlaylists"
-            :key="button.id"
-            @click="handleButtonClick(button.id)"
-            :title="button.label"
-            :class="{ activeButton: activeButtonId === button.id }"
-            :disabled="activeButtonId === button.id"
-            @contextmenu="openCtxMenu($event, button.id, 'created-playlists')"
-          >
-            <img
-              :src="button.img + '?param=60y60'"
-              class="button-icon"
-              :id="button.img"
-            />
-            <div class="playlist-button-text">{{ button.label }}</div>
-          </button>
-        </div>
+      <div class="fade-container" v-if="showMyPlaylist">
+        <button
+          :tabindex="-1"
+          class="playlist-button font-color-main"
+          v-for="button in userPlaylists"
+          @click="handleButtonClick(button.id)"
+          :title="button.label"
+          :class="{ activeButton: activeButtonId === button.id }"
+          :disabled="activeButtonId === button.id"
+          @contextmenu="openCtxMenu($event, button.id, 'created-playlists')"
+        >
+          <img
+            :src="button.img + '?param=60y60'"
+            class="button-icon"
+            :id="button.img"
+          />
+          <div class="playlist-button-text">{{ button.label }}</div>
+        </button>
+      </div>
       <!-- </transition> -->
       <button
         :tabindex="-1"
@@ -130,44 +129,41 @@
         </span>
         <div class="switch-user-playlist-icon-container">
           <!-- <transition name="rotate"> -->
-            <img
-              class="switch-user-playlist-icon g-icon"
-              v-if="showMySubscribedPlaylist"
-              src="@/assets/less.svg"
-            />
+          <img
+            class="switch-user-playlist-icon g-icon"
+            v-if="showMySubscribedPlaylist"
+            src="@/assets/less.svg"
+          />
           <!-- </transition> -->
           <!-- <transition name="rotate2"> -->
-            <img
-              class="switch-user-playlist-icon g-icon"
-              v-if="!showMySubscribedPlaylist"
-              src="@/assets/more.svg"
-            />
+          <img
+            class="switch-user-playlist-icon g-icon"
+            v-if="!showMySubscribedPlaylist"
+            src="@/assets/more.svg"
+          />
           <!-- </transition> -->
         </div>
       </button>
       <!-- <transition name="slide-fade"> -->
-        <div class="fade-container" v-if="showMySubscribedPlaylist">
-          <button
-            :tabindex="-1"
-            class="playlist-button font-color-main"
-            v-for="button in userSubscribes"
-            :key="button.id"
-            @click="handleButtonClick(button.id)"
-            :title="button.label"
-            :class="{ activeButton: activeButtonId === button.id }"
-            :disabled="activeButtonId === button.id"
-            @contextmenu="
-              openCtxMenu($event, button.id, 'subscribed-playlists')
-            "
-          >
-            <img
-              :src="button.img + '?param=60y60'"
-              class="button-icon"
-              :id="button.img"
-            />
-            <div class="playlist-button-text">{{ button.label }}</div>
-          </button>
-        </div>
+      <div class="fade-container" v-if="showMySubscribedPlaylist">
+        <button
+          :tabindex="-1"
+          class="playlist-button font-color-main"
+          v-for="button in userSubscribes"
+          @click="handleButtonClick(button.id)"
+          :title="button.label"
+          :class="{ activeButton: activeButtonId === button.id }"
+          :disabled="activeButtonId === button.id"
+          @contextmenu="openCtxMenu($event, button.id, 'subscribed-playlists')"
+        >
+          <img
+            :src="button.img + '?param=60y60'"
+            class="button-icon"
+            :id="button.img"
+          />
+          <div class="playlist-button-text">{{ button.label }}</div>
+        </button>
+      </div>
       <!-- </transition> -->
     </YScroll>
   </div>

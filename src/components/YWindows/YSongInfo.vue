@@ -46,7 +46,6 @@
               <div
                 class="song-info-artist"
                 v-for="artist in track.ar"
-                :key="artist.id"
                 style="width: 100%"
               >
                 <div class="left">

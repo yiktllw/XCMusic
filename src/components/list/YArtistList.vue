@@ -4,7 +4,6 @@
     <div
       class="artists-item"
       v-for="artist in artists"
-      :key="type === 'artist' ? artist.id : artist.userId"
     >
       <!-- 歌手信息 -->
       <div

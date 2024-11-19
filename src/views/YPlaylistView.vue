@@ -72,10 +72,7 @@
             </div>
             <!-- 4 创建信息 -->
             <div class="album-artist font-color-high" v-else>
-              <span
-                v-for="(artist, index) in playlist.artists"
-                :key="artist.id"
-              >
+              <span v-for="(artist, index) in playlist.artists">
                 <!-- 5 歌手按钮 -->
                 <span
                   @click="handleArtistClick(artist.id)"
@@ -666,7 +663,7 @@ export default defineComponent({
         const trackArtist = track.ar
           .map((artist) => {
             if (!artist.name) {
-              return '';
+              return "";
             }
             artist.name.toLowerCase();
           })

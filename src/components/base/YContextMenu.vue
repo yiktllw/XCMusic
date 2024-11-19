@@ -20,7 +20,6 @@
         <div
           class="item font-color-main"
           v-for="item in items"
-          :key="item.label"
           @click="handleClick(item.role)"
         >
           <div class="item-content" v-if="item.display">
