@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/yiktllw/XCMusic/compare/v0.2.5...v0.2.6) (2024-11-19)
+
+
+### Features
+
+* 实现设置-常规-禁用GPU加速 ([0ecf9f3](https://github.com/yiktllw/XCMusic/commit/0ecf9f39595fd8a1dd674536dcbb49370bc6b9fc))
+* 使评论按钮更容易点击 ([1ac018a](https://github.com/yiktllw/XCMusic/commit/1ac018ad54607383f93a16312c591d82ebc7b041))
+* 为收藏的专辑、下载、本地、关于界面添加背景颜色 ([8ca609e](https://github.com/yiktllw/XCMusic/commit/8ca609e68679a2fcb757da538988b46a07e23b28))
+* 新增没有百科内容时的文字 ([db0fd30](https://github.com/yiktllw/XCMusic/commit/db0fd3038149637817df27860a2fe94843083133))
+* 新增没有歌词的文字 ([25b9966](https://github.com/yiktllw/XCMusic/commit/25b996681958736c6f3bc12f1d7d66b267c91d09))
+* 修改亮色时，背景颜色的变化程度 ([fe4878f](https://github.com/yiktllw/XCMusic/commit/fe4878fdb175816c83859133b43bb1a427fc8dc9))
+* 优化歌词样式，更改默认窗口大小 ([984ee74](https://github.com/yiktllw/XCMusic/commit/984ee74fb482dd7d0c25ab32057c25fa24ad582d))
+* 优化进度条动画 ([069fe93](https://github.com/yiktllw/XCMusic/commit/069fe936f39cf9ebd3b11b4d62a16e465060b338))
+* 在重新打开歌词时，自动设置缩放 ([a2e296e](https://github.com/yiktllw/XCMusic/commit/a2e296e0efe630287c2c42930d2eb3900c00d8aa))
+
+
+### Bug Fixes
+
+* 内存优化 ([d660cdd](https://github.com/yiktllw/XCMusic/commit/d660cdd766e76b505ff2bd6ef551c918a184891b))
+* 修复导入已下载歌曲信息后，重启程序失效的问题 ([fda1658](https://github.com/yiktllw/XCMusic/commit/fda1658bb4f8eeb730275d5dc5ff71804f43bf19))
+* 修复歌曲右键菜单图标错误 ([0efa8fe](https://github.com/yiktllw/XCMusic/commit/0efa8fe87c16846a5be4b5539e60468b2239d24c))
+* 修复评论界面中，跳转到另一个评论时不自动刷新数据的bug，加载评论时显示动画 ([b6fbf93](https://github.com/yiktllw/XCMusic/commit/b6fbf93f6701899f1173d5cd50b2eb68f971e1d5))
+* 修复搜索内容过长时，历史显示异常的but ([2ac0cad](https://github.com/yiktllw/XCMusic/commit/2ac0cad60654ee3ca4220ee574de7100bff23754))
+* 修复在没有设置缩放时，无法显示歌词的bug ([1f99589](https://github.com/yiktllw/XCMusic/commit/1f99589cefe00a4d076543d85a426ced088a983e))
+
 ### [0.2.5](https://github.com/yiktllw/XCMusic/compare/v0.2.4...v0.2.5) (2024-11-16)
 
 
