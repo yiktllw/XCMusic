@@ -133,9 +133,9 @@ export class Lyrics {
     // 存储解析结果的数组
     const lyrics: LrcItem[] = [
       {
-        type: 'lrc',
+        type: "lrc",
         startTime: 0,
-        content: "",
+        content: "暂无歌词",
       },
     ];
 
@@ -186,6 +186,8 @@ export class Lyrics {
       }
     });
 
+    if (lyrics.length > 1) lyrics.splice(0, 1);
+    if (lyrics.length === 1) lyrics[0].startTime = 0;
     return lyrics;
   }
 }
