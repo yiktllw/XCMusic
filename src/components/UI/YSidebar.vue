@@ -352,6 +352,7 @@ export default defineComponent({
       &:hover {
         background-color: rgba(var(--foreground-color-rgb), 0.1);
         cursor: pointer;
+        color: var(--font-color-main);
 
         .big-button-icon {
           opacity: 1;
