@@ -940,10 +940,7 @@ export default defineComponent({
       this.getDevices();
       this.initRectData();
     },
-  },
-  mounted() {
-    this.init();
-    this.scroll!.addScrollEndListener((event: Event) => {
+    handleScroll(event: Event) {
       if (event.type !== "scroll") return;
       let index = 0;
       const scrollTop = this.scroll!.$el.scrollTop;
@@ -963,7 +960,11 @@ export default defineComponent({
         index = this.rectData.length - 1;
       }
       this.header!.setPosition(this.switcher[index].position);
-    });
+    },
+  },
+  mounted() {
+    this.init();
+    this.scroll!.addScrollEndListener(this.handleScroll);
   },
   beforeUnmount() {
     this.globalMsg.subscriber.offAll("YSettingView");

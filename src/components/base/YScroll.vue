@@ -41,14 +41,8 @@ export default defineComponent({
         console.error(error);
       }
     },
-    handleScrollEnd(event: Event) {
-      this.disposable.forEach((callback) => callback(event));
-    },
     handleScroll(event: Event) {
-      // if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
-      // this.scrollTimeout = setTimeout(() => {
-      this.handleScrollEnd(event);
-      // }, 18);
+      this.disposable.forEach((callback) => callback(event));
     },
     addScrollEndListener(callback: (e: Event) => void) {
       this.disposable.push(callback);

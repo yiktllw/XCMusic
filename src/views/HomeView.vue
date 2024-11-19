@@ -131,6 +131,7 @@ import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
 import { ITrack } from "@/utils/tracks";
 import { IPlaylist } from "@/utils/login";
+import { getStorage } from "@/utils/render_storage";
 
 export default defineComponent({
   name: "App",
@@ -306,6 +307,18 @@ export default defineComponent({
     this.YSidebar_ref = null;
     this.YDisplayArea_ref = null;
     this.prevent_container = null;
+  },
+  watch: {
+    showPreventContainer(val) {
+      if (val) {
+        const useGpu = getStorage("setting.system.disableGpuAcceleration");
+        if (useGpu) {
+          this.$nextTick(() => {
+            this.prevent_container!.style.backdropFilter = "none";
+          });
+        }
+      }
+    },
   },
   methods: {
     async handleMessage(event: MessageEvent) {
