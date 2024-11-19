@@ -272,6 +272,7 @@ export namespace Lyrics {
       })
       .catch((error) => {
         console.error("Failed to get lyrics:", error);
+        return [];
       });
     return lrc;
   }
