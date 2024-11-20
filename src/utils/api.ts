@@ -12,7 +12,7 @@ import axios from "axios";
 import { Tracks } from "@/utils/tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "@/utils/render_storage";
-import { IPlaylist } from "@/utils/api.interface";
+import { IPlaylist, IUser } from "@/utils/api.interface";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
 
@@ -98,6 +98,9 @@ export async function toogleLike(id: number | string, status: boolean) {
   }
 }
 
+/**
+ * 歌单相关api
+ */
 export namespace Playlist {
   /**
    * 获取某个歌单的信息，这个接口的返回信息量很大，谨慎使用
@@ -189,6 +192,9 @@ export namespace Playlist {
   }
 }
 
+/**
+ * 歌曲相关api
+ */
 export namespace Song {
   /**
    * 获取歌曲的某个音质的链接
@@ -243,7 +249,7 @@ export namespace Search {
 }
 
 /**
- * 歌单相关API
+ * 歌词相关API
  */
 export namespace Lyrics {
   /**
@@ -275,5 +281,20 @@ export namespace Lyrics {
         return [];
       });
     return lrc;
+  }
+}
+
+/**
+ * 用户相关API
+ */
+export namespace User{
+  /**
+   * 音乐云盘信息
+   */
+  export async function getCloudInfo(params: IUser.CloudParams) : Promise<IUser.CloudResponse> {
+    let res = await useApi("/user/cloud", params).catch((error) => {
+      console.error("Failed to get cloud info:", error);
+    });
+    return res;
   }
 }
