@@ -173,7 +173,7 @@ import YTitlebar from "@/components/UI/YTitlebar.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
-import { useApi } from "@/utils/api";
+import { Song } from "@/utils/api";
 import { getColorFromImg, YColor } from "@/utils/color";
 import YSpecCanvas from "@/components/base/YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
@@ -400,14 +400,13 @@ export default defineComponent({
     },
     async getWiki() {
       if (!this.track.id || isLocal(this.track.id)) return;
-      await useApi("/song/wiki/summary", {
-        id: this.track.id,
-        cookie: this.login.cookie,
-      })
+      await Song.getWiki(this.track.id as number)
         .then((res) => {
           if (!res) return;
-          this.firstListen = res.data.blocks[0];
-          this.songWiki = res.data.blocks[1];
+          this.firstListen = res.data
+            .blocks[0] as unknown as SongWikiSummary.IFirstListen;
+          this.songWiki = res.data
+            .blocks[1] as unknown as SongWikiSummary.IWikiSummary;
         })
         .catch((error) => {
           console.error("Failed to get wiki:", error);
@@ -422,11 +421,9 @@ export default defineComponent({
     },
     async getSheets() {
       if (!this.track.id || isLocal(this.track.id)) return;
-      await useApi("/sheet/list", {
-        id: this.track.id,
-        cookie: this.login.cookie,
-      })
+      await Song.getSheets(this.track.id as number)
         .then((res) => {
+          if (!res) return;
           if (res.code !== 200) {
             console.log("id: ", this.track.id, "获取曲谱失败, ", res.code);
           }

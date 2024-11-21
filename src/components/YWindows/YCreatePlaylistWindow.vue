@@ -35,7 +35,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import YWindow from "@/components/base/YWindow.vue";
-import { useApi } from "@/utils/api";
+import { Playlist } from "@/utils/api";
 import { Message } from "@/dual/YMessageC";
 import { useStore } from "vuex";
 
@@ -75,12 +75,7 @@ export default defineComponent({
         Message.post("error", this.$t("create_playlist.no_name"));
         return;
       }
-      await useApi("/playlist/create", {
-        name: this.inputValue,
-        privacy: this.isPrivate ? 10 : 0,
-        cookie: this.login.cookie,
-        timestamp: new Date().getTime(),
-      })
+      await Playlist.create(this.inputValue, this.isPrivate ? 10 : 0)
         .then((res) => {
           if (res.code !== 200) {
             Message.post("error", this.$t("create_playlist.error"));

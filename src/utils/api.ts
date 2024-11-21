@@ -10,9 +10,16 @@
 
 import axios from "axios";
 import { Tracks } from "@/utils/tracks";
-import { ISearchSuggestion } from "@/dual/YTitlebar";
+import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "@/utils/render_storage";
-import { ILike, IPlaylist, IUser } from "@/utils/api.interface";
+import {
+  IComment,
+  ILike,
+  ILogin,
+  IPlaylist,
+  ISong,
+  IUser,
+} from "@/utils/api.interface";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
 
@@ -199,6 +206,50 @@ export namespace Playlist {
       cookie: cookie,
     });
   }
+
+  /**
+   * 添加歌曲到歌单
+   */
+  export async function addTracks(
+    playlistId: number,
+    ids: number[]
+  ): Promise<IPlaylist.AddTracksResponse> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      throw new Error("No login cookie found");
+    }
+
+    const res = await useApi("/playlist/tracks", {
+      op: "add",
+      pid: playlistId,
+      tracks: ids.join(","),
+      cookie: cookie,
+    });
+
+    return res;
+  }
+
+  /**
+   * 创建歌单
+   */
+  export async function create(
+    name: string,
+    privacy: 10 | 0
+  ): Promise<IPlaylist.CreateResponse> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      return { code: 301 };
+    }
+
+    const res = await useApi("/playlist/create", {
+      name: name,
+      privacy: privacy,
+      cookie: cookie,
+      timestamp: new Date().getTime(),
+    });
+
+    return res;
+  }
 }
 
 /**
@@ -220,6 +271,42 @@ export namespace Song {
         return "";
       });
     return url;
+  }
+
+  /** 获取歌曲百科 */
+  export async function getWiki(
+    id: number
+  ): Promise<null | ISong.WikiResponse> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("Failed to get song wiki: No login cookie found");
+      return null;
+    }
+
+    const res = await useApi("/song/wiki/summary", {
+      id: id,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error(`Failed to get song wiki of ${id}`, error);
+    });
+    return res;
+  }
+
+  /** 获取歌曲曲谱列表 */
+  export async function getSheets(
+    id: number
+  ): Promise<null | ISong.SheetResponse> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("Failed to get song sheets: No login cookie found");
+      return null;
+    }
+
+    const res = await useApi("/sheet/list", {
+      id: id,
+      cookie: cookie,
+    });
+    return res;
   }
 }
 
@@ -254,6 +341,14 @@ export namespace Search {
       return [];
     }
     return res.result.allMatch ?? [];
+  }
+  /** 获取热搜榜 */
+  export async function getHotSearch(): Promise<IHotSearch[]> {
+    const res = await useApi("/search/hot/detail").catch((error) => {
+      console.error("Failed to get hot searches:", error);
+      return [];
+    });
+    return res?.result?.hots ?? [];
   }
 }
 
@@ -307,5 +402,98 @@ export namespace User {
       console.error("Failed to get cloud info:", error);
     });
     return res;
+  }
+  /**
+   * 获取用户信息
+   */
+  export async function detail(
+    uid: number
+  ): Promise<IUser.DetailResponse | null> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+
+    const res = await useApi("/user/detail", {
+      uid: uid,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error("Failed to get user detail:", error);
+      return null;
+    });
+
+    return res;
+  }
+}
+
+/**
+ * 评论相关API
+ */
+export namespace Comment {
+  /** 歌曲评论相关api */
+  export namespace Song {
+    /** 获取评论信息，通常用法为获取某个歌曲的评论数量 */
+    export async function info(
+      id: number,
+      limit = 0
+    ): Promise<IComment.SongInfoResponse | null> {
+      if (!id) {
+        console.error("No valid id: ", id);
+        return null;
+      }
+      let res = await useApi("/comment/music", {
+        id: id,
+        limit: limit,
+      }).catch((error) => {
+        console.error(`Failed to get song comment of ${id}`, error);
+        return null;
+      });
+      return res;
+    }
+  }
+}
+
+/**
+ * 登录相关API
+ */
+export namespace Login {
+  /** 获取二维码key */
+  export async function getQrKey(): Promise<string | null> {
+    const res = await useApi("/login/qr/key", {
+      timestamp: new Date().getTime(),
+    }).catch((error) => {
+      console.error("Failed to get qr key:", error);
+      return null;
+    });
+    if (res?.data?.unikey) return res.data.unikey;
+    return null;
+  }
+  /** 从二维码key生成图片,返回base64图片 */
+  export async function createQrImg(key: string): Promise<string | null> {
+    const res = await useApi("/login/qr/create", {
+      key: key,
+      qrimg: true,
+      timestamp: new Date().getTime(),
+    }).catch((error) => {
+      console.error("Failed to create qr image:", error);
+      return null;
+    });
+    if (res?.data?.qrimg) return res.data.qrimg;
+    return null;
+  }
+  /** 检查二维码状态 */
+  export async function checkQrStatus(
+    key: string
+  ): Promise<ILogin.CheckQrResponse | null> {
+    const res = await useApi("/login/qr/check", {
+      key: key,
+      timestamp: new Date().getTime(),
+    }).catch((error) => {
+      console.error("Failed to check qr status:", error);
+      return null;
+    });
+    if (res) return res;
+    return null;
   }
 }

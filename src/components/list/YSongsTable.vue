@@ -402,7 +402,7 @@ import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { Message } from "@/dual/YMessageC";
 import { ref, watch, defineComponent, toRaw } from "vue";
-import { useApi } from "@/utils/api";
+import { Song } from "@/utils/api";
 import upArrow from "@/assets/up-arrow.svg";
 import downArrow from "@/assets/down-arrow.svg";
 import updownArrow from "@/assets/updown-arrow.svg";
@@ -1058,16 +1058,9 @@ export default defineComponent({
     },
     async downloadSong(track: ITrack) {
       if (!track.id || isLocal(track.id)) return;
-      const url = await useApi("/song/url/v1", {
-        id: track.id,
-        level: this.setting.download.quality,
-        cookie: this.login.cookie ?? undefined,
-      })
-        .then((res) => res.data[0].url)
-        .catch((err) => {
-          console.error(err);
-          return "";
-        });
+
+      const url = await Song.getUrl(track.id, this.setting.download.quality);
+
       this.download.add(url, track, this.setting.download.path);
     },
     deletaFromPlaylist(id: number | string) {

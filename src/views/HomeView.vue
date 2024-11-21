@@ -339,7 +339,7 @@ export default defineComponent({
         if (data.from && data.from !== -1) {
           // 是否来自于用户的歌单，如果是，则显示删除选项
           this.menu[this.menu.length - 1].display = true;
-          console.log("from:", data.from, this.menu);
+          // console.log("from:", data.from, this.menu);
         } else {
           // 否则不显示删除选项
           this.menu[this.menu.length - 1].display = false;
@@ -546,7 +546,7 @@ export default defineComponent({
             needTranslate: false,
             callback: () => {
               useApi("/playlist/delete", {
-                id: arg.target,
+                id: arg.target.id,
                 cookie: this.login.cookie,
               })
                 .then((res) => {

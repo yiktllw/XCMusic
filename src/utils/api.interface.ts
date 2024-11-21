@@ -1,8 +1,9 @@
 /*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
- * api.interface.ts 是 api.ts 的接口定义 
+ * api.interface.ts 是 api.ts 的接口定义
  *---------------------------------------------------------------*/
 
+import { SheetList } from "@/dual/YPlayUI";
 import { ITrack } from "@/utils/tracks";
 
 namespace Public {
@@ -69,7 +70,7 @@ namespace Public {
   }
 }
 
-export namespace ILike{
+export namespace ILike {
   export interface Response {
     /** 未知作用 */
     songs: Array<any>;
@@ -123,6 +124,22 @@ export namespace IPlaylist {
     };
     /** 歌曲权限信息，暂未使用 */
     privileges: Array<Public.IPrivilege>;
+  }
+  
+  export interface AddTracksResponse {
+    /** 200为成功 */
+    status: number;
+    body: {
+      /** 未知参数 */
+      code: number;
+      /** 信息，若成功则为空字符串 */
+      message: string;
+    }
+  }
+  
+  export interface CreateResponse {
+    /** 200为成功 */
+    code: number;
   }
 }
 
@@ -287,5 +304,281 @@ export namespace IUser {
     hasMore: boolean;
     /** 200为成功 */
     code: number;
+  }
+  /** 用户详情的返回值 */
+  export interface DetailResponse {
+    /** 用户信息 */
+    profile: {
+      follows: number;
+      followeds: number;
+      level: number;
+    };
+    /** 用户等级 */
+    level: number;
+  }
+}
+
+export namespace IComment {
+  export interface SongInfoResponse {
+    /** 总评论数量 */
+    total: number;
+    /** 200为成功 */
+    code: number;
+    /** 未知参数 */
+    isMusician: boolean;
+    /** 未知参数 */
+    cnum: number;
+    /** 未知参数 */
+    userId: number;
+    /** 未知参数 */
+    topComments: Array<any>;
+    /** 是否有更多热评 */
+    moreHot: boolean;
+    /** 热评，暂未使用 */
+    hotComments: Array<any>;
+    /** 未知参数 */
+    commentBanner: any;
+    /** 评论 */
+    comments: Array<any>;
+    /** 是否有更多评论 */
+    more: boolean;
+  }
+}
+
+export namespace ISong {
+  interface IBaseUIElement {
+    /** 主标题 */
+    mainTitle: {
+      /** 标题 */
+      title: string;
+      /** 未知参数 */
+      titleImgId: any;
+      /** 未知参数 */
+      titleImgUrl: any;
+      /** 未知参数 */
+      action: any;
+    };
+    /** 副标题 */
+    subTitles: Array<{
+      /** 副标题 */
+      title: string;
+      /** 未知参数 */
+      titleImgId: any;
+      /** 未知参数 */
+      titleImgUrl: any;
+      /** 未知参数 */
+      action: any;
+    }> | null;
+    images: Array<{
+      /** 未知参数 */
+      tag: any;
+      /** 图片标题 */
+      title: string | null;
+      /** 未知参数 */
+      superscript: any;
+      /** 未知参数 */
+      imageId: number;
+      /** 图片URL */
+      imageUrl: string;
+      /** 未知参数 */
+      imageWithoutTextUrl: any;
+      /** 未知参数 */
+      md5: any;
+      /** 未知参数 */
+      width: number;
+      /** 未知参数 */
+      height: number;
+      /** 未知参数 */
+      action: any;
+    }> | null;
+    /** 未知参数 */
+    labels: any;
+    /** 未知参数 */
+    textLinks: null | Array<{
+      /** 未知参数 */
+      tag: null;
+      /** 未知参数 */
+      text: string;
+      /** 未知参数 */
+      url: string;
+    }>;
+    /** 未知参数 */
+    descriptions: any;
+    /** 未知参数 */
+    icons: any;
+    /** 未知参数 */
+    buttons: any;
+    /** 未知参数 */
+    videos: any;
+    /** 未知参数 */
+    superscript: any;
+    /** 未知参数 */
+    type: any;
+    /** 未知参数 */
+    coverTagV0: any;
+    /** 未知参数 */
+    colorList: any;
+  }
+  export interface WikiResponse {
+    /** 200为成功 */
+    code: number;
+    /** 百科数据 */
+    data: {
+      /** 未知参数 */
+      cursor: string;
+      /** 区块 */
+      blocks: Array<{
+        /** ui元素 */
+        uiElement: IBaseUIElement;
+        /**
+         *
+         */
+        creatives: Array<{
+          /** 未知参数 */
+          id: any;
+          /** 未知参数 */
+          blockId: any;
+          /** 未知参数 */
+          creativeId: any;
+          /** 未知参数 */
+          creativeType: string;
+          /** 未知参数 */
+          position: any;
+          /** 未知参数 */
+          action: any;
+          /**
+           *
+           */
+          uiElement: null | IBaseUIElement;
+          /** 未知参数 */
+          adInfo: any;
+          /** 未知参数 */
+          code: any;
+          /** 未知参数 */
+          resources: Array<{
+            /** 未知参数 */
+            resourceType: any;
+            /** 未知参数 */
+            resourceId: any;
+            /** 未知参数 */
+            resourceUrl: any;
+            /** 未知参数 */
+            resourceExtInfo: any;
+            /**
+             *
+             */
+            resourceExt: Array<{
+              /** 未知参数 */
+              specialType: number;
+              /** 未知参数 */
+              musicMemoryTextType?: number;
+              /** 未知参数 */
+              musicFirstListenDto?: {
+                /** 第一次听的时间，是UNIX时间戳 */
+                timestamp: number;
+                /** 第一次听的季节，如“初秋” */
+                season: string;
+                /** 第一次听的时间段，如“深夜” */
+                period: string;
+                /** 第一次听的日期，如“2025.03.21 03:21” */
+                date: string;
+                /** 未知参数 */
+                subTitle: any;
+                /** 未知参数 */
+                desc: any;
+              };
+              musicTotalPlayDto?: {
+                /** 总播放次数 */
+                playCount: number;
+                /** 总播放时长，分钟 */
+                duration: number;
+                /** 说明性文字 */
+                text: string;
+                /** 未知参数 */
+                subTitle: any;
+                /** 未知参数 */
+                desc: any;
+              };
+            }> | null;
+            /** 未知参数 */
+            resourcePolicyId: any;
+            /** 未知参数 */
+            action: any;
+            /** ui元素 */
+            uiElement: IBaseUIElement;
+            /** 未知参数 */
+            valid: boolean;
+            /** 未知参数 */
+            alg: any;
+            /** 未知参数 */
+            scm: any;
+            /** 未知参数 */
+            visibleStatus: any;
+          }>;
+        }>;
+        /** 未知参数 */
+        showType: string;
+        /** 未知参数 */
+        alg: string;
+        /** 未知参数 */
+        scm: string;
+        /** 未知参数 */
+        id: string;
+        /** 未知参数 */
+        adInfo: any;
+        /** 未知参数 */
+        extInfo: any;
+        /** 未知参数 */
+        position: number;
+        /** 未知参数 */
+        md5: string;
+        /** 未知参数 */
+        channel: string;
+        /** 未知参数 */
+        code: string;
+        /** 未知参数 */
+        canRefresh: boolean;
+        /** 未知参数 */
+        visibleStatus: any;
+        /** 未知参数 */
+        blockConfig: any;
+        /** 未知参数 */
+        blockCursor: string;
+        /** 是否有更多 */
+        hasMore: boolean;
+        /** 未知参数 */
+        blockParam: any;
+        /** 未知参数 */
+        crossPlatformConfig: any;
+        /** 未知参数 */
+        hideTitle: boolean;
+        /** 未知参数 */
+        opRcmd: number;
+      }>;
+      /** 是否有更多 */
+      hasMore: boolean;
+      /** 未知参数 */
+      pageConfig: any;
+      /** 未知参数 */
+      pageCodeContext: any;
+    };
+    /** 未知参数 */
+    message: string;
+  }
+
+  export interface SheetResponse {
+    /** 200为成功 */
+    code: number;
+    data: {
+      musicSheetSimpleInfoVOS?: SheetList.ISheet[];
+    };
+  }
+}
+
+export namespace ILogin {
+  export interface CheckQrResponse {
+    /** 803为登录成功 */
+    code: number;
+    cookie: string;
   }
 }

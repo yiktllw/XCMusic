@@ -29,7 +29,7 @@ import YWindow from "@/components/base/YWindow.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import { defineComponent, ref } from "vue";
 import { Message } from "@/dual/YMessageC";
-import { useApi } from "@/utils/api";
+import { Playlist } from "@/utils/api";
 import { useStore } from "vuex";
 import { IPlaylist } from "@/utils/login";
 
@@ -64,12 +64,7 @@ export default defineComponent({
   },
   methods: {
     async addToPlaylist(playlistId: number | string) {
-      await useApi("/playlist/tracks", {
-        op: "add",
-        pid: playlistId,
-        tracks: this.ids.join(","),
-        cookie: this.login.cookie,
-      })
+      await Playlist.addTracks(playlistId as number, this.ids)
         .then((res) => {
           if (res.status !== 200) {
             Message.post("error", this.$t("song_added_failed"));

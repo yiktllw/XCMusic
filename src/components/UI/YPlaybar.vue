@@ -478,7 +478,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { Like, useApi } from "@/utils/api";
+import { Comment, Like, Song } from "@/utils/api";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import YPanel from "@/components/base/YPanel.vue";
@@ -722,28 +722,24 @@ export default defineComponent({
       if (!this.currentTrack?.id || isLocal(this.currentTrack?.id)) {
         return;
       }
-      await useApi(`/comment/music`, {
-        id: this.currentTrack?.id,
-        limit: 0,
-      })
-        .then((res) => {
-          let count = res.total;
-          if (count < 1000) {
-            this.currentTrackComment = `${count}`;
-          } else if (count >= 1000 && count < 10000) {
-            let num = Math.floor(count / 1000);
-            this.currentTrackComment = `${num}k+`;
-          } else if (count >= 10000 && count < 100000) {
-            let num = Math.floor(count / 10000);
-            this.currentTrackComment = `${num}w+`;
-          } else if (count > 100000) {
-            let num = Math.floor(count / 100000);
-            this.currentTrackComment = `${num}0w+`;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await Comment.Song.info(this.currentTrack?.id).then((res) => {
+        if (res?.code !== 200) return;
+
+        let count = res.total;
+
+        if (count < 1000) {
+          this.currentTrackComment = `${count}`;
+        } else if (count >= 1000 && count < 10000) {
+          let num = Math.floor(count / 1000);
+          this.currentTrackComment = `${num}k+`;
+        } else if (count >= 10000 && count < 100000) {
+          let num = Math.floor(count / 10000);
+          this.currentTrackComment = `${num}w+`;
+        } else if (count > 100000) {
+          let num = Math.floor(count / 100000);
+          this.currentTrackComment = `${num}0w+`;
+        }
+      });
     },
     openInfoPanel() {
       window.postMessage({
@@ -776,16 +772,10 @@ export default defineComponent({
       if (!this.currentTrack || isLocal(this.currentTrack.id)) {
         return;
       }
-      const url = await useApi("/song/url/v1", {
-        id: this.currentTrack.id,
-        level: this.setting.download.quality,
-        cookie: this.login.cookie ?? undefined,
-      })
-        .then((res) => res.data[0].url)
-        .catch((err) => {
-          console.error("Failed to get download URL:", err);
-          return "";
-        });
+      const url = await Song.getUrl(
+        this.currentTrack.id,
+        this.setting.download.quality
+      );
       this.download.add(
         url,
         this.player.currentTrack,

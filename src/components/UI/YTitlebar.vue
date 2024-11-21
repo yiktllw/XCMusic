@@ -76,10 +76,7 @@
                 {{ $t("titlebar.searchHistory") }}
               </div>
               <div class="search-history-items">
-                <div
-                  v-for="str in searchHistory"
-                  class="item-container"
-                >
+                <div v-for="str in searchHistory" class="item-container">
                   <span
                     class="search-history-item font-color-standard"
                     @click="search(str)"
@@ -256,7 +253,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { Search, useApi } from "@/utils/api";
+import { Login, Search, User } from "@/utils/api";
 import { useStore } from "vuex";
 import YPanel from "@/components/base/YPanel.vue";
 import YScroll from "@/components/base/YScroll.vue";
@@ -364,20 +361,12 @@ export default defineComponent({
         console.log("open userInfo");
       } else {
         // 如果未登录，则显示二维码登录
-        let qrKey = await useApi("/login/qr/key", {
-          timestamp: new Date().getTime(),
-        }).catch((error) => {
-          console.error("Failed to get QR key:", error);
-        });
-        this.qrKey = qrKey.data.unikey;
-        let qrCode = await useApi("/login/qr/create", {
-          key: this.qrKey,
-          qrimg: true,
-          timestamp: new Date().getTime(),
-        }).catch((error) => {
-          console.error("Failed to get QR code:", error);
-        });
-        this.base64Image = qrCode.data.qrimg;
+        let qrKey = await Login.getQrKey();
+        if (!qrKey) return;
+        this.qrKey = qrKey;
+        let qrCoke = await Login.createQrImg(this.qrKey);
+        if (!qrCoke) return;
+        this.base64Image = qrCoke;
         this.globalMsg.post("open-login-window", this.base64Image);
         this.toggleDropdown(); // 切换下拉菜单显示
         this.pollQRCodeStatus(); // 轮询二维码状态
@@ -386,13 +375,8 @@ export default defineComponent({
     // 轮询二维码状态
     async pollQRCodeStatus() {
       QRInterval = setInterval(async () => {
-        let checkResponse = await useApi("/login/qr/check", {
-          key: this.qrKey,
-          timestamp: new Date().getTime(),
-        }).catch((error) => {
-          console.error("Failed to check QR code:", error);
-        });
-        if (checkResponse.code === 803) {
+        let checkResponse = await Login.checkQrStatus(this.qrKey);
+        if (checkResponse && checkResponse.code === 803) {
           // 关闭扫码窗口
           this.showDropdown = false;
           this.globalMsg.post("close-login-window");
@@ -507,12 +491,10 @@ export default defineComponent({
         if (!this.login.userId) {
           await this.login.updateInfo();
         }
-        let userProfile = await useApi("/user/detail", {
-          uid: this.login.userId,
-          cookie: this.login.cookie,
-        }).catch((error) => {
-          console.error("Failed to get user profile:", error);
-        });
+        let userProfile = await User.detail(
+          this.login.userId as unknown as number
+        );
+        if (!userProfile) return;
         this.userProfile = userProfile.profile;
         this.userProfile.level = userProfile.level;
       }
@@ -526,10 +508,7 @@ export default defineComponent({
     },
     async getHotSearches() {
       // 获取热搜榜
-      let result = await useApi("/search/hot/detail", {}).catch((error) => {
-        console.error("Failed to get hot searches:", error);
-      });
-      this.hotSearches = result.result.hots;
+      this.hotSearches = await Search.getHotSearch();
     },
     openTestPage() {
       this.$router.push({ path: "/test" });
@@ -824,7 +803,7 @@ export default defineComponent({
               }
 
               .delete-button {
-                background-color: rgba(var(--foreground-color-rgb), 0.30);
+                background-color: rgba(var(--foreground-color-rgb), 0.3);
               }
             }
           }
