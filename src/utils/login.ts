@@ -7,8 +7,8 @@
  *---------------------------------------------------------------*/
 
 import { Subscriber } from "@/utils/subscribe";
-import { useApi } from "@/utils/api";
-import { ref, reactive, markRaw, Ref, Raw, Reactive } from "vue";
+import { useApi, Login as LoginApi, User } from "@/utils/api";
+import { reactive, markRaw, Raw, Reactive } from "vue";
 import { UserPlaylist } from "@/dual/login";
 import { getStorage, setStorage } from "@/utils/render_storage";
 
@@ -35,7 +35,7 @@ export class Login {
   /** 用户名 */
   _userName: string = getStorage("login_user_name") ?? "";
   /** 用户喜欢的音乐 */
-  _likelist: Raw<number[]> = markRaw([]);
+  _likelist: number[] = [];
   /** 用户头像 */
   _avatar: string = getStorage("login_avatar") ?? "";
   /** 用户创建的歌单 */
@@ -44,7 +44,7 @@ export class Login {
   _userSubscribes: Reactive<IPlaylist[]> = reactive([]);
   /** 订阅事件 */
   subscriber: Subscriber = markRaw(
-    new Subscriber(["userPlaylists", "status", "userId", "userName", "avatar"]),
+    new Subscriber(["userPlaylists", "status", "userId", "userName", "avatar"])
   );
   /** 每隔一段时间，自动更新用户的歌单 */
   interval: NodeJS.Timeout;
@@ -68,14 +68,13 @@ export class Login {
   }
   /** 更新信息 */
   async updateInfo() {
-    // console.log('updateInfo');
-    await useApi("/user/account", {
-      cookie: this._cookie,
-    })
+    await User.account()
       .then((res) => {
-        this.userId = res.profile.userId;
-        this.userName = res.profile.nickname;
-        this.avatar = res.profile.avatarUrl + "?param=200y200";
+        if (!res) return;
+
+        this.userId = res.userId.toString();
+        this.userName = res.nickname;
+        this.avatar = res.avatarUrl + "?param=200y200";
       })
       .catch((error) => {
         console.log(error);
@@ -84,13 +83,7 @@ export class Login {
     await this.refreshUserPlaylists();
   }
   async logout() {
-    if (this._cookie) {
-      await useApi("/logout", {
-        cookie: this._cookie,
-      }).catch((error) => {
-        console.error("Failed to logout:", error);
-      });
-    }
+    await LoginApi.out();
     this.clear();
     window.location.reload();
   }
@@ -140,20 +133,16 @@ export class Login {
   get likelist() {
     return this._likelist;
   }
+  private set likelist(value) {
+    if (Array.isArray(value)) this._likelist = value;
+  }
   /** 重新加载用户喜欢的音乐 */
   async reloadLikelist() {
-    if (!this._cookie) return;
     if (!this._userId) await this.updateInfo();
-    useApi("/likelist", {
-      cookie: this._cookie,
-      uid: this._userId,
-    })
-      .then((res) => {
-        this._likelist = markRaw(res.ids);
-      })
-      .catch((error) => {
-        console.error("Failed to get likelist:", error);
-      });
+    this.likelist = await User.getLikelist(
+      this._userId as unknown as number,
+      true
+    );
   }
   get status() {
     return this._status;

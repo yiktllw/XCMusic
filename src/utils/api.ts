@@ -82,6 +82,7 @@ export namespace Like {
       id: id,
       like: true,
       cookie: cookie,
+      timestamp: new Date().getTime(),
     }).catch((error) => {
       console.error(`error when set like of ${id}`, error);
       return null;
@@ -99,6 +100,7 @@ export namespace Like {
       id: id,
       like: false,
       cookie: cookie,
+      timestamp: new Date().getTime(),
     }).catch((error) => {
       console.error(`error when set like of ${id}`, error);
       return null;
@@ -250,6 +252,26 @@ export namespace Playlist {
 
     return res;
   }
+
+  /**
+   * 更新歌单播放量
+   */
+  export async function updatePlaycount(id: number): Promise<Object | null> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+
+    const res = await useApi("/playlist/update/playcount", {
+      id: id,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error("Failed to update playlist playcount:", error);
+      return null;
+    });
+    return res;
+  }
 }
 
 /**
@@ -271,6 +293,40 @@ export namespace Song {
         return "";
       });
     return url;
+  }
+
+  /**
+   * 获取音质信息
+   */
+  export async function getQuality(
+    id: number,
+    quality: string
+  ): Promise<ISong.QualityResponse> {
+    const res = await useApi("/song/url/v1", {
+      id: id,
+      level: quality,
+      cookie: getStorage("login_cookie") ?? undefined,
+    });
+    return {
+      gain: res.data[0].gain,
+      peak: res.data[0].peak,
+      size: res.data[0].size,
+    };
+  }
+
+  /**
+   * 获取音质的完整信息
+   */
+  export async function getUrlObj(
+    id: number,
+    level: string
+  ): Promise<ISong.UrlObjResponse> {
+    const res = await useApi("/song/url/v1", {
+      id: id,
+      level: level,
+      cookie: getStorage("login_cookie") ?? undefined,
+    });
+    return res.data[0];
   }
 
   /** 获取歌曲百科 */
@@ -425,6 +481,54 @@ export namespace User {
 
     return res;
   }
+
+  /**
+   * 用户账户信息
+   */
+  export async function account(): Promise<IUser.AccountResponse | null> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+
+    const res = await useApi("/user/account", {
+      cookie: cookie,
+    });
+    return res.profile;
+  }
+
+  /**
+   * 获取喜欢的音乐
+   */
+  export async function getLikelist(
+    uid: number,
+    reload = false
+  ): Promise<number[]> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return [];
+    }
+
+    const params: {
+      uid: number;
+      cookie: string;
+      timestamp?: number;
+    } = {
+      uid: uid,
+      cookie: cookie,
+    };
+    if (reload) params["timestamp"] = new Date().getTime();
+
+    const res = await useApi("/likelist", params).catch((error) => {
+      console.error("Failed to get likelist:", error);
+      return {
+        ids: [],
+      };
+    });
+    return res.ids;
+  }
 }
 
 /**
@@ -495,5 +599,22 @@ export namespace Login {
     });
     if (res) return res;
     return null;
+  }
+
+  /**
+   * 登出
+   */
+  export async function out() {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return;
+    }
+
+    await useApi("/logout", {
+      cookie: cookie,
+    }).catch((error) => {
+      console.error("Failed to logout:", error);
+    });
   }
 }

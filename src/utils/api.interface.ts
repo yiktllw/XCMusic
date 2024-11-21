@@ -316,6 +316,16 @@ export namespace IUser {
     /** 用户等级 */
     level: number;
   }
+  
+  /** 用户账户的返回值 */
+  export interface AccountResponse {
+    /** 用户ID */
+    userId: number;
+    /** 用户昵称 */
+    nickname: string;
+    /** 用户头像 */
+    avatarUrl: string;
+  }
 }
 
 export namespace IComment {
@@ -346,6 +356,16 @@ export namespace IComment {
 }
 
 export namespace ISong {
+  export interface QualityResponse {
+    size: number;
+    gain: number;
+    peak: number;
+  }
+  
+  export interface UrlObjResponse extends QualityResponse {
+    url: string;
+  }
+
   interface IBaseUIElement {
     /** 主标题 */
     mainTitle: {

@@ -12,7 +12,7 @@ type QualityInfo = {
 };
 
 import { markRaw } from "vue";
-import { Lyrics, useApi } from "@/utils/api";
+import { Lyrics, Playlist, Song } from "@/utils/api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { Message } from "@/dual/YMessageC";
@@ -327,6 +327,7 @@ export class Player {
   async reloadUrl() {
     if (!this.currentTrack || isLocal(this.currentTrack.id)) return;
     let result = await this.getUrl(this.currentTrack.id);
+    if (!result) return;
     let url = result.url;
     this._audio.src = url;
     this._audio.currentTime = this._currentTime as number;
@@ -398,7 +399,7 @@ export class Player {
         result = { url: fileUrl };
       }
 
-      if (nourl) return;
+      if (nourl || !result) return;
       let url = result.url;
       this._audio.src = url;
       this._audio.onended = () => this.next();
@@ -535,27 +536,10 @@ export class Player {
   ): Promise<QualityInfo | null> {
     if (isLocal(id)) return null;
     let response = null;
-    if (getStorage("login_cookie")) {
-      response = await useApi("/song/url/v1", {
-        id: id,
-        level: quality,
-        cookie: getStorage("login_cookie"),
-      }).catch((error) => {
-        console.error(error);
-      });
-    } else {
-      response = await useApi("/song/url/v1", {
-        id: id,
-        level: quality,
-      }).catch((error) => {
-        console.error(error);
-      });
-    }
+    response = await Song.getQuality(id as number, quality);
     let result = {
       name: quality,
-      size: response.data[0].size,
-      gain: response.data[0].gain,
-      peak: response.data[0].peak,
+      ...response,
     };
     return result;
   }
@@ -826,21 +810,14 @@ export class Player {
    */
   async updatePlaycount() {
     if (!getStorage("login_cookie")) return;
-    await useApi("/playlist/update/playcount", {
-      id: this._playlistId,
-      cookie: getStorage("login_cookie"),
-    })
-      .then((res) => {
-        console.log(
-          "update playlist playcount: ",
-          this._playlistId,
-          "response",
-          JSON.stringify(res, null, 4)
-        );
-      })
-      .catch((err) => {
-        console.log("update playlist playcount error: ", err);
-      });
+    await Playlist.updatePlaycount(this._playlistId as number).then((res) => {
+      console.log(
+        "update playlist playcount: ",
+        this._playlistId,
+        "response",
+        JSON.stringify(res, null, 4)
+      );
+    });
   }
   /**
    * 获取当前歌曲的位置
@@ -1054,23 +1031,7 @@ export class Player {
         if (song) store.state.download.delete(song.id);
       }
     }
-    if (getStorage("login_cookie")) {
-      response = await useApi("/song/url/v1", {
-        id: id,
-        level: this.quality,
-        cookie: getStorage("login_cookie"),
-      }).catch((error) => {
-        console.error(error);
-      });
-    } else {
-      response = await useApi("/song/url/v1", {
-        id: id,
-        level: this.quality,
-      }).catch((error) => {
-        console.error(error);
-      });
-    }
-    let result = response.data[0];
+    let result = await Song.getUrlObj(id as number, this.quality);
     if (result.url === null) {
       const msg = i18n.global.t("player.noUrlError");
       Message.post("error", msg);
