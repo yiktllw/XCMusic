@@ -126,7 +126,7 @@ import {
   playlistItems,
   IMenuClick,
 } from "@/dual/YContextMenuItemC";
-import { Playlist, useApi } from "@/utils/api";
+import { Comment, Playlist, useApi } from "@/utils/api";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
 import { ITrack } from "@/utils/tracks";
@@ -400,11 +400,9 @@ export default defineComponent({
       if (!id) {
         return result;
       }
-      await useApi(`/comment/music`, {
-        id: id,
-        limit: 0,
-      })
+      await Comment.Song.info(id as number)
         .then((res) => {
+          if (!res) return;
           let count = res.total;
           if (count < 1000) {
             result = `${count}`;
@@ -545,17 +543,10 @@ export default defineComponent({
             content: this.$t("confirm.delete"),
             needTranslate: false,
             callback: () => {
-              useApi("/playlist/delete", {
-                id: arg.target.id,
-                cookie: this.login.cookie,
-              })
-                .then((res) => {
-                  this.login.refreshUserPlaylists();
-                  console.log("Delete playlist:", JSON.stringify(res, null, 4));
-                })
-                .catch((err) => {
-                  console.error("Error when delete playlist:", err);
-                });
+              Playlist.Delete(arg.target.id).then((res) => {
+                this.login.refreshUserPlaylists();
+                console.log("Delete playlist:", JSON.stringify(res, null, 4));
+              });
             },
           };
           this.globalMsg.confirm(confirm);
@@ -571,12 +562,7 @@ export default defineComponent({
       if (playlistId === -1) {
         return;
       }
-      await useApi("/playlist/tracks", {
-        op: "del",
-        pid: playlistId,
-        tracks: trackId,
-        cookie: this.login.cookie,
-      })
+      await Playlist.removeTracks(playlistId as number, [trackId as number])
         .then((res) => {
           console.log(
             "Track deleted from playlist:",
@@ -584,6 +570,7 @@ export default defineComponent({
           );
           if (res.status === 200) {
             Message.post("success", this.$t("message.homeview.delete_success"));
+            this.globalMsg.post("refresh-playlist", playlistId);
           } else {
             Message.post(
               "error",

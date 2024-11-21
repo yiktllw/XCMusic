@@ -354,6 +354,7 @@ export default defineComponent({
       download: store.state.download,
       playlist_songstable,
       album_songstable,
+      globalMsg: store.state.globalMsg,
     };
   },
   computed: {
@@ -442,7 +443,7 @@ export default defineComponent({
   },
   methods: {
     // 获取歌单
-    async fetchPlaylist(id: number) {
+    async fetchPlaylist(id: number, refresh = false) {
       try {
         let requests = [];
         if (this.type === "playlist") {
@@ -496,7 +497,7 @@ export default defineComponent({
                     throw error;
                   })
               : null,
-            this.fetchTracks(id, 1)
+            this.fetchTracks(id, 1, refresh)
               .then((getTracks) => {
                 // 第一页的歌曲列表
                 if (id !== this.playlistId) {
@@ -597,7 +598,7 @@ export default defineComponent({
           const promises = [];
 
           for (let i = 2; i <= this.page; i++) {
-            promises.push(this.fetchTracks(id, i));
+            promises.push(this.fetchTracks(id, i, refresh));
           }
 
           const addedTracksArray = await Promise.all(promises);
@@ -614,9 +615,9 @@ export default defineComponent({
       }
     },
     // 获取当前页的歌曲列表
-    async fetchTracks(id: number, page: number) {
+    async fetchTracks(id: number, page: number, refresh = false) {
       const limit = 1000;
-      let result = await Playlist.fetchTracks(id, page, limit);
+      let result = await Playlist.fetchTracks(id, page, limit, refresh);
       return result;
     },
     // 设置背景颜色
@@ -753,8 +754,19 @@ export default defineComponent({
       Message.post("info", "功能暂未实现");
     },
   },
+  mounted() {
+    this.globalMsg.subscriber.on({
+      id: `YPlaylistView`,
+      type: "refresh-playlist",
+      func: () => {
+        console.log("refresh-playlist");
+        this.fetchPlaylist(this.playlistId, true);
+      },
+    });
+  },
   beforeUnmount() {
     // 组件销毁时发送消息
+    this.globalMsg.subscriber.offAll(`YPlaylistView`);
     this.openedPlaylist.id = 0;
     this.playlist_songstable = null;
     this.album_songstable = null;

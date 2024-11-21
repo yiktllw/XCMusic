@@ -5,7 +5,7 @@
  * Tracks类会将歌曲列表处理成统一的格式
  *---------------------------------------------------------------*/
 
-import { useApi } from "@/utils/api";
+import { Song } from "@/utils/api";
 function generateUniqueString(address: string): string {
   const crypto = window.api?.crypto;
   if (!crypto) {
@@ -126,7 +126,7 @@ export class Tracks {
         } else if (url === "/artist/songs") {
           track = item;
           let index = params.albums.findIndex(
-            (album: { id: number }) => album.id === track.al.id,
+            (album: { id: number }) => album.id === track.al.id
           );
           if (index === -1) {
             track.al.picUrl = require("@/assets/song.svg");
@@ -237,7 +237,7 @@ export class Tracks {
               name: ar.name,
               tns: ar.tns ?? "",
             };
-          },
+          }
         );
         resultTrack.dt = track.dt;
         resultTrack.pop = track.pop;
@@ -274,11 +274,9 @@ export class TrackIds {
     if (this._ids.length === 0) {
       return;
     }
-    await useApi("/song/detail", {
-      ids: this._ids.join(","),
-    })
+    await Song.detail(this._ids)
       .then((res) => {
-        this.result = res.songs.map((item: { al: { picUrl: string } }) => {
+        this.result = res.map((item) => {
           return {
             ...item,
             _picUrl: item.al.picUrl + "?param=80y80",

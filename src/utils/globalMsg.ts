@@ -20,6 +20,7 @@ const events = [
   "confirm",
   "close-playui",
   "refresh-sidebar",
+  "refresh-playlist",
 ];
 
 export interface IConfirm {

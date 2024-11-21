@@ -7,7 +7,7 @@
  *---------------------------------------------------------------*/
 
 import { Subscriber } from "@/utils/subscribe";
-import { useApi, Login as LoginApi, User } from "@/utils/api";
+import { Login as LoginApi, User } from "@/utils/api";
 import { reactive, markRaw, Raw, Reactive } from "vue";
 import { UserPlaylist } from "@/dual/login";
 import { getStorage, setStorage } from "@/utils/render_storage";
@@ -182,15 +182,11 @@ export class Login {
       await this.updateInfo();
       if (!this._userId) return;
     }
-    await useApi("/user/playlist", {
-      uid: this._userId,
-      cookie: this._cookie,
-      timestamp: new Date().getTime(),
-    })
+    await User.getPlaylists(this._userId as unknown as number)
       .then((res) => {
         this._userPlaylists = [];
         this._userSubscribes = [];
-        res.playlist.forEach((playlist: UserPlaylist) => {
+        res.forEach((playlist) => {
           if (!playlist.subscribed) {
             this._userPlaylists.push({
               name: playlist.name,

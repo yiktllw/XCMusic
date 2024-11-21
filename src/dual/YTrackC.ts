@@ -1,4 +1,4 @@
-import { useApi } from "@/utils/api";
+import { Song } from "@/utils/api";
 import { ITrack } from "@/utils/tracks";
 
 export class YTrackC implements ITrack {
@@ -69,19 +69,15 @@ export class YTrackC implements ITrack {
     if (!this._id) {
       return;
     } else {
-      await useApi("/song/detail", {
-        ids: this._id,
-      })
+      await Song.detail([this._id])
         .then((res) => {
-          let tns = res.songs[0].tns ? " (" + res.songs[0].tns + ")" : "";
-          this._name = res.songs[0].name + tns;
-          this._picUrl = res.songs[0].al.picUrl;
-          this._ar = res.songs[0].ar;
-          this._al = res.songs[0].al;
-          let trackTns = res.songs[0].al.tns[0]
-            ? " (" + res.songs[0].al.tns + ")"
-            : "";
-          this._al.name = res.songs[0].al.name + trackTns;
+          let tns = res[0].tns ? " (" + res[0].tns + ")" : "";
+          this._name = res[0].name + tns;
+          this._picUrl = res[0].al.picUrl;
+          this._ar = res[0].ar;
+          this._al = res[0].al;
+          let trackTns = res[0].al.tns[0] ? " (" + res[0].al.tns + ")" : "";
+          this._al.name = res[0].al.name + trackTns;
           this.onTrackLoaded();
         })
         .catch((err) => {

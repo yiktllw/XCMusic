@@ -9,7 +9,7 @@
  *---------------------------------------------------------------*/
 
 import axios from "axios";
-import { Tracks } from "@/utils/tracks";
+import { ITrack, Tracks } from "@/utils/tracks";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "@/utils/render_storage";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@/utils/api.interface";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
+import { UserPlaylist } from "@/dual/login";
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -172,14 +173,22 @@ export namespace Playlist {
   export async function fetchTracks(
     playlistId: number,
     page: number,
-    limit: number = 500
+    limit: number = 500,
+    refresh = false
   ) {
     let offset = (page - 1) * limit;
-    let getTracks = await useApi("/playlist/track/all", {
+    const params: {
+      id: number;
+      limit: number;
+      offset: number;
+      timestamp?: number;
+    } = {
       id: playlistId,
       limit: limit,
       offset: offset,
-    }).catch((error) => {
+    };
+    if (refresh) params["timestamp"] = new Date().getTime();
+    let getTracks = await useApi("/playlist/track/all", params).catch((error) => {
       console.log("Failed to fetch tracks:", error);
     });
     // 加入新的属性 originalIndex，用于排序
@@ -232,6 +241,49 @@ export namespace Playlist {
   }
 
   /**
+   * 从歌单中删除歌曲，会抛出异常
+   */
+  export async function removeTracks(playlistId: number, ids: number[]): Promise<{
+    /** 200为成功 */
+    status: number;
+    /** 消息 */
+    message?: string;
+  }> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      throw new Error("No login cookie found");
+    }
+
+    const res = await useApi("/playlist/tracks", {
+      op: "del",
+      pid: playlistId,
+      tracks: ids.join(","),
+      cookie: cookie,
+    });
+    return res;
+  }
+
+  /**
+   * 删除歌单
+   */
+  export async function Delete(playlistId: number) {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return;
+    }
+
+    const res = await useApi("/playlist/delete", {
+      id: playlistId,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error("Failed to delete playlist:", error);
+      return error;
+    });
+    return res;
+  }
+
+  /**
    * 创建歌单
    */
   export async function create(
@@ -278,6 +330,23 @@ export namespace Playlist {
  * 歌曲相关api
  */
 export namespace Song {
+  /**
+   * 获取歌曲的详细信息
+   */
+  export async function detail(ids: number[]): Promise<ITrack[]> {
+    const res = await useApi("/song/detail", {
+      ids: ids.join(","),
+    })
+      .then((res) => {
+        return res.songs;
+      })
+      .catch((error) => {
+        console.error("Failed to get song detail:", error);
+        return [];
+      });
+    return res;
+  }
+
   /**
    * 获取歌曲的某个音质的链接
    */
@@ -528,6 +597,28 @@ export namespace User {
       };
     });
     return res.ids;
+  }
+
+  /**
+   * 获取用户创建的歌单和收藏的歌单
+   */
+  export async function getPlaylists(uid: number): Promise<UserPlaylist[]> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return [];
+    }
+    const res = await useApi("/user/playlist", {
+      uid: uid,
+      cookie: cookie,
+      timestamp: new Date().getTime(),
+    })
+      .then((res: { playlist: UserPlaylist[] }) => res.playlist)
+      .catch((error) => {
+        console.error("Failed to get user playlists:", error);
+        return [];
+      });
+    return res;
   }
 }
 
