@@ -73,7 +73,7 @@ export default defineComponent({
       },
     },
     target: {
-      default: null,
+      default: null as any,
     },
     posX: {
       type: String,
@@ -104,7 +104,7 @@ export default defineComponent({
       this.$emit("menu-click", {
         role: role,
         target: this.target,
-        from: -1,
+        from: this.target?.from,
       });
       this.panel?.tooglePanel();
     },

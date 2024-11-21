@@ -449,37 +449,6 @@
             {{ $t("header.setting_view.about") }}
           </div>
           <div class="about-content item-content">
-            <div class="content-item item-backup">
-              <div class="content-item-title">
-                {{ $t("setting_view.about.backup") }}
-              </div>
-              <div class="content-item-content backup-content">
-                <div
-                  class="export backup-content-item"
-                  @click="exportToJSON_Setting"
-                >
-                  {{ $t("setting_view.about.export") }}
-                </div>
-                <div
-                  class="import backup-content-item"
-                  @click="importFromJSON_Setting"
-                >
-                  {{ $t("setting_view.about.import") }}
-                </div>
-                <div
-                  class="export backup-content-item"
-                  @click="exportToJSON_Download"
-                >
-                  {{ $t("setting_view.about.export_download") }}
-                </div>
-                <div
-                  class="import backup-content-item"
-                  @click="importFromJSON_Download"
-                >
-                  {{ $t("setting_view.about.import_download") }}
-                </div>
-              </div>
-            </div>
             <div class="content-item item-about-version">
               <div class="content-item-title">
                 {{ $t("setting_view.about.version") }}
@@ -518,6 +487,37 @@
               </div>
               <div class="content-item-content">
                 <div class="github-link" @click="openGitRepo">GitHub</div>
+              </div>
+            </div>
+            <div class="content-item item-backup">
+              <div class="content-item-title">
+                {{ $t("setting_view.about.backup") }}
+              </div>
+              <div class="content-item-content backup-content">
+                <div
+                  class="export backup-content-item"
+                  @click="exportToJSON_Setting"
+                >
+                  {{ $t("setting_view.about.export") }}
+                </div>
+                <div
+                  class="import backup-content-item"
+                  @click="importFromJSON_Setting"
+                >
+                  {{ $t("setting_view.about.import") }}
+                </div>
+                <div
+                  class="export backup-content-item"
+                  @click="exportToJSON_Download"
+                >
+                  {{ $t("setting_view.about.export_download") }}
+                </div>
+                <div
+                  class="import backup-content-item"
+                  @click="importFromJSON_Download"
+                >
+                  {{ $t("setting_view.about.import_download") }}
+                </div>
               </div>
             </div>
           </div>

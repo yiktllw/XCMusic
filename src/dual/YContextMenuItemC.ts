@@ -21,6 +21,7 @@ interface ICtxMenuItem {
 export interface IMenuClick {
   role: string;
   target: any;
+  /** 来自哪个歌单，如果不是自己创建的歌单，则为-1 */
   from: number;
 }
 

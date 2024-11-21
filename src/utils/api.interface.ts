@@ -69,6 +69,17 @@ namespace Public {
   }
 }
 
+export namespace ILike{
+  export interface Response {
+    /** 未知作用 */
+    songs: Array<any>;
+    /** 200为成功 */
+    code: number;
+    /** 喜欢的歌单ID */
+    playlistId: number;
+  }
+}
+
 export namespace IPlaylist {
   /** /playlist/detail的参数 */
   export interface DetailParams {

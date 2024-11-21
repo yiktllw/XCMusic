@@ -12,7 +12,7 @@ import axios from "axios";
 import { Tracks } from "@/utils/tracks";
 import { ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage } from "@/utils/render_storage";
-import { IPlaylist, IUser } from "@/utils/api.interface";
+import { ILike, IPlaylist, IUser } from "@/utils/api.interface";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
 
@@ -62,39 +62,48 @@ export async function useApi(
   }
 }
 
-/**
- * 设置喜欢/不喜欢
- * @param {number} id 歌曲id
- * @param {*} like 是否喜欢
- * @param {*} cookie 登录cookie
- * @returns
- */
-export async function setLike(
-  id: number | string,
-  like: boolean,
-  cookie: string
-) {
-  let result = await useApi("/like", {
-    id: id,
-    like: like,
-    cookie: cookie,
-  }).catch((error) => {
-    console.error("use api error: a", error);
-    throw error;
-  });
-  return result;
-}
-
-/**
- * 切换喜欢状态
- * @param {number} id 歌曲id
- * @param {*} status 当前状态
- */
-export async function toogleLike(id: number | string, status: boolean) {
-  if (status) {
-    await setLike(id, false, getStorage("login_cookie") ?? "");
-  } else {
-    await setLike(id, true, getStorage("login_cookie") ?? "");
+/** 喜欢、不喜欢歌曲的api */
+export namespace Like {
+  /** 设置喜欢 */
+  export async function on(id: number): Promise<ILike.Response | null> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    let result = await useApi("/like", {
+      id: id,
+      like: true,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error(`error when set like of ${id}`, error);
+      return null;
+    });
+    return result;
+  }
+  /** 设置不喜欢 */
+  export async function off(id: number): Promise<ILike.Response | null> {
+    const cookie = getStorage("login_cookie");
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    let result = await useApi("/like", {
+      id: id,
+      like: false,
+      cookie: cookie,
+    }).catch((error) => {
+      console.error(`error when set like of ${id}`, error);
+      return null;
+    });
+    return result;
+  }
+  /** 切换喜欢的状态 */
+  export async function toggle(
+    id: number,
+    status: boolean
+  ): Promise<ILike.Response | null> {
+    return status ? await off(id) : await on(id);
   }
 }
 
@@ -287,11 +296,13 @@ export namespace Lyrics {
 /**
  * 用户相关API
  */
-export namespace User{
+export namespace User {
   /**
    * 音乐云盘信息
    */
-  export async function getCloudInfo(params: IUser.CloudParams) : Promise<IUser.CloudResponse> {
+  export async function getCloudInfo(
+    params: IUser.CloudParams
+  ): Promise<IUser.CloudResponse> {
     let res = await useApi("/user/cloud", params).catch((error) => {
       console.error("Failed to get cloud info:", error);
     });

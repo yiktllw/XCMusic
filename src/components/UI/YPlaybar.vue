@@ -31,10 +31,7 @@
             @click="$emit('open-panel')"
           >
             <div class="open-panel-overlay"></div>
-            <img
-              class="img-cover img img-open-panel"
-              src="@/assets/less.svg"
-            />
+            <img class="img-cover img img-open-panel" src="@/assets/less.svg" />
           </div>
           <!-- 4 播放信息文本 -->
           <div class="play-info-text">
@@ -134,6 +131,9 @@
             v-else
             class="img-like img g-icon"
             src="@/assets/unlikes.svg"
+            :style="{
+              opacity: 0.7,
+            }"
             :title="$t('playbar.like')"
           />
         </button>
@@ -478,7 +478,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { toogleLike, useApi } from "@/utils/api";
+import { Like, useApi } from "@/utils/api";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import YPanel from "@/components/base/YPanel.vue";
@@ -645,19 +645,26 @@ export default defineComponent({
     },
     // 切换喜欢状态
     _toogleLike(status: boolean) {
-      if (!this.player.currentTrack) {
+      if (!this.player.currentTrack || isLocal(this.player.currentTrack.id))
         return;
-      }
-      console.log("toogleLike");
-      console.log("status:", status);
-      if (isLocal(this.player.currentTrack.id)) {
-        console.log("Local track, cannot like");
-        return;
-      }
-      toogleLike(this.player.currentTrack.id, status);
-      if (this.login.status) {
-        this.login.reloadLikelist();
-      }
+
+      Like.toggle(this.player.currentTrack.id, status).then((res) => {
+        if (res?.code === 200) {
+          this.login.reloadLikelist().then(() => {
+            console.log(
+              `toggled ${this.player.currentTrack?.id} like status from ${status} to ${!status} successfully `,
+              JSON.stringify(res, null, 4),
+              "\nnow includes in likelist:",
+              this.login.likelist.includes(this.player.currentTrack?.id)
+            );
+          });
+        } else {
+          console.error(
+            "Failed to toggle like status",
+            JSON.stringify(res, null, 4)
+          );
+        }
+      });
     },
     // 切换播放状态
     tooglePlayState() {

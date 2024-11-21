@@ -326,30 +326,41 @@ export default defineComponent({
         event.data.type === "song-open-context-menu" ||
         event.data.type === "song-toogle-context-menu"
       ) {
+        // 显示还是切换右键菜单
         if (event.data.type === "song-toogle-context-menu") {
           this.contextMenu?.toogleContextMenu();
         } else {
           this.contextMenu?.showContextMenu();
         }
+
         let data = event.data.data;
         this.menu = songItems;
+
         if (data.from && data.from !== -1) {
+          // 是否来自于用户的歌单，如果是，则显示删除选项
           this.menu[this.menu.length - 1].display = true;
           console.log("from:", data.from, this.menu);
         } else {
+          // 否则不显示删除选项
           this.menu[this.menu.length - 1].display = false;
         }
+
         this.target = JSON.parse(data.track);
+        this.target.from = data.from;
+
         this.posX = data.x + 5 + "px";
         this.posY = data.y + 5 + "px";
+
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
+
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
         console.log({
           x: data.x,
           y: data.y,
           track: JSON.parse(data.track),
         });
+
         let commentCount = await this.getCommentCount(this.target.id);
         this.menu[4].label =
           this.$t("context.view_comment") + `(${commentCount})`;
@@ -358,7 +369,9 @@ export default defineComponent({
           return !isLocal(id);
         });
         console.log("ids: ", JSON.stringify(this.trackIds, null, 4));
+
         if (this.trackIds.length === 0) return;
+
         this.showAddToPlaylist = true;
         this.showPreventContainer = true;
       } else if (event.data.type === "message-show") {
