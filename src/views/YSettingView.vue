@@ -227,56 +227,66 @@
                   {{ $t("setting_view.display.hideInSidebar") }}
                 </div>
                 <div class="item-sidebar-content-checks">
-                  <input
-                    type="checkbox"
-                    id="setting_sidebar_favorite"
-                    name="setting_sidebar_favorite"
-                    v-model="hideInSidebar_favorite"
-                    @change="setHideInSidebar"
-                  />
-                  <label for="setting_sidebar_favorite">
-                    {{ $t("playlist_view.my_favorite_musics") }}
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="setting_sidebar_album"
-                    name="setting_sidebar_album"
-                    v-model="hideInSidebar_album"
-                    @change="setHideInSidebar"
-                  />
-                  <label for="setting_sidebar_album">
-                    {{ $t("subscribed_album") }}
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="setting_sidebar_local"
-                    name="setting_sidebar_local"
-                    v-model="hideInSidebar_local"
-                    @change="setHideInSidebar"
-                  />
-                  <label for="setting_sidebar_local">
-                    {{ $t("local_music") }}
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="setting_sidebar_download"
-                    name="setting_sidebar_download"
-                    v-model="hideInSidebar_download"
-                    @change="setHideInSidebar"
-                  />
-                  <label for="setting_sidebar_download">
-                    {{ $t("manage_download") }}
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="setting_sidebar_cloud"
-                    name="setting_sidebar_cloud"
-                    v-model="hideInSidebar_cloud"
-                    @change="setHideInSidebar"
-                  />
-                  <label for="setting_sidebar_cloud">
-                    {{ $t("cloud") }}
-                  </label>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="setting_sidebar_favorite"
+                      name="setting_sidebar_favorite"
+                      v-model="hideInSidebar_favorite"
+                      @change="setHideInSidebar"
+                    />
+                    <label for="setting_sidebar_favorite">
+                      {{ $t("playlist_view.my_favorite_musics") }}
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="setting_sidebar_album"
+                      name="setting_sidebar_album"
+                      v-model="hideInSidebar_album"
+                      @change="setHideInSidebar"
+                    />
+                    <label for="setting_sidebar_album">
+                      {{ $t("subscribed_album") }}
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="setting_sidebar_local"
+                      name="setting_sidebar_local"
+                      v-model="hideInSidebar_local"
+                      @change="setHideInSidebar"
+                    />
+                    <label for="setting_sidebar_local">
+                      {{ $t("local_music") }}
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="setting_sidebar_download"
+                      name="setting_sidebar_download"
+                      v-model="hideInSidebar_download"
+                      @change="setHideInSidebar"
+                    />
+                    <label for="setting_sidebar_download">
+                      {{ $t("manage_download") }}
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="setting_sidebar_cloud"
+                      name="setting_sidebar_cloud"
+                      v-model="hideInSidebar_cloud"
+                      @change="setHideInSidebar"
+                    />
+                    <label for="setting_sidebar_cloud">
+                      {{ $t("cloud") }}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -852,11 +862,11 @@ export default defineComponent({
     },
     setHideInSidebar() {
       const hideInSidebar: TSideBarItems[] = [];
-      (["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]).forEach(
-        (item: TSideBarItems) => {
-          if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
-        }
-      );
+      (
+        ["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]
+      ).forEach((item: TSideBarItems) => {
+        if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
+      });
       this.setting.display.hideInSidebar = hideInSidebar;
       this.globalMsg.post("refresh-sidebar");
     },
@@ -1191,6 +1201,7 @@ export default defineComponent({
               display: flex;
               align-items: center;
               flex-direction: row;
+              flex-wrap: wrap;
 
               label {
                 margin-right: 15px;
