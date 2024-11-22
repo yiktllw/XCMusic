@@ -4,10 +4,7 @@
       {{ $t("localsongs.downloading") }}
     </div>
     <div class="downloading font-color-high" v-if="downloading.length > 0">
-      <div
-        v-for="item in downloading"
-        class="downloading-item"
-      >
+      <div v-for="item in downloading" class="downloading-item">
         <div class="downloading-item-info">
           <div class="downloading-item-info-title">
             {{ item.track.name }}
@@ -71,7 +68,9 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Downloaded Music   "));
+    YColor.setBackgroundColorHex2(
+      YColor.stringToHexColor("Downloaded Music   ")
+    );
     this.getDownloadedTracks();
     this.download.subscriber.on({
       id: "YLocalSongsView",
@@ -102,14 +101,15 @@ export default defineComponent({
 .main {
   padding: 0;
   text-align: left;
-  margin-bottom: 20px;
+  padding: 10px 20px 20px 20px;
 
   .title {
     width: inherit;
-    font-size: 18px;
-    margin: 10px 20px;
-    font-weight: bold;
     color: var(--font-color-main);
+    text-align: left;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 20px 30px;
   }
 
   .downloading {

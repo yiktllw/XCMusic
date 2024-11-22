@@ -84,16 +84,19 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .main {
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px 20px 20px;
   text-align: left;
-  margin-bottom: 20px;
 
   .title {
     width: inherit;
-    font-size: 20px;
     margin: 15px 30px;
-    font-weight: bold;
     color: var(--font-color-main);
+    text-align: left;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 20px 30px;
   }
 
   .local {
