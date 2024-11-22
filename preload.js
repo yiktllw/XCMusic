@@ -21,6 +21,7 @@
  * 17. os
  * 18. crypto
  * 19. ipcRenderer.removeEventListener
+ * 20. env.isDevelopment 是否为开发环境
  *---------------------------------------------------------------*/
 
 const { contextBridge, ipcRenderer, shell } = require("electron");
@@ -64,3 +65,7 @@ contextBridge.exposeInMainWorld("electron", {
   isElectron: true,
   shell: shell,
 });
+
+contextBridge.exposeInMainWorld("env", {
+  isDevelopment: process.env.NODE_ENV === "development",
+})

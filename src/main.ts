@@ -16,6 +16,9 @@ import store from "@/store";
 import "./assets/css/global.scss";
 import i18n from "@/i18n";
 
+// 生产环境下关闭console.log
+if (!window.env?.isDevelopment) console.log = () => {};
+
 const app = createApp(App);
 app.use(router);
 app.use(store);

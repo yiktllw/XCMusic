@@ -74,7 +74,7 @@
           {{ $t("cloud") }}
         </div>
       </button>
-      <div v-if="hideInSidebar.length < 4" class="split-line"></div>
+      <div v-if="hideInSidebar.length < 5" class="split-line"></div>
       <div class="created-playlist">
         <button
           :tabindex="-1"

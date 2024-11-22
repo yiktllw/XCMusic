@@ -63,15 +63,16 @@ interface savedPositions {
   [key: string]: savedPosition;
 }
 
+interface env {
+  isDevelopment: boolean;
+}
+
 declare global {
   interface Window {
-    setting: Setting;
-    Setting: typeof Setting;
     electron: electron;
     api: api;
     savedPositions: savedPositions;
     test: any;
-    /** 安全地向控制台输出内容 */
-    log: (...args: any[]) => void;
+    env: env;
   }
 }
