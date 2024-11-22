@@ -16,9 +16,11 @@
   transform: rotate(0deg);
 }
 
-.playui-slide-enter-active,
+.playui-slide-enter-active{
+  transition: all 0.30s ease-out;
+}
 .playui-slide-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.30s ease-in;
 }
 
 .playui-slide-enter-from,
