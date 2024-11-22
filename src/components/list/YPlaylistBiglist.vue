@@ -39,12 +39,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { IPlaylist } from "@/dual/YPlaylistList";
+import { IBigPlaylist, IPlaylist } from "@/dual/YPlaylistList";
 export default defineComponent({
   name: "YPlaylistBiglist",
   props: {
     playlists: {
-      type: Array as () => IPlaylist[],
+      type: Array as () => Array<IBigPlaylist | IPlaylist>,
       default: () => [],
     },
     type: {

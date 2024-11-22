@@ -10,13 +10,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useApi } from "@/utils/api";
+import { User } from "@/utils/api";
 import { YPageC } from "@/dual/YPageC";
 import YPage from "@/components/base/YPage.vue";
 import { useStore } from "vuex";
 import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import { YColor } from "@/utils/color";
-import { IPlaylist } from "@/dual/YPlaylistList";
+import { IBigPlaylist, IPlaylist } from "@/dual/YPlaylistList";
 
 export default defineComponent({
   name: "YSubscribedAlbumView",
@@ -33,11 +33,11 @@ export default defineComponent({
   data() {
     return {
       page: new YPageC(1),
-      albums: [] as IPlaylist[],
+      albums: [] as IBigPlaylist[],
     };
   },
   mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("收藏的专辑     "))
+    YColor.setBackgroundColorHex2(YColor.stringToHexColor("收藏的专辑     "));
     this.getUserSubscribedAlbums(true);
   },
   watch: {
@@ -48,11 +48,7 @@ export default defineComponent({
   methods: {
     async getUserSubscribedAlbums(newPage = false) {
       const LIMIT = 24;
-      await useApi("/album/sublist", {
-        offset: (this.page.current - 1) * LIMIT,
-        limit: LIMIT,
-        cookie: this.login._cookie,
-      })
+      await User.getSubAlbums(this.page.current, LIMIT)
         .then((res) => {
           if (!res) {
             return;
@@ -60,22 +56,15 @@ export default defineComponent({
           if (newPage) {
             this.page = new YPageC(Math.ceil(res.count / LIMIT));
           }
-          this.albums = res.data.map(
-            (album: {
-              id: number;
-              picUrl: string;
-              name: string;
-              size: number;
-            }) => {
-              return {
-                id: album.id,
-                _bigPicUrl: album.picUrl + "?param=200y200",
-                playCount: 0,
-                name: album.name,
-                size: album.size,
-              };
-            },
-          );
+          this.albums = res.albums.map((album) => {
+            return {
+              id: album.id,
+              _bigPicUrl: album.picUrl + "?param=200y200",
+              playCount: 0,
+              name: album.name,
+              size: album.size,
+            };
+          });
         })
         .catch((err) => {
           console.error("getUserSubscribedAlbums", err);

@@ -60,9 +60,11 @@
       ></div>
     </button>
   </div>
-  <YScroll :style="{
-    maxHeight: 'calc(100vh - 230px)',
-  }">
+  <YScroll
+    :style="{
+      maxHeight: 'calc(100vh - 230px)',
+    }"
+  >
     <div class="content">
       <!-- 歌曲 -->
       <div class="songs" v-if="position === 'song'">
@@ -117,11 +119,13 @@ import YArtistList from "@/components/list/YArtistList.vue";
 import YSearchLyrics from "@/components/list/YSearchLyrics.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import YPage from "@/components/base/YPage.vue";
-import { Tracks, ITrack } from "@/utils/tracks";
+import { ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
-import { useApi } from "@/utils/api";
+import { Search } from "@/utils/api";
 import { markRaw, defineComponent } from "vue";
+import { IPlaylist } from "@/dual/YPlaylistList";
+import { IArtist } from "@/dual/YArtistList";
 
 export default defineComponent({
   name: "YSearchView",
@@ -171,19 +175,19 @@ export default defineComponent({
         {
           display: "search_view.switcher.album",
           position: "album",
-          playlists: [],
+          playlists: [] as IPlaylist[],
           total: 0,
         },
         {
           display: "search_view.switcher.playlist",
           position: "playlist",
-          playlists: [],
+          playlists: [] as IPlaylist[],
           total: 0,
         },
         {
           display: "search_view.switcher.artist",
           position: "artist",
-          artists: [],
+          artists: [] as IArtist[],
           total: 0,
         },
         {
@@ -195,7 +199,7 @@ export default defineComponent({
         {
           display: "search_view.switcher.user",
           position: "user",
-          users: [],
+          users: [] as IArtist[],
           total: 0,
         },
       ],
@@ -217,24 +221,12 @@ export default defineComponent({
     },
     // 搜索歌曲
     async fetchTracks(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 1,
-        limit: 100,
-        offset: (this.songsPage.current - 1) * 100,
-      })
+      await Search.songs(this.search, this.songsPage.current)
         .then((result) => {
-          this.switcher[0].tracks = markRaw(
-            new Tracks({
-              url: "/cloudsearch?type=1",
-              tracks: result.result.songs,
-            }).tracks
-          );
-          this.switcher[0].total = result.result.songCount;
+          this.switcher[0].tracks = markRaw(result.songs);
+          this.switcher[0].total = result.songCount;
           if (newPageInstance) {
-            this.songsPage = new YPageC(
-              Math.ceil(result.result.songCount / 100)
-            );
+            this.songsPage = new YPageC(Math.ceil(result.songCount / 100));
           }
           this.songsPage.onPageChange = () => {
             this.fetchTracks(false);
@@ -246,25 +238,18 @@ export default defineComponent({
     },
     // 搜索歌单
     async fetchPlaylists(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 1000,
-        limit: 100,
-        offset: (this.playlistsPage.current - 1) * 100,
-      })
+      await Search.playlists(this.search, this.playlistsPage.current)
         .then((result) => {
-          this.switcher[2].playlists = result.result.playlists?.map(
-            (playlist: { coverImgUrl: string }) => {
-              return {
-                ...playlist,
-                _picUrl: playlist.coverImgUrl + "?param=40y40",
-              };
-            }
-          );
-          this.switcher[2].total = result.result.playlistCount;
+          this.switcher[2].playlists = result.playlists?.map((playlist) => {
+            return {
+              ...playlist,
+              _picUrl: playlist.coverImgUrl + "?param=80y80",
+            };
+          });
+          this.switcher[2].total = result.playlistCount;
           if (newPageInstance) {
             this.playlistsPage = new YPageC(
-              Math.ceil(result.result.playlistCount / 100)
+              Math.ceil(result.playlistCount / 100)
             );
           }
           this.playlistsPage.onPageChange = () => {
@@ -277,26 +262,17 @@ export default defineComponent({
     },
     // 搜索专辑
     async fetchAlbums(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 10,
-        limit: 100,
-        offset: (this.albumsPage.current - 1) * 100,
-      })
+      await Search.albums(this.search, this.albumsPage.current)
         .then((result) => {
-          this.switcher[1].playlists = result.result.albums?.map(
-            (album: { picUrl: string }) => {
-              return {
-                ...album,
-                _picUrl: album.picUrl + "?param=80y80",
-              };
-            }
-          );
-          this.switcher[1].total = result.result.albumCount;
+          this.switcher[1].playlists = result.albums?.map((album) => {
+            return {
+              ...album,
+              _picUrl: album.picUrl + "?param=80y80",
+            };
+          });
+          this.switcher[1].total = result.albumCount;
           if (newPageInstance) {
-            this.albumsPage = new YPageC(
-              Math.ceil(result.result.albumCount / 100)
-            );
+            this.albumsPage = new YPageC(Math.ceil(result.albumCount / 100));
           }
           this.albumsPage.onPageChange = () => {
             this.fetchAlbums(false);
@@ -308,26 +284,17 @@ export default defineComponent({
     },
     // 搜索歌手
     async fetchArtists(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 100,
-        limit: 100,
-        offset: (this.artistsPage.current - 1) * 100,
-      })
+      await Search.artists(this.search, this.artistsPage.current)
         .then((result) => {
-          this.switcher[3].artists = result.result.artists?.map(
-            (artist: { picUrl: string }) => {
-              return {
-                ...artist,
-                _picUrl: artist.picUrl + "?param=130y130",
-              };
-            }
-          );
-          this.switcher[3].total = result.result.artistCount;
+          this.switcher[3].artists = result.artists?.map((artist) => {
+            return {
+              ...artist,
+              _picUrl: artist.picUrl + "?param=130y130",
+            };
+          });
+          this.switcher[3].total = result.artistCount;
           if (newPageInstance) {
-            this.artistsPage = new YPageC(
-              Math.ceil(result.result.artistCount / 100)
-            );
+            this.artistsPage = new YPageC(Math.ceil(result.artistCount / 100));
           }
           this.artistsPage.onPageChange = () => {
             this.fetchArtists(false);
@@ -339,23 +306,12 @@ export default defineComponent({
     },
     // 搜索歌词
     async fetchLyrics(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 1006,
-        limit: 100,
-      })
+      await Search.songsWithLyrics(this.search, this.lyricsPage.current)
         .then((result) => {
-          this.switcher[4].lyricsList = markRaw(
-            new Tracks({
-              url: "/cloudsearch?type=1006",
-              tracks: result.result.songs,
-            }).tracks
-          );
-          this.switcher[4].total = result.result.songCount;
+          this.switcher[4].lyricsList = markRaw(result.songs);
+          this.switcher[4].total = result.songCount;
           if (newPageInstance) {
-            this.lyricsPage = new YPageC(
-              Math.ceil(result.result.songCount / 100)
-            );
+            this.lyricsPage = new YPageC(Math.ceil(result.songCount / 100));
           }
           this.lyricsPage.onPageChange = () => {
             this.fetchLyrics(false);
@@ -367,25 +323,18 @@ export default defineComponent({
     },
     // 搜索用户
     async fetchUsers(newPageInstance = true) {
-      await useApi("/cloudsearch", {
-        keywords: this.search,
-        type: 1002,
-        limit: 100,
-        offset: (this.usersPage.current - 1) * 100,
-      })
+      await Search.users(this.search, this.usersPage.current)
         .then((result) => {
-          this.switcher[5].users = result.result.userprofiles?.map(
-            (user: { avatarUrl: string }) => {
-              return {
-                ...user,
-                _picUrl: user.avatarUrl + "?param=130y130",
-              };
-            }
-          );
-          this.switcher[5].total = result.result.userprofileCount;
+          this.switcher[5].users = result.userprofiles?.map((user) => {
+            return {
+              ...user,
+              _picUrl: user.avatarUrl + "?param=130y130",
+            };
+          });
+          this.switcher[5].total = result.userprofileCount;
           if (newPageInstance) {
             this.usersPage = new YPageC(
-              Math.ceil(result.result.userprofileCount / 100)
+              Math.ceil(result.userprofileCount / 100)
             );
           }
           this.usersPage.onPageChange = () => {

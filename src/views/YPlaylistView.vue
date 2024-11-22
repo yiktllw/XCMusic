@@ -311,10 +311,10 @@ import YLoading from "@/components/base/YLoading.vue";
 import YComment from "@/components/list/YComment.vue";
 import { Message } from "@/dual/YMessageC";
 import { ITrack, Tracks } from "@/utils/tracks";
-import { Playlist, useApi } from "@/utils/api";
+import { Playlist, User } from "@/utils/api";
 import { formatDate_yyyymmdd } from "@/utils/time";
 import { YColor } from "@/utils/color";
-import { Theme1, Theme2, themes } from "@/utils/theme";
+import { Theme1, Theme2 } from "@/utils/theme";
 import { useStore } from "vuex";
 import { preparePlaylist } from "@/utils/playlist";
 import { markRaw, ref, defineComponent } from "vue";
@@ -483,13 +483,11 @@ export default defineComponent({
                 throw error;
               }),
             this.login.userId
-              ? useApi("/user/playlist", {
-                  uid: this.login.userId,
-                })
+              ? User.getPlaylists(this.login.userId as unknown as number)
                   .then((myFavoriteId) => {
                     // 如果是我喜欢的音乐
-                    if (myFavoriteId.playlist[0].id == id) {
-                      return myFavoriteId.playlist[0].id;
+                    if (myFavoriteId[0].id == id) {
+                      return myFavoriteId[0].id;
                     }
                   })
                   .catch((error) => {
@@ -515,10 +513,10 @@ export default defineComponent({
           ];
         } else {
           requests = [
-            useApi(`/api/album/v3/detail?id=${id}`)
+            Playlist.getAlbum(id)
               .then((response) => {
                 // 专辑名称
-                if (id !== this.playlistId) {
+                if (id !== this.playlistId || !response) {
                   return;
                 }
                 this.playlist.name = response.album.name;
@@ -559,12 +557,10 @@ export default defineComponent({
                 throw error;
               }),
             this.login.userId
-              ? useApi("/user/playlist", {
-                  uid: this.login.userId,
-                })
+              ? User.getPlaylists(this.login.userId as unknown as number)
                   .then((myFavoriteId) => {
                     // 我喜欢的音乐
-                    if (myFavoriteId.playlist[0].id == id) {
+                    if (myFavoriteId[0].id == id) {
                       this.playlist.name = this.$t(
                         "playlist_view.my_favorite_musics"
                       );
@@ -725,13 +721,7 @@ export default defineComponent({
     },
     // 更新歌单播放次数
     async updatePlayCount() {
-      let result = await useApi("/playlist/update/playcount", {
-        id: this.playlistId,
-      }).catch((error) => {
-        console.error("Failed to update play count:", error);
-        throw error;
-      });
-      console.log("updatePlayCount:", JSON.stringify(result, null, 2));
+      await Playlist.updatePlaycount(this.playlistId);
     },
     // 处理歌手点击
     handleArtistClick(artistId: number | string) {

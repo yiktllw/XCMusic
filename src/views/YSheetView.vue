@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import { useApi } from "@/utils/api";
+import { Song } from "@/utils/api";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
@@ -88,18 +88,12 @@ export default defineComponent({
   },
   methods: {
     async getSheet() {
-      await useApi("/sheet/preview", {
-        id: this.sheetId,
-        cookie: this.login.cookie,
-      })
-        .then((res) => {
-          this.sheet = res.data;
-          this.sheet = this.sheet.sort((a, b) => a.id - b.id);
-          this.page = new YPageC(this.sheet.length > 0 ? this.sheet.length : 1);
-        })
-        .catch((err: Error) => {
-          console.error("getSheet", err);
-        });
+      Song.getSheetDetail(this.sheetId).then((res) => {
+        if (!res?.data) return;
+        this.sheet = res.data;
+        this.sheet = this.sheet.sort((a, b) => a.id - b.id);
+        this.page = new YPageC(this.sheet.length > 0 ? this.sheet.length : 1);
+      });
     },
     handleKeydown(e: KeyboardEvent) {
       if (this.scrollInterval) return;

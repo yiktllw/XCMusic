@@ -8,7 +8,7 @@
  *---------------------------------------------------------------*/
 
 import { YTrackC } from "@/dual/YTrackC";
-import { useApi } from "@/utils/api";
+import { Search } from "@/utils/api";
 import { Subscriber } from "@/utils//subscribe";
 import { markRaw } from "vue";
 import { ITrack } from "@/utils/tracks";
@@ -28,7 +28,7 @@ export class SongPicker {
       "Documents",
       "弹幕姬",
       "Plugins",
-      "xcmusic",
+      "xcmusic"
     );
     this.filePath = window.api.pathJoin(this.damakuPath, "songPicker.txt");
     if (!window.api.existsSync(this.damakuPath)) {
@@ -167,11 +167,9 @@ export class SongPicker {
    */
   async getSearchedSong(playNow: boolean) {
     if (this.song && this.song.type === "keyword") {
-      await useApi("/cloudsearch", {
-        keywords: this.song.data,
-      })
+      await Search.songs(this.song.data as string, 1, 1)
         .then((res) => {
-          this._track = res.result.songs[0];
+          this._track = res.songs[0];
           if (playNow) {
             this.subscriber.exec("track");
           } else {

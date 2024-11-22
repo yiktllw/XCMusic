@@ -17,8 +17,8 @@
 import { defineComponent } from "vue";
 import YHeader from "@/components/base/YHeader.vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
-import { ITrack, Tracks } from "@/utils/tracks";
-import { useApi } from "@/utils/api";
+import { ITrack } from "@/utils/tracks";
+import { User } from "@/utils/api";
 import { useStore } from "vuex";
 import { YColor } from "@/utils/color";
 
@@ -73,34 +73,12 @@ export default defineComponent({
       this.position = position;
     },
     async fetchUserSongsRank() {
-      await useApi("/user/record", {
-        uid: this.userId,
-        type: 1,
-        cookie: this.login.cookie,
-      })
-        .then((res) => {
-          this.recentTracks = new Tracks({
-            url: "/user/record",
-            tracks: res.weekData,
-          }).tracks;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      await useApi("/user/record", {
-        uid: this.userId,
-        type: 0,
-        cookie: this.login.cookie,
-      })
-        .then((res) => {
-          this.alltimeTracks = new Tracks({
-            url: "/user/record",
-            tracks: res.allData,
-          }).tracks;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await User.songsRank(this.userId, "week").then((res) => {
+        this.recentTracks = res;
+      });
+      await User.songsRank(this.userId, "alltime").then((res) => {
+        this.alltimeTracks = res;
+      });
     },
   },
   mounted() {

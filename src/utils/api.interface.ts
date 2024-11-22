@@ -5,6 +5,10 @@
 
 import { SheetList } from "@/dual/YPlayUI";
 import { ITrack } from "@/utils/tracks";
+import { IPlaylist as IPlaylist_List } from "@/dual/YPlaylistList";
+import { IArtist } from "@/dual/YArtistList";
+import { IArtist as IArtist_ } from "@/dual/YPlaylistView";
+import { ISheet } from "@/dual/YSheetView";
 
 namespace Public {
   export interface IPrivilege {
@@ -125,7 +129,7 @@ export namespace IPlaylist {
     /** 歌曲权限信息，暂未使用 */
     privileges: Array<Public.IPrivilege>;
   }
-  
+
   export interface AddTracksResponse {
     /** 200为成功 */
     status: number;
@@ -134,12 +138,91 @@ export namespace IPlaylist {
       code: number;
       /** 信息，若成功则为空字符串 */
       message: string;
-    }
+    };
   }
-  
+
   export interface CreateResponse {
     /** 200为成功 */
     code: number;
+  }
+
+  export interface AlbumResponse {
+    /** 专辑信息 */
+    album: {
+      /** 专辑名称 */
+      name: string;
+      /** 专辑译名 */
+      transNames: Array<string>;
+      /** 专辑封面 */
+      picUrl: string;
+      /** 发布时间 */
+      publishTime: number;
+      /** 专辑艺术家 */
+      artists: Array<IArtist_>;
+      /** 专辑歌曲数量 */
+      size: number;
+    };
+    /** 专辑的歌曲 */
+    songs: Array<ITrack>;
+    /** 专辑的单曲信息 */
+    showreels: Array<any>;
+  }
+}
+
+export namespace ISearch {
+  export interface SongsResponse {
+    /** 歌曲数组 */
+    songs: Array<ITrack>;
+    /** 歌曲数量 */
+    songCount: number;
+  }
+
+  interface IPlaylist_ extends IPlaylist_List {
+    /** 封面URL */
+    coverImgUrl: string;
+  }
+
+  export interface PlaylistsResponse {
+    /** 歌单数组 */
+    playlists: Array<IPlaylist_>;
+    /** 歌单数量 */
+    playlistCount: number;
+  }
+
+  interface IAlbum_ extends IPlaylist_List {
+    /** 封面URL */
+    picUrl: string;
+  }
+
+  export interface AlbumsResponse {
+    /** 专辑数组 */
+    albums: Array<IAlbum_>;
+    /** 专辑数量 */
+    albumCount: number;
+  }
+
+  interface IArtist_ extends IArtist {
+    /** 封面URL */
+    picUrl: string;
+  }
+
+  export interface ArtistsResponse {
+    /** 歌手数组 */
+    artists: Array<IArtist_>;
+    /** 歌手数量 */
+    artistCount: number;
+  }
+
+  interface IUser_ extends IArtist {
+    /** 封面URL */
+    avatarUrl: string;
+  }
+
+  export interface UsersResponse {
+    /** 用户数组 */
+    userprofiles: Array<IUser_>;
+    /** 用户数量 */
+    userprofileCount: number;
   }
 }
 
@@ -309,14 +392,47 @@ export namespace IUser {
   export interface DetailResponse {
     /** 用户信息 */
     profile: {
+      /** 用户ID */
+      userId: number;
+      /** 用户昵称 */
+      nickname: string;
+      /** 用户头像 */
+      avatarUrl: string;
+      /** 用户创建的歌单数量 */
+      playlistCount: number;
+      /** 用户关注 */
       follows: number;
+      /** 用户粉丝 */
       followeds: number;
+      /** 用户等级 */
       level: number;
     };
     /** 用户等级 */
     level: number;
+    /** 用户听歌数量 */
+    listenSongs: number;
   }
   
+  /** 歌手详情的返回值 */
+  export interface ArtistDetailResponse {
+    /** 歌手ID */
+    id: number;
+    /** 歌手名称 */
+    name: string;
+    /** 歌手译名 */
+    transNames: Array<string>;
+    /** 歌手头像 */
+    avatar: string;
+    /** 歌手身份 */
+    identity: string;
+    /** 歌手简要描述 */
+    briefDesc: string;
+    /** 歌手的音乐数量 */
+    musicSize: number;
+    /** 歌手的专辑数量 */
+    albumSize: number;
+  }
+
   /** 用户账户的返回值 */
   export interface AccountResponse {
     /** 用户ID */
@@ -325,6 +441,30 @@ export namespace IUser {
     nickname: string;
     /** 用户头像 */
     avatarUrl: string;
+  }
+
+  /** 用户订阅的专辑的返回值 */
+  export interface SubAlbumsResponse {
+    /** 专辑数量 */
+    count: number;
+    /** 专辑数组 */
+    albums: Array<{
+      /** 专辑ID */
+      id: number;
+      /** 专辑封面 */
+      picUrl: string;
+      /** 专辑名称 */
+      name: string;
+      /** 专辑的歌曲数量 */
+      size: number;
+    }>;
+  }
+  
+  export interface ArtistSongsResponse {
+    /** 歌手的歌曲 */
+    songs: Array<ITrack>;
+    /** 歌曲数量 */
+    total: number;
   }
 }
 
@@ -361,7 +501,7 @@ export namespace ISong {
     gain: number;
     peak: number;
   }
-  
+
   export interface UrlObjResponse extends QualityResponse {
     url: string;
   }
@@ -592,6 +732,10 @@ export namespace ISong {
     data: {
       musicSheetSimpleInfoVOS?: SheetList.ISheet[];
     };
+  }
+
+  export interface SheetDetailResponse {
+    data: ISheet[];
   }
 }
 

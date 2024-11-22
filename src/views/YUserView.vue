@@ -221,8 +221,7 @@ import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import YLoading from "@/components/base/YLoading.vue";
 import YPage from "@/components/base/YPage.vue";
-import { Tracks } from "@/utils/tracks";
-import { useApi } from "@/utils/api";
+import { User } from "@/utils/api";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
 import { YPageC } from "@/dual/YPageC";
@@ -327,12 +326,9 @@ export default defineComponent({
       }
       if (this.type === "user") {
         // 如果 type 为 user，获取用户信息
-        let response = await useApi("/user/detail", {
-          uid: this.userId,
-          cookie: this.login.cookie,
-        }).catch((err) => {
-          console.log("fetch user error:", err);
-        });
+        console.log("fetch user");
+        let response = await User.detail(this.userId);
+        if (!response) return;
         // 处理用户信息
         this.user = {
           id: response.profile.userId,
@@ -362,20 +358,15 @@ export default defineComponent({
         await this.fetchUserPlaylist();
       } else {
         // 如果 type 为 artist，获取歌手信息
-        let response = await useApi("/artist/detail", {
-          id: this.userId,
-          cookie: this.login.cookie,
-        }).catch((err) => {
-          console.log("fetch artist error:", err);
-        });
-        let artist = response.data.artist;
+        const artist = await User.artistDetail(this.userId);
+        if (!artist) return;
         // 处理歌手信息
         this.user = {
           id: artist.id,
           name: artist.name,
           transName: artist.transNames[0],
           picUrl: artist.avatar + "?param=160y160",
-          identity: response.data.identify?.imageDesc ?? "",
+          identity: artist.identity,
           briefDesc: artist.briefDesc,
           intro: [],
           musicSize: artist.musicSize,
@@ -411,19 +402,15 @@ export default defineComponent({
         return;
       }
       // 获取用户的歌单
-      let response = await useApi("/user/playlist", {
-        uid: this.userId,
-        cookie: this.login.cookie,
-      }).catch((err) => {
-        console.log("fetch user playlist error:", err);
-      });
+      console.log("fetch user playlist");
+      const response = await User.getPlaylists(this.userId);
       // 清空用户的歌单
       (this.user as IUser).userPlaylists = [
         {
           name: this.$t("user_view.listen_rank"),
           id: `user-record-${this.userId}`,
           userId: this.userId,
-          creator: response.playlist[0]?.creator ?? null,
+          creator: response[0]?.creator ?? null,
           playCount: 0,
           trackCount:
             this.$t("user_view.total_listen") +
@@ -440,7 +427,7 @@ export default defineComponent({
       ];
       (this.user as IUser).userSubscribedPlaylists = [];
       // 返回处理后的歌单
-      response.playlist.forEach((item: any) => {
+      response.forEach((item) => {
         if (!item.subscribed) {
           // 用户创建的歌单
           (this.user as IUser).userPlaylists.push({
@@ -465,21 +452,7 @@ export default defineComponent({
         return;
       }
       // 获取歌手的专辑
-      let response = await useApi("/artist/album", {
-        id: this.userId,
-        limit: 1900,
-        cookie: this.login.cookie,
-      }).catch((err) => {
-        console.log("fetch artist albums error:", err);
-      });
-      // 返回处理后的专辑
-      (this.user as IArtist)!.albums = response.hotAlbums.map((album: any) => {
-        return {
-          ...album,
-          _picUrl: album.picUrl + "?param=80y80",
-          _bigPicUrl: album.picUrl + "?param=180y180",
-        };
-      });
+      (this.user as IArtist)!.albums = await User.getArtistAlbums(this.userId);
     },
     // 按页获取歌手的作品
     async fetchArtistWorks(page: number, newPage = false) {
@@ -489,11 +462,7 @@ export default defineComponent({
         return;
       }
       // 获取歌手的歌曲
-      await useApi("/api/v2/artist/songs", {
-        id: this.userId,
-        limit: SONGS_PER_PAGE,
-        offset: page * SONGS_PER_PAGE,
-      })
+      await User.getArtistSongs(this.userId, page + 1, SONGS_PER_PAGE)
         .then(async (response) => {
           if (newPage) {
             this.page.total = Math.ceil(response.total / SONGS_PER_PAGE);
@@ -501,15 +470,7 @@ export default defineComponent({
               this.fetchArtistWorks(this.page.current - 1, false);
             };
           }
-          // 由于歌曲的封面缺失，需要获取歌手的专辑
-          // await this.fetchArtistAlbums();
-          // 为歌曲添加专辑的封面
-          (this.user as IArtist).tracks = markRaw(
-            new Tracks({
-              url: "/api/v2/artist/songs",
-              tracks: response.songs,
-            }).tracks
-          );
+          (this.user as IArtist).tracks = markRaw(response.songs);
         })
         .catch((err) => {
           console.log("fetch artist songs error:", err);
@@ -521,9 +482,7 @@ export default defineComponent({
         return;
       }
       // 获取歌手的描述
-      await useApi("/artist/desc", {
-        id: this.userId,
-      })
+      User.getArtistDesc(this.userId)
         .then((response) => {
           // 处理歌手的描述
           let desc = [
@@ -533,7 +492,7 @@ export default defineComponent({
             },
           ];
           // 添加歌手的描述
-          (this.user as IArtist).intro = [...desc, ...response.introduction];
+          (this.user as IArtist).intro = [...desc, ...response];
         })
         .catch((err) => {
           console.log("fetch artist intro error:", err);
@@ -554,9 +513,9 @@ export default defineComponent({
           document,
           (theme as Theme1).type,
           (theme as Theme2).background,
-        () => {
-          YColor.setBackgroundColorHex2(YColor.stringToHexColor("userview"));
-        },
+          () => {
+            YColor.setBackgroundColorHex2(YColor.stringToHexColor("userview"));
+          }
         );
       }
     } catch (error) {
