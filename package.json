@@ -6,7 +6,7 @@
     "email": "yiktllw@qq.com"
   },
   "license": "MIT",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve ",

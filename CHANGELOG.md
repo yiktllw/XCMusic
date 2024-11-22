@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.7](https://github.com/yiktllw/XCMusic/compare/v0.2.6...v0.2.7) (2024-11-22)
+
+
+### Features
+
+* 删除歌曲后刷新歌单 ([34731f4](https://github.com/yiktllw/XCMusic/commit/34731f45e8a44192b09921789d7a0f0df60374e0))
+* 实现查看音乐云盘的歌曲 ([1493b68](https://github.com/yiktllw/XCMusic/commit/1493b68a50c0d9c745189eee063cf1a68107f95c))
+* 添加音乐云盘api ([2437919](https://github.com/yiktllw/XCMusic/commit/24379196d1dab4be667e2db8fad7a50e6c3decad))
+* 统一下载界面和本地音乐界面的样式 ([900fcad](https://github.com/yiktllw/XCMusic/commit/900fcadfcddfab358702a68dd39751d9f12fbab0))
+* 优化播放界面的进入和退出动画 ([d1351c8](https://github.com/yiktllw/XCMusic/commit/d1351c80c1f0c35924f4d3cc44308da3b407fde6))
+* 优化侧边栏按钮显示 ([f6ec55b](https://github.com/yiktllw/XCMusic/commit/f6ec55bd28c7c6766198917a7c0768754c7db366))
+* 优化分页按钮样式 ([e738f8d](https://github.com/yiktllw/XCMusic/commit/e738f8d8e0a040c56819354847972c4dbbfeb976))
+* 在生产环境下禁用控制台输出 ([7ace22c](https://github.com/yiktllw/XCMusic/commit/7ace22cd589fca9687ae61c6516e1391c8e1ddc4))
+
+
+### Bug Fixes
+
+* 修复: 设置-外观-侧边栏不会自动换行的bug ([86bc7d3](https://github.com/yiktllw/XCMusic/commit/86bc7d3cc7fddce861017ad64720f43ef12f466a))
+* 修复点击播放栏的喜欢按钮时，状态不会立刻更新的bug ([5084ee6](https://github.com/yiktllw/XCMusic/commit/5084ee6e2a0ab049a2318d70aa396f6db5b5684b))
+* 修复歌词消失的bug ([c0bd7fa](https://github.com/yiktllw/XCMusic/commit/c0bd7faf09bd6fb7846aeb08db85e0ab375807c1))
+* 修复禁用GPU加速时的性能问题 ([e06284e](https://github.com/yiktllw/XCMusic/commit/e06284e238f437347b5f589e955ac07e2896d972))
+* 修复没有歌词时，不会自动切换歌词的bug ([39bd3c7](https://github.com/yiktllw/XCMusic/commit/39bd3c7c77be61452df897b5a3ba38c7a0f45312))
+* 修复无法从歌单中删除歌曲的bug ([036a073](https://github.com/yiktllw/XCMusic/commit/036a073f05d7830768a7b2731d2a76ac159b625d))
+
 ### [0.2.6](https://github.com/yiktllw/XCMusic/compare/v0.2.5...v0.2.6) (2024-11-19)
 
 
