@@ -217,6 +217,14 @@ const routes = [
         },
       },
       {
+        path: "cloud",
+        name: "Cloud",
+        component: () => import("@/views/YCloudView.vue"),
+        meta: {
+          keepAlive: false,
+        },
+      },
+      {
         path: "audio/test",
         name: "AudioTest",
         component: () => import("@/views/YAudioView.vue"),

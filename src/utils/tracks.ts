@@ -6,6 +6,8 @@
  *---------------------------------------------------------------*/
 
 import { Song } from "@/utils/api";
+import { IUser } from "./api.interface";
+
 function generateUniqueString(address: string): string {
   const crypto = window.api?.crypto;
   if (!crypto) {
@@ -214,6 +216,20 @@ export class Tracks {
             dt: Math.ceil(item.duration * 1000),
             pop: 0,
             localPath: item.path,
+          };
+        } else if (url === "/user/cloud") {
+          const _item = item as IUser.CloudTrack;
+          track = {
+            id: _item.simpleSong.id,
+            name: _item.simpleSong.name,
+            al: {
+              id: _item.simpleSong.al.id,
+              name: _item.album,
+              picUrl: _item.simpleSong.al.picUrl,
+            },
+            ar: _item.simpleSong.ar,
+            dt: _item.simpleSong.dt,
+            pop: _item.simpleSong.pop,
           };
         }
         resultTrack.id = track.id;

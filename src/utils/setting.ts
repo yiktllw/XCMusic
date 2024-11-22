@@ -491,9 +491,14 @@ export const qualities = [
 ];
 
 /** 侧边栏的内容 */
-const sidebarItems = ["favorite", "album", "local", "download"];
+const sidebarItems = ["favorite", "album", "local", "download", "cloud"];
 
-export type TSideBarItems = "favorite" | "album" | "local" | "download";
+export type TSideBarItems =
+  | "favorite"
+  | "album"
+  | "local"
+  | "download"
+  | "cloud";
 
 /**
  * 设置类

@@ -485,6 +485,7 @@ export default defineComponent({
       type: Number,
       default: 500,
     },
+    /** 用来标记订阅(当前播放的歌曲) */
     id: {
       type: String,
       required: true,

@@ -63,6 +63,17 @@
           {{ $t("manage_download") }}
         </div>
       </button>
+      <button
+        :tabindex="-1"
+        v-if="!hideInSidebar.includes('cloud')"
+        class="big-button font-color-standard"
+        @click="$router.push({ path: '/cloud' })"
+      >
+        <img src="@/assets/cloud.svg" class="g-icon big-button-icon" />
+        <div class="big-button-text">
+          {{ $t("cloud") }}
+        </div>
+      </button>
       <div v-if="hideInSidebar.length < 4" class="split-line"></div>
       <div class="created-playlist">
         <button

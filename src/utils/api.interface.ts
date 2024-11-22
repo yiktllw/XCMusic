@@ -245,136 +245,143 @@ export namespace IUser {
     /** 未知参数 */
     vd: number;
   }
+
+  /** 云盘歌曲简要参数 */
+  interface CloudSimpleSong {
+    name: string;
+    /** 歌曲ID */
+    id: number;
+    /** 未知参数 */
+    pst: number;
+    /** 未知参数 */
+    t: number;
+    /** 歌手 */
+    ar: Array<{
+      /** 歌手ID */
+      id: number;
+      /** 歌手名称 */
+      name: string | null;
+      /** 歌手译名 */
+      tns: Array<string>;
+      /** 歌手别名 */
+      alias: Array<string>;
+    }>;
+    /** 歌曲别名 */
+    alia: Array<string>;
+    /** 人气 */
+    pop: number;
+    /** 未知参数 */
+    st: number;
+    /** 未知参数 */
+    rt: number;
+    /** 未知参数 */
+    fee: number;
+    /** 未知参数 */
+    v: number;
+    /** 未知参数 */
+    crbt: any;
+    /** 未知参数 */
+    cf: any;
+    /** 专辑 */
+    al: {
+      /** 专辑ID */
+      id: number;
+      /** 专辑名称 */
+      name: string | null;
+      /** 专辑封面 */
+      picUrl: string;
+      /** 专辑别名 */
+      tns: Array<string>;
+      /** 未知参数 */
+      pic: number;
+    };
+    /** 时长 */
+    dt: number;
+    /** h音质信息 */
+    h: IQuality | null;
+    /** m音质信息 */
+    m: IQuality | null;
+    /** l音质信息 */
+    l: IQuality | null;
+    /** 未知参数 */
+    a: null;
+    /** 专辑里的cd计数 */
+    cd: number | null;
+    /** cd里的歌曲数 */
+    no: number;
+    /** 未知参数 */
+    rtUrl: any;
+    /** 未知参数 */
+    ftype: number;
+    /** 未知参数 */
+    rtUrls: Array<any>;
+    /** 未知参数 */
+    djId: number;
+    /** 未知参数 */
+    copyright: number;
+    /** 未知参数 */
+    s_id: number;
+    /** 未知参数 */
+    mark: number;
+    /** 未知参数 */
+    originCoverType: number;
+    /** 未知参数 */
+    originSongSimpleData: any;
+    /** 未知参数 */
+    single: number;
+    /** 未知参数 */
+    noCopyrightRcmd: any;
+    /** 未知参数 */
+    rtype: number;
+    /** 未知参数 */
+    cp: number;
+    /** 未知参数 */
+    mst: number;
+    /** 未知参数 */
+    mv: number;
+    /** 未知参数 */
+    rurl: any;
+    /** 发布时间 */
+    publishTime: number;
+    /** 未知参数 */
+    videoInfo: any;
+    /** 权限信息 */
+    privilege: Public.IPrivilege;
+  }
+
+  /** 云盘歌曲 */
+  export interface CloudTrack {
+    /** 云盘歌曲简要参数  */
+    simpleSong: CloudSimpleSong;
+    /** 专辑 */
+    album: string;
+    /** 歌手 */
+    artist: string;
+    /** 比特率 */
+    bitrate: number;
+    /** 歌曲ID */
+    songId: number;
+    /** 歌曲名 */
+    songName: string;
+    /** 添加到云盘的时间 */
+    addTime: number;
+    /** 未知用法 */
+    cover: number;
+    /** 未知用法 */
+    coverId: string;
+    /** 未知用法 */
+    lyricId: string;
+    /** 未知用法 */
+    version: number;
+    /** 文件大小 */
+    fileSize: number;
+    /** 文件名 */
+    fileName: string;
+  }
+
   /** 云盘信息的返回值 */
   export interface CloudResponse {
-    data: Array<{
-      simpleSong: {
-        /** 歌曲名 */
-        name: string;
-        /** 歌曲ID */
-        id: number;
-        /** 未知参数 */
-        pst: number;
-        /** 未知参数 */
-        t: number;
-        /** 歌手 */
-        ar: Array<{
-          /** 歌手ID */
-          id: number;
-          /** 歌手名称 */
-          name: string | null;
-          /** 歌手译名 */
-          tns: Array<string>;
-          /** 歌手别名 */
-          alias: Array<string>;
-        }>;
-        /** 歌曲别名 */
-        alia: Array<string>;
-        /** 人气 */
-        pop: number;
-        /** 未知参数 */
-        st: number;
-        /** 未知参数 */
-        rt: number;
-        /** 未知参数 */
-        fee: number;
-        /** 未知参数 */
-        v: number;
-        /** 未知参数 */
-        crbt: any;
-        /** 未知参数 */
-        cf: any;
-        /** 专辑 */
-        al: {
-          /** 专辑ID */
-          id: number;
-          /** 专辑名称 */
-          name: string | null;
-          /** 专辑封面 */
-          picUrl: string;
-          /** 专辑别名 */
-          tns: Array<string>;
-          /** 未知参数 */
-          pic: number;
-        };
-        /** 时长 */
-        dt: number;
-        /** h音质信息 */
-        h: IQuality | null;
-        /** m音质信息 */
-        m: IQuality | null;
-        /** l音质信息 */
-        l: IQuality | null;
-        /** 未知参数 */
-        a: null;
-        /** 专辑里的cd计数 */
-        cd: number | null;
-        /** cd里的歌曲数 */
-        no: number;
-        /** 未知参数 */
-        rtUrl: any;
-        /** 未知参数 */
-        ftype: number;
-        /** 未知参数 */
-        rtUrls: Array<any>;
-        /** 未知参数 */
-        djId: number;
-        /** 未知参数 */
-        copyright: number;
-        /** 未知参数 */
-        s_id: number;
-        /** 未知参数 */
-        mark: number;
-        /** 未知参数 */
-        originCoverType: number;
-        /** 未知参数 */
-        originSongSimpleData: any;
-        /** 未知参数 */
-        single: number;
-        /** 未知参数 */
-        noCopyrightRcmd: any;
-        /** 未知参数 */
-        rtype: number;
-        /** 未知参数 */
-        cp: number;
-        /** 未知参数 */
-        mst: number;
-        /** 未知参数 */
-        mv: number;
-        /** 未知参数 */
-        rurl: any;
-        /** 发布时间 */
-        publishTime: number;
-        /** 未知参数 */
-        videoInfo: any;
-        /** 权限信息 */
-        privilege: Public.IPrivilege;
-      };
-      /** 专辑 */
-      album: string;
-      /** 歌手 */
-      artist: string;
-      /** 比特率 */
-      bitrate: number;
-      /** 歌曲ID */
-      songId: number;
-      /** 歌曲名 */
-      songName: string;
-      /** 添加到云盘的时间 */
-      addTime: number;
-      /** 未知用法 */
-      cover: number;
-      /** 未知用法 */
-      coverId: string;
-      /** 未知用法 */
-      lyricId: string;
-      /** 未知用法 */
-      version: number;
-      /** 文件大小 */
-      fileSize: number;
-      /** 文件名 */
-      fileName: string;
-    }>;
+    data: Array<CloudTrack>;
     /** 云盘歌曲数量 */
     count: number;
     /** 云盘已用容量 */
@@ -412,7 +419,7 @@ export namespace IUser {
     /** 用户听歌数量 */
     listenSongs: number;
   }
-  
+
   /** 歌手详情的返回值 */
   export interface ArtistDetailResponse {
     /** 歌手ID */
@@ -459,7 +466,7 @@ export namespace IUser {
       size: number;
     }>;
   }
-  
+
   export interface ArtistSongsResponse {
     /** 歌手的歌曲 */
     songs: Array<ITrack>;

@@ -267,6 +267,16 @@
                   <label for="setting_sidebar_download">
                     {{ $t("manage_download") }}
                   </label>
+                  <input
+                    type="checkbox"
+                    id="setting_sidebar_cloud"
+                    name="setting_sidebar_cloud"
+                    v-model="hideInSidebar_cloud"
+                    @change="setHideInSidebar"
+                  />
+                  <label for="setting_sidebar_cloud">
+                    {{ $t("cloud") }}
+                  </label>
                 </div>
               </div>
             </div>
@@ -630,6 +640,7 @@ export default defineComponent({
       hideInSidebar_album: false as boolean,
       hideInSidebar_local: false as boolean,
       hideInSidebar_download: false as boolean,
+      hideInSidebar_cloud: false as boolean,
       rectData: [] as number[],
       disableGpu: false,
     };
@@ -841,7 +852,7 @@ export default defineComponent({
     },
     setHideInSidebar() {
       const hideInSidebar: TSideBarItems[] = [];
-      (["favorite", "album", "local", "download"] as TSideBarItems[]).forEach(
+      (["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]).forEach(
         (item: TSideBarItems) => {
           if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
         }

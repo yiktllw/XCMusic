@@ -78,7 +78,8 @@ export default defineComponent({
 .main {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px 20px 20px 20px;
+
   .title {
     text-align: left;
     font-size: 22px;
