@@ -30,8 +30,8 @@
 - [目录](#目录)
 - [特性](#特性)
 - [待完成](#待完成)
-- [部署到vercel](#部署到vercel)
 - [配置开发环境](#配置开发环境)
+- [部署到vercel](#部署到vercel)
 - [灵感来源](#灵感来源)
 - [关于](#关于)
 - [许可证](#许可证)
@@ -52,7 +52,7 @@
 - 支持选择输出设备
 - 支持使用弹幕姬点歌。(需要在弹幕姬安装[DMPlugin_XCMusic](https://github.com/yiktllw/DMPlugin_XCMusic)插件)
 
-**[⬆ 回到目录](#目录)*  *
+**[⬆ 回到目录](#目录)**
 
 ## 待完成
 
@@ -73,30 +73,6 @@
   - [ ] 通知管理
 - [ ] 系统
   - [ ] 完善系统托盘功能
-
-**[⬆ 回到目录](#目录)**
-
-## 部署到vercel
-
-1. fork此项目
-2. 部署[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
-3. 新建vercel.json文件，写入:
-
-```json
-{
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist_electron"
-      }
-    }
-  ]
-}
-```
-
-4. 导入到vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的api地址。
 
 **[⬆ 回到目录](#目录)**
 
@@ -121,6 +97,30 @@ npm run electron:serve
 ```shell
 npm run electron:build
 ```
+
+**[⬆ 回到目录](#目录)**
+
+## 部署到vercel
+
+1. fork此项目
+2. 部署[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
+3. 新建vercel.json文件，写入:
+
+```json
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist_electron"
+      }
+    }
+  ]
+}
+```
+
+4. 导入到vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的api地址。
 
 **[⬆ 回到目录](#目录)**
 
