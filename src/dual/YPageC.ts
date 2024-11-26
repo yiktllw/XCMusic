@@ -26,31 +26,28 @@ export class YPageC {
     return this._current;
   }
   set current(page) {
-    if (
-      (page > 0 && page <= this._total && page !== this._current) ||
-      this._unknown_page
-    ) {
-      this._current = page;
-      if (this._onPageChange) {
-        this._onPageChange();
-      }
+    if (page <= 0 || page > this.total || page === this.current) return;
+    this._current = page;
+    if (this._onPageChange) {
+      this._onPageChange();
     }
   }
   get total() {
     return this._total;
   }
   set total(total) {
-    if (total > 0) {
-      this._total = total;
-    }
+    if (total <= 0) return;
+    this._total = total;
   }
   get onPageChange() {
     return this._onPageChange;
   }
   set onPageChange(func) {
-    if (typeof func === "function") {
-      this._onPageChange = func;
+    if (typeof func !== "function") {
+      console.error("onPageChange must be a function");
+      return;
     }
+    this._onPageChange = func;
   }
   get leftPage() {
     if (this._unknown_page) return [];
@@ -97,9 +94,6 @@ export class YPageC {
       this._allow_page_increase
     ) {
       this._current++;
-      if (this._onPageChange) {
-        // this._onPageChange();
-      }
     }
   }
   /**
@@ -109,9 +103,6 @@ export class YPageC {
     if (this._current > 1) {
       this._current--;
       this._allow_page_increase = true;
-      if (this._onPageChange) {
-        // this._onPageChange();
-      }
     }
   }
 }

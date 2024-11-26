@@ -22,6 +22,7 @@ export class SongPicker {
   _track: null | ITrack;
   timer: NodeJS.Timeout;
   constructor() {
+    // 设置用于与弹幕姬通信的路径
     this.homeDir = window.api.homeDir();
     this.damakuPath = window.api.pathJoin(
       this.homeDir,
@@ -31,6 +32,7 @@ export class SongPicker {
       "xcmusic"
     );
     this.filePath = window.api.pathJoin(this.damakuPath, "songPicker.txt");
+    
     if (!window.api.existsSync(this.damakuPath)) {
       window.api.makeDirSync(this.damakuPath);
     }
@@ -55,7 +57,6 @@ export class SongPicker {
   async #clearFile() {
     try {
       window.api.writeFile(this.filePath, "");
-      // console.log('文件已清空');
     } catch (err) {
       console.error("清空文件失败", err);
     }

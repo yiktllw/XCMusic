@@ -52,7 +52,7 @@
 - 支持选择输出设备
 - 支持使用弹幕姬点歌。(需要在弹幕姬安装[DMPlugin_XCMusic](https://github.com/yiktllw/DMPlugin_XCMusic)插件)
 
-**[⬆ 回到目录](#目录)**
+**[⬆ 回到目录](#目录)*  *
 
 ## 待完成
 

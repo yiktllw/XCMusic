@@ -29,19 +29,24 @@ export class YTrackC implements ITrack {
    * 非空信息
    */
   _id: number;
-  _name: string;
-  _picUrl: string;
+  _name: string = "";
+  _picUrl: string = "";
   _ar: Array<{
     // 歌手信息
     id: number; // 歌手 id，唯一标识
     name: string; // 歌手名
     tns: string; // 歌手别名
-  }>;
+  }> = [];
   _al: {
     id: number;
     name: string;
     picUrl: string;
     tns: string;
+  } = {
+    id: 0,
+    name: "",
+    picUrl: "",
+    tns: "",
   };
   _onTrackLoaded: Function;
   /**
@@ -50,15 +55,6 @@ export class YTrackC implements ITrack {
    */
   constructor(id: number | null) {
     this._id = id ?? 0;
-    this._name = "";
-    this._picUrl = "";
-    this._ar = [];
-    this._al = {
-      id: 0,
-      name: "",
-      picUrl: "",
-      tns: "",
-    };
     this._onTrackLoaded = () => {};
     this.init();
   }
@@ -66,24 +62,22 @@ export class YTrackC implements ITrack {
    * 初始化歌曲信息
    */
   async init() {
-    if (!this._id) {
-      return;
-    } else {
-      await Song.detail([this._id])
-        .then((res) => {
-          let tns = res[0].tns ? " (" + res[0].tns + ")" : "";
-          this._name = res[0].name + tns;
-          this._picUrl = res[0].al.picUrl;
-          this._ar = res[0].ar;
-          this._al = res[0].al;
-          let trackTns = res[0].al.tns[0] ? " (" + res[0].al.tns + ")" : "";
-          this._al.name = res[0].al.name + trackTns;
-          this.onTrackLoaded();
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
+    if (!this._id) return;
+
+    await Song.detail([this._id])
+      .then((res) => {
+        let tns = res[0].tns ? " (" + res[0].tns + ")" : "";
+        this._name = res[0].name + tns;
+        this._picUrl = res[0].al.picUrl;
+        this._ar = res[0].ar;
+        this._al = res[0].al;
+        let trackTns = res[0].al.tns[0] ? " (" + res[0].al.tns + ")" : "";
+        this._al.name = res[0].al.name + trackTns;
+        this.onTrackLoaded();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
   get id() {
     return this._id;
@@ -104,10 +98,10 @@ export class YTrackC implements ITrack {
     return this._onTrackLoaded;
   }
   set onTrackLoaded(fn) {
-    if (typeof fn === "function") {
-      this._onTrackLoaded = fn;
-    } else {
+    if (typeof fn !== "function") {
       throw new Error("onTrackLoaded must be a function, but got " + typeof fn);
     }
+
+    this._onTrackLoaded = fn;
   }
 }

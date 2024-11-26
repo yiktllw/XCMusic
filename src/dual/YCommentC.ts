@@ -20,6 +20,13 @@ export interface IComment {
   likedCount: number;
 }
 
+class YCommentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "YCommentError";
+  }
+}
+
 export class YCommentC {
   _type: Types;
   _id: string | number;
@@ -75,34 +82,36 @@ export class YCommentC {
           : null,
     })
       .then((res) => {
-        this.comments = res.data?.comments;
-        this.title = res.data?.commentsTitle;
-        this._count = res.data?.totalCount;
-        if (newPageInstance) {
-          this.page = new YPageC(Math.ceil(res.data?.totalCount / 100) || 1);
-          // console.log('new page instance: ', this.page);
-        } else {
-          this.page.total = Math.ceil(res.data?.totalCount / 100);
-        }
-        this.page.onPageChange = () => {
-          this.initData(false);
-        };
+        this.handleApiResponse(res, newPageInstance);
       })
       .catch((err) => {
         console.error(err);
       });
   }
+  handleApiResponse(res: any, newPageInstance: boolean) {
+    this.comments = res.data?.comments;
+    this.title = res.data?.commentsTitle;
+    this._count = res.data?.totalCount;
+    if (newPageInstance) {
+      this.page = new YPageC(Math.ceil(res.data?.totalCount / 100) || 1);
+      // console.log('new page instance: ', this.page);
+    } else {
+      this.page.total = Math.ceil(res.data?.totalCount / 100);
+    }
+    this.page.onPageChange = () => {
+      this.initData(false);
+    };
+  }
   get type() {
     return this._type;
   }
   set type(type: Types) {
-    if (type === "song" || type === "album" || type === "playlist") {
-      this._type = type;
-    } else {
-      throw new Error(
-        "type error: type must be song, album or playlist, but got " + type,
+    if (type !== "song" && type !== "album" && type !== "playlist") {
+      throw new YCommentError(
+        "type error: type must be song, album or playlist, but got " + type
       );
     }
+    this._type = type;
   }
   get typeId() {
     if (this._type === "song") {
@@ -119,19 +128,16 @@ export class YCommentC {
     return this._sortType;
   }
   set sortType(sortType) {
-    if (
-      sortType === "recommend" ||
-      sortType === "time" ||
-      (sortType === "hot" && this._sortType !== sortType)
-    ) {
+    if (sortType !== "recommend" && sortType !== "hot" && sortType !== "time") {
+      throw new YCommentError(
+        "sortType error: sortType must be recommend or time, but got " +
+          sortType
+      );
+    }
+    if (this._sortType !== sortType) {
       this._sortType = sortType;
       this.initData(true);
       console.log("sortType changed: ", this._sortType);
-    } else {
-      throw new Error(
-        "sortType error: sortType must be recommend or time, but got " +
-          sortType,
-      );
     }
   }
   get sortTypeId() {
@@ -149,40 +155,37 @@ export class YCommentC {
     return this._comments;
   }
   set comments(comments) {
-    if (comments instanceof Array) {
-      this._comments = comments;
-      this.onCommentUpdate();
-    } else {
-      throw new Error(
-        "comments error: comments must be an array, but got " + comments,
+    if (!(comments instanceof Array)) {
+      throw new YCommentError(
+        "comments error: comments must be an array, but got " + comments
       );
     }
+    this._comments = comments;
+    this.onCommentUpdate();
   }
   get title() {
     return this._commentsTitle;
   }
   set title(commentsTitle) {
-    if (typeof commentsTitle === "string") {
-      this._commentsTitle = commentsTitle;
-    } else {
-      throw new Error(
+    if (typeof commentsTitle !== "string") {
+      throw new YCommentError(
         "commentsTitle error: commentsTitle must be a string, but got " +
-          commentsTitle,
+          commentsTitle
       );
     }
+    this._commentsTitle = commentsTitle;
   }
   get onCommentUpdate() {
     return this._onCommentUpdate;
   }
   set onCommentUpdate(onCommentUpdate) {
-    if (typeof onCommentUpdate === "function") {
-      this._onCommentUpdate = onCommentUpdate;
-    } else {
-      throw new Error(
+    if (typeof onCommentUpdate !== "function") {
+      throw new YCommentError(
         "onCommentUpdate error: onCommentUpdate must be a function, but got " +
-          onCommentUpdate,
+          onCommentUpdate
       );
     }
+    this._onCommentUpdate = onCommentUpdate;
   }
   get count() {
     return this._count;

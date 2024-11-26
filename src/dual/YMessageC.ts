@@ -10,6 +10,13 @@ type Msg = {
   type: "info" | "success" | "warning" | "error";
 };
 
+class YMessageError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "YMessageError";
+  }
+}
+
 export class YMessageC {
   #types = ["info", "success", "warning", "error"];
   #message = "";
@@ -20,11 +27,10 @@ export class YMessageC {
    */
   constructor({ message, type }: Msg) {
     this.#message = message;
-    if (this.#types.includes(type)) {
-      this.#type = type;
-    } else {
-      console.error("Invalid type: ", type);
+    if (!this.#types.includes(type)) {
+      throw new YMessageError("Invalid type: " + type);
     }
+    this.#type = type;
   }
   get message() {
     return this.#message;
@@ -49,23 +55,20 @@ export namespace Message {
   export function post(
     type: "info" | "success" | "warning" | "error",
     message: string,
-    needTrans: boolean = false,
+    needTrans: boolean = false
   ) {
-    if (["info", "success", "warning", "error"].includes(type)) {
-      let transMsg = message;
-      if (needTrans) {
-        transMsg = i18n.global.t(message);
-      }
-      const msg = new YMessageC({
-        type: type,
-        message: transMsg,
-      });
-      window.postMessage({
-        type: "message-show",
-        data: msg.data,
-      });
-    } else {
-      console.error("Invalid type: ", type);
+    if (!["info", "success", "warning", "error"].includes(type)) {
+      throw new YMessageError("Invalid type: " + type);
     }
+    let transMsg = message;
+    if (needTrans) transMsg = i18n.global.t(message);
+    const msg = new YMessageC({
+      type: type,
+      message: transMsg,
+    });
+    window.postMessage({
+      type: "message-show",
+      data: msg.data,
+    });
   }
 }

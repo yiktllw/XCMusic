@@ -371,8 +371,6 @@ export async function getColorFromImg(
       reject("img src is null");
     });
   }
-  // console.log('step2');
-  // console.log(img);
 
   // 使用 Promise 包装 img.onload
   const color: COLOR | null =
@@ -380,15 +378,14 @@ export async function getColorFromImg(
       // 图片加载完成后执行
       img.onload = () => {
         try {
-          // console.log('step3');
           const canvas = document.createElement("canvas");
           const context = canvas.getContext("2d");
           if (!context) return;
+          
           canvas.width = img.width;
           canvas.height = img.height;
           context.drawImage(img, 0, 0, img.width, img.height);
 
-          // console.log('step4');
           const imageData = context.getImageData(
             0,
             0,
