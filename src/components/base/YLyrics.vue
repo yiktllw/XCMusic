@@ -12,12 +12,12 @@
 
 <script lang="ts">
 import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
-import { getStorage } from "@/utils/render_storage";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
-let scale = window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
+let scale = window.devicePixelRatio * (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
 // 行高
 let lineHeight = 59 * scale;
 let smallLineHeight = 30 * scale;
@@ -134,7 +134,7 @@ export default defineComponent({
   methods: {
     setScale() {
       scale =
-        window.devicePixelRatio * (getStorage("setting.display.zoom") ?? 1);
+        window.devicePixelRatio * (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
       // 行高
       lineHeight = 59 * scale;
       smallLineHeight = 30 * scale;

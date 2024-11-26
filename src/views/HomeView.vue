@@ -131,7 +131,7 @@ import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
 import { ITrack } from "@/utils/tracks";
 import { IPlaylist } from "@/utils/login";
-import { getStorage } from "@/utils/render_storage";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 
 export default defineComponent({
   name: "App",
@@ -311,7 +311,7 @@ export default defineComponent({
   watch: {
     showPreventContainer(val) {
       if (val) {
-        const useGpu = getStorage("setting.system.disableGpuAcceleration");
+        const useGpu = getStorage(StorageKey.Setting_System_disableGpuAcceleration);
         if (useGpu) {
           this.$nextTick(() => {
             this.prevent_container!.style.backdropFilter = "none";

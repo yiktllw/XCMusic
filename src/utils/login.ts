@@ -10,7 +10,7 @@ import { Subscriber } from "@/utils/subscribe";
 import { Login as LoginApi, User } from "@/utils/api";
 import { reactive, markRaw, Raw, Reactive } from "vue";
 import { UserPlaylist } from "@/dual/login";
-import { getStorage, setStorage } from "@/utils/render_storage";
+import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 
 export interface IPlaylist {
   /** 歌单名 */
@@ -27,17 +27,17 @@ export interface IPlaylist {
 
 export class Login {
   /** 登录凭证 */
-  _cookie: string = getStorage("login_cookie") ?? "";
+  _cookie: string = getStorage(StorageKey.LoginCookie) ?? "";
   /** 登录状态 */
-  _status: boolean = getStorage("login_cookie") ? true : false;
+  _status: boolean = getStorage(StorageKey.LoginCookie) ? true : false;
   /** 用户ID */
-  _userId: string = getStorage("login_user_id") ?? "";
+  _userId: number = getStorage(StorageKey.LoginUserId) ?? 0;
   /** 用户名 */
-  _userName: string = getStorage("login_user_name") ?? "";
+  _userName: string = getStorage(StorageKey.LoginUserName) ?? "";
   /** 用户喜欢的音乐 */
   _likelist: number[] = [];
   /** 用户头像 */
-  _avatar: string = getStorage("login_avatar") ?? "";
+  _avatar: string = getStorage(StorageKey.LoginAvatar) ?? "";
   /** 用户创建的歌单 */
   _userPlaylists: Reactive<IPlaylist[]> = reactive([]);
   /** 用户订阅的歌单 */
@@ -72,7 +72,7 @@ export class Login {
       .then((res) => {
         if (!res) return;
 
-        this.userId = res.userId.toString();
+        this.userId = res.userId;
         this.userName = res.nickname;
         this.avatar = res.avatarUrl + "?param=200y200";
       })
@@ -90,9 +90,9 @@ export class Login {
   clear() {
     /** 使用_cookie是为了不触发window.location.reload() */
     this._cookie = "";
-    setStorage("login_cookie", "");
+    setStorage(StorageKey.LoginCookie, "");
     this.status = false;
-    this._userId = "";
+    this._userId = 0;
     this.userName = "";
     this._likelist = markRaw([]);
     this.avatar = "";
@@ -104,7 +104,7 @@ export class Login {
     return this._cookie;
   }
   set cookie(value) {
-    setStorage("login_cookie", value ?? "");
+    setStorage(StorageKey.LoginCookie, value ?? "");
     this._cookie = value;
     this.status = true;
     this.updateInfo();
@@ -116,7 +116,7 @@ export class Login {
   private set userId(value) {
     if (value !== this._userId && value) {
       this._userId = value;
-      setStorage("login_user_id", value.toString());
+      setStorage(StorageKey.LoginUserId, value);
       this.subscriber.exec("userId");
     }
   }
@@ -126,7 +126,7 @@ export class Login {
   private set userName(value) {
     if (value !== this._userName && value) {
       this._userName = value;
-      setStorage("login_user_name", value);
+      setStorage(StorageKey.LoginUserName, value);
       this.subscriber.exec("userName");
     }
   }
@@ -150,7 +150,7 @@ export class Login {
   private set status(value) {
     if (typeof value === "boolean" && value !== this._status) {
       this._status = value;
-      setStorage("login_status", value ? "true" : "false");
+      setStorage(StorageKey.LoginStatus, value);
       this.subscriber.exec("status");
     }
   }
@@ -160,7 +160,7 @@ export class Login {
   private set avatar(value) {
     if (value !== this._avatar && value) {
       this._avatar = value;
-      setStorage("login_avatar", value);
+      setStorage(StorageKey.LoginAvatar, value);
       this.subscriber.exec("avatar");
     }
   }

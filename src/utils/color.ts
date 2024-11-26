@@ -9,7 +9,7 @@
 
 import Color from "color";
 import { Theme1, Theme2, themes } from "@/utils/theme";
-import { getStorage } from "@/utils/render_storage";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 
 type COLOR = {
   r: number;
@@ -59,13 +59,13 @@ export namespace YColor {
       const userCustomThemes: Array<{
         data: Theme1 | Theme2;
         classContent: string;
-      }> = getStorage("setting.display.userCustomThemes") ?? "[]";
+      }> = getStorage(StorageKey.Setting_Display_UserCustomThemes) ?? [];
       let _res = userCustomThemes.find(
         (theme) => theme.data.value === themeValue
       );
       if (!_res) {
         throw new Error(
-          `THEME NOT FOUND. \nrequire: ${themeValue} \nuserCustomThemes: ${JSON.stringify(userCustomThemes, null, 2)}`
+          `THEME NOT FOUND. \nrequire: ${JSON.stringify(themeValue, null, 2)} \nuserCustomThemes: ${JSON.stringify(userCustomThemes, null, 2)}`
         );
       }
       res = _res?.data;
@@ -238,7 +238,7 @@ export namespace YColor {
    */
   export function setBackgroundColorHex2(hex: string) {
     try {
-      const setting_theme = getStorage("setting.display.theme");
+      const setting_theme = getStorage(StorageKey.Setting_Display_Theme);
       if (!setting_theme) return;
       const theme = YColor.findTheme(setting_theme);
       YColor.setBackgroundColorHex(

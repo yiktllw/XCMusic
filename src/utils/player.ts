@@ -22,7 +22,7 @@ import i18n from "@/i18n";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { qualities } from "@/utils/setting";
 import { ITrack } from "@/utils/tracks";
-import { getStorage, setStorage } from "@/utils/render_storage";
+import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 var fs: any, path: any;
 if (window.electron?.isElectron) {
@@ -72,7 +72,7 @@ export class Player {
     | "sky"
     | "jymaster" = "exhigh";
   /** 是否开启音量均衡功能 */
-  _volume_leveling: boolean = getStorage("setting.play.volume_leveling");
+  _volume_leveling: boolean = getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? false;
   /** 歌词 */
   _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
   /** 点歌功能 */
@@ -151,14 +151,14 @@ export class Player {
           if (this._mode === "listrandom") {
             this._playlist = this._playlist.sort(() => Math.random() - 0.5);
           }
-          const lastTrack = getStorage("currentTrack");
+          const lastTrack = getStorage(StorageKey.CurrentTrack);
           if (lastTrack) {
             this.subscriber.on({
               id: "indexDB",
               type: "playerReady",
               func: () => {
-                const autoPlay = getStorage("setting.play.autoPlay");
-                this.playTrack(lastTrack, autoPlay, 1600);
+                const autoPlay = getStorage(StorageKey.Setting_Play_AutoPlay);
+                this.playTrack(lastTrack, autoPlay ?? false, 1600);
               },
             });
           }
@@ -173,7 +173,7 @@ export class Player {
       id: "currentTrackStorage",
       type: "track",
       func: () => {
-        setStorage("currentTrack", this.currentTrack);
+        setStorage(StorageKey.CurrentTrack, this.currentTrack);
       },
     });
 
@@ -565,7 +565,7 @@ export class Player {
       this._sourceNode.connect(this._gainNode);
       this._gainNode.connect(this._destination);
 
-      if (getStorage("setting.playui.spectrum")) {
+      if (getStorage(StorageKey.Setting_PlayUI_Spectrum)) {
         // 创建 AnalyserNode
         this._analyserNode = this._audioContext.createAnalyser();
         this._analyserNode.fftSize = 1024; // 设置 FFT 大小
@@ -576,7 +576,7 @@ export class Player {
       this._outputAudio.srcObject = this._destination.stream;
       this._outputAudio.play();
 
-      this.setDevice(getStorage("setting.play.device") ?? "default");
+      this.setDevice(getStorage(StorageKey.Setting_Play_Device) ?? "default");
     }
   }
   /**
@@ -809,7 +809,7 @@ export class Player {
    * 更新歌单播放数据
    */
   async updatePlaycount() {
-    if (!getStorage("login_cookie")) return;
+    if (!getStorage(StorageKey.LoginCookie)) return;
     await Playlist.updatePlaycount(this._playlistId as number).then((res) => {
       console.log(
         "update playlist playcount: ",

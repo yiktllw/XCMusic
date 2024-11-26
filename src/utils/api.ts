@@ -9,7 +9,7 @@
 import axios from "axios";
 import { ITrack, Tracks } from "@/utils/tracks";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
-import { getStorage } from "@/utils/render_storage";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 import {
   IComment,
   ILike,
@@ -84,7 +84,7 @@ export namespace Like {
     /** 歌曲id */
     id: number
   ): Promise<ILike.Response | null> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return null;
@@ -108,7 +108,7 @@ export namespace Like {
     /** 歌曲id */
     id: number
   ): Promise<ILike.Response | null> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return null;
@@ -151,7 +151,7 @@ export namespace Playlist {
     /** 歌单id */
     id: number
   ): Promise<IPlaylist.DetailResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     const params: IPlaylist.DetailParams = { id: id };
     if (cookie && cookie.length > 0) params["cookie"] = cookie;
     let res = await useApi("/playlist/detail", params).catch((error) => {
@@ -259,7 +259,7 @@ export namespace Playlist {
     /** 歌单描述 */
     desc: string
   ) {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) console.error("No login cookie found");
     await useApi("/playlist/update", {
       id: id,
@@ -278,7 +278,7 @@ export namespace Playlist {
     /** 需要添加的歌曲id数组 */
     ids: number[]
   ): Promise<IPlaylist.AddTracksResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       throw new Error("No login cookie found");
     }
@@ -307,7 +307,7 @@ export namespace Playlist {
     /** 消息 */
     message?: string;
   }> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       throw new Error("No login cookie found");
     }
@@ -328,7 +328,7 @@ export namespace Playlist {
     /** 歌单id */
     playlistId: number
   ) {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return;
@@ -353,7 +353,7 @@ export namespace Playlist {
     /** 歌单隐私，0为公开，10为私人 */
     privacy: 10 | 0
   ): Promise<IPlaylist.CreateResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       return { code: 301 };
     }
@@ -375,7 +375,7 @@ export namespace Playlist {
     /** 歌单id */
     id: number
   ): Promise<Object | null> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return null;
@@ -445,7 +445,7 @@ export namespace Song {
     const url: string = await useApi("/song/url/v1", {
       id: id,
       level: level,
-      cookie: getStorage("login_cookie") ?? undefined,
+      cookie: getStorage(StorageKey.LoginCookie) ?? undefined,
     })
       .then((res) => res.data[0].url)
       .catch((err) => {
@@ -466,7 +466,7 @@ export namespace Song {
     const res = await useApi("/song/url/v1", {
       id: id,
       level: quality,
-      cookie: getStorage("login_cookie") ?? undefined,
+      cookie: getStorage(StorageKey.LoginCookie) ?? undefined,
     });
 
     return {
@@ -486,7 +486,7 @@ export namespace Song {
     const res = await useApi("/song/url/v1", {
       id: id,
       level: level,
-      cookie: getStorage("login_cookie") ?? undefined,
+      cookie: getStorage(StorageKey.LoginCookie) ?? undefined,
     });
 
     return res.data[0];
@@ -497,7 +497,7 @@ export namespace Song {
     /** 歌曲id */
     id: number
   ): Promise<null | ISong.WikiResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("Failed to get song wiki: No login cookie found");
       return null;
@@ -519,7 +519,7 @@ export namespace Song {
     /** 歌曲id */
     id: number
   ): Promise<null | ISong.SheetResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("Failed to get song sheets: No login cookie found");
       return null;
@@ -539,7 +539,7 @@ export namespace Song {
     /** 曲谱id */
     id: number
   ): Promise<null | ISong.SheetDetailResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("Failed to get sheet detail: No login cookie found");
       return null;
@@ -873,7 +873,7 @@ export namespace User {
     /** 用户id */
     uid: number
   ): Promise<IUser.DetailResponse | null> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return null;
@@ -915,7 +915,7 @@ export namespace User {
    * 用户账户信息
    */
   export async function account(): Promise<IUser.AccountResponse | null> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return null;
@@ -937,7 +937,7 @@ export namespace User {
     /** 是否刷新 */
     reload = false
   ): Promise<number[]> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return [];
@@ -971,7 +971,7 @@ export namespace User {
     /** 用户id */
     uid: number
   ): Promise<UserPlaylist[]> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return [];
@@ -1000,7 +1000,7 @@ export namespace User {
     /** 每页数量 */
     limit: number = 100
   ): Promise<IUser.SubAlbumsResponse> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return {
@@ -1030,7 +1030,7 @@ export namespace User {
     /** 一周的数据或所有时间的数据 */
     type: "week" | "alltime" = "week"
   ): Promise<ITrack[]> {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return [];
@@ -1213,7 +1213,7 @@ export namespace Login {
    * 登出
    */
   export async function out() {
-    const cookie = getStorage("login_cookie");
+    const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
       console.error("No login cookie found");
       return;

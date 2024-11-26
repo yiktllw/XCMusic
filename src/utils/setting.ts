@@ -7,7 +7,7 @@
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
-import { getStorage, setStorage } from "@/utils/render_storage";
+import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { Theme1, Theme2, themes } from "@/utils/theme";
 let fs: any, path: any, os: any;
 
@@ -118,18 +118,18 @@ export interface ISettings {
 export const settingGroup: SettingGroup = {
   play: {
     dbclick: {
-      value: getStorage("setting.play.dbclick") ?? "all",
+      value: getStorage(StorageKey.Setting_Play_Dbclick) ?? "all",
       default: "all",
       validation: (value) => {
         let valid = ["all", "single"].includes(value);
         if (valid) {
-          setStorage("setting.play.dbclick", value);
+          setStorage(StorageKey.Setting_Play_Dbclick, value);
         }
         return valid;
       },
     },
     volume_leveling: {
-      value: getStorage("setting.play.volume_leveling") ?? true,
+      value: getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? true,
       default: true,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -137,67 +137,67 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          setStorage("setting.play.volume_leveling", value);
+          setStorage(StorageKey.Setting_Play_VolumeLeveling, value);
         } else if (valid2) {
-          setStorage("setting.play.volume_leveling", value);
+          setStorage(StorageKey.Setting_Play_VolumeLeveling, value);
           valid = true;
         }
         return valid;
       },
     },
     volume: {
-      value: getStorage("setting.play.volume") ?? 1,
+      value: getStorage(StorageKey.Settting_Play_Volume) ?? 1,
       default: 1,
       type: "number",
       validation: (value) => {
         let valid = typeof value === "number" && value >= 0 && value <= 1;
         if (valid) {
-          setStorage("setting.play.volume", value);
+          setStorage(StorageKey.Settting_Play_Volume, value);
         }
         return valid;
       },
     },
     mode: {
-      value: getStorage("setting.play.mode") ?? "order",
+      value: getStorage(StorageKey.Setting_Play_Mode) ?? "order",
       default: "order",
       validation: (value) => {
         let valid = typeof value === "string" && modes.includes(value);
         if (valid) {
-          setStorage("setting.play.mode", value);
+          setStorage(StorageKey.Setting_Play_Mode, value);
         }
         return valid;
       },
     },
     quality: {
-      value: getStorage("setting.play.quality") ?? "standard",
+      value: getStorage(StorageKey.Setting_Play_Quality) ?? "standard",
       default: "standard",
       validation: (value) => {
         let valid = typeof value === "string" && qualities.includes(value);
         if (valid) {
-          setStorage("setting.play.quality", value);
+          setStorage(StorageKey.Setting_Play_Quality, value);
         }
         return valid;
       },
     },
     device: {
-      value: getStorage("setting.play.device") ?? "default",
+      value: getStorage(StorageKey.Setting_Play_Device) ?? "default",
       default: "default",
       validation: (value) => {
         let valid = typeof value === "string";
         if (valid) {
-          setStorage("setting.play.device", value);
+          setStorage(StorageKey.Setting_Play_Device, value);
         }
         return valid;
       },
     },
     autoPlay: {
-      value: getStorage("setting.play.autoPlay") ?? false,
+      value: getStorage(StorageKey.Setting_Play_AutoPlay) ?? false,
       default: false,
       validation: (value) => {
         let valid = validBoolean(value);
         if (valid) {
           value = strToBool(value);
-          setStorage("setting.play.autoPlay", value);
+          setStorage(StorageKey.Setting_Play_AutoPlay, value);
         }
         return valid;
       },
@@ -205,7 +205,7 @@ export const settingGroup: SettingGroup = {
   },
   playui: {
     spectrum: {
-      value: getStorage("setting.playui.spectrum") ?? false,
+      value: getStorage(StorageKey.Setting_PlayUI_Spectrum) ?? false,
       default: false,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -213,9 +213,9 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          setStorage("setting.playui.spectrum", value);
+          setStorage(StorageKey.Setting_PlayUI_Spectrum, value);
         } else if (valid2) {
-          setStorage("setting.playui.spectrum", value);
+          setStorage(StorageKey.Setting_PlayUI_Spectrum, value);
           valid = true;
         }
         return valid;
@@ -224,36 +224,37 @@ export const settingGroup: SettingGroup = {
   },
   download: {
     path: {
-      value: getStorage("setting.download.path") ?? getDownloadDirectory(),
+      value:
+        getStorage(StorageKey.Setting_Download_Path) ?? getDownloadDirectory(),
       default: getDownloadDirectory(),
       validation: (value) => {
         let valid = typeof value === "string" && isValidDirectory(value);
         if (valid) {
-          setStorage("setting.download.path", value);
+          setStorage(StorageKey.Setting_Download_Path, value);
         }
         return valid;
       },
     },
     quality: {
-      value: getStorage("setting.download.quality") ?? "standard",
+      value: getStorage(StorageKey.Setting_Download_Quality) ?? "standard",
       default: "standard",
       validation: (value) => {
         let valid = typeof value === "string" && qualities.includes(value);
         if (valid) {
-          setStorage("setting.download.quality", value);
+          setStorage(StorageKey.Setting_Download_Quality, value);
         }
         return valid;
       },
     },
     localPaths: {
-      value: getStorage("setting.download.localPaths") ?? [],
+      value: getStorage(StorageKey.Setting_Download_LocalPaths) ?? [],
       default: [],
       validation: (value) => {
         let valid =
           Array.isArray(value) &&
           value.every((path: string) => isValidDirectory(path));
         if (valid) {
-          setStorage("setting.download.localPaths", value);
+          setStorage(StorageKey.Setting_Download_LocalPaths, value);
         }
         return valid;
       },
@@ -261,53 +262,53 @@ export const settingGroup: SettingGroup = {
   },
   display: {
     language: {
-      value: getStorage("setting.display.language") ?? "zh",
+      value: getStorage(StorageKey.Setting_Display_Language) ?? "zh",
       default: "zh",
       validation: (value) => {
         let valid = ["zh", "en"].includes(value);
         if (valid) {
-          setStorage("setting.display.language", value);
+          setStorage(StorageKey.Setting_Display_Language, value);
         }
         return valid;
       },
     },
     theme: {
-      value: getStorage("setting.display.theme") ?? "dark",
+      value: getStorage(StorageKey.Setting_Display_Theme) ?? "dark",
       default: "dark",
       validation: (value) => {
         const userCustomThemes: Array<{
           data: Theme1 | Theme2;
           classContent: string;
-        }> = getStorage("setting.display.userCustomThemes") ?? [];
+        }> = getStorage(StorageKey.Setting_Display_UserCustomThemes) ?? [];
         let valid =
           typeof value === "string" &&
           (themes.some((theme) => theme.value === value) ||
             userCustomThemes.some((theme) => theme.data.value === value));
         if (valid) {
-          setStorage("setting.display.theme", value);
+          setStorage(StorageKey.Setting_Display_Theme, value);
         }
         return valid;
       },
     },
     userCustomThemes: {
-      value: getStorage("setting.display.userCustomThemes") ?? [],
+      value: getStorage(StorageKey.Setting_Display_UserCustomThemes) ?? [],
       default: [],
       validation: (value) => {
         let valid = Array.isArray(value);
         if (valid) {
-          setStorage("setting.display.userCustomThemes", value);
+          setStorage(StorageKey.Setting_Display_UserCustomThemes, value);
         }
         return valid;
       },
     },
     zoom: {
-      value: getStorage("setting.display.zoom") ?? 1,
+      value: getStorage(StorageKey.Setting_Display_Zoom) ?? 1,
       default: 1,
       type: "number",
       validation: (value) => {
         let valid = typeof value === "number" && value >= 0.5 && value <= 2;
         if (valid) {
-          setStorage("setting.display.zoom", value);
+          setStorage(StorageKey.Setting_Display_Zoom, value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send("zoom", value);
           }
@@ -316,7 +317,7 @@ export const settingGroup: SettingGroup = {
       },
     },
     fullscreenAutoZoom: {
-      value: getStorage("setting.display.fullscreenAutoZoom") ?? false,
+      value: getStorage(StorageKey.Setting_Display_FullscreenAutoZoom) ?? false,
       default: false,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -324,60 +325,49 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          setStorage("setting.display.fullscreenAutoZoom", value);
+          setStorage(StorageKey.Setting_Display_FullscreenAutoZoom, value);
         } else if (valid2) {
-          setStorage("setting.display.fullscreenAutoZoom", value);
+          setStorage(StorageKey.Setting_Display_FullscreenAutoZoom, value);
           valid = true;
         }
         return valid;
       },
     },
     sidebarWidth: {
-      value: getStorage("setting.display.sidebarWidth") ?? 200,
+      value: getStorage(StorageKey.Setting_Display_SidebarWidth) ?? 200,
       default: 200,
       type: "number",
       nosave: true,
       validation: (value) => {
         let valid = typeof value === "number" && value >= 180 && value <= 260;
         if (valid) {
-          setStorage("setting.display.sidebarWidth", value);
+          setStorage(StorageKey.Setting_Display_SidebarWidth, value);
         }
         return valid;
       },
     },
     albumWidth: {
-      value: getStorage("setting.display.albumWidth") ?? 230,
+      value: getStorage(StorageKey.Setting_Display_AlbumWidth) ?? 230,
       default: 230,
       type: "number",
       nosave: true,
       validation: (value) => {
         let valid = typeof value === "number" && value >= 200 && value <= 400;
         if (valid) {
-          setStorage("setting.display.albumWidth", value);
+          setStorage(StorageKey.Setting_Display_AlbumWidth, value);
         }
         return valid;
       },
     },
     hideInSidebar: {
-      value: getStorage("setting.display.hideInSidebar") ?? [],
+      value: getStorage(StorageKey.Setting_Display_HideInSidebar) ?? [],
       default: [],
       validation: (value) => {
         let valid =
           Array.isArray(value) &&
           value.every((item: string) => sidebarItems.includes(item));
         if (valid) {
-          setStorage("setting.display.hideInSidebar", value);
-        }
-        return valid;
-      },
-    },
-    showCoverInPlaylist: {
-      value: getStorage("setting.display.showCoverInPlaylist") ?? true,
-      default: true,
-      validation: (value) => {
-        let valid = typeof value === "boolean";
-        if (valid) {
-          setStorage("setting.display.showCoverInPlaylist", value);
+          setStorage(StorageKey.Setting_Display_HideInSidebar, value);
         }
         return valid;
       },
@@ -385,31 +375,31 @@ export const settingGroup: SettingGroup = {
   },
   titleBar: {
     searchHistory: {
-      value: getStorage("setting.searchHistory") ?? [],
+      value: getStorage(StorageKey.Setting_SearchHistory) ?? [],
       default: [],
       nosave: true,
       validation: (value) => {
         let valid = Array.isArray(value);
         if (valid) {
-          setStorage("setting.searchHistory", value);
+          setStorage(StorageKey.Setting_SearchHistory, value);
         }
         return valid;
       },
     },
     closeButton: {
-      value: getStorage("setting.titleBar.closeButton") ?? "minimize",
+      value: getStorage(StorageKey.Setting_TitleBar_CloseButton) ?? "minimize",
       default: "minimize",
       validation: (value) => {
         let valid =
           typeof value === "string" && ["quit", "minimize"].includes(value);
         if (valid) {
-          setStorage("setting.titleBar.closeButton", value);
+          setStorage(StorageKey.Setting_TitleBar_CloseButton, value);
         }
         return valid;
       },
     },
     closeAlwaysAsk: {
-      value: getStorage("setting.titleBar.closeAlwaysAsk") ?? true,
+      value: getStorage(StorageKey.Setting_TitleBar_CloseAlwaysAsk) ?? true,
       default: true,
       validation: (value) => {
         let valid = typeof value === "boolean";
@@ -417,9 +407,9 @@ export const settingGroup: SettingGroup = {
           typeof value === "string" &&
           ["true", "false"].includes(value.toLowerCase());
         if (valid) {
-          setStorage("setting.titleBar.closeAlwaysAsk", value);
+          setStorage(StorageKey.Setting_TitleBar_CloseAlwaysAsk, value);
         } else if (valid2) {
-          setStorage("setting.titleBar.closeAlwaysAsk", value);
+          setStorage(StorageKey.Setting_TitleBar_CloseAlwaysAsk, value);
           valid = true;
         }
         return valid;
@@ -428,7 +418,7 @@ export const settingGroup: SettingGroup = {
   },
   system: {
     openAtLogin: {
-      value: getStorage("setting.system.openAtLogin") ?? false,
+      value: getStorage(StorageKey.Setting_System_OpenAtLogin) ?? false,
       default: false,
       validation: (value) => {
         let valid = false;
@@ -436,7 +426,7 @@ export const settingGroup: SettingGroup = {
 
         // 将value转换为boolean并得知是否有效
         if (isBool) {
-          setStorage("setting.system.openAtLogin", value);
+          setStorage(StorageKey.Setting_System_OpenAtLogin, value);
           valid = true;
         } else if (typeof value === "string") {
           value = value.toLowerCase();
@@ -457,12 +447,13 @@ export const settingGroup: SettingGroup = {
       },
     },
     disableGpuAcceleration: {
-      value: getStorage("setting.system.disableGpuAcceleration") ?? false,
+      value:
+        getStorage(StorageKey.Setting_System_disableGpuAcceleration) ?? false,
       default: false,
       validation: (value) => {
         let valid = typeof value === "boolean";
         if (valid) {
-          setStorage("setting.system.disableGpuAcceleration", value);
+          setStorage(StorageKey.Setting_System_disableGpuAcceleration, value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send(
               value ? "disable-gpu" : "enable-gpu"

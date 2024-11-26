@@ -6,7 +6,7 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import { Doc } from "@/utils/document";
-import { getStorage } from "@/utils/render_storage";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 
 export default defineComponent({
   name: "App",
@@ -57,7 +57,7 @@ export default defineComponent({
   },
   methods: {
     handleFullScreen(event: { width: number; height: number }) {
-      const autoScale = getStorage("setting.display.fullscreenAutoZoom");
+      const autoScale = getStorage(StorageKey.Setting_Display_FullscreenAutoZoom);
       if (!autoScale) return;
       const { width, height } = event;
       const scalex = width / 1177;
