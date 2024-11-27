@@ -12,7 +12,7 @@ const path = require("path");
 const NodeID3 = require("node-id3");
 import flac from "flac-metadata";
 import { ITrack } from "@/utils/tracks";
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow } from "electron";
 
 export interface IDownloadProgress {
   track: ITrack;

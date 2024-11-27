@@ -179,6 +179,8 @@ import YSpecCanvas from "@/components/base/YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ICreative, SheetList, SongWikiSummary } from "@/dual/YPlayUI";
 import YLyrics from "@/components/base/YLyrics.vue";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { PlayerEvents } from "@/dual/player";
 
 export default defineComponent({
   name: "YPlayUI",
@@ -457,31 +459,23 @@ export default defineComponent({
     if (this.player.currentTrack) {
       this.track = this.player.currentTrack;
     }
-    this.player.subscriber.on({
-      id: "YPlayUI",
-      func: async () => {
-        this.track = this.player.currentTrack;
-        let requests = [
-          this.setBackgroundColor(),
-          this.getWiki(),
-          this.getSheets(),
-        ];
-        await Promise.all(requests);
-        this.currentLine = 0;
-      },
-      type: "track",
+    this.player.subscriber.on("YPlayUI", PlayerEvents.track, async () => {
+      this.track = this.player.currentTrack;
+      let requests = [
+        this.setBackgroundColor(),
+        this.getWiki(),
+        this.getSheets(),
+      ];
+      await Promise.all(requests);
+      this.currentLine = 0;
     });
     if (this.player.currentTrack?.id && isLocal(this.player.currentTrack?.id))
       await this.getWiki();
     if (this.player.currentTrack) {
       this.currentTime = parseInt((this.player.currentTime * 1000).toString());
     }
-    this.globalMsg.subscriber.on({
-      id: "YPlayUI",
-      type: "close-playui",
-      func: () => {
-        this.closePanel();
-      },
+    this.globalMsg.subscriber.on("YPlayUI", GlobalMsgEvents.ClosePlayUI, () => {
+      this.closePanel();
     });
   },
   beforeUnmount() {

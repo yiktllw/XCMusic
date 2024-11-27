@@ -157,6 +157,7 @@ import { Message } from "@/dual/YMessageC";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { useStore } from "vuex";
 import { ITrack } from "@/utils/tracks";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export default defineComponent({
   name: "YSongInfo",
@@ -204,13 +205,13 @@ export default defineComponent({
     openArtist(id: number | string) {
       if (!id || isLocal(id)) return;
       this.$router.push(`/artist/${id}`);
-      this.globalMsg.post("close-playui");
+      this.globalMsg.post(GlobalMsgEvents.ClosePlayUI);
       this.window?.closeWindow();
     },
     openAlbum(id: number | string) {
       if (!id || isLocal(id)) return;
       this.$router.push(`/album/${id}`);
-      this.globalMsg.post("close-playui");
+      this.globalMsg.post(GlobalMsgEvents.ClosePlayUI);
       this.window?.closeWindow();
     },
     isLocal(id: number | string) {

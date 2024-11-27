@@ -8,17 +8,6 @@
 
 import { markRaw } from "vue";
 
-interface SubscribeOptions {
-  id: string | number;
-  func: Function;
-  type: string;
-}
-
-interface UnsubscribeOptions {
-  id: string;
-  type: string;
-}
-
 interface SubscriberItem {
   globalIndex: number;
   id: number | string;
@@ -26,7 +15,7 @@ interface SubscriberItem {
   type: string;
 }
 
-export class Subscriber {
+export class Subscriber<EventsCallbacks extends Record<string, (...args: any) => any>> {
   _subscribes: Array<SubscriberItem> = markRaw([]);
   /**
    *  单个订阅的全局索引
@@ -35,12 +24,12 @@ export class Subscriber {
   /**
    * 允许订阅的事件类型
    */
-  allowedEvents: string[];
+  allowedEvents: { [key: string]: string };
   /**
    * 订阅事件类
    * @param {Array<string>} allowedEvents 允许订阅的事件类型
    */
-  constructor(allowedEvents: Array<string>) {
+  constructor(allowedEvents: { [key: string]: string }) {
     this.allowedEvents = allowedEvents;
   }
   /**
@@ -76,26 +65,29 @@ export class Subscriber {
   }
   /**
    * 订阅一种事件
-   * @param {Object} options - 事件处理的参数对象
-   * @param {string} [options.id=''] - 用来标识订阅者的唯一id
-   * @param {Function} [options.func=()=>{}] - 事件处理函数
-   * @param {string} [options.type=''] - 订阅的事件类型
    */
-  on({ id, type, func = () => {} }: SubscribeOptions) {
+  on<K extends keyof EventsCallbacks>(
+    /** 用来标识订阅者的唯一ID */
+    id: string,
+    /** 需要订阅的事件类型 */
+    type: K,
+    /** 回调函数 */
+    func: EventsCallbacks[K]
+  ) {
     if (typeof func !== "function") {
-      console.log("func is not a function: ", JSON.stringify(func, null, 4));
+      console.error("func is not a function: ", JSON.stringify(func, null, 4));
       return;
     }
     if (id === "" || type === "") {
-      console.log("id or type is empty");
+      console.error("id or type is empty");
       return;
     }
-    if (!this.allowedEvents?.includes(type)) {
-      console.log(
+    if (!(type in this.allowedEvents)) {
+      console.error(
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        [...this.allowedEvents]
+        JSON.stringify(this.allowedEvents, null, 4)
       );
       return;
     }
@@ -133,13 +125,13 @@ export class Subscriber {
    * @param {string} [options.id=''] - 用来标识订阅者的唯一id
    * @param {string} [options.type=''] - 要取消订阅的事件类型
    */
-  off({ id, type }: UnsubscribeOptions) {
-    if (!this.allowedEvents?.includes(type)) {
-      console.log(
+  off<K extends keyof EventsCallbacks>(id: string, type: K) {
+    if (!(type in this.allowedEvents)) {
+      console.error(
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        [...this.allowedEvents]
+        JSON.stringify(this.allowedEvents, null, 4)
       );
       return;
     }
@@ -173,13 +165,13 @@ export class Subscriber {
    * 执行某种事件
    * @param {string} type - 要执行的事件类型
    */
-  exec(type: string, ...args: any[]) {
-    if (!this.allowedEvents?.includes(type)) {
-      console.log(
+  exec<K extends keyof EventsCallbacks>(type: K, ...args: Parameters<EventsCallbacks[K]>) {
+    if (!(type in this.allowedEvents)) {
+      console.error(
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        [...this.allowedEvents]
+        JSON.stringify(this.allowedEvents, null, 4)
       );
       return;
     }

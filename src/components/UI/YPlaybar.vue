@@ -489,6 +489,8 @@ import YScroll from "@/components/base/YScroll.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ITrack } from "@/utils/tracks";
 import YListRandom from "@/components/base/YListRandom.vue";
+import { PlayerEvents } from "@/dual/player";
+import { DownloadEvents } from "@/dual/download_renderer";
 
 export default defineComponent({
   name: "YPlaybar",
@@ -796,9 +798,10 @@ export default defineComponent({
         | "listrandom"
         | "loop"
     );
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.trackReady,
+      () => {
         let avQuality = this.player.availableQuality;
         this.qualityGroup.forEach((quality) => {
           // 清空可用数据
@@ -812,79 +815,78 @@ export default defineComponent({
           });
         });
         this.qualityDisplay = this.player.qualityDisplay;
-      },
-      type: "trackReady",
-    });
+      }
+    );
     this.playlist = this.player.playlist;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.playlist,
+      () => {
         this.playlist = this.player.playlist;
-      },
-      type: "playlist",
-    });
+      }
+    );
     this.playState = this.player.playState;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.playState,
+      () => {
         this.playState = this.player.playState;
-      },
-      type: "playState",
-    });
+      }
+    );
     this.currentTrack = this.player.currentTrack;
     this.setCommentCount();
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: async () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.track,
+      async () => {
         this.currentTrack = this.player.currentTrack;
         await this.setCommentCount();
-      },
-      type: "track",
-    });
+      }
+    );
     this.currentTime = this.player.currentTime;
     this.duration = this.player.duration as number;
     this.progress = this.player.progress;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.time,
+      () => {
         this.duration = this.player.duration as number;
         this.currentTime = this.player.currentTime;
         this.progress = this.player.progress;
-      },
-      type: "time",
-    });
+      }
+    );
     this.playMode = this.player.mode;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.mode,
+      () => {
         this.playMode = this.player.mode;
-      },
-      type: "mode",
-    });
+      }
+    );
     this.volume = this.player.volume;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.volume,
+      () => {
         this.volume = this.player.volume;
-      },
-      type: "volume",
-    });
+      }
+    );
     this.qualityDisplay = this.player.qualityDisplay;
-    this.player.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.player.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      PlayerEvents.quality,
+      () => {
         this.qualityDisplay = this.player.qualityDisplay;
-      },
-      type: "quality",
-    });
+      }
+    );
     this.downloadedSongIds = this.download.downloadedSongIds;
-    this.download.subscriber.on({
-      id: "YPlaybar" + `${this.type}`,
-      func: () => {
+    this.download.subscriber.on(
+      "YPlaybar" + `${this.type}`,
+      DownloadEvents.Complete,
+      () => {
         this.downloadedSongIds = this.download.downloadedSongIds;
-      },
-      type: "downloaded-songs",
-    });
+      }
+    );
   },
   beforeUnmount() {
     this.player.subscriber.offAll("YPlaybar" + `${this.type}`);

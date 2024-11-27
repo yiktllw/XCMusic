@@ -23,7 +23,20 @@ export interface UserPlaylist {
     userId: number;
     /** 用户昵称 */
     nickname: string;
-  }
+  };
   /** 歌单的播放次数 */
   playCount: number;
+}
+
+export enum LoginEvents {
+  /** 用户创建、订阅的歌单 */
+  userPlaylists = "userPlaylists",
+  /** 登录状态 */
+  status = "status",
+  /** 用户ID */
+  userId = "userId",
+  /** 用户名 */
+  userName = "userName",
+  /** 用户头像 */
+  avatar = "avatar",
 }

@@ -409,6 +409,8 @@ import updownArrow from "@/assets/updown-arrow.svg";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { ITrack } from "@/utils/tracks";
 import { AlReels } from "@/dual/YSongsTable";
+import { PlayerEvents } from "@/dual/player";
+import { DownloadEvents } from "@/dual/download_renderer";
 
 export default defineComponent({
   props: {
@@ -624,21 +626,19 @@ export default defineComponent({
 
     this.alWidth = this.setting.display.albumWidth;
     this.nowPlaying = this.player.currentTrack?.id ?? 0;
-    this.player.subscriber.on({
-      id: this.id,
-      type: "track",
-      func: () => {
+    this.player.subscriber.on(      this.id,
+      PlayerEvents.track,
+      () => {
         this.nowPlaying = this.player.currentTrack?.id ?? 0;
       },
-    });
+);
     this.downloadedSongIds = this.download.downloadedSongIds;
-    this.download.subscriber.on({
-      id: this.id,
-      type: "downloaded-songs",
-      func: () => {
+    this.download.subscriber.on(      this.id,
+      DownloadEvents.Complete,
+      () => {
         this.downloadedSongIds = this.download.downloadedSongIds;
       },
-    });
+);
     this.UL?.addEventListener("mousemove", this.handleUlMouseMove);
     this.UL?.addEventListener("mouseleave", this.handleUlMouseLeave);
     this.UL?.addEventListener("dblclick", this.handleUlDbClick);

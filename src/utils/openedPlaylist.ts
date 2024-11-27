@@ -5,18 +5,25 @@
 
 import { Subscriber } from "@/utils/subscribe";
 
+export enum OpenedPlaylistEvents {
+  id = "id",
+}
+  
+type OpenedPlaylistEventCallbacks = {
+  [OpenedPlaylistEvents.id]: () => void;
+}
+
 export class OpenedPlaylist {
   _id: number;
-  subscriber: Subscriber;
+  subscriber = new Subscriber<OpenedPlaylistEventCallbacks>(OpenedPlaylistEvents);
   constructor() {
     this._id = 0;
-    this.subscriber = new Subscriber(["id"]);
   }
   get id() {
     return this._id;
   }
   set id(id) {
     this._id = id;
-    this.subscriber.exec("id");
+    this.subscriber.exec(OpenedPlaylistEvents.id);
   }
 }

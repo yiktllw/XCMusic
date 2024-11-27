@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
+import { PlayerEvents } from "@/dual/player";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
@@ -94,13 +95,12 @@ export default defineComponent({
     });
 
     this.lyrics = this.player.lyrics;
-    this.player.subscriber.on({
-      id: "YLyrics",
-      type: "lyrics",
-      func: () => {
+    this.player.subscriber.on(      "YLyrics",
+      PlayerEvents.lyrics,
+      () => {
         this.lyrics = this.player.lyrics;
       },
-    });
+);
 
     this.setScale();
   },

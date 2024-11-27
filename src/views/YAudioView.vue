@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts">
+import { PlayerEvents } from "@/dual/player";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 
@@ -41,12 +42,8 @@ export default defineComponent({
   },
   mounted() {
     this.currentGain = this.player._gainNode?.gain.value;
-    this.player.subscriber.on({
-      id: "YAudioView",
-      type: "gain",
-      func: () => {
-        this.currentGain = this.player._gainNode?.gain.value;
-      },
+    this.player.subscriber.on("YAudioView", PlayerEvents.gain, () => {
+      this.currentGain = this.player._gainNode?.gain.value;
     });
   },
   beforeUnmount() {

@@ -8,9 +8,9 @@
 
 import { Subscriber } from "@/utils/subscribe";
 import { Login as LoginApi, User } from "@/utils/api";
-import { reactive, markRaw, Raw, Reactive } from "vue";
-import { UserPlaylist } from "@/dual/login";
+import { reactive, markRaw, Reactive } from "vue";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
+import { LoginEvents } from "@/dual/login";
 
 export interface IPlaylist {
   /** 歌单名 */
@@ -23,6 +23,14 @@ export interface IPlaylist {
   trackCount: number;
   /** 歌单图片 */
   img: string;
+}
+
+type LoginEventCallbacks = {
+  [LoginEvents.userPlaylists]: () => void;
+  [LoginEvents.status]: () => void;
+  [LoginEvents.userId]: () => void;
+  [LoginEvents.userName]: () => void;
+  [LoginEvents.avatar]: () => void;
 }
 
 export class Login {
@@ -43,9 +51,7 @@ export class Login {
   /** 用户订阅的歌单 */
   _userSubscribes: Reactive<IPlaylist[]> = reactive([]);
   /** 订阅事件 */
-  subscriber: Subscriber = markRaw(
-    new Subscriber(["userPlaylists", "status", "userId", "userName", "avatar"])
-  );
+  subscriber = new Subscriber<LoginEventCallbacks>(LoginEvents);
   /** 每隔一段时间，自动更新用户的歌单 */
   interval: NodeJS.Timeout;
   _userFavoriteId: number = 0;
@@ -117,7 +123,7 @@ export class Login {
     if (value !== this._userId && value) {
       this._userId = value;
       setStorage(StorageKey.LoginUserId, value);
-      this.subscriber.exec("userId");
+      this.subscriber.exec(LoginEvents.userId);
     }
   }
   get userName() {
@@ -127,7 +133,7 @@ export class Login {
     if (value !== this._userName && value) {
       this._userName = value;
       setStorage(StorageKey.LoginUserName, value);
-      this.subscriber.exec("userName");
+      this.subscriber.exec(LoginEvents.userName);
     }
   }
   get likelist() {
@@ -151,7 +157,7 @@ export class Login {
     if (typeof value === "boolean" && value !== this._status) {
       this._status = value;
       setStorage(StorageKey.LoginStatus, value);
-      this.subscriber.exec("status");
+      this.subscriber.exec(LoginEvents.status);
     }
   }
   get avatar() {
@@ -161,7 +167,7 @@ export class Login {
     if (value !== this._avatar && value) {
       this._avatar = value;
       setStorage(StorageKey.LoginAvatar, value);
-      this.subscriber.exec("avatar");
+      this.subscriber.exec(LoginEvents.avatar);
     }
   }
   get userPlaylists() {
@@ -213,6 +219,6 @@ export class Login {
       this._userFavoriteId = this.userPlaylists[0].id;
       this.userPlaylists.splice(0, 1);
     }
-    this.subscriber.exec("userPlaylists");
+    this.subscriber.exec(LoginEvents.userPlaylists);
   }
 }

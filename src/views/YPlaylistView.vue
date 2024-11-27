@@ -321,6 +321,7 @@ import { markRaw, ref, defineComponent } from "vue";
 import { AlReels } from "@/dual/YSongsTable";
 import { IArtist } from "@/dual/YPlaylistView";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export default defineComponent({
   name: "YPlaylist",
@@ -745,14 +746,13 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.globalMsg.subscriber.on({
-      id: `YPlaylistView`,
-      type: "refresh-playlist",
-      func: () => {
+    this.globalMsg.subscriber.on(      `YPlaylistView`,
+      GlobalMsgEvents.RefreshPlaylist,
+      () => {
         console.log("refresh-playlist");
         this.fetchPlaylist(this.playlistId, true);
       },
-    });
+);
   },
   beforeUnmount() {
     // 组件销毁时发送消息

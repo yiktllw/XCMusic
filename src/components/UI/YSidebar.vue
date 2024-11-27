@@ -188,7 +188,10 @@ import { useStore } from "vuex";
 import YScroll from "@/components/base/YScroll.vue";
 import { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
 import { IPlaylist } from "@/utils/login";
+import { LoginEvents } from "@/dual/login";
 import { TSideBarItems } from "@/utils/setting";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { OpenedPlaylistEvents } from "@/utils/openedPlaylist";
 
 export default defineComponent({
   name: "YSidebar",
@@ -254,7 +257,7 @@ export default defineComponent({
         Message.post("error", this.$t("need_login"));
         return;
       }
-      this.globalMsg.post("create-playlist");
+      this.globalMsg.post(GlobalMsgEvents.CreatePlaylist);
     },
     openCtxMenu(
       event: MouseEvent,
@@ -274,35 +277,33 @@ export default defineComponent({
         y: event.clientY,
         from: from,
       };
-      this.globalMsg.post("open-ctx-menu-playlist", data);
+      this.globalMsg.post(GlobalMsgEvents.OpenCtxMenuPlaylist, data);
     },
   },
   mounted() {
     this.sidebarWidth = this.setting.display.sidebarWidth;
     this.userPlaylists = this.login.userPlaylists;
     this.userSubscribes = this.login.userSubscribes;
-    this.login.subscriber.on({
-      id: "YSidebar",
-      type: "userPlaylists",
-      func: () => {
+    this.login.subscriber.on(      "YSidebar",
+      LoginEvents.userPlaylists,
+      () => {
         this.userPlaylists = this.login.userPlaylists;
         this.userSubscribes = this.login.userSubscribes;
       },
-    });
-    this.OpenedPlaylist.subscriber.on({
-      id: "YSidebar",
-      type: "id",
-      func: () => {
+);
+    this.OpenedPlaylist.subscriber.on(      "YSidebar",
+      OpenedPlaylistEvents.id,
+      () => {
         this.activeButtonId = this.OpenedPlaylist.id;
       },
-    });
-    this.globalMsg.subscriber.on({
-      id: "YSidebar",
-      type: "refresh-sidebar",
-      func: () => {
+);
+    this.globalMsg.subscriber.on(
+      "YSidebar",
+      GlobalMsgEvents.RefreshSidebar,
+      () => {
         this.hideInSidebar = this.setting.display.hideInSidebar;
-      },
-    });
+      }
+    );
   },
   beforeUnmount() {
     this.login.subscriber.offAll("YSidebar");

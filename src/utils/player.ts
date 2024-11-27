@@ -4,17 +4,12 @@
  * 在vuex store中，会实例化Player类
  *---------------------------------------------------------------*/
 
-type QualityInfo = {
-  name: string;
-  size: number;
-  gain: number;
-  peak: number;
-};
-
 import { markRaw } from "vue";
 import { Lyrics, Playlist, Song } from "@/utils/api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
+import { SongPickerEvents } from "@/dual/damakuSongPicker";
+import { PlayerEvents } from "@/dual/player";
 import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
@@ -29,6 +24,28 @@ if (window.electron?.isElectron) {
   fs = window.api.fs;
   path = window.api.path;
 }
+
+type QualityInfo = {
+  name: string;
+  size: number;
+  gain: number;
+  peak: number;
+};
+
+type PlayerEventCallbacks = {
+  [PlayerEvents.playState]: () => void;
+  [PlayerEvents.playlist]: () => void;
+  [PlayerEvents.track]: () => void;
+  [PlayerEvents.trackReady]: () => void;
+  [PlayerEvents.lyrics]: () => void;
+  [PlayerEvents.time]: () => void;
+  [PlayerEvents.quality]: () => void;
+  [PlayerEvents.volume]: () => void;
+  [PlayerEvents.history]: () => void;
+  [PlayerEvents.mode]: () => void;
+  [PlayerEvents.playerReady]: () => void;
+  [PlayerEvents.gain]: () => void;
+};
 
 export class Player {
   /** 音频对象 */
@@ -72,7 +89,8 @@ export class Player {
     | "sky"
     | "jymaster" = "exhigh";
   /** 是否开启音量均衡功能 */
-  _volume_leveling: boolean = getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? false;
+  _volume_leveling: boolean =
+    getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? false;
   /** 歌词 */
   _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
   /** 点歌功能 */
@@ -80,22 +98,7 @@ export class Player {
   /** 更新时间的定时器 */
   _updateTime: null | NodeJS.Timeout = null;
   /** 订阅事件 */
-  subscriber: Subscriber = markRaw(
-    new Subscriber([
-      "playState",
-      "playlist",
-      "track",
-      "trackReady",
-      "lyrics",
-      "time",
-      "quality",
-      "volume",
-      "history",
-      "mode",
-      "playerReady",
-      "gain",
-    ])
-  );
+  subscriber: Subscriber<PlayerEventCallbacks> = new Subscriber<PlayerEventCallbacks>(PlayerEvents);
   /** IndexDB, 用于存储播放列表 */
   db: indexDB = new indexDB("ncm", "playlist");
   reloadInterval: null | NodeJS.Timeout = null;
@@ -114,36 +117,28 @@ export class Player {
     // 点歌功能
     if (window.electron?.isElectron) {
       this.songPicker = markRaw(new SongPicker());
-      this.songPicker.subscriber.on({
-        id: "player.js",
-        func: () => {
-          if (!this.songPicker?.track) return;
-          this.playTrack(this.songPicker?.track);
-        },
-        type: "track",
+      this.songPicker.subscriber.on("player.js", SongPickerEvents.Track, () => {
+        if (!this.songPicker?.track) return;
+        this.playTrack(this.songPicker?.track);
       });
-      this.songPicker.subscriber.on({
-        id: "player.js",
-        func: () => {
+      this.songPicker.subscriber.on(
+        "player.js",
+        SongPickerEvents.NextTrack,
+        () => {
           if (!this.songPicker?.track) return;
           this.nextPlay(this.songPicker?.track);
-        },
-        type: "nextTrack",
-      });
+        }
+      );
     }
 
     this.db.openDatabase().then(() => {
       // console.log('Database opened');
-      this.subscriber.on({
-        id: "indexDB",
-        type: "playlist",
-        func: () => {
-          try {
-            this.db.storePlaylist(this.playlist);
-          } catch (error) {
-            console.error(error);
-          }
-        },
+      this.subscriber.on("indexDB", PlayerEvents.playlist, () => {
+        try {
+          this.db.storePlaylist(this.playlist);
+        } catch (error) {
+          console.error(error);
+        }
       });
       try {
         this.db.fetchPlaylist().then((res) => {
@@ -153,128 +148,104 @@ export class Player {
           }
           const lastTrack = getStorage(StorageKey.CurrentTrack);
           if (lastTrack) {
-            this.subscriber.on({
-              id: "indexDB",
-              type: "playerReady",
-              func: () => {
-                const autoPlay = getStorage(StorageKey.Setting_Play_AutoPlay);
-                this.playTrack(lastTrack, autoPlay ?? false, 1600);
-              },
+            this.subscriber.on("indexDB", PlayerEvents.playerReady, () => {
+              const autoPlay = getStorage(StorageKey.Setting_Play_AutoPlay);
+              this.playTrack(lastTrack, autoPlay ?? false, 1600);
             });
           }
-          this.subscriber.exec("playlist");
+          this.subscriber.exec(PlayerEvents.playlist);
         });
       } catch (error) {
         console.error(error);
       }
     });
 
-    this.subscriber.on({
-      id: "currentTrackStorage",
-      type: "track",
-      func: () => {
-        setStorage(StorageKey.CurrentTrack, this.currentTrack);
-      },
+    this.subscriber.on("currentTrackStorage", PlayerEvents.track, () => {
+      setStorage(StorageKey.CurrentTrack, this.currentTrack);
     });
 
-    this.subscriber.on({
-      id: "player",
-      type: "track",
-      func: () => {
-        if (!this.currentTrack?.id) return;
-        Lyrics.get(this.currentTrack.id).then((_lyrics) => {
-          this.lyrics = _lyrics;
-        });
-      },
+    this.subscriber.on("player", PlayerEvents.track, () => {
+      if (!this.currentTrack?.id) return;
+      Lyrics.get(this.currentTrack.id).then((_lyrics) => {
+        this.lyrics = _lyrics;
+      });
     });
     this.initMediaSession();
 
     setTimeout(() => {
-      this.subscriber.exec("playerReady");
+      this.subscriber.exec(PlayerEvents.playerReady);
     }, 500);
   }
   /**
    * 初始化媒体会话
    */
   initMediaSession() {
-    this.subscriber.on({
-      id: "mediaSession",
-      type: "track",
-      func: () => {
-        let imgSrc = this.currentTrack?.al?.picUrl;
-        if (!imgSrc) imgSrc = require("@/assets/song.svg");
-        let metaData = {
-          title: this.currentTrackName ?? "未知歌曲",
-          artist: this.currentTrackArtists
-            ? this.currentTrackArtists.map((artist) => artist.name).join(" / ")
-            : "未知歌手",
-          album: this.currentTrack?.al?.name ?? "未知专辑",
-          artwork: [
-            {
-              src: imgSrc ? imgSrc + "?param=96y96" : "",
-              sizes: "96x96",
-              type: "image/png",
-            },
-            {
-              src: imgSrc ? imgSrc + "?param=128y128" : "",
-              sizes: "128x128",
-              type: "image/png",
-            },
-          ],
-        };
-        navigator.mediaSession.metadata = new window.MediaMetadata(metaData);
-        navigator.mediaSession.setActionHandler("play", () => {
-          this.playState = "play";
-        });
-        navigator.mediaSession.setActionHandler("pause", () => {
-          this.playState = "pause";
-        });
-        navigator.mediaSession.setActionHandler("previoustrack", () => {
-          this.previous();
-        });
-        navigator.mediaSession.setActionHandler("nexttrack", () => {
-          this.next();
-        });
-        navigator.mediaSession.setActionHandler("stop", () => {
-          this.playState = "pause";
-        });
-        navigator.mediaSession.setActionHandler("seekto", (event) => {
-          this.currentTime = Math.floor(event.seekTime ?? 0);
-        });
-        navigator.mediaSession.setActionHandler("seekbackward", (event) => {
-          this.currentTime = this.currentTime - (event.seekOffset ?? 10);
-        });
-        navigator.mediaSession.setActionHandler("seekforward", (event) => {
-          this.currentTime = this.currentTime + (event.seekOffset ?? 10);
-        });
-        navigator.mediaSession.playbackState = "playing";
-        this._mediaSessionInit = true;
-      },
+    this.subscriber.on("mediaSession", PlayerEvents.track, () => {
+      let imgSrc = this.currentTrack?.al?.picUrl;
+      if (!imgSrc) imgSrc = require("@/assets/song.svg");
+      let metaData = {
+        title: this.currentTrackName ?? "未知歌曲",
+        artist: this.currentTrackArtists
+          ? this.currentTrackArtists.map((artist) => artist.name).join(" / ")
+          : "未知歌手",
+        album: this.currentTrack?.al?.name ?? "未知专辑",
+        artwork: [
+          {
+            src: imgSrc ? imgSrc + "?param=96y96" : "",
+            sizes: "96x96",
+            type: "image/png",
+          },
+          {
+            src: imgSrc ? imgSrc + "?param=128y128" : "",
+            sizes: "128x128",
+            type: "image/png",
+          },
+        ],
+      };
+      navigator.mediaSession.metadata = new window.MediaMetadata(metaData);
+      navigator.mediaSession.setActionHandler("play", () => {
+        this.playState = "play";
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        this.playState = "pause";
+      });
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        this.previous();
+      });
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        this.next();
+      });
+      navigator.mediaSession.setActionHandler("stop", () => {
+        this.playState = "pause";
+      });
+      navigator.mediaSession.setActionHandler("seekto", (event) => {
+        this.currentTime = Math.floor(event.seekTime ?? 0);
+      });
+      navigator.mediaSession.setActionHandler("seekbackward", (event) => {
+        this.currentTime = this.currentTime - (event.seekOffset ?? 10);
+      });
+      navigator.mediaSession.setActionHandler("seekforward", (event) => {
+        this.currentTime = this.currentTime + (event.seekOffset ?? 10);
+      });
+      navigator.mediaSession.playbackState = "playing";
+      this._mediaSessionInit = true;
     });
-    this.subscriber.on({
-      id: "mediaSession",
-      type: "playState",
-      func: () => {
-        if (this._mediaSessionInit) {
-          if (this.playState === "pause") {
-            navigator.mediaSession.playbackState = "paused";
-          } else {
-            navigator.mediaSession.playbackState = "playing";
-          }
+    this.subscriber.on("mediaSession", PlayerEvents.playState, () => {
+      if (this._mediaSessionInit) {
+        if (this.playState === "pause") {
+          navigator.mediaSession.playbackState = "paused";
+        } else {
+          navigator.mediaSession.playbackState = "playing";
         }
-      },
+      }
     });
-    this.subscriber.on({
-      id: "mediaSession",
-      type: "time",
-      func: () => {
-        if (this._mediaSessionInit) {
-          navigator.mediaSession.setPositionState({
-            position: this.currentTime,
-            duration: (this.duration as number) ?? 0,
-          });
-        }
-      },
+    this.subscriber.on("mediaSession", PlayerEvents.time, () => {
+      if (this._mediaSessionInit) {
+        navigator.mediaSession.setPositionState({
+          position: this.currentTime,
+          duration: (this.duration as number) ?? 0,
+        });
+      }
     });
   }
   async handleAudioError(error: MediaError | null) {
@@ -312,8 +283,8 @@ export class Player {
             parseFloat((this._currentTime / this._duration).toFixed(3))
           )
         );
-        this.subscriber.exec("time");
-        this.subscriber.exec("trackReady");
+        this.subscriber.exec(PlayerEvents.time);
+        this.subscriber.exec(PlayerEvents.trackReady);
       }
 
       this._updateTime = setTimeout(update, 300); // 递归调用 setTimeout
@@ -381,7 +352,7 @@ export class Player {
       // 更新当前播放的歌曲位置
       this._current = trackIndex;
       // 触发 track 的回调函数
-      this.subscriber.exec("track");
+      this.subscriber.exec(PlayerEvents.track);
 
       // 获取歌曲播放信息
       let nourl = false;
@@ -439,7 +410,7 @@ export class Player {
       );
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
-      this.subscriber.exec("trackReady");
+      this.subscriber.exec(PlayerEvents.trackReady);
     }
   }
   async gainTrack(id: number | string): Promise<string> {
@@ -590,7 +561,7 @@ export class Player {
         (track) => track.id === this._history[this._historyIndex + direction].id
       );
       this._historyIndex += direction;
-      this.subscriber.exec("history");
+      this.subscriber.exec(PlayerEvents.history);
     } else if (direction === 1) {
       // 如果历史记录中没有下一首歌曲
       // 随机播放下一首
@@ -665,7 +636,7 @@ export class Player {
       // 如果播放模式为其它模式
       this._playlist = list;
     }
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   deleteTrack(id: string | number) {
     let index = this._playlist.findIndex((track) => track.id === id);
@@ -674,7 +645,7 @@ export class Player {
     if (index === this._current) {
       this.playTrack(this.currentTrack);
     }
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   /**
    * 添加列表到播放列表
@@ -728,7 +699,7 @@ export class Player {
     if (playFirst) {
       this.playTrack(this.currentTrack, false);
     }
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   /**
    * 清空播放列表
@@ -740,7 +711,7 @@ export class Player {
     this.playState = "play";
     this._audio.src = "";
     this.clearHistory();
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   /**
    * 下一首播放指定歌曲
@@ -760,7 +731,7 @@ export class Player {
       // 如果不在播放列表中，则添加到下一首
       this._playlist.splice(this._current + 1, 0, track);
     }
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   /**
    * 播放全部
@@ -801,9 +772,9 @@ export class Player {
     if (this._mode === "random") {
       // 将历史的下一首替换为当前歌曲
       this._history = this._history.splice(this._historyIndex + 1, 0, value);
-      this.subscriber.exec("history");
+      this.subscriber.exec(PlayerEvents.history);
     }
-    this.subscriber.exec("playlist");
+    this.subscriber.exec(PlayerEvents.playlist);
   }
   /**
    * 更新歌单播放数据
@@ -901,7 +872,7 @@ export class Player {
     this.clearHistory();
     // 设置播放模式
     this._mode = value;
-    this.subscriber.exec("mode");
+    this.subscriber.exec(PlayerEvents.mode);
     // 如果播放模式不为列表随机
     if (
       value === "order" ||
@@ -948,7 +919,7 @@ export class Player {
   appendToHistory(track: ITrack) {
     this._history.push(track);
     this._historyIndex = this._history.length - 1;
-    this.subscriber.exec("history");
+    this.subscriber.exec(PlayerEvents.history);
   }
   /**
    * 插入到历史开头
@@ -957,7 +928,7 @@ export class Player {
   insertToHistory(track: ITrack) {
     this._history.splice(0, 0, track);
     this._historyIndex = 0;
-    this.subscriber.exec("history");
+    this.subscriber.exec(PlayerEvents.history);
   }
   /**
    * 清空历史
@@ -965,7 +936,7 @@ export class Player {
   clearHistory() {
     this._history = [];
     this._historyIndex = 0;
-    this.subscriber.exec("history");
+    this.subscriber.exec(PlayerEvents.history);
   }
   /**
    * 获取播放状态
@@ -997,7 +968,7 @@ export class Player {
             clearInterval(this.reloadInterval);
           }
         }
-        this.subscriber.exec("playState");
+        this.subscriber.exec(PlayerEvents.playState);
       } else {
         console.log("Audio not ready");
       }
@@ -1060,7 +1031,7 @@ export class Player {
     if (value >= 0 && value <= 1) {
       this._volume = value;
       this._audio.volume = value;
-      this.subscriber.exec("volume");
+      this.subscriber.exec(PlayerEvents.volume);
     }
   }
   /**
@@ -1101,7 +1072,7 @@ export class Player {
     try {
       if (this._gainNode) {
         this._gainNode.gain.value = gain_linear;
-        this.subscriber.exec("gain");
+        this.subscriber.exec(PlayerEvents.gain);
         setGainNodeMsg = " gainNode set to " + gain_linear;
       }
     } catch (error) {
@@ -1138,7 +1109,7 @@ export class Player {
       this._audio.currentTime = value;
       this._currentTime = value;
       this._progress = value / (this._duration as number);
-      this.subscriber.exec("time");
+      this.subscriber.exec(PlayerEvents.time);
     }
   }
   /**
@@ -1188,7 +1159,7 @@ export class Player {
     if (qualities.includes(value)) {
       this._quality = value;
       this.reloadUrl();
-      this.subscriber.exec("quality");
+      this.subscriber.exec(PlayerEvents.quality);
     } else {
       console.log("Quality not supported: ", value);
     }
@@ -1360,6 +1331,6 @@ export class Player {
   }
   private set lyrics(value) {
     this._lyrics = value;
-    this.subscriber.exec("lyrics");
+    this.subscriber.exec(PlayerEvents.lyrics);
   }
 }

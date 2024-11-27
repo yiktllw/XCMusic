@@ -13,6 +13,7 @@ import { IDownloadProgress } from "@/utils/download";
 import { Song } from "@/utils/api";
 import { getDownloadDirectory } from "@/utils/setting";
 import { getStorage, StorageKey } from "@/utils/render_storage";
+import { DownloadEvents } from "@/dual/download_renderer";
 
 export interface IDownloadedSong {
   id: number;
@@ -20,10 +21,16 @@ export interface IDownloadedSong {
   path: string;
 }
 
+type DownloadEventCallbacks = {
+  [DownloadEvents.Complete]: (track?: ITrack) => void;
+  [DownloadEvents.Doing]: () => void;
+  [DownloadEvents.List]: () => void;
+};
+
 export class Download {
   db: indexDB;
   downloadedSongs: Array<IDownloadedSong>;
-  subscriber: Subscriber;
+  subscriber = new Subscriber<DownloadEventCallbacks>(DownloadEvents);
   /**
    * 正在下载的歌曲列表
    */
@@ -36,17 +43,9 @@ export class Download {
   constructor() {
     this.db = new indexDB("download", "songs");
     this.downloadedSongs = [];
-    this.subscriber = new Subscriber([
-      /** 已下载的歌曲 */
-      "downloaded-songs",
-      /** 下载中的歌曲 */
-      "downloading",
-      /** 预订了下载任务的歌曲 */
-      "downloadlist",
-    ]);
     this.db.openDatabase().then(async () => {
       this.downloadedSongs = await this.db.getAllSongs();
-      this.subscriber.exec("downloaded-songs");
+      this.subscriber.exec(DownloadEvents.Complete);
     });
     if (window.electron?.isElectron) {
       window.electron.ipcRenderer.on(
@@ -72,8 +71,8 @@ export class Download {
           this.downloading = this.downloading.filter(
             (item) => item.track.id !== track.id
           );
-          this.subscriber.exec("downloading");
-          this.subscriber.exec("downloaded-songs", track);
+          this.subscriber.exec(DownloadEvents.Doing);
+          this.subscriber.exec(DownloadEvents.Complete, track);
         }
       );
       window.electron.ipcRenderer.on(
@@ -85,13 +84,13 @@ export class Download {
           if (index !== -1) {
             this.downloading[index] = data;
           }
-          this.subscriber.exec("downloading");
+          this.subscriber.exec(DownloadEvents.Doing);
         }
       );
-      this.subscriber.on({
-        id: "download_renderer",
-        type: "downloading",
-        func: async () => {
+      this.subscriber.on(
+        "download_renderer",
+        DownloadEvents.Doing,
+        async () => {
           if (this.downloading.length === 0 && this.downloadlist.length > 0) {
             const song = this.downloadlist.shift();
             if (!song) return;
@@ -101,13 +100,14 @@ export class Download {
               getStorage(StorageKey.Setting_Download_Quality) ?? "standard"
             );
             const downloadDir =
-              getStorage(StorageKey.Setting_Download_Path) ?? getDownloadDirectory();
+              getStorage(StorageKey.Setting_Download_Path) ??
+              getDownloadDirectory();
             if (!url || !downloadDir) return;
 
             this.add(url, song, downloadDir);
           }
-        },
-      });
+        }
+      );
     }
   }
 
@@ -128,7 +128,7 @@ export class Download {
       track: track,
       percent: 0,
     });
-    this.subscriber.exec("downloading");
+    this.subscriber.exec(DownloadEvents.Doing);
   }
 
   /**
@@ -142,8 +142,8 @@ export class Download {
     );
     if (list.length === 0) console.log("no new songs to download");
     this.downloadlist.push(...list);
-    this.subscriber.exec("downloadlist");
-    this.subscriber.exec("downloading");
+    this.subscriber.exec(DownloadEvents.List);
+    this.subscriber.exec(DownloadEvents.Doing);
   }
 
   /**
@@ -158,7 +158,7 @@ export class Download {
     this.downloadedSongs = this.downloadedSongs.filter(
       (song) => song.id !== id
     );
-    this.subscriber.exec("downloaded-songs");
+    this.subscriber.exec(DownloadEvents.Complete);
   }
 
   /**
@@ -171,7 +171,7 @@ export class Download {
     }
     await this.db.clearDownloadStore();
     this.downloadedSongs = [];
-    this.subscriber.exec("downloaded-songs");
+    this.subscriber.exec(DownloadEvents.Complete);
   }
 
   /**
@@ -211,7 +211,7 @@ export class Download {
       }
     });
     await Promise.all(pushRequests);
-    this.subscriber.exec("downloaded-songs");
+    this.subscriber.exec(DownloadEvents.Complete);
   }
 
   /**

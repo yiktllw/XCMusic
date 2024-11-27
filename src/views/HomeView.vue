@@ -129,6 +129,7 @@ import {
 import { Comment, Playlist } from "@/utils/api";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { ITrack } from "@/utils/tracks";
 import { IPlaylist } from "@/utils/login";
 import { getStorage, StorageKey } from "@/utils/render_storage";
@@ -216,51 +217,51 @@ export default defineComponent({
       | "exhigh"
       | "standard"
       | "higher";
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "create-playlist",
-      func: () => {
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.CreatePlaylist,
+      () => {
         this.showCreatePlaylist = true;
         this.showPreventContainer = true;
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "open-login-window",
-      func: (data: string) => {
+      }
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenLoginWindow,
+      (data) => {
         this.showLoginWindow = true;
         this.showPreventContainer = true;
-        this.base64Image = data;
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "close-login-window",
-      func: () => {
+        this.base64Image = data ?? "";
+      }
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.CloseLoginWindow,
+      () => {
         this.showLoginWindow = false;
         this.showPreventContainer = false;
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "open-custom-window",
-      func: () => {
+      }
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenCustomWindow,
+      () => {
         this.showCustomWindow = true;
         this.showPreventContainer = true;
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "open-close-window",
-      func: () => {
+      }
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenCloseWindow,
+      () => {
         this.showCloseWindow = true;
         this.showPreventContainer = true;
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "open-ctx-menu-playlist",
-      func: (data: IPlaylistCtxData) => {
+      }
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenCtxMenuPlaylist,
+      (data: IPlaylistCtxData) => {
         this.contextMenu?.showContextMenu();
         this.menu = playlistItems;
         this.target = data;
@@ -287,17 +288,16 @@ export default defineComponent({
             this.menu[4].display = false;
             break;
         }
-      },
-    });
-    this.globalMsg.subscriber.on({
-      id: "HomeView",
-      type: "confirm",
-      func: (args: IConfirm) => {
+      }
+    );
+    this.globalMsg.subscriber.on(      "HomeView",
+      GlobalMsgEvents.Confirm,
+      (args) => {
         this.confirm = args;
         this.showConfirmWindow = true;
         this.showPreventContainer = true;
       },
-    });
+);
   },
   beforeUnmount() {
     this.globalMsg.subscriber.offAll("HomeView");
@@ -311,7 +311,9 @@ export default defineComponent({
   watch: {
     showPreventContainer(val) {
       if (val) {
-        const useGpu = getStorage(StorageKey.Setting_System_disableGpuAcceleration);
+        const useGpu = getStorage(
+          StorageKey.Setting_System_disableGpuAcceleration
+        );
         if (useGpu) {
           this.$nextTick(() => {
             this.prevent_container!.style.backdropFilter = "none";
@@ -570,7 +572,7 @@ export default defineComponent({
           );
           if (res.status === 200) {
             Message.post("success", this.$t("message.homeview.delete_success"));
-            this.globalMsg.post("refresh-playlist", playlistId);
+            this.globalMsg.post(GlobalMsgEvents.RefreshPlaylist, playlistId as number);
           } else {
             Message.post(
               "error",
@@ -602,7 +604,7 @@ export default defineComponent({
       if (val === false) {
         this.showLoginWindow = false;
         this.showPreventContainer = false;
-        this.globalMsg.post("close-login-window-from-homeview");
+        this.globalMsg.post(GlobalMsgEvents.CloseLoginWindowFromHomeView);
       }
     },
     handleNewWindowState_createPlaylist(val: boolean) {

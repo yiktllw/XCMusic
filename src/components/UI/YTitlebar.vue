@@ -258,6 +258,8 @@ import { useStore } from "vuex";
 import YPanel from "@/components/base/YPanel.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { LoginEvents } from "@/dual/login";
 
 let QRInterval: NodeJS.Timeout | null = null;
 
@@ -367,7 +369,7 @@ export default defineComponent({
         let qrCoke = await Login.createQrImg(this.qrKey);
         if (!qrCoke) return;
         this.base64Image = qrCoke;
-        this.globalMsg.post("open-login-window", this.base64Image);
+        this.globalMsg.post(GlobalMsgEvents.OpenLoginWindow, this.base64Image);
         this.toggleDropdown(); // 切换下拉菜单显示
         this.pollQRCodeStatus(); // 轮询二维码状态
       }
@@ -379,7 +381,7 @@ export default defineComponent({
         if (checkResponse && checkResponse.code === 803) {
           // 关闭扫码窗口
           this.showDropdown = false;
-          this.globalMsg.post("close-login-window");
+          this.globalMsg.post(GlobalMsgEvents.CloseLoginWindow);
           if (QRInterval) clearInterval(QRInterval);
           this.$emit("user-login");
           await this.init();
@@ -417,7 +419,7 @@ export default defineComponent({
       if (window.electron?.isElectron) {
         const closeAlwaysAsk = this.setting.titleBar.closeAlwaysAsk;
         if (closeAlwaysAsk) {
-          this.globalMsg.post("open-close-window");
+          this.globalMsg.post(GlobalMsgEvents.OpenCloseWindow);
           return;
         }
         const closeBehavior = this.setting.titleBar.closeButton;
@@ -574,38 +576,26 @@ export default defineComponent({
     this.avatar = this.login.avatar;
     this.status = this.login.status;
     this.userNickName = this.login.userName;
-    this.login.subscriber.on({
-      id: "YTitlebar",
-      type: "status",
-      func: async () => {
-        this.avatar = this.login.avatar;
-      },
+    this.login.subscriber.on("YTitlebar", LoginEvents.status, async () => {
+      this.avatar = this.login.avatar;
     });
-    this.login.subscriber.on({
-      id: "YTitlebar",
-      type: "avatar",
-      func: async () => {
-        this.status = this.login.status;
-      },
+    this.login.subscriber.on("YTitlebar", LoginEvents.avatar, async () => {
+      this.status = this.login.status;
     });
-    this.login.subscriber.on({
-      id: "YTitlebar",
-      type: "userName",
-      func: async () => {
-        this.userNickName = this.login.userName;
-      },
+    this.login.subscriber.on("YTitlebar", LoginEvents.userName, async () => {
+      this.userNickName = this.login.userName;
     });
     if (this.type === "default") {
       await this.getHotSearches();
       this.searchHistory = this.setting.titleBar.searchHistory;
     }
-    this.globalMsg.subscriber.on({
-      id: "YTitlebar",
-      type: "close-login-window-from-homeview",
-      func: () => {
+    this.globalMsg.subscriber.on(
+      "YTitlebar",
+      GlobalMsgEvents.CloseLoginWindowFromHomeView,
+      () => {
         this.showDropdown = false;
-      },
-    });
+      }
+    );
   },
   beforeUnmount() {
     if (QRInterval) clearInterval(QRInterval);

@@ -519,6 +519,7 @@ import { themes } from "@/utils/theme";
 import { Message } from "@/dual/YMessageC";
 import themecss from "@/utils/theme.txt";
 import { CSSClass } from "@/dual/YCustomWindow";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export default defineComponent({
   name: "YCustomWindow",
@@ -658,7 +659,7 @@ export default defineComponent({
           classContent: result.classContent,
         },
       ];
-      this.globalMsg.post("close-custom-window");
+      this.globalMsg.post(GlobalMsgEvents.CloseCustomWindow);
       Doc.updateDocumentClassBySetting(this.setting.display.userCustomThemes);
       this.window!.closeWindow();
     },

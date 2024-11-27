@@ -31,6 +31,7 @@ export default defineComponent({
   methods: {},
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
+    window.test = this.player;
   },
   beforeUnmount() {},
 });

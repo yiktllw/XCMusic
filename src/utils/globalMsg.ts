@@ -6,22 +6,9 @@
  * 2. 要求用户确认某些操作
  *---------------------------------------------------------------*/
 
+import { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
 import { Subscriber } from "@/utils/subscribe";
-
-const events = [
-  "create-playlist",
-  "open-login-window",
-  "close-login-window",
-  "close-login-window-from-homeview",
-  "open-custom-window",
-  "close-custom-window",
-  "open-close-window",
-  "open-ctx-menu-playlist",
-  "confirm",
-  "close-playui",
-  "refresh-sidebar",
-  "refresh-playlist",
-];
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export interface IConfirm {
   /** 显示在确认窗口的内容 */
@@ -32,19 +19,35 @@ export interface IConfirm {
   callback: Function;
 }
 
+type GlobalMsgFuncs = {
+  [GlobalMsgEvents.CreatePlaylist]: () => void;
+  [GlobalMsgEvents.OpenLoginWindow]: (base64Img: string) => void;
+  [GlobalMsgEvents.CloseLoginWindow]: () => void;
+  [GlobalMsgEvents.CloseLoginWindowFromHomeView]: () => void;
+  [GlobalMsgEvents.OpenCustomWindow]: () => void;
+  [GlobalMsgEvents.CloseCustomWindow]: () => void;
+  [GlobalMsgEvents.OpenCloseWindow]: () => void;
+  [GlobalMsgEvents.OpenCtxMenuPlaylist]: (data: IPlaylistCtxData) => void;
+  [GlobalMsgEvents.Confirm]: (args: IConfirm) => void;
+  [GlobalMsgEvents.ClosePlayUI]: () => void;
+  [GlobalMsgEvents.RefreshSidebar]: () => void;
+  [GlobalMsgEvents.RefreshPlaylist]: (playlistId: number) => void;
+};
+
 export class GlobalMsg {
-  subscriber: Subscriber;
-  constructor() {
-    this.subscriber = new Subscriber(events);
-  }
-  post(msg: string, data?: any) {
-    if (!events.includes(msg)) {
+  subscriber = new Subscriber<GlobalMsgFuncs>(GlobalMsgEvents);
+  constructor() {}
+  post<K extends keyof GlobalMsgFuncs>(
+    msg: K,
+    ...args: Parameters<GlobalMsgFuncs[K]>
+  ) {
+    if (!(msg in GlobalMsgEvents)) {
       console.error("msg not exist in allowed list:", msg);
       return;
     }
-    this.subscriber.exec(msg, data);
+    this.subscriber.exec(msg, ...args);
   }
   confirm(args: IConfirm) {
-    this.subscriber.exec("confirm", args);
+    this.subscriber.exec(GlobalMsgEvents.Confirm, args);
   }
 }

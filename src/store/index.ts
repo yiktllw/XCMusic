@@ -3,7 +3,7 @@ import { Player } from "@/utils/player"; // 引入 Player 类
 import { Login } from "@/utils/login";
 import { Setting, ISettings } from "@/utils/setting";
 import { OpenedPlaylist } from "@/utils/openedPlaylist";
-import { markRaw, Raw } from "vue";
+import { markRaw } from "vue";
 import { Download } from "@/utils/download_renderer";
 import { GlobalMsg } from "@/utils/globalMsg";
 

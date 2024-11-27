@@ -12,12 +12,17 @@ import { Search } from "@/utils/api";
 import { Subscriber } from "@/utils//subscribe";
 import { markRaw } from "vue";
 import { ITrack } from "@/utils/tracks";
+import { SongPickerEvents } from "@/dual/damakuSongPicker";
+type SongPickerFuncs = {
+  [SongPickerEvents.Track]: () => void;
+  [SongPickerEvents.NextTrack]: () => void;
+};
 
 export class SongPicker {
   homeDir: string;
   damakuPath: string;
   filePath: string;
-  subscriber: Subscriber;
+  subscriber = new Subscriber<SongPickerFuncs>(SongPickerEvents);
   song: null | { type: string; data: number | string };
   _track: null | ITrack;
   timer: NodeJS.Timeout;
@@ -32,7 +37,7 @@ export class SongPicker {
       "xcmusic"
     );
     this.filePath = window.api.pathJoin(this.damakuPath, "songPicker.txt");
-    
+
     if (!window.api.existsSync(this.damakuPath)) {
       window.api.makeDirSync(this.damakuPath);
     }
@@ -40,8 +45,6 @@ export class SongPicker {
       window.api.writeFile(this.filePath, "");
     }
     this.#clearFile();
-
-    this.subscriber = new Subscriber(["track", "nextTrack"]);
 
     this.song = null;
     this._track = null;
@@ -138,7 +141,7 @@ export class SongPicker {
             let track = markRaw(new YTrackC(trimmedContent));
             track.onTrackLoaded = () => {
               this._track = track;
-              this.subscriber.exec("track");
+              this.subscriber.exec(SongPickerEvents.Track);
             };
           } else if (startIndex2 !== -1) {
             this.song = {
@@ -148,7 +151,7 @@ export class SongPicker {
             let track = markRaw(new YTrackC(trimmedContent));
             track.onTrackLoaded = () => {
               this._track = track;
-              this.subscriber.exec("nextTrack");
+              this.subscriber.exec(SongPickerEvents.NextTrack);
             };
           }
         } else {
@@ -172,9 +175,9 @@ export class SongPicker {
         .then((res) => {
           this._track = res.songs[0];
           if (playNow) {
-            this.subscriber.exec("track");
+            this.subscriber.exec(SongPickerEvents.Track);
           } else {
-            this.subscriber.exec("nextTrack");
+            this.subscriber.exec(SongPickerEvents.NextTrack);
           }
         })
         .catch((err) => {

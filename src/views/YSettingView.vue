@@ -563,6 +563,7 @@ import {
 } from "@/utils/setting";
 import { ISaveJSONData } from "@/dual/YSettingView";
 import YScroll from "@/components/base/YScroll.vue";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
 /** 用于生成设置界面的背景色 */
 const str = "setting_view";
 
@@ -830,14 +831,14 @@ export default defineComponent({
       window.location.reload();
     },
     openCustomWindow() {
-      this.globalMsg.post("open-custom-window");
-      this.globalMsg.subscriber.on({
-        id: "YSettingView",
-        type: "close-custom-window",
-        func: () => {
+      this.globalMsg.post(GlobalMsgEvents.OpenCustomWindow);
+      this.globalMsg.subscriber.on(
+        "YSettingView",
+        GlobalMsgEvents.CloseCustomWindow,
+        () => {
           this.fetchThemes();
-        },
-      });
+        }
+      );
     },
     fetchThemes() {
       const userCustomThemes = this.setting.display.userCustomThemes.map(
@@ -868,7 +869,7 @@ export default defineComponent({
         if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
       });
       this.setting.display.hideInSidebar = hideInSidebar;
-      this.globalMsg.post("refresh-sidebar");
+      this.globalMsg.post(GlobalMsgEvents.RefreshSidebar);
     },
     async exportToJSON_Setting() {
       if (!window.electron?.isElectron) return;

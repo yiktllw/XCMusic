@@ -32,6 +32,7 @@ import { Message } from "@/dual/YMessageC";
 import { Playlist } from "@/utils/api";
 import { useStore } from "vuex";
 import { IPlaylist } from "@/utils/login";
+import { LoginEvents } from "@/dual/login";
 
 export default defineComponent({
   name: "YAddToPlaylist",
@@ -88,13 +89,13 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.login.subscriber.on({
-      id: "YAddToPlaylist",
-      type: "userPlaylists",
-      func: () => {
+    this.login.subscriber.on(
+      "YAddToPlaylist",
+      LoginEvents.userPlaylists,
+      () => {
         this.userPlaylists = this.login.userPlaylists;
-      },
-    });
+      }
+    );
   },
   beforeUnmount() {
     this.login.subscriber.offAll("YAddToPlaylist");

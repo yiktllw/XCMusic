@@ -40,6 +40,7 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import { ITrack, TrackIds } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { ITrackWithProgress } from "@/dual/YLocalSongsView";
+import { DownloadEvents } from "@/dual/download_renderer";
 
 export default defineComponent({
   name: "YLocalSongsView",
@@ -72,23 +73,19 @@ export default defineComponent({
       YColor.stringToHexColor("Downloaded Music   ")
     );
     this.getDownloadedTracks();
-    this.download.subscriber.on({
-      id: "YLocalSongsView",
-      type: "downloaded-songs",
-      func: async () => {
+    this.download.subscriber.on(
+      "YLocalSongsView",
+      DownloadEvents.Complete,
+      async () => {
         await this.getDownloadedTracks();
         this.downloading = this.download.downloading;
         this.downloadingKey += 1;
-      },
-    });
+      }
+    );
     this.downloading = this.download.downloading;
-    this.download.subscriber.on({
-      id: "YLocalSongsView",
-      type: "downloading",
-      func: () => {
-        this.downloading = this.download.downloading;
-        this.downloadingKey += 1;
-      },
+    this.download.subscriber.on("YLocalSongsView", DownloadEvents.Doing, () => {
+      this.downloading = this.download.downloading;
+      this.downloadingKey += 1;
     });
   },
   beforeUnmount() {
