@@ -113,6 +113,7 @@ export class Player {
     this._audio.onerror = () => this.handleAudioError(this._audio.error);
     // 初始化音量均衡控件
     this.initAudioContext();
+    this._audio.crossOrigin = "anonymous";
 
     // 点歌功能
     if (window.electron?.isElectron) {
@@ -384,10 +385,12 @@ export class Player {
           if (delay > 0) {
             setTimeout(() => {
               this._audio.play();
+              this._outputAudio.play();
               this.playState = "play";
             }, delay);
           } else {
             await this._audio.play();
+            this._outputAudio.play();
             this.playState = "play";
           }
           autoPlayMsg = "Autoplay";
