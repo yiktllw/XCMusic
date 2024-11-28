@@ -13,12 +13,29 @@
  *---------------------------------------------------------------*/
 
 import { Setting } from "@/utils/setting";
-import { shell } from "electron";
+import { shell, webFrame } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import crypto from "crypto";
 import https from "https";
+
+interface MemoryUsageDetails {
+  // Docs: https://electronjs.org/docs/api/structures/memory-usage-details
+
+  count: number;
+  liveSize: number;
+  size: number;
+}
+
+interface ResourceUsage {
+  images: MemoryUsageDetails;
+  scripts: MemoryUsageDetails;
+  cssStyleSheets: MemoryUsageDetails;
+  xslStyleSheets: MemoryUsageDetails;
+  fonts: MemoryUsageDetails;
+  other: MemoryUsageDetails;
+}
 
 interface electron {
   ipcRenderer: {
@@ -26,11 +43,18 @@ interface electron {
     on(channel: string, listener: (event: any, ...args: any[]) => void): void;
     once(channel: string, listener: (event: any, ...args: any[]) => void): void;
     invoke(channel: string, data?: any): Promise<any>;
-    removeListener(channel: string, listener: (event: any, ...args: any[]) => void): void;
+    removeListener(
+      channel: string,
+      listener: (event: any, ...args: any[]) => void
+    ): void;
     removeAllListeners(channel: string): void;
   };
   isElectron: boolean;
   shell: shell;
+  /** 清除缓存 */
+  clearCache: () => void;
+  getResourceUsage: () => ResourceUsage;
+  getProcessInfo: () => any;
 }
 
 interface api {
@@ -42,12 +66,12 @@ interface api {
   pathJoin: (...args: string[]) => string;
   readFile: (
     path: string,
-    options?: { encoding?: null; flag?: string },
+    options?: { encoding?: null; flag?: string }
   ) => Buffer;
   writeFile: (
     path: string,
     data: any,
-    options?: { encoding?: string; flag?: string },
+    options?: { encoding?: string; flag?: string }
   ) => void;
   existsSync: (path: string) => boolean;
   makeDirSync: (path: string) => void;

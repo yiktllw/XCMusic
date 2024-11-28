@@ -1,7 +1,10 @@
 <template>
   <div class="display">
-    <div class="font-color-main" @click="$router.push({ path: '/audio/test' })">
+    <div class="button font-color-main" @click="$router.push({ path: '/audio/test' })">
       点击跳转到音频调试界面
+    </div>
+    <div class="button font-color-main" @click="clearCache">
+      点击清除webFrame缓存
     </div>
   </div>
 </template>
@@ -28,7 +31,15 @@ export default defineComponent({
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    clearCache() {
+      window.electron.clearCache();
+      console.log("clearCache");
+      const usage = window.electron.getResourceUsage();
+      const test = window.electron.getProcessInfo();
+      console.log(JSON.stringify(test, null, 4));
+    }
+  },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
     window.test = this.player;
@@ -47,6 +58,10 @@ export default defineComponent({
   .scrollable {
     width: 100%;
     height: 100%;
+  }
+  
+  .button {
+    cursor: pointer;
   }
 }
 

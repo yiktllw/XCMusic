@@ -24,13 +24,18 @@
  * 20. env.isDevelopment 是否为开发环境
  *---------------------------------------------------------------*/
 
-const { contextBridge, ipcRenderer, shell } = require("electron");
+const {
+  contextBridge,
+  app,
+ipcRenderer,
+  shell,
+  webFrame,
+} = require("electron");
 
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const crypto = require("crypto");
-const { removeAllListeners } = require("process");
 
 contextBridge.exposeInMainWorld("api", {
   pathJoin: (...args) => path.join(...args), // 暴露 path.join
@@ -64,8 +69,11 @@ contextBridge.exposeInMainWorld("electron", {
   },
   isElectron: true,
   shell: shell,
+  clearCache: () => webFrame.clearCache(),
+  getResourceUsage: () => webFrame.getResourceUsage(),
+  getProcessInfo: () => process.memoryUsage(),
 });
 
 contextBridge.exposeInMainWorld("env", {
   isDevelopment: process.env.NODE_ENV === "development",
-})
+});
