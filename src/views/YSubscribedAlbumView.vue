@@ -16,7 +16,7 @@ import YPage from "@/components/base/YPage.vue";
 import { useStore } from "vuex";
 import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import { YColor } from "@/utils/color";
-import { IBigPlaylist, IPlaylist } from "@/dual/YPlaylistList";
+import { IBigPlaylist } from "@/dual/YPlaylistList";
 
 export default defineComponent({
   name: "YSubscribedAlbumView",

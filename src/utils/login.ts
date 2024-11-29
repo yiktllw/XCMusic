@@ -11,6 +11,7 @@ import { Login as LoginApi, User } from "@/utils/api";
 import { reactive, markRaw, Reactive } from "vue";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { LoginEvents } from "@/dual/login";
+import { IBigPlaylist } from "@/dual/YPlaylistList";
 
 export interface IPlaylist {
   /** 歌单名 */
@@ -31,7 +32,7 @@ type LoginEventCallbacks = {
   [LoginEvents.userId]: () => void;
   [LoginEvents.userName]: () => void;
   [LoginEvents.avatar]: () => void;
-}
+};
 
 export class Login {
   /** 登录凭证 */
@@ -47,9 +48,11 @@ export class Login {
   /** 用户头像 */
   _avatar: string = getStorage(StorageKey.LoginAvatar) ?? "";
   /** 用户创建的歌单 */
-  _userPlaylists: Reactive<IPlaylist[]> = reactive([]);
+  _userPlaylists: IPlaylist[] = [];
   /** 用户订阅的歌单 */
-  _userSubscribes: Reactive<IPlaylist[]> = reactive([]);
+  _userSubscribes: IPlaylist[] = [];
+  /** 用户订阅的专辑 */
+  private _userSubscribeAlbums: IBigPlaylist[] = [];
   /** 订阅事件 */
   subscriber = new Subscriber<LoginEventCallbacks>(LoginEvents);
   /** 每隔一段时间，自动更新用户的歌单 */
@@ -87,6 +90,7 @@ export class Login {
       });
     await this.reloadLikelist();
     await this.refreshUserPlaylists();
+    await this.refreshUserAlbums();
   }
   async logout() {
     await LoginApi.out();
@@ -176,6 +180,19 @@ export class Login {
   get userSubscribes() {
     return this._userSubscribes;
   }
+  get userSubscribeAlbums() {
+    return this._userSubscribeAlbums;
+  }
+  /** 获取用户订阅的歌单ID */
+  get userSubscribeIds() {
+    return this._userSubscribes.map((playlist) => playlist.id);
+  }
+  private set userSubscribeAlbums(value) {
+    this._userSubscribeAlbums = value;
+  }
+  get userSubscribeAlbumIds() {
+    return this._userSubscribeAlbums.map((album) => album.id);
+  }
   get userFavoriteId() {
     return this._userFavoriteId;
   }
@@ -188,7 +205,7 @@ export class Login {
       await this.updateInfo();
       if (!this._userId) return;
     }
-    await User.getPlaylists(this._userId as unknown as number)
+    await User.getPlaylists(this._userId)
       .then((res) => {
         this._userPlaylists = [];
         this._userSubscribes = [];
@@ -219,6 +236,29 @@ export class Login {
       this._userFavoriteId = this.userPlaylists[0].id;
       this.userPlaylists.splice(0, 1);
     }
+    this.subscriber.exec(LoginEvents.userPlaylists);
+  }
+  /** 刷新用户订阅的专辑 */
+  async refreshUserAlbums() {
+    if (!this._cookie) {
+      return;
+    }
+    if (!this._userId) {
+      await this.updateInfo();
+      if (!this._userId) return;
+    }
+    const res = await User.getSubAlbums(1, 1000);
+    this.userSubscribeAlbums = res.albums.map((album) => {
+      return {
+        name: album.name,
+        label: album.name,
+        id: album.id,
+        trackCount: album.size,
+        img: album.picUrl,
+        playCount: 0,
+        _bigPicUrl: album.picUrl + "?param=400y400",
+      };
+    });
     this.subscriber.exec(LoginEvents.userPlaylists);
   }
 }

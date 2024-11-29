@@ -198,7 +198,9 @@
 		"play": "Play",
 		"published_time": "Published",
 		"search": "Search",
-		"songs": "Songs"
+		"songs": "Songs",
+		"subscribe": "Subscribe",
+		"subscribed": "Subscribed"
 	},
 	"playui": {
 		"lyric": "Lyrics",

@@ -406,6 +406,58 @@ export namespace Playlist {
     });
     return res;
   }
+
+  /**
+   * 收藏/取消收藏专辑
+   */
+  export async function subAlbum(
+    /** 专辑ID */
+    id: number,
+    /** on为收藏，off为取消收藏 */
+    type: "on" | "off"
+  ) {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    const res = await useApi("/album/sub", {
+      t: type === "on" ? 1 : 0,
+      cookie: cookie,
+      timestamp: new Date().getTime(),
+      id: id,
+    }).catch((error) => {
+      console.error("Failed to sub album:", error);
+      return null;
+    });
+    return res;
+  }
+
+  /**
+   * 收藏/取消收藏歌单
+   */
+  export async function subPlaylist(
+    /** 歌单ID */
+    id: number,
+    /** on为收藏，off为取消收藏 */
+    type: "on" | "off"
+  ) {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    const res = await useApi("/playlist/subscribe", {
+      t: type === "on" ? 1 : 2,
+      cookie: cookie,
+      timestamp: new Date().getTime(),
+      id: id,
+    }).catch((error) => {
+      console.error("Failed to sub playlist:", error);
+      return null;
+    });
+    return res;
+  }
 }
 
 /**
@@ -1012,6 +1064,7 @@ export namespace User {
     const res = await useApi("/album/sublist", {
       offset: (page - 1) * limit,
       limit: limit,
+      timestamp: new Date().getTime(),
       cookie: cookie,
     });
 

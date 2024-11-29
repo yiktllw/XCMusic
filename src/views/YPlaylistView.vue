@@ -133,6 +133,27 @@
                 />
                 {{ $t("playlist_view.download") }}
               </button>
+              <!--订阅按钮 -->
+              <button
+                v-if="!userCreateIds.includes(playlistId)"
+                :tabindex="-1"
+                class="multichoice-button"
+                @click="subscribe()"
+              >
+                <img
+                  class="g-icon"
+                  src="@/assets/subscribe3.svg"
+                  style="width: 15px; height: 15px; padding-right: 5px"
+                />
+                {{
+                  (type === "playlist" &&
+                    userSubscribeIds.includes(playlistId)) ||
+                  (type === "album" &&
+                    userSubscribeAlbumIds.includes(playlistId))
+                    ? $t("playlist_view.subscribed")
+                    : $t("playlist_view.subscribe")
+                }}
+              </button>
               <!-- 5 多选按钮 -->
               <button
                 :tabindex="-1"
@@ -322,6 +343,7 @@ import { AlReels } from "@/dual/YSongsTable";
 import { IArtist } from "@/dual/YPlaylistView";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { LoginEvents } from "@/dual/login";
 
 export default defineComponent({
   name: "YPlaylist",
@@ -384,6 +406,9 @@ export default defineComponent({
       filteredTracks: [] as ITrack[], // 搜索过滤后的歌曲列表
       orient: "songs", // 歌曲列表或评论列表
       page: 1, // 歌单页数
+      userSubscribeIds: [] as number[], // 用户订阅的歌单ID
+      userSubscribeAlbumIds: [] as number[], // 用户订阅的专辑ID
+      userCreateIds: [] as number[], // 用户创建的歌单ID
     };
   },
   watch: {
@@ -741,22 +766,56 @@ export default defineComponent({
       this.download.addList(this.filteredTracks);
       Message.post("success", this.$t("playlist_view.list_added_to_download"));
     },
+    async subscribe() {
+      let type: "on" | "off" = "on";
+      if (
+        (this.userSubscribeIds.includes(this.playlistId) &&
+          this.type === "playlist") ||
+        (this.userSubscribeAlbumIds.includes(this.playlistId) &&
+          this.type === "album")
+      ) {
+        type = "off";
+      }
+      let res;
+      if (this.type === "playlist") {
+        res = await Playlist.subPlaylist(this.playlistId, type);
+        this.login.refreshUserPlaylists();
+      } else {
+        res = await Playlist.subAlbum(this.playlistId, type);
+        this.login.refreshUserAlbums();
+      }
+      console.log(type, res);
+    },
     multiChoice() {
       Message.post("info", "功能暂未实现");
     },
   },
   mounted() {
-    this.globalMsg.subscriber.on(      `YPlaylistView`,
+    this.globalMsg.subscriber.on(
+      `YPlaylistView`,
       GlobalMsgEvents.RefreshPlaylist,
       () => {
         console.log("refresh-playlist");
         this.fetchPlaylist(this.playlistId, true);
-      },
-);
+      }
+    );
+    this.userSubscribeIds = this.login.userSubscribeIds.slice();
+    this.userCreateIds = this.login.userPlaylists.map(
+      (playlist) => playlist.id
+    );
+    this.userSubscribeAlbumIds = this.login.userSubscribeAlbumIds.slice();
+    this.login.subscriber.on("YPlaylistView", LoginEvents.userPlaylists, () => {
+      this.userSubscribeIds = this.login.userSubscribeIds.slice();
+      this.userSubscribeAlbumIds = this.login.userSubscribeAlbumIds.slice();
+      this.userCreateIds = this.login.userPlaylists.map(
+        (playlist) => playlist.id
+      );
+    });
   },
   beforeUnmount() {
     // 组件销毁时发送消息
     this.globalMsg.subscriber.offAll(`YPlaylistView`);
+    this.login.subscriber.offAll("YPlaylistView");
     this.openedPlaylist.id = 0;
     this.playlist_songstable = null;
     this.album_songstable = null;

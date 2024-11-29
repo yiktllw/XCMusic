@@ -198,7 +198,9 @@
 		"play": "播放",
 		"published_time": "发布",
 		"search": "搜索",
-		"songs": "歌曲"
+		"songs": "歌曲",
+		"subscribe": "收藏",
+		"subscribed": "已收藏"
 	},
 	"playui": {
 		"lyric": "歌词",
