@@ -997,6 +997,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+// input[type="checkbox"] {
+//   accent-color: rgb(var(--highlight-color-rgb));
+// }
+// input[type="radio"] {
+//   accent-color: rgb(var(--highlight-color-rgb));
+// }
 .setting {
   display: flex;
   width: inherit;
@@ -1111,6 +1117,7 @@ export default defineComponent({
 
             select {
               // width: 210px;
+              min-width: 100px;
               padding: 2px 2px !important;
               border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
               background-color: transparent;

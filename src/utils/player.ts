@@ -151,7 +151,7 @@ export class Player {
           if (lastTrack) {
             this.subscriber.on("indexDB", PlayerEvents.playerReady, () => {
               const autoPlay = getStorage(StorageKey.Setting_Play_AutoPlay);
-              this.playTrack(lastTrack, autoPlay ?? false, 1600);
+              this.playTrack(lastTrack, autoPlay ?? true, 1600);
             });
           }
           this.subscriber.exec(PlayerEvents.playlist);
