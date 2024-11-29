@@ -270,7 +270,7 @@ export default defineComponent({
         let menuWidth = 198 + 5;
         let menuHeight = 35 * this.menu.length + 5;
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log(JSON.stringify(data, null, 4));
+        // console.log(JSON.stringify(data, null, 4));
         switch (data.from) {
           case "created-playlists":
             this.menu[3].display = true;
@@ -357,11 +357,11 @@ export default defineComponent({
         let menuHeight = 35 * this.menu.length + 5;
 
         this.setDirection(data.x, data.y, menuWidth, menuHeight);
-        console.log({
-          x: data.x,
-          y: data.y,
-          track: JSON.parse(data.track),
-        });
+        // console.log({
+        //   x: data.x,
+        //   y: data.y,
+        //   track: JSON.parse(data.track),
+        // });
 
         let commentCount = await this.getCommentCount(this.target.id);
         this.menu[4].label =
@@ -370,7 +370,7 @@ export default defineComponent({
         this.trackIds = event.data.data.ids.filter((id: number | string) => {
           return !isLocal(id);
         });
-        console.log("ids: ", JSON.stringify(this.trackIds, null, 4));
+        // console.log("ids: ", JSON.stringify(this.trackIds, null, 4));
 
         if (this.trackIds.length === 0) return;
 
@@ -547,7 +547,7 @@ export default defineComponent({
             callback: () => {
               Playlist.Delete(arg.target.id).then((res) => {
                 this.login.refreshUserPlaylists();
-                console.log("Delete playlist:", JSON.stringify(res, null, 4));
+                // console.log("Delete playlist:", JSON.stringify(res, null, 4));
               });
             },
           };
@@ -566,10 +566,10 @@ export default defineComponent({
       }
       await Playlist.removeTracks(playlistId as number, [trackId as number])
         .then((res) => {
-          console.log(
-            "Track deleted from playlist:",
-            JSON.stringify(res, null, 4)
-          );
+          // console.log(
+          //   "Track deleted from playlist:",
+          //   JSON.stringify(res, null, 4)
+          // );
           if (res.status === 200) {
             Message.post("success", this.$t("message.homeview.delete_success"));
             this.globalMsg.post(GlobalMsgEvents.RefreshPlaylist, playlistId as number);

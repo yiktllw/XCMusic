@@ -72,12 +72,14 @@
           <img
             class="img-info play-info-ico g-icon"
             src="@/assets/info.svg"
+            :style="{ width: '22px', height: '22px' }"
             :title="$t('playbar.song_info')"
             @click="openInfoPanel"
           />
           <img
             class="img-subscribe play-info-ico g-icon"
             src="@/assets/subscribe.svg"
+            :style="{ width: '20px', height: '20px' }"
             :title="$t('context.subscribe')"
             @click="handleSubscribe"
           />
@@ -393,14 +395,21 @@
           </div>
         </YPanel>
         <!-- 播放列表按钮 -->
-        <img
-          class="img playlist-img g-icon"
-          src="@/assets/playlist.svg"
-          style="width: 20px; height: 20px; margin-left: 10px"
+        <div
+          class="playlist-img-container"
           @click="playlist_panel?.tooglePanel"
           :title="$t('playbar.playlist')"
           ref="playlist_panel_trigger"
-        />
+        >
+          <img
+            class="img playlist-img g-icon"
+            src="@/assets/playlist2.svg"
+            style="width: 20px; height: 20px; margin-left: 10px"
+          />
+          <div class="number">
+            {{ playlist.length }}
+          </div>
+        </div>
         <!-- 播放列表面板 -->
         <YPanel
           ref="playlist_panel"
@@ -938,6 +947,28 @@ export default defineComponent({
       opacity: 1;
     }
   }
+  .playlist-img-container {
+    display: flex;
+    position: relative;
+    cursor: pointer;
+    align-items: center;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    .playlist-img {
+      opacity: 1;
+    }
+
+    .number {
+      position: absolute;
+      top: -3px;
+      left: 26px;
+      font-size: 10px;
+    }
+  }
 
   .align-left {
     display: flex;
@@ -1045,8 +1076,8 @@ export default defineComponent({
         }
 
         .play-info-ico {
-          width: 22px;
-          height: 22px;
+          width: 21px;
+          height: 21px;
           cursor: pointer;
           opacity: 0.6;
 
@@ -1090,8 +1121,8 @@ export default defineComponent({
 
           .song-comment-num {
             position: absolute;
-            left: 12px;
-            top: -5px;
+            left: 11px;
+            top: -6px;
             font-size: 10px;
             z-index: 1;
             padding: 0px 0px 2px 2px;
