@@ -86,16 +86,80 @@
 npm install
 ```
 
+#### 使用electron
+
 运行Electron程序
 
 ```shell
 npm run electron:serve
 ```
 
-编译为二进制程序
+打包为二进制程序
 
 ```shell
 npm run electron:build
+```
+
+#### 使用tauri
+
+1. 打包网易云音乐api程序:
+
+   1. 克隆仓库:[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
+   2. 在`NeteaseCloudMusicApi`目录下，安装依赖:
+
+   ```shell
+   npm install
+   ```
+
+   3. 在`NeteaseCloudMusicApi`目录下，修改`app.js`的`start`函数为:
+
+   ```javascript
+   async function start() {
+     // 检测是否存在 anonymous_token 文件,没有则生成
+     if (!fs.existsSync(path.resolve(tmpPath, "anonymous_token"))) {
+       fs.writeFileSync(path.resolve(tmpPath, "anonymous_token"), "", "utf-8");
+     }
+     // 启动时更新anonymous_token
+     const generateConfig = require("./generateConfig");
+     await generateConfig();
+     require("./server").serveNcmApi({
+       checkVersion: false,
+       port: 43210,
+     });
+   }
+   ```
+
+   4. 在`NeteaseCloudMusicApi`目录下，根据平台运行命令:
+      win平台
+
+   ```shell
+   npm run pkgwin
+   ```
+
+   linux平台
+
+   ```shell
+   npm run pkglinux
+   ```
+
+   macos平台
+
+   ```shell
+   npm run pkgmacos
+   ```
+
+   5. 在`NeteaseCloudMusicApi/bin`目录下找到打包的程序，并将其复制到`XCMusic/src-tauri/resources/api`目录下。
+
+2. 运行tauri程序:
+
+```shell
+npm run tauri:serve
+```
+
+4. 打包为二进制程序:
+
+```shell
+npm run tauri:build
 ```
 
 **[⬆ 回到目录](#目录)**
@@ -138,13 +202,13 @@ npm run electron:build
 4. XC系列01: XCMusic
 <div/>
 
-3. Für "Clara Josephine Schumann".
+5. Für "Clara Josephine Schumann".
 <div/>
 
-2. Prelude for TeXpert Code.
+6. Prelude for TeXpert Code.
 <div/>
 
-1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
+7. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
 
 **[⬆ 回到目录](#目录)**
 
