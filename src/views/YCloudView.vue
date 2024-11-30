@@ -22,6 +22,7 @@ import { useStore } from "vuex";
 import { ITrack, Tracks } from "@/utils/tracks";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
+import { YColor } from "@/utils/color";
 
 export default defineComponent({
   name: "YCloudView",
@@ -36,6 +37,8 @@ export default defineComponent({
     YPage,
   },
   mounted() {
+    const color = YColor.stringToHexColor("CLOUD");
+    YColor.setBackgroundColorHex2(color);
     this.fetchTracks(true);
   },
   beforeUnmount() {},
