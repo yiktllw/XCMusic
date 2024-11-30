@@ -8,26 +8,38 @@
 
 export interface LrcItem {
   type: "lrc";
+  /** 开始时间 */
   startTime: number;
+  /** 内容 */
   content: string;
 }
 
 export interface LrcItem2 {
   type: "lrc";
+  /** 开始时间 */
   startTime: number;
+  /** 内容 */
   content: Array<{
+    /** 未知 */
     li: string;
+    /** 文字 */
     tx: string;
   }>;
 }
 
 export interface YrcItem {
   type: "yrc";
+  /** 开始时间，毫秒 */
   startTime: number;
+  /** 持续时间，毫秒，可能为空 */
   duration?: number;
+  /** 单句的词 */
   words: Array<{
+    /** 词的开始时间，毫秒 */
     startTime: number;
+    /** 词的持续时间，毫秒 */
     duration: number;
+    /** 词的文本 */
     text: string;
   }>;
 }

@@ -11,14 +11,15 @@
 </template>
 
 <script lang="ts">
-import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 import { PlayerEvents } from "@/dual/player";
+import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
-let scale = window.devicePixelRatio * (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
+let scale =
+  window.devicePixelRatio * (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
 // 行高
 let lineHeight = 59 * scale;
 let smallLineHeight = 30 * scale;
@@ -95,12 +96,9 @@ export default defineComponent({
     });
 
     this.lyrics = this.player.lyrics;
-    this.player.subscriber.on(      "YLyrics",
-      PlayerEvents.lyrics,
-      () => {
-        this.lyrics = this.player.lyrics;
-      },
-);
+    this.player.subscriber.on("YLyrics", PlayerEvents.lyrics, () => {
+      this.lyrics = this.player.lyrics;
+    });
 
     this.setScale();
   },
@@ -134,7 +132,8 @@ export default defineComponent({
   methods: {
     setScale() {
       scale =
-        window.devicePixelRatio * (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
+        window.devicePixelRatio *
+        (getStorage(StorageKey.Setting_Display_Zoom) ?? 1);
       // 行高
       lineHeight = 59 * scale;
       smallLineHeight = 30 * scale;
@@ -331,16 +330,26 @@ export default defineComponent({
         const startY = this.lineY[i] - scrollY + this.canvas.height / 2;
 
         if (this.formattedLyrics[i].lines.length === 1) {
-          this.drawOneLineLyrics(i, dist, startY);
+          this.drawLine(i, dist, startY);
         } else {
-          this.drawMultiLineLyrics(i, dist, startY);
+          this.drawMultiLine(i, dist, startY);
         }
       }
     },
-    /** 绘制无分行的歌词 */
-    drawOneLineLyrics(i: number, dist: number, startY: number) {
-      if (!this.ctx || !this.canvas || this.lyrics.length === 0) return;
 
+    /**
+     * 绘制单行歌词
+     */
+    drawLine(
+      /** 歌词的索引 */
+      i: number,
+      /** 与中间的距离 */
+      dist: number,
+      /** 开始绘制的位置 */
+      startY: number
+    ) {
+      if (!this.ctx || !this.canvas || this.lyrics.length === 0) return;
+      // 绘制无分行的歌词
       const text = this.formattedLyrics[i].lines[0];
 
       // 颜色动画和字体大小动画
@@ -350,104 +359,89 @@ export default defineComponent({
       let drawDone = false;
 
       if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
-        drawDone = this.drawYrcLine(i, dist, startY, text);
+        // 逐字歌词动画
+        this.ctx.save();
+        this.ctx.fillStyle = fontColor2;
+        const data = this.lyrics[i] as YrcItem;
+
+        if (data.duration) {
+          // 找到当前时间所在的词
+          let index = -1;
+          // 拼接这一行的歌词
+          let tmpLine = "";
+          for (let j = 0; j < data.words.length; j++) {
+            const word = data.words[j];
+            tmpLine += word.text;
+            if (
+              this.timeNow * 1000 >= word.startTime &&
+              (this.timeNow * 1000 < word.duration + word.startTime ||
+                this.timeNow * 1000 < data.words[j + 1]?.startTime)
+            ) {
+              index = j;
+              break;
+            }
+          }
+
+          if (index !== -1) {
+            // 计算当前词的宽度
+            const wordWidth = this.ctx.measureText(
+              data.words[index].text
+            ).width;
+            // 计算当前行的宽度
+            const tmpLineWidth = this.ctx.measureText(tmpLine).width;
+            // 计算当前词的进度
+            const progress =
+              (this.timeNow * 1000 - data.words[index].startTime) /
+              data.words[index].duration;
+            // 计算当前词的位置
+            const x = tmpLineWidth - wordWidth + wordWidth * progress;
+
+            // 绘制被裁剪的白色文字
+            this.ctx.save();
+
+            // 裁剪
+            this.ctx.beginPath();
+            this.ctx.rect(0, startY - lineHeight, x, startY + lineHeight + 10);
+            this.ctx.clip();
+
+            // 绘制
+            this.ctx.fillStyle = this.dyToColor(dist);
+            this.ctx.fillText(text, 0, startY);
+            drawDone = true;
+
+            this.ctx.restore();
+
+            // 绘制被裁剪的底色文字
+            this.ctx.beginPath();
+            this.ctx.rect(
+              x,
+              startY - lineHeight,
+              this.canvas.height,
+              startY + lineHeight + 10
+            );
+            this.ctx.clip();
+            this.ctx.fillText(text, 0, startY);
+          }
+        }
+        this.ctx.restore();
       }
       // 绘制这一行歌词
       if (!drawDone) this.ctx.fillText(text, 0, startY);
     },
 
-    /** 绘制单行的逐字歌词 */
-    drawYrcLine(
-      /** 歌词索引 */
+    /**
+     * 绘制分行歌词
+     */
+    drawMultiLine(
+      /** 歌词的索引 */
       i: number,
-      /** 与中间位置的差值 */
-      dist: number,
-      /** 开始绘制的位置 */
-      startY: number,
-      /** 歌词内容 */
-      text: string
-    ): boolean {
-      let drawDone = false;
-      if (!this.ctx || !this.canvas || this.lyrics.length === 0)
-        return drawDone;
-      // 逐字歌词动画
-      this.ctx.save();
-      this.ctx.fillStyle = fontColor2;
-      const data = this.lyrics[i] as YrcItem;
-
-      if (data.duration) {
-        // 找到当前时间所在的词
-        let index = -1;
-        // 拼接这一行的歌词
-        let tmpLine = "";
-        for (let j = 0; j < data.words.length; j++) {
-          const word = data.words[j];
-          tmpLine += word.text;
-          if (
-            this.timeNow * 1000 > word.startTime &&
-            (this.timeNow * 1000 <= word.duration + word.startTime ||
-              this.timeNow * 1000 <= data.words[j + 1]?.startTime)
-          ) {
-            index = j;
-            break;
-          }
-        }
-
-        if (index !== -1) {
-          // 计算当前词的宽度
-          const wordWidth = this.ctx.measureText(data.words[index].text).width;
-          // 计算当前行的宽度
-          const tmpLineWidth = this.ctx.measureText(tmpLine).width;
-          // 计算当前词的进度
-          const progress =
-            (this.timeNow * 1000 - data.words[index].startTime) /
-            data.words[index].duration;
-          // 计算当前词的位置
-          const x = tmpLineWidth - wordWidth + wordWidth * progress;
-
-          // 绘制被裁剪的白色文字
-          this.ctx.save();
-
-          // 裁剪
-          this.ctx.beginPath();
-          this.ctx.rect(0, startY - lineHeight, x, startY + lineHeight + 10);
-          this.ctx.clip();
-
-          // 绘制
-          this.ctx.fillStyle = this.dyToColor(dist);
-          this.ctx.fillText(text, 0, startY);
-          drawDone = true;
-
-          this.ctx.restore();
-
-          // 绘制被裁剪的底色文字
-          this.ctx.beginPath();
-          this.ctx.rect(
-            x,
-            startY - lineHeight,
-            this.canvas.height,
-            startY + lineHeight + 10
-          );
-          this.ctx.clip();
-          this.ctx.fillText(text, 0, startY);
-        }
-      }
-      this.ctx.restore();
-
-      return drawDone;
-    },
-
-    /** 绘制有分行(过长)的逐字歌词 */
-    drawMultiLineLyrics(
-      /** 歌词索引 */
-      i: number,
-      /** 与中间位置的差值 */
+      /** 与中间的距离 */
       dist: number,
       /** 开始绘制的位置 */
       startY: number
     ) {
       if (!this.ctx || !this.canvas || this.lyrics.length === 0) return;
-
+      // 绘制有分行(过长)的逐字歌词
       for (let j = 0; j < this.formattedLyrics[i].lines.length; j++) {
         const text = this.formattedLyrics[i].lines[j];
 
@@ -458,111 +452,93 @@ export default defineComponent({
         let drawDone = false;
 
         if (this.lyrics[i].type === "yrc" && this.currentLyricIndex === i) {
-          this.drawYrcMultiLine(i, j, text, dist, startY);
+          // 逐字歌词动画
+          this.ctx.save();
+          this.ctx.fillStyle = fontColor2;
+          const data = this.lyrics[i] as YrcItem;
+          if (data.duration) {
+            // 找到当前时间所在的词
+            let index = -1;
+            // 拼接这一行的歌词
+            let tmpLine = "";
+            for (let k = 0; k < data.words.length; k++) {
+              const word = data.words[k];
+
+              if (
+                k <=
+                  (this.formattedLyrics[i].breakLineOn[j] ??
+                    data.words.length) &&
+                k >= (this.formattedLyrics[i].breakLineOn[j - 1] ?? 0)
+              ) {
+                // 如果是这一分行的词
+                tmpLine += word.text;
+              }
+              if (
+                this.timeNow * 1000 >= word.startTime &&
+                this.timeNow * 1000 < word.duration + word.startTime
+              ) {
+                // 找到当前词在YrcItem中的索引
+                index = k;
+                break;
+              }
+            }
+            // 如果找到了当前词
+            if (index !== -1) {
+              // 计算当前词的宽度
+              const wordWidth = this.ctx.measureText(
+                data.words[index].text
+              ).width;
+              // 计算当前行的宽度
+              const tmpLineWidth = this.ctx.measureText(tmpLine).width;
+              // 计算当前词的进度
+              const progress =
+                (this.timeNow * 1000 - data.words[index].startTime) /
+                data.words[index].duration;
+              // 计算当前词的位置
+              let x = tmpLineWidth - wordWidth + wordWidth * progress;
+
+              // 如果已经换到下一行，x 重置为最大
+              if (index >= this.formattedLyrics[i].breakLineOn[j]) {
+                x = tmpLineWidth;
+              }
+
+              // 绘制被裁剪的白色文字
+              this.ctx.save();
+
+              // 裁剪
+              this.ctx.beginPath();
+              this.ctx.rect(
+                0,
+                startY - smallLineHeight + j * smallLineHeight,
+                x,
+                startY + smallLineHeight * j
+              );
+              this.ctx.clip();
+
+              // 绘制
+              this.ctx.fillStyle = this.dyToColor(dist);
+              this.ctx.fillText(text, 0, startY + j * smallLineHeight);
+              drawDone = true;
+
+              this.ctx.restore();
+
+              // 绘制被裁剪的底色文字
+              this.ctx.beginPath();
+              this.ctx.rect(
+                x,
+                startY - smallLineHeight + j * smallLineHeight,
+                this.canvas.height,
+                startY + smallLineHeight * j
+              );
+              this.ctx.clip();
+              this.ctx.fillText(text, 0, startY + j * smallLineHeight);
+            }
+          }
+          this.ctx.restore();
         }
         // 绘制这一行歌词
         if (!drawDone) this.ctx.fillText(text, 0, startY + j * smallLineHeight);
       }
-    },
-
-    /** 绘制有分行的逐字歌词 */
-    drawYrcMultiLine(
-      /** 歌词索引 */
-      i: number,
-      /** 单句歌词的分行索引 */
-      j: number,
-      /** 歌词内容 */
-      text: string,
-      /** 与中间位置的差值 */
-      dist: number,
-      /** 开始绘制的位置 */
-      startY: number
-    ): boolean {
-      let drawDone = false;
-      if (!this.ctx || !this.canvas || this.lyrics.length === 0)
-        return drawDone;
-      // 逐字歌词动画
-      this.ctx.save();
-      this.ctx.fillStyle = fontColor2;
-      const data = this.lyrics[i] as YrcItem;
-      if (data.duration) {
-        // 找到当前时间所在的词
-        let index = -1;
-        // 拼接这一行的歌词
-        let tmpLine = "";
-        for (let k = 0; k < data.words.length; k++) {
-          const word = data.words[k];
-
-          if (
-            k <=
-              (this.formattedLyrics[i].breakLineOn[j] ?? data.words.length) &&
-            k >= (this.formattedLyrics[i].breakLineOn[j - 1] ?? 0)
-          ) {
-            // 如果是这一分行的词
-            tmpLine += word.text;
-          }
-          if (
-            this.timeNow * 1000 > word.startTime &&
-            this.timeNow * 1000 <= word.duration + word.startTime
-          ) {
-            // 找到当前词在YrcItem中的索引
-            index = k;
-            break;
-          }
-        }
-        // 如果找到了当前词
-        if (index !== -1) {
-          // 计算当前词的宽度
-          const wordWidth = this.ctx.measureText(data.words[index].text).width;
-          // 计算当前行的宽度
-          const tmpLineWidth = this.ctx.measureText(tmpLine).width;
-          // 计算当前词的进度
-          const progress =
-            (this.timeNow * 1000 - data.words[index].startTime) /
-            data.words[index].duration;
-          // 计算当前词的位置
-          let x = tmpLineWidth - wordWidth + wordWidth * progress;
-
-          // 如果已经换到下一行，x 重置为最大
-          if (index >= this.formattedLyrics[i].breakLineOn[j]) {
-            x = tmpLineWidth;
-          }
-
-          // 绘制被裁剪的白色文字
-          this.ctx.save();
-
-          // 裁剪
-          this.ctx.beginPath();
-          this.ctx.rect(
-            0,
-            startY - smallLineHeight + j * smallLineHeight,
-            x,
-            startY + smallLineHeight * j
-          );
-          this.ctx.clip();
-
-          // 绘制
-          this.ctx.fillStyle = this.dyToColor(dist);
-          this.ctx.fillText(text, 0, startY + j * smallLineHeight);
-          drawDone = true;
-
-          this.ctx.restore();
-
-          // 绘制被裁剪的底色文字
-          this.ctx.beginPath();
-          this.ctx.rect(
-            x,
-            startY - smallLineHeight + j * smallLineHeight,
-            this.canvas.height,
-            startY + smallLineHeight * j
-          );
-          this.ctx.clip();
-          this.ctx.fillText(text, 0, startY + j * smallLineHeight);
-        }
-      }
-      this.ctx.restore();
-
-      return drawDone;
     },
 
     /** 根据与中间位置的差值计算颜色 */
@@ -602,7 +578,27 @@ export default defineComponent({
             breakLineOn: [0],
           });
         } else if (lyric.type === "lrc") {
-          const result = this.getFormattedLrcLines(lyric);
+          // 如果是 lrc，且content是字符串
+          let content = lyric.content as string;
+
+          /** 用来存储单行的内容 */
+          let singleLine = "";
+
+          /** 用来存储原本的单行被分割后的结果 */
+          let result = [] as Array<string>;
+
+          // 遍历每个字符，如果当前行的宽度小于500，就继续添加字符，否则就换行
+          for (let i = 0; i < content.length; i++) {
+            if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
+              singleLine += content[i];
+            } else {
+              singleLine += content[i];
+              result.push(singleLine);
+              singleLine = "";
+            }
+          }
+
+          result.push(singleLine);
           // 返回结果
           res.push({
             lines: result,
@@ -610,8 +606,25 @@ export default defineComponent({
           });
         }
         if (lyric.type === "yrc") {
-          const { lines: result, breakLineOn } =
-            this.getFormattedYrcLines(lyric);
+          let result = [] as Array<string>;
+
+          let singleLine = "";
+
+          let breakLineOn = [] as Array<number>;
+
+          // 遍历每个词，如果当前行的宽度小于500，就继续添加词，否则就换行
+          for (let i = 0; i < lyric.words.length; i++) {
+            if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
+              singleLine += lyric.words[i].text;
+            } else {
+              singleLine += lyric.words[i].text;
+              breakLineOn.push(i);
+              result.push(singleLine);
+              singleLine = "";
+            }
+          }
+
+          result.push(singleLine);
           res.push({
             lines: result,
             breakLineOn,
@@ -619,60 +632,6 @@ export default defineComponent({
         }
       }
       return res;
-    },
-
-    getFormattedLrcLines(lyric: LrcItem | LrcItem2): string[] {
-      // 如果是 lrc，且content是字符串
-      let content = lyric.content as string;
-
-      /** 用来存储单行的内容 */
-      let singleLine = "";
-
-      /** 用来存储原本的单行被分割后的结果 */
-      let result = [] as Array<string>;
-
-      // 遍历每个字符，如果当前行的宽度小于500，就继续添加字符，否则就换行
-      for (let i = 0; i < content.length; i++) {
-        if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
-          singleLine += content[i];
-        } else {
-          singleLine += content[i];
-          result.push(singleLine);
-          singleLine = "";
-        }
-      }
-
-      result.push(singleLine);
-      return result;
-    },
-
-    getFormattedYrcLines(lyric: YrcItem): {
-      lines: Array<string>;
-      breakLineOn: Array<number>;
-    } {
-      let result = [] as Array<string>;
-
-      let singleLine = "";
-
-      let breakLineOn = [] as Array<number>;
-
-      // 遍历每个词，如果当前行的宽度小于500，就继续添加词，否则就换行
-      for (let i = 0; i < lyric.words.length; i++) {
-        if (this.ctx!.measureText(singleLine).width < MAX_LINE_WIDTH) {
-          singleLine += lyric.words[i].text;
-        } else {
-          singleLine += lyric.words[i].text;
-          breakLineOn.push(i);
-          result.push(singleLine);
-          singleLine = "";
-        }
-      }
-
-      result.push(singleLine);
-      return {
-        lines: result,
-        breakLineOn,
-      };
     },
   },
 });

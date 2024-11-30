@@ -129,25 +129,21 @@ npm run electron:build
    ```
 
    4. 在`NeteaseCloudMusicApi`目录下，根据平台运行命令:
-      win平台
 
-   ```shell
-   npm run pkgwin
-   ```
+    win平台
+     ```shell
+     npm run pkgwin
+     ```
+     linux平台
+     ```shell
+     npm run pkglinux
+     ```
+     macos平台
+     ```shell
+     npm run pkgmacos
+     ```
 
-   linux平台
-
-   ```shell
-   npm run pkglinux
-   ```
-
-   macos平台
-
-   ```shell
-   npm run pkgmacos
-   ```
-
-   5. 在`NeteaseCloudMusicApi/bin`目录下找到打包的程序，并将其复制到`XCMusic/src-tauri/resources/api`目录下。
+   5. 在`NeteaseCloudMusicApi/bin`目录下，找到打包的程序，并将其复制到`XCMusic/src-tauri/resources/api`目录下。
 
 2. 运行tauri程序:
 
