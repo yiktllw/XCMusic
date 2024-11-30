@@ -14,7 +14,7 @@
 import { PlayerEvents } from "@/dual/player";
 import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 import { getStorage, StorageKey } from "@/utils/render_storage";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, toRaw } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
@@ -96,6 +96,7 @@ export default defineComponent({
     });
 
     this.lyrics = this.player.lyrics;
+    console.log(toRaw(this.lyrics));
     this.player.subscriber.on("YLyrics", PlayerEvents.lyrics, () => {
       this.lyrics = this.player.lyrics;
     });
@@ -442,7 +443,12 @@ export default defineComponent({
     ) {
       if (!this.ctx || !this.canvas || this.lyrics.length === 0) return;
       // 绘制有分行(过长)的逐字歌词
-      for (let j = 0; j < this.formattedLyrics[i].lines.length; j++) {
+      for (
+        /** j是分行的索引 */
+        let j = 0;
+        j < this.formattedLyrics[i].lines.length;
+        j++
+      ) {
         const text = this.formattedLyrics[i].lines[j];
 
         // 颜色动画和字体大小动画
@@ -468,7 +474,7 @@ export default defineComponent({
                 k <=
                   (this.formattedLyrics[i].breakLineOn[j] ??
                     data.words.length) &&
-                k >= (this.formattedLyrics[i].breakLineOn[j - 1] ?? 0)
+                k > (this.formattedLyrics[i].breakLineOn[j - 1] ?? -1)
               ) {
                 // 如果是这一分行的词
                 tmpLine += word.text;
@@ -497,9 +503,12 @@ export default defineComponent({
               // 计算当前词的位置
               let x = tmpLineWidth - wordWidth + wordWidth * progress;
 
-              // 如果已经换到下一行，x 重置为最大
-              if (index >= this.formattedLyrics[i].breakLineOn[j]) {
+              if (index > this.formattedLyrics[i].breakLineOn[j]) {
+                // 如果已经换到下一行，x 重置为最大
                 x = tmpLineWidth;
+              } else if (index <= this.formattedLyrics[i].breakLineOn[j - 1]) {
+                // 如果还在上一行，x 重置为0
+                x = 0;
               }
 
               // 绘制被裁剪的白色文字
