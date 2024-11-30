@@ -251,6 +251,8 @@
 			"import_download": "导入已下载的歌曲信息",
 			"import_no_file": "请选择一个文件",
 			"import_success": "导入成功",
+			"issues": "报个bug",
+			"license": "开源许可",
 			"readme": "介绍",
 			"source_code": "源代码",
 			"version": "版本"
@@ -268,6 +270,7 @@
 		"close_to_minimize": "点击关闭按钮时，最小化到托盘",
 		"close_to_quit": "点击关闭按钮时，退出程序",
 		"disable_gpu": "禁用GPU加速",
+		"disable_gpu_also": "(同时也会禁用部分动画)",
 		"display": {
 			"fullscreen": "全屏",
 			"fullscreen_auto_zoom": "全屏时自动缩放",

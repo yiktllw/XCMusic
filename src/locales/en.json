@@ -251,6 +251,8 @@
 			"import_download": "Import Downloaded Songs",
 			"import_no_file": "No File Selected",
 			"import_success": "Imported Successfully",
+			"issues": "Issues",
+			"license": "License",
 			"readme": "Readme",
 			"source_code": "Source",
 			"version": "Version"
@@ -268,6 +270,7 @@
 		"close_to_minimize": "Close to Hide.",
 		"close_to_quit": "Close to Quit.",
 		"disable_gpu": "Disable Hardware Acceleration",
+		"disable_gpu_also": "(Also disable some animations)",
 		"display": {
 			"fullscreen": "Fullscreen",
 			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen",

@@ -125,6 +125,9 @@
                 />
                 <label for="setting_disable_gpu">
                   {{ $t("setting_view.disable_gpu") }}
+                  <span style="color: var(--font-color-low);">
+                    {{ $t("setting_view.disable_gpu_also") }}
+                  </span>
                 </label>
               </div>
             </div>
@@ -477,36 +480,36 @@
                 {{ version }}
               </div>
             </div>
-            <div class="content-item item-about-author">
-              <div class="content-item-title">
-                {{ $t("setting_view.about.author") }}
-              </div>
-              <div class="content-item-content" @click="openAuthor">
-                <div class="github-link">YiktLLW</div>
-              </div>
-            </div>
-            <div class="content-item item-about-readme">
+            <div class="content-item item-about-github">
               <div class="content-item-title">
                 {{ $t("setting_view.about.readme") }}
               </div>
-              <div class="content-item-content" @click="openReadme">
-                <div class="github-link">README</div>
-              </div>
-            </div>
-            <div class="content-item item-about-changelog">
-              <div class="content-item-title">
-                {{ $t("setting_view.about.changelog") }}
-              </div>
-              <div class="content-item-content" @click="openChangelog">
-                <div class="github-link">CHANGELOG</div>
+              <div class="content-item-content">
+                <div class="github-link" @click="openReadme">
+                  README
+                </div>
+                <div class="github-link" @click="openChangelog">
+                  {{ $t("setting_view.about.changelog") }}
+                </div>
               </div>
             </div>
             <div class="content-item item-about-github">
-              <div class="content-item-title">
-                {{ $t("setting_view.about.source_code") }}
-              </div>
+              <div class="content-item-title">GitHub</div>
               <div class="content-item-content">
-                <div class="github-link" @click="openGitRepo">GitHub</div>
+                <div class="github-link" @click="openAuthor">
+                  {{ $t("setting_view.about.author") }}
+                  : yiktllw
+                </div>
+                <div class="github-link" @click="openGitRepo('default')">
+                  {{ $t("setting_view.about.source_code") }}
+                </div>
+                <div class="github-link" @click="openGitRepo('issues')">
+                  {{ $t("setting_view.about.issues") }}
+                </div>
+                <div class="github-link" @click="openGitRepo('license')">
+                  {{ $t("setting_view.about.license") }}
+                  : MIT
+                </div>
               </div>
             </div>
             <div class="content-item item-backup">
@@ -514,29 +517,33 @@
                 {{ $t("setting_view.about.backup") }}
               </div>
               <div class="content-item-content backup-content">
-                <div
-                  class="export backup-content-item"
-                  @click="exportToJSON_Setting"
-                >
-                  {{ $t("setting_view.about.export") }}
+                <div>
+                  <div
+                    class="export backup-content-item"
+                    @click="exportToJSON_Setting"
+                  >
+                    {{ $t("setting_view.about.export") }}
+                  </div>
+                  <div
+                    class="import backup-content-item"
+                    @click="importFromJSON_Setting"
+                  >
+                    {{ $t("setting_view.about.import") }}
+                  </div>
                 </div>
-                <div
-                  class="import backup-content-item"
-                  @click="importFromJSON_Setting"
-                >
-                  {{ $t("setting_view.about.import") }}
-                </div>
-                <div
-                  class="export backup-content-item"
-                  @click="exportToJSON_Download"
-                >
-                  {{ $t("setting_view.about.export_download") }}
-                </div>
-                <div
-                  class="import backup-content-item"
-                  @click="importFromJSON_Download"
-                >
-                  {{ $t("setting_view.about.import_download") }}
+                <div>
+                  <div
+                    class="export backup-content-item"
+                    @click="exportToJSON_Download"
+                  >
+                    {{ $t("setting_view.about.export_download") }}
+                  </div>
+                  <div
+                    class="import backup-content-item"
+                    @click="importFromJSON_Download"
+                  >
+                    {{ $t("setting_view.about.import_download") }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -778,9 +785,21 @@ export default defineComponent({
       this.quality = quality;
       this.setting.download.quality = quality;
     },
-    openGitRepo() {
+    openGitRepo(position: "default" | "issues" | "license" = "default") {
       if (!window.electron?.isElectron) return;
-      window.electron.shell.openExternal("https://github.com/yiktllw/XCMusic");
+      if (position === "default") {
+        window.electron.shell.openExternal(
+          "https://github.com/yiktllw/XCMusic"
+        );
+      } else if (position === "issues") {
+        window.electron.shell.openExternal(
+          "https://github.com/yiktllw/XCMusic/issues"
+        );
+      } else if (position === "license") {
+        window.electron.shell.openExternal(
+          "https://github.com/yiktllw/XCMusic/blob/master/LICENSE"
+      );
+    }
     },
     openAuthor() {
       if (!window.electron?.isElectron) return;
@@ -1163,12 +1182,13 @@ export default defineComponent({
             align-items: center;
             flex-wrap: wrap;
             line-height: 30px;
-            max-width: 200px;
+            max-width: 500px;
 
             .backup-content-item {
               cursor: pointer;
+              text-align: left;
               color: var(--font-color-high);
-              margin-right: 10px;
+              margin-right: 30px;
 
               &:hover {
                 color: var(--font-color-main);
@@ -1215,6 +1235,17 @@ export default defineComponent({
                 margin-right: 15px;
               }
             }
+          }
+        }
+
+        .item-about-github {
+          .content-item-content {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 500px;
+            flex-direction: row;
+            gap: 15px;
           }
         }
 
