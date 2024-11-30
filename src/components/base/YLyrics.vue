@@ -96,7 +96,6 @@ export default defineComponent({
     });
 
     this.lyrics = this.player.lyrics;
-    console.log(toRaw(this.lyrics));
     this.player.subscriber.on("YLyrics", PlayerEvents.lyrics, () => {
       this.lyrics = this.player.lyrics;
     });

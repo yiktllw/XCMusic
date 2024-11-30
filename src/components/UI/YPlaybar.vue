@@ -397,7 +397,7 @@
         <!-- 播放列表按钮 -->
         <div
           class="playlist-img-container"
-          @click="playlist_panel?.tooglePanel"
+          @click="openPlaylistPanel"
           :title="$t('playbar.playlist')"
           ref="playlist_panel_trigger"
         >
@@ -413,6 +413,8 @@
         <!-- 播放列表面板 -->
         <YPanel
           ref="playlist_panel"
+          @mounted="handlePlaylistPanelMounted"
+          @close-panel="handlePlaylistClose"
           :trigger="playlist_panel_trigger as HTMLElement"
           :slide-direction="4"
           :default-show="false"
@@ -463,6 +465,7 @@
             </div>
             <YScroll>
               <YSongsTable
+                v-if="showSongs"
                 class="songs-table"
                 v-model="playlist"
                 :showTrackCounter="false"
@@ -478,6 +481,7 @@
                 ref="songstable"
               />
             </YScroll>
+            <YLoading style="margin: auto" v-if="!showSongs" />
           </div>
         </YPanel>
       </div>
@@ -500,6 +504,7 @@ import { ITrack } from "@/utils/tracks";
 import YListRandom from "@/components/base/YListRandom.vue";
 import { PlayerEvents } from "@/dual/player";
 import { DownloadEvents } from "@/dual/download_renderer";
+import YLoading from "../base/YLoading.vue";
 
 export default defineComponent({
   name: "YPlaybar",
@@ -511,6 +516,7 @@ export default defineComponent({
     YTextBanner,
     YScroll,
     YListRandom,
+    YLoading,
   },
   setup() {
     const quality_panel = ref<InstanceType<typeof YPanel> | null>();
@@ -623,6 +629,8 @@ export default defineComponent({
       volume: 0,
       qualityDisplay: "quality.standard",
       downloadedSongIds: [] as number[],
+      /** 用来等待面板加载完成后再加载歌曲 */
+      showSongs: false,
     };
   },
   watch: {
@@ -792,6 +800,16 @@ export default defineComponent({
         this.player.currentTrack,
         this.setting.download.path
       );
+    },
+    openPlaylistPanel() {
+      this.playlist_panel?.tooglePanel();
+    },
+    handlePlaylistClose() {
+      this.showSongs = false;
+    },
+    handlePlaylistPanelMounted() {
+      console.log("playlist panel mounted");
+      this.showSongs = true;
     },
   },
   async mounted() {

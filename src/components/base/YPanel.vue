@@ -76,9 +76,10 @@ export default defineComponent({
   data() {
     return {
       showPanel: false,
+      timeout: null as NodeJS.Timeout | null,
     };
   },
-  emits: ["update:modelValue", "show-panel"],
+  emits: ["update:modelValue", "show-panel", "close-panel", "mounted"],
   computed: {
     _animationTime() {
       return this.animationTime + "s";
@@ -107,8 +108,13 @@ export default defineComponent({
       if (val) {
         window.addEventListener("click", this.handleClickOutside);
         this.$emit("show-panel");
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          this.$emit("mounted");
+        }, this.animationTime * 1000);
       } else {
         window.removeEventListener("click", this.handleClickOutside);
+        this.$emit("close-panel");
       }
     },
   },
@@ -174,6 +180,7 @@ export default defineComponent({
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
     this.panel = null;
+    if (this.timeout) clearTimeout(this.timeout);
   },
 });
 </script>

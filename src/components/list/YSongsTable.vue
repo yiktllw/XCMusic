@@ -649,7 +649,6 @@ export default defineComponent({
     this.UL?.removeEventListener("dblclick", this.handleUlDbClick);
     this.UL?.removeEventListener("click", this.handleUlClick);
     this.UL?.removeEventListener("contextmenu", this.handleUlContext);
-    console.log("YSongsTable Unmounted, Cleaned EventListener");
     // 清空引用
     this.main = null;
     this.songs_album_ref = null;
