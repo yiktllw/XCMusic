@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.8](https://github.com/yiktllw/XCMusic/compare/v0.2.7...v0.2.8) (2024-12-01)
+
+
+### Features
+
+* 柔化部分svg图片 ([825d6f1](https://github.com/yiktllw/XCMusic/commit/825d6f1c038a7849b0e87e243994718b3603a99b))
+* 实现收藏专辑和歌单 ([a88d7b2](https://github.com/yiktllw/XCMusic/commit/a88d7b2198bed5c41fb917cb6508e59fa57c3b1a))
+* 为音乐云盘界面设置背景颜色 ([3e39a8e](https://github.com/yiktllw/XCMusic/commit/3e39a8ebf971c1389bf466b6662e0ccf95c5ac70))
+* 优化播放列表的显示速度 ([4ef372c](https://github.com/yiktllw/XCMusic/commit/4ef372c515e87e012abb48e51ae9d2d333a84afd))
+* 优化内存: 限制媒体缓存大小和磁盘缓存大小 ([ce88f2a](https://github.com/yiktllw/XCMusic/commit/ce88f2a653d03b5488703ceb3e74fb68d4fbbcd0))
+* 在播放列表图标上显示播放列表的数量 ([0cf077b](https://github.com/yiktllw/XCMusic/commit/0cf077bb1c934dfafcf1dd182a970d8416fd8c03))
+* 支持使用tauri后端(前端暂未适配) ([be4f16a](https://github.com/yiktllw/XCMusic/commit/be4f16a16846ad3885c72fb24112ca6c9fb8eca4))
+* 重新组织设置-关于，为设置-硬件-GPU加速添加注释 ([3bb94ca](https://github.com/yiktllw/XCMusic/commit/3bb94ca496a98a73016b806243e04d5753532db8))
+
+
+### Bug Fixes
+
+* 修复切换到云盘歌曲时，歌词不刷新的bug ([adbad34](https://github.com/yiktllw/XCMusic/commit/adbad348a6bb58f7bc0286022d1ee99301d247ca))
+* 修复音量均衡默认不启用的问题 ([6b6c2dd](https://github.com/yiktllw/XCMusic/commit/6b6c2dd57c64144180c2db02cc3e0365e3be3bc7))
+* 修复逐字歌词第二行进度异常的问题 ([501a752](https://github.com/yiktllw/XCMusic/commit/501a752f4a674cf70ab73392b695c31682605fff))
+* 修复逐字歌词闪烁的bug ([b56377b](https://github.com/yiktllw/XCMusic/commit/b56377b4293b5a936afed98fe7d89fb93c844ac6))
+* 修复逐字歌词有时失效的bug ([617c724](https://github.com/yiktllw/XCMusic/commit/617c7240b5aa338fa4d91c1ae639221925111d15))
+* 修复web端无法播放音频的问题 ([a65beb3](https://github.com/yiktllw/XCMusic/commit/a65beb37c73d7b0a41894bf671a17ed08a3f7e50))
+
 ### [0.2.7](https://github.com/yiktllw/XCMusic/compare/v0.2.6...v0.2.7) (2024-11-22)
 
 
