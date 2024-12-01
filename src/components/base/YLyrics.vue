@@ -14,7 +14,7 @@
 import { PlayerEvents } from "@/dual/player";
 import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 import { getStorage, StorageKey } from "@/utils/render_storage";
-import { defineComponent, ref, toRaw } from "vue";
+import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 // 获取设备像素比
@@ -311,7 +311,12 @@ export default defineComponent({
 
     /** 在scrollY处绘制歌词的函数 */
     drawLyrics(scrollY: number) {
-      if (!this.ctx || !this.canvas || this.lyrics.length === 0) return;
+      if (!this.ctx || !this.canvas) return;
+
+      if (this.lyrics.length === 0) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        return;
+      }
 
       const fontSize = 20 * scale; // 字体大小
 
