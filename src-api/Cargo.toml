@@ -1,0 +1,10 @@
+[package]
+name = "src-api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aes = "0.7"
+block-modes = "0.8"
+base64 = "0.21"
+urlencoding = "2.1"
