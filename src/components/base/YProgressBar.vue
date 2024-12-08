@@ -1,4 +1,5 @@
 <template>
+  <!-- 横版进度条 -->
   <div
     class="progress-bigframe ani"
     ref="big_frame"

@@ -1,4 +1,5 @@
 <template>
+  <!-- 查看评论界面 -->
   <div class="main font-color-main">
     <div class="track" v-if="type === 'song'">
       <div class="cover" v-if="track.picUrl">

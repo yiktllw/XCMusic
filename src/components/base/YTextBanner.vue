@@ -1,4 +1,5 @@
 <template>
+  <!-- 文字轮播组件，用于在播放栏展示歌曲名 -->
   <div class="main" ref="main_ref">
     <div
       class="scroll"

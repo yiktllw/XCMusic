@@ -1,4 +1,5 @@
 <template>
+  <!-- 应用内通知组件 -->
   <div class="msg theme-dark">
     <transition
       name="slide-fade"

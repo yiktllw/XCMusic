@@ -1,4 +1,5 @@
 <template>
+  <!-- 侧边栏 -->
   <div
     class="sidebar y_sidebar_component"
     ref="sidebar_component"

@@ -1,4 +1,5 @@
 <template>
+  <!-- 下载管理界面 -->
   <div class="main">
     <div class="title" v-if="downloading.length > 0">
       {{ $t("localsongs.downloading") }}

@@ -1,4 +1,5 @@
 <template>
+  <!-- 歌曲列表组件 -->
   <div class="table-container" ref="main">
     <!-- 3 表头 -->
     <div v-if="showHeader" class="table-header" :style="{ top: stickyTop }">

@@ -1,4 +1,5 @@
 <template>
+  <!-- 曲谱查看界面 -->
   <div class="main">
     <div class="sheet-titlebar font-color-high">
       <div class="left">

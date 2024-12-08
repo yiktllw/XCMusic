@@ -1,4 +1,5 @@
 <template>
+  <!-- 编辑歌单信息窗口 -->
   <div>
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

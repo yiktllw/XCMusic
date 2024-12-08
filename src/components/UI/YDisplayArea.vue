@@ -1,4 +1,5 @@
 <template>
+  <!-- 显示区域 -->
   <div>
     <div class="display-area" id="display-area-main">
       <YScroll

@@ -1,4 +1,5 @@
 <template>
+  <!-- 设置界面 -->
   <div class="setting" ref="main">
     <div class="header">
       <div class="title font-color-main">{{ $t("settings") }}</div>

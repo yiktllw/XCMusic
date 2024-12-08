@@ -1,4 +1,5 @@
 <template>
+  <!-- 搜索界面 -->
   <!-- 滚动容器 -->
   <div class="search-info">
     <div class="search-info-title font-color-main">

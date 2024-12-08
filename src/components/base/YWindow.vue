@@ -1,4 +1,5 @@
 <template>
+  <!-- 窗口组件，预设了关闭图标和关闭事件。在HomeView中使用 -->
   <div class="window font-color-main" v-if="showWindow">
     <div class="window-header">
       <slot name="header">

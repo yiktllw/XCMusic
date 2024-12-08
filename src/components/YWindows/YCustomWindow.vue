@@ -1,4 +1,5 @@
 <template>
+  <!-- 自定义主题窗口 -->
   <div class="y-custom-window">
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

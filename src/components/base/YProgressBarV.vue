@@ -4,6 +4,7 @@ const emits = defineEmits(["update:modelValue", "set-progress-end"]);
 </script>
 
 <template>
+  <!-- 纵版进度条 -->
   <div class="progress-bigframe">
     <div class="progress-bar" @click="onClick" ref="progress_bar">
       <div

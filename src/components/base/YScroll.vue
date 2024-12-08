@@ -1,4 +1,5 @@
 <template>
+  <!-- 滚动窗口，预设了滚动条样式 -->
   <div class="g-scrollable" ref="main">
     <slot></slot>
   </div>

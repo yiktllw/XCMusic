@@ -1,4 +1,5 @@
 <template>
+  <!-- 收藏的专辑界面 -->
   <div class="main">
     <div class="title font-color-main">
       {{ $t("subscribed_album") }}

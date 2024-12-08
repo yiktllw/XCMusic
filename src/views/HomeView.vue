@@ -1,5 +1,5 @@
 <template>
-  <!-- 主容器 -->
+  <!--  主界面  -->
   <div class="mainContainer" id="mainContainer">
     <div class="align-up">
       <div class="align-left">

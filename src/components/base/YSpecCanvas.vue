@@ -1,4 +1,5 @@
 <template>
+  <!-- 频谱图组件 -->
   <canvas ref="canvas" class="canvas" v-if="showSpectrum"></canvas>
 </template>
 

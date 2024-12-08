@@ -1,4 +1,5 @@
 <template>
+  <!-- 音频调试界面 -->
   <div class="main font-color-main">
     <div class="gain">
       <input

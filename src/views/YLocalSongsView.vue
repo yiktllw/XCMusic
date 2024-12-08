@@ -1,4 +1,5 @@
 <template>
+  <!-- 本地音乐界面 -->
   <div class="main">
     <div class="title">
       {{ $t("local_music") }}

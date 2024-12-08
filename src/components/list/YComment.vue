@@ -1,4 +1,5 @@
 <template>
+  <!-- 评论组件 -->
   <YLoading v-if="loading" />
   <div v-else class="comment-main">
     <div class="header">

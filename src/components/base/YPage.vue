@@ -1,4 +1,5 @@
 <template>
+  <!-- 底部分页组件 -->
   <div>
     <div
       class="page-main font-color-main"

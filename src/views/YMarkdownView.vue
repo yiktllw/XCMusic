@@ -1,4 +1,5 @@
 <template>
+  <!-- markdown预览器(仅限README.md和CHANGELOG.md) -->
   <div class="font-color-main md" ref="md" v-html="markdownContent"></div>
 </template>
 

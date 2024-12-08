@@ -1,4 +1,5 @@
 <template>
+  <!-- 添加到歌单窗口 -->
   <div class="add-to-playlist">
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

@@ -1,4 +1,5 @@
 <template>
+  <!-- 面板组件，在外部点击时自动关闭，可以设置滑动动画的方向和时间 -->
   <div>
     <transition
       name="slide-fade"

@@ -1,5 +1,5 @@
 <template>
-  <!--欢迎界面-->
+  <!-- 欢迎(首页)界面 -->
   <div class="container">
     <img src="@/assets/xc-up.svg" class="up-img g-icon" />
     <img src="@/assets/xc.svg" class="full-width-image g-icon" />

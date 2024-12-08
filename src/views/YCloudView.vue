@@ -1,4 +1,5 @@
 <template>
+  <!--  音乐云盘界面  -->
   <div class="main">
     <div class="title font-color-main">
       {{ $t("cloud") }}

@@ -1,5 +1,5 @@
 <template>
-  <!-- 0 播放栏 -->
+  <!-- 播放栏 -->
   <div class="big-progress" v-if="type === 'play-ui'">
     <YProgressBar
       v-model="progress"

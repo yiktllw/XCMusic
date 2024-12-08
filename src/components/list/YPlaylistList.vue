@@ -1,4 +1,5 @@
 <template>
+  <!-- 歌单列表组件(正常) -->
   <div class="table-container">
     <!-- 3 表头 -->
     <div class="table-header" :style="{ top: stickyTop }" v-if="showHeader">
@@ -89,7 +90,7 @@
             openUserPage(
               type === 'playlist'
                 ? playlist.creator.userId
-                : playlist.artist.id,
+                : playlist.artist?.id ?? 0,
             )
           "
           :title="
@@ -108,7 +109,7 @@
           <span v-if="type === 'playlist'">{{
             formatedPlayCount(playlist.playCount)
           }}</span>
-          <span v-else>{{ formatedTime(playlist.publishTime) }}</span>
+          <span v-else>{{ formatedTime(playlist.publishTime ?? 0) }}</span>
         </div>
       </div>
     </div>

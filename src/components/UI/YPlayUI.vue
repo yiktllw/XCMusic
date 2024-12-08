@@ -1,4 +1,5 @@
 <template>
+  <!-- 播放界面 -->
   <transition name="playui-slide">
     <div class="container theme-dark" v-if="show" ref="playuiContainer">
       <div class="title-bar">

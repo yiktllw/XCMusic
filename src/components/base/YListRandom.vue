@@ -1,4 +1,6 @@
 <template>
+  <!-- 列表随机的图标 -->
+  <!-- 使用这种svg形式可以动态调整svg颜色 -->
   <div class="main">
     <svg
       id="_图层_1"

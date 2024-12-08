@@ -1,4 +1,5 @@
 <template>
+  <!-- 关闭时询问窗口 -->
   <div class="main">
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

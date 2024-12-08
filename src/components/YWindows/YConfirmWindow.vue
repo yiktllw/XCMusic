@@ -1,4 +1,5 @@
 <template>
+  <!-- 确认窗口 -->
   <div>
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

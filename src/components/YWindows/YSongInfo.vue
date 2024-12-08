@@ -1,4 +1,5 @@
 <template>
+  <!-- 歌曲信息窗口 -->
   <div class="song-info">
     <YWindow ref="window" @new-window-state="handleNewWindowState">
       <template #header>

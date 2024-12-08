@@ -1,4 +1,5 @@
 <template>
+  <!-- 正在播放的动图组件 -->
   <div class="container">
     <img src="@/assets/playing.svg" width="15" height="12" />
   </div>

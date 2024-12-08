@@ -1,4 +1,5 @@
 <template>
+  <!-- 歌单列表组件(大图) -->
   <div class="playlists-biglist">
     <div
       class="playlist-item"

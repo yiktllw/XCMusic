@@ -1,4 +1,5 @@
 <template>
+  <!-- 歌单、专辑界面 -->
   <!-- 0 滚动容器 -->
   <div class="scrollable y-playlist-view font-color-main" ref="scrollable">
     <!-- 1 歌单视图 -->

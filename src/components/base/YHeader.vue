@@ -1,4 +1,5 @@
 <template>
+  <!-- 顶部导航组件 -->
   <div class="switcher font-color-standard">
     <!-- 导航元素 -->
     <button
