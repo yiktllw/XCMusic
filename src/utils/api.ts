@@ -919,6 +919,34 @@ export namespace User {
   }
 
   /**
+   * 获取全部云盘歌曲
+   */
+  export async function getAllCloudTracks(): Promise<IUser.CloudTrack[]> {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return [];
+    }
+
+    const LIMIT = 1000;
+
+    let cloudInfo = await getCloudInfo({ cookie: cookie });
+    let pageCount = Math.ceil(cloudInfo.count / LIMIT);
+    let requests = [];
+    for (let i = 1; i <= pageCount; i++) {
+      requests.push(
+        getCloudInfo({ cookie, limit: LIMIT, offset: (i - 1) * LIMIT })
+      );
+    }
+
+    let allCloudTracks = await Promise.all(requests).then((values) => {
+      return values.map((value) => value.data).flat();
+    });
+
+    return allCloudTracks;
+  }
+
+  /**
    * 获取用户信息
    */
   export async function detail(
