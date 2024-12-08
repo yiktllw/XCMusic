@@ -61,11 +61,11 @@ export namespace YColor {
         classContent: string;
       }> = getStorage(StorageKey.Setting_Display_UserCustomThemes) ?? [];
       let _res = userCustomThemes.find(
-        (theme) => theme.data.value === themeValue
+        (theme) => theme.data.value === themeValue,
       );
       if (!_res) {
         throw new Error(
-          `THEME NOT FOUND. \nrequire: ${JSON.stringify(themeValue, null, 2)} \nuserCustomThemes: ${JSON.stringify(userCustomThemes, null, 2)}`
+          `THEME NOT FOUND. \nrequire: ${JSON.stringify(themeValue, null, 2)} \nuserCustomThemes: ${JSON.stringify(userCustomThemes, null, 2)}`,
         );
       }
       res = _res?.data;
@@ -104,7 +104,7 @@ export namespace YColor {
    */
   export function getLightThemeColor(
     hex: string,
-    background = "#FFFFFF"
+    background = "#FFFFFF",
   ): string | null {
     const rgb = YColor.hexToRgb(hex);
     if (!rgb) return null; // 如果 HEX 格式不正确，则返回 null
@@ -120,15 +120,15 @@ export namespace YColor {
     const closerColor = {
       r: Math.max(
         Math.round(rgb.r + (backgroundColor.r - rgb.r) * ratio),
-        backgroundColor.r - maxSaturation
+        backgroundColor.r - maxSaturation,
       ),
       g: Math.max(
         Math.round(rgb.g + (backgroundColor.g - rgb.g) * ratio),
-        backgroundColor.g - maxSaturation
+        backgroundColor.g - maxSaturation,
       ),
       b: Math.max(
         Math.round(rgb.b + (backgroundColor.b - rgb.b) * ratio),
-        backgroundColor.b - maxSaturation
+        backgroundColor.b - maxSaturation,
       ),
     };
 
@@ -169,7 +169,7 @@ export namespace YColor {
     document: Document,
     colorThemeType: COLOR_THEME_TYPE | undefined,
     themeBackground: string = "#131319",
-    nullColorCallback?: () => void
+    nullColorCallback?: () => void,
   ) {
     getColorFromImg(imgSrc, document).then((color) => {
       if (color) {
@@ -179,7 +179,7 @@ export namespace YColor {
         } else if (colorThemeType === "light") {
           // 亮色主题
           let lightColor = YColor.getLightThemeColor(
-            YColor.rgbToHex(color.r, color.g, color.b)
+            YColor.rgbToHex(color.r, color.g, color.b),
           );
           setBackgroundColor(YColor.hexToRgb(lightColor ?? "#FFFFFF"));
         } else {
@@ -188,7 +188,7 @@ export namespace YColor {
           if (!DOM) return;
           const themeColorHEX = YColor.getLightThemeColor(
             YColor.rgbToHex(color.r, color.g, color.b),
-            themeBackground
+            themeBackground,
           );
           const themeColorRGB = YColor.hexToRgb(themeColorHEX ?? "#FFFFFF");
           (DOM as HTMLElement).style.background =
@@ -216,7 +216,7 @@ export namespace YColor {
   export function setBackgroundColorHex(
     hex: string,
     colorThemeType?: COLOR_THEME_TYPE,
-    themeBackground: string = "#131319"
+    themeBackground: string = "#131319",
   ) {
     if (colorThemeType === "dark") {
       setBackgroundColor(YColor.hexToRgb(hex));
@@ -244,7 +244,7 @@ export namespace YColor {
       YColor.setBackgroundColorHex(
         YColor.stringToHexColor(hex),
         (theme as Theme1).type,
-        (theme as Theme2).background
+        (theme as Theme2).background,
       );
     } catch (error) {
       console.error("Error set background color from hex: ", error);
@@ -358,7 +358,7 @@ function increaseSaturation(r: number, g: number, b: number): COLOR {
  */
 export async function getColorFromImg(
   imgSrc: string,
-  document: Document
+  document: Document,
 ): Promise<COLOR | null> {
   // 创建一个图片对象
   // console.log('step1');
@@ -381,7 +381,7 @@ export async function getColorFromImg(
           const canvas = document.createElement("canvas");
           const context = canvas.getContext("2d");
           if (!context) return;
-          
+
           canvas.width = img.width;
           canvas.height = img.height;
           context.drawImage(img, 0, 0, img.width, img.height);
@@ -390,7 +390,7 @@ export async function getColorFromImg(
             0,
             0,
             canvas.width,
-            canvas.height
+            canvas.height,
           );
           const data = imageData.data;
           let r = 0,
@@ -477,6 +477,6 @@ function colorDistance(color1: COLOR, color2: COLOR): number {
   return Math.sqrt(
     Math.pow(color1.r - color2.r, 2) +
       Math.pow(color1.g - color2.g, 2) +
-      Math.pow(color1.b - color2.b, 2)
+      Math.pow(color1.b - color2.b, 2),
   );
 }

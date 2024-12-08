@@ -108,7 +108,7 @@ export class YCommentC {
   set type(type: Types) {
     if (type !== "song" && type !== "album" && type !== "playlist") {
       throw new YCommentError(
-        "type error: type must be song, album or playlist, but got " + type
+        "type error: type must be song, album or playlist, but got " + type,
       );
     }
     this._type = type;
@@ -131,7 +131,7 @@ export class YCommentC {
     if (sortType !== "recommend" && sortType !== "hot" && sortType !== "time") {
       throw new YCommentError(
         "sortType error: sortType must be recommend or time, but got " +
-          sortType
+          sortType,
       );
     }
     if (this._sortType !== sortType) {
@@ -157,7 +157,7 @@ export class YCommentC {
   set comments(comments) {
     if (!(comments instanceof Array)) {
       throw new YCommentError(
-        "comments error: comments must be an array, but got " + comments
+        "comments error: comments must be an array, but got " + comments,
       );
     }
     this._comments = comments;
@@ -170,7 +170,7 @@ export class YCommentC {
     if (typeof commentsTitle !== "string") {
       throw new YCommentError(
         "commentsTitle error: commentsTitle must be a string, but got " +
-          commentsTitle
+          commentsTitle,
       );
     }
     this._commentsTitle = commentsTitle;
@@ -182,7 +182,7 @@ export class YCommentC {
     if (typeof onCommentUpdate !== "function") {
       throw new YCommentError(
         "onCommentUpdate error: onCommentUpdate must be a function, but got " +
-          onCommentUpdate
+          onCommentUpdate,
       );
     }
     this._onCommentUpdate = onCommentUpdate;

@@ -12,17 +12,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import YScroll from "@/components/base/YScroll.vue";
-
-export default defineComponent({
-  name: "YDisplayarea",
-  components: {
-    YScroll,
-  },
-});
-</script>
+<script src="./YDisplayArea.ts" lang="ts"></script>
 
 <style scoped>
 .display-area {

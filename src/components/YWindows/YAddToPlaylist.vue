@@ -95,7 +95,7 @@ export default defineComponent({
       LoginEvents.userPlaylists,
       () => {
         this.userPlaylists = this.login.userPlaylists;
-      }
+      },
     );
   },
   beforeUnmount() {

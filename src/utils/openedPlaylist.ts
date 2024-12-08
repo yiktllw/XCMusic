@@ -8,14 +8,16 @@ import { Subscriber } from "@/utils/subscribe";
 export enum OpenedPlaylistEvents {
   id = "id",
 }
-  
+
 type OpenedPlaylistEventCallbacks = {
   [OpenedPlaylistEvents.id]: () => void;
-}
+};
 
 export class OpenedPlaylist {
   _id: number;
-  subscriber = new Subscriber<OpenedPlaylistEventCallbacks>(OpenedPlaylistEvents);
+  subscriber = new Subscriber<OpenedPlaylistEventCallbacks>(
+    OpenedPlaylistEvents,
+  );
   constructor() {
     this._id = 0;
   }

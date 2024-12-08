@@ -128,7 +128,7 @@ export class Tracks {
         } else if (url === "/artist/songs") {
           track = item;
           let index = params.albums.findIndex(
-            (album: { id: number }) => album.id === track.al.id
+            (album: { id: number }) => album.id === track.al.id,
           );
           if (index === -1) {
             track.al.picUrl = require("@/assets/song.svg");
@@ -253,7 +253,7 @@ export class Tracks {
               name: ar.name,
               tns: ar.tns ?? "",
             };
-          }
+          },
         );
         resultTrack.dt = track.dt;
         resultTrack.pop = track.pop;

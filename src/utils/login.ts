@@ -151,7 +151,7 @@ export class Login {
     if (!this._userId) await this.updateInfo();
     this.likelist = await User.getLikelist(
       this._userId as unknown as number,
-      true
+      true,
     );
   }
   get status() {

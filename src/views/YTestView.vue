@@ -1,7 +1,10 @@
 <template>
   <!-- 测试界面 -->
   <div class="display">
-    <div class="button font-color-main" @click="$router.push({ path: '/audio/test' })">
+    <div
+      class="button font-color-main"
+      @click="$router.push({ path: '/audio/test' })"
+    >
       点击跳转到音频调试界面
     </div>
     <div class="button font-color-main" @click="clearCache">
@@ -10,44 +13,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { YColor } from "@/utils/color";
-import { defineComponent } from "vue";
-import { useStore } from "vuex";
-
-export default defineComponent({
-  name: "YTestView",
-  components: {
-  },
-  setup() {
-    const store = useStore();
-
-    return {
-      player: store.state.player,
-      setting: store.state.setting,
-      download: store.state.download,
-    };
-  },
-  computed: {},
-  data() {
-    return {};
-  },
-  methods: {
-    clearCache() {
-      window.electron.clearCache();
-      console.log("clearCache");
-      const usage = window.electron.getResourceUsage();
-      const test = window.electron.getProcessInfo();
-      console.log(JSON.stringify(test, null, 4));
-    }
-  },
-  mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
-    window.test = this.player;
-  },
-  beforeUnmount() {},
-});
-</script>
+<script src="./YTestView.ts" lang="ts"></script>
 
 <style lang="scss" scoped>
 .display {
@@ -60,7 +26,7 @@ export default defineComponent({
     width: 100%;
     height: 100%;
   }
-  
+
   .button {
     cursor: pointer;
   }

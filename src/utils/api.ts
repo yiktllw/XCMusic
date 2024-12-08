@@ -51,7 +51,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 自定义 API 请求函数
@@ -63,7 +63,7 @@ export async function useApi(
   /** api的相对路径 */
   relativePath: string,
   /** 剩余参数对象 */
-  params?: Object
+  params?: Object,
 ): Promise<any> {
   try {
     const response = await apiClient.get(relativePath, { params });
@@ -82,7 +82,7 @@ export namespace Like {
    */
   export async function on(
     /** 歌曲id */
-    id: number
+    id: number,
   ): Promise<ILike.Response | null> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -106,7 +106,7 @@ export namespace Like {
    */
   export async function off(
     /** 歌曲id */
-    id: number
+    id: number,
   ): Promise<ILike.Response | null> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -134,7 +134,7 @@ export namespace Like {
     /** 歌曲id */
     id: number,
     /** 喜欢状态 */
-    status: boolean
+    status: boolean,
   ): Promise<ILike.Response | null> {
     return status ? await off(id) : await on(id);
   }
@@ -149,7 +149,7 @@ export namespace Playlist {
    */
   export async function getDetail(
     /** 歌单id */
-    id: number
+    id: number,
   ): Promise<IPlaylist.DetailResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     const params: IPlaylist.DetailParams = { id: id };
@@ -168,7 +168,7 @@ export namespace Playlist {
     /** 歌单id */
     playlistId: number,
     /** 歌单的歌曲数量，可选 */
-    _trackCount?: number
+    _trackCount?: number,
   ) {
     let trackCount = 0;
 
@@ -212,7 +212,7 @@ export namespace Playlist {
     /** 每页数量，可选，默认500 */
     limit: number = 500,
     /** 是否刷新，可选，默认false */
-    refresh = false
+    refresh = false,
   ) {
     // 计算偏移量
     const offset = (page - 1) * limit;
@@ -234,7 +234,7 @@ export namespace Playlist {
     let getTracks = await useApi("/playlist/track/all", params).catch(
       (error) => {
         console.log("Failed to fetch tracks:", error);
-      }
+      },
     );
 
     // 加入新的属性 originalIndex，用于排序
@@ -257,7 +257,7 @@ export namespace Playlist {
     /** 歌单名称 */
     name: string,
     /** 歌单描述 */
-    desc: string
+    desc: string,
   ) {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) console.error("No login cookie found");
@@ -276,7 +276,7 @@ export namespace Playlist {
     /** 歌单id */
     playlistId: number,
     /** 需要添加的歌曲id数组 */
-    ids: number[]
+    ids: number[],
   ): Promise<IPlaylist.AddTracksResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -300,7 +300,7 @@ export namespace Playlist {
     /** 歌单id */
     playlistId: number,
     /** 需要删除的歌曲id数组 */
-    ids: number[]
+    ids: number[],
   ): Promise<{
     /** 200为成功 */
     status: number;
@@ -326,7 +326,7 @@ export namespace Playlist {
    */
   export async function Delete(
     /** 歌单id */
-    playlistId: number
+    playlistId: number,
   ) {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -351,7 +351,7 @@ export namespace Playlist {
     /** 歌单名称 */
     name: string,
     /** 歌单隐私，0为公开，10为私人 */
-    privacy: 10 | 0
+    privacy: 10 | 0,
   ): Promise<IPlaylist.CreateResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -373,7 +373,7 @@ export namespace Playlist {
    */
   export async function updatePlaycount(
     /** 歌单id */
-    id: number
+    id: number,
   ): Promise<Object | null> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -396,7 +396,7 @@ export namespace Playlist {
    */
   export async function getAlbum(
     /** 专辑id */
-    id: number
+    id: number,
   ): Promise<IPlaylist.AlbumResponse | null> {
     const res = await useApi("/api/album/v3/detail", {
       id: id,
@@ -414,7 +414,7 @@ export namespace Playlist {
     /** 专辑ID */
     id: number,
     /** on为收藏，off为取消收藏 */
-    type: "on" | "off"
+    type: "on" | "off",
   ) {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -440,7 +440,7 @@ export namespace Playlist {
     /** 歌单ID */
     id: number,
     /** on为收藏，off为取消收藏 */
-    type: "on" | "off"
+    type: "on" | "off",
   ) {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -469,7 +469,7 @@ export namespace Song {
    */
   export async function detail(
     /** 歌曲id数组 */
-    ids: number[]
+    ids: number[],
   ): Promise<ITrack[]> {
     const res = await useApi("/song/detail", {
       ids: ids.join(","),
@@ -492,7 +492,7 @@ export namespace Song {
     /** 歌曲id */
     id: number,
     /** 音质等级 */
-    level: string
+    level: string,
   ): Promise<string> {
     const url: string = await useApi("/song/url/v1", {
       id: id,
@@ -513,7 +513,7 @@ export namespace Song {
    */
   export async function getQuality(
     id: number,
-    quality: string
+    quality: string,
   ): Promise<ISong.QualityResponse> {
     const res = await useApi("/song/url/v1", {
       id: id,
@@ -533,7 +533,7 @@ export namespace Song {
    */
   export async function getUrlObj(
     id: number,
-    level: string
+    level: string,
   ): Promise<ISong.UrlObjResponse> {
     const res = await useApi("/song/url/v1", {
       id: id,
@@ -547,7 +547,7 @@ export namespace Song {
   /** 获取歌曲百科 */
   export async function getWiki(
     /** 歌曲id */
-    id: number
+    id: number,
   ): Promise<null | ISong.WikiResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -569,7 +569,7 @@ export namespace Song {
    */
   export async function getSheets(
     /** 歌曲id */
-    id: number
+    id: number,
   ): Promise<null | ISong.SheetResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -589,7 +589,7 @@ export namespace Song {
    */
   export async function getSheetDetail(
     /** 曲谱id */
-    id: number
+    id: number,
   ): Promise<null | ISong.SheetDetailResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -622,7 +622,7 @@ export namespace Search {
    */
   export async function getSearchSuggestion(
     /** 搜索关键词 */
-    keyword: string
+    keyword: string,
   ): Promise<ISearchSuggestion[]> {
     // 如果关键词为空，直接返回空数组
     if (keyword === "" || !keyword) {
@@ -672,7 +672,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.SongsResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -706,7 +706,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.PlaylistsResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -737,7 +737,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.AlbumsResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -769,7 +769,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.ArtistsResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -801,7 +801,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.SongsResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -836,7 +836,7 @@ export namespace Search {
     /** 页码，从1开始 */
     page: number = 1,
     /** 每页数量，默认100 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<ISearch.UsersResponse> {
     const res = await useApi("/cloudsearch", {
       keywords: keyword,
@@ -869,7 +869,7 @@ export namespace Lyrics {
    */
   export async function get(
     /** 歌曲id */
-    id: number
+    id: number,
   ): Promise<Array<LrcItem | YrcItem | LrcItem2>> {
     let lrc: Array<LrcItem | LrcItem2 | YrcItem> = [];
 
@@ -910,7 +910,7 @@ export namespace User {
    * 音乐云盘信息
    */
   export async function getCloudInfo(
-    params: IUser.CloudParams
+    params: IUser.CloudParams,
   ): Promise<IUser.CloudResponse> {
     let res = await useApi("/user/cloud", params).catch((error) => {
       console.error("Failed to get cloud info:", error);
@@ -935,7 +935,7 @@ export namespace User {
     let requests = [];
     for (let i = 1; i <= pageCount; i++) {
       requests.push(
-        getCloudInfo({ cookie, limit: LIMIT, offset: (i - 1) * LIMIT })
+        getCloudInfo({ cookie, limit: LIMIT, offset: (i - 1) * LIMIT }),
       );
     }
 
@@ -951,7 +951,7 @@ export namespace User {
    */
   export async function detail(
     /** 用户id */
-    uid: number
+    uid: number,
   ): Promise<IUser.DetailResponse | null> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -975,7 +975,7 @@ export namespace User {
    */
   export async function artistDetail(
     /** 歌手id */
-    id: number
+    id: number,
   ): Promise<IUser.ArtistDetailResponse | null> {
     const res = await useApi("/artist/detail", {
       id: id,
@@ -1015,7 +1015,7 @@ export namespace User {
     /** 用户id */
     uid: number,
     /** 是否刷新 */
-    reload = false
+    reload = false,
   ): Promise<number[]> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -1049,7 +1049,7 @@ export namespace User {
    */
   export async function getPlaylists(
     /** 用户id */
-    uid: number
+    uid: number,
   ): Promise<UserPlaylist[]> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -1078,7 +1078,7 @@ export namespace User {
     /** 页码 */
     page: number = 1,
     /** 每页数量 */
-    limit: number = 100
+    limit: number = 100,
   ): Promise<IUser.SubAlbumsResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -1109,7 +1109,7 @@ export namespace User {
     /** 用户id */
     uid: number,
     /** 一周的数据或所有时间的数据 */
-    type: "week" | "alltime" = "week"
+    type: "week" | "alltime" = "week",
   ): Promise<ITrack[]> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -1137,7 +1137,7 @@ export namespace User {
     /** 页码 */
     page: number = 1,
     /** 每页数量 */
-    SONGS_PER_PAGE: number = 100
+    SONGS_PER_PAGE: number = 100,
   ): Promise<IUser.ArtistSongsResponse> {
     const res = await useApi("/api/v2/artist/songs", {
       id: id,
@@ -1165,7 +1165,7 @@ export namespace User {
    */
   export async function getArtistAlbums(
     /** 歌手id */
-    id: number
+    id: number,
   ): Promise<IPlaylist_[]> {
     const res = await useApi("/artist/album", {
       id: id,
@@ -1191,7 +1191,7 @@ export namespace User {
    */
   export async function getArtistDesc(
     /** 歌手id */
-    id: number
+    id: number,
   ): Promise<
     Array<{
       ti: string;
@@ -1215,7 +1215,7 @@ export namespace Comment {
       /** 歌曲id */
       id: number,
       /** 评论数量限制，默认为0 */
-      limit = 0
+      limit = 0,
     ): Promise<IComment.SongInfoResponse | null> {
       if (!id) {
         console.error("No valid id: ", id);
@@ -1256,7 +1256,7 @@ export namespace Login {
   /** 从二维码key生成图片,返回base64图片 */
   export async function createQrImg(
     /** 二维码key */
-    key: string
+    key: string,
   ): Promise<string | null> {
     const res = await useApi("/login/qr/create", {
       key: key,
@@ -1275,7 +1275,7 @@ export namespace Login {
   /** 检查二维码状态 */
   export async function checkQrStatus(
     /** 二维码key */
-    key: string
+    key: string,
   ): Promise<ILogin.CheckQrResponse | null> {
     const res = await useApi("/login/qr/check", {
       key: key,

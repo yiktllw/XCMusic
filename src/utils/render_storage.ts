@@ -134,7 +134,7 @@ interface IData {
  */
 export function setStorage<T extends keyof StorageMap>(
   key: T,
-  value: StorageMap[T] | null
+  value: StorageMap[T] | null,
 ): void {
   const data: IData = {
     data: value,
@@ -146,7 +146,7 @@ export function setStorage<T extends keyof StorageMap>(
  * 从localStorage中获取数据
  */
 export function getStorage<T extends keyof StorageMap>(
-  key: T
+  key: T,
 ): StorageMap[T] | null {
   const value = localStorage.getItem(key);
   if (!value) {

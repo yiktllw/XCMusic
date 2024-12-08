@@ -34,7 +34,7 @@ export class SongPicker {
       "Documents",
       "弹幕姬",
       "Plugins",
-      "xcmusic"
+      "xcmusic",
     );
     this.filePath = window.api.pathJoin(this.damakuPath, "songPicker.txt");
 

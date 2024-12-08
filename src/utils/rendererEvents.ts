@@ -89,27 +89,30 @@ ipcMain.handle("get-local-tracks", async (event, dirPath) => {
   }
 });
 
-ipcMain.handle("save-json", async (event, data: ISaveJSONData): Promise<null | string> => {
-  const { canceled, filePath } = await dialog.showSaveDialog({
-    title: "导出设置JSON文件",
-    defaultPath: path.join(app.getPath("desktop"), data.name), // 默认路径为桌面
-    filters: [{ name: "JSON", extensions: ["json"] }],
-  });
-  try {
-    if (canceled) {
-      return null;
-    } else if (filePath) {
-      fs.writeFileSync(filePath, data.json, "utf-8");
-      return filePath;
-    } else {
-      console.error("No file path provided");
+ipcMain.handle(
+  "save-json",
+  async (event, data: ISaveJSONData): Promise<null | string> => {
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      title: "导出设置JSON文件",
+      defaultPath: path.join(app.getPath("desktop"), data.name), // 默认路径为桌面
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+    try {
+      if (canceled) {
+        return null;
+      } else if (filePath) {
+        fs.writeFileSync(filePath, data.json, "utf-8");
+        return filePath;
+      } else {
+        console.error("No file path provided");
+        return null;
+      }
+    } catch (err) {
+      console.error("Error saving JSON file:", err);
       return null;
     }
-  } catch (err) {
-    console.error("Error saving JSON file:", err);
-    return null;
-  }
-});
+  },
+);
 
 ipcMain.handle("open-json", async (): Promise<null | string> => {
   const { canceled, filePaths } = await dialog.showOpenDialog({

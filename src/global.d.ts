@@ -45,7 +45,7 @@ interface electron {
     invoke(channel: string, data?: any): Promise<any>;
     removeListener(
       channel: string,
-      listener: (event: any, ...args: any[]) => void
+      listener: (event: any, ...args: any[]) => void,
     ): void;
     removeAllListeners(channel: string): void;
   };
@@ -66,12 +66,12 @@ interface api {
   pathJoin: (...args: string[]) => string;
   readFile: (
     path: string,
-    options?: { encoding?: null; flag?: string }
+    options?: { encoding?: null; flag?: string },
   ) => Buffer;
   writeFile: (
     path: string,
     data: any,
-    options?: { encoding?: string; flag?: string }
+    options?: { encoding?: string; flag?: string },
   ) => void;
   existsSync: (path: string) => boolean;
   makeDirSync: (path: string) => void;

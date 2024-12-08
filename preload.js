@@ -27,7 +27,7 @@
 const {
   contextBridge,
   app,
-ipcRenderer,
+  ipcRenderer,
   shell,
   webFrame,
 } = require("electron");

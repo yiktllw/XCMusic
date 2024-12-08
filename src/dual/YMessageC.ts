@@ -55,7 +55,7 @@ export namespace Message {
   export function post(
     type: "info" | "success" | "warning" | "error",
     message: string,
-    needTrans: boolean = false
+    needTrans: boolean = false,
   ) {
     if (!["info", "success", "warning", "error"].includes(type)) {
       throw new YMessageError("Invalid type: " + type);

@@ -1,409 +1,409 @@
 {
-	"add_to_playlist": "Add to playlist",
-	"album": "Album",
-	"cancel": "Cancel",
-	"cloud": "Cloud",
-	"comment": {
-		"all_comment": "All Comments",
-		"hot_order": "Popularity",
-		"recommend_order": "Recommended",
-		"time_order": "Time"
-	},
-	"confirm": {
-		"delete": "Sure to delete?",
-		"title": "Confirm"
-	},
-	"context": {
-		"addToPlaylistAll": "Add All to Playlist",
-		"copy_link": "Copy Link",
-		"delete_from_playlist": "Remove from Playlist",
-		"delete_playlist": "Delete Playlist",
-		"download": "Download",
-		"downloadAll": "Download All",
-		"editPlaylist": "Edit Playlist",
-		"edit_playlist": "Edit Playlist Information",
-		"info": "Song Info",
-		"nextplay": "Play Next",
-		"play": "Play",
-		"playAll": "Play All",
-		"subscribe": "Add to Playlist",
-		"view_comment": "View Comments"
-	},
-	"copy": {
-		"click_to_copy": "Click to Copy",
-		"click_to_paste": "Click to Paste",
-		"copied": "Copied",
-		"copy": "Copy",
-		"copy_failed": "Copy Failed",
-		"paste": "Paste",
-		"paste_failed": "Paste Failed",
-		"paste_failed_invalid_data": "Invalid Data",
-		"pasted": "Pasted"
-	},
-	"create_custom_theme": {
-		"color_from_str": "String To Color",
-		"font_color": "Font Color",
-		"font_color_primary": "Primary",
-		"font_color_quaternary": "Quaternary",
-		"font_color_secondary": "Secondary",
-		"font_color_tertiary": "Tertiary",
-		"font_color_type": "Font Color Type",
-		"font_color_type_single": "Single",
-		"font_color_type_various": "Various",
-		"highlight_color": "Highlight Color",
-		"preset": "Preset",
-		"theme_auto_background_type": "Auto Background Type",
-		"theme_background_color": "Background",
-		"theme_foreground_color": "Foreground",
-		"theme_name": "Name",
-		"theme_name_placeholder": "Please enter a theme name",
-		"theme_panel_color": "Panel",
-		"theme_type": "Type",
-		"theme_type_dark": "Dark",
-		"theme_type_light": "Light",
-		"theme_type_other": "Other",
-		"title": "Create Custom Theme"
-	},
-	"create_playlist": {
-		"create": "Create",
-		"error": "Failed to create playlist",
-		"input_playlist_name": "Playlist Name",
-		"no_name": "Please enter a name",
-		"private": "Private",
-		"success": "Successfully created playlist",
-		"title": "Create Playlist"
-	},
-	"default": "Default",
-	"edit_playlist": {
-		"description": "Description",
-		"input_desc": "Please enter a description",
-		"input_name": "Please enter a name",
-		"name": "Playlist Name"
-	},
-	"fans": "Fans",
-	"header": {
-		"local_music": {
-			"downloaded_songs": "Downloaded Songs",
-			"local_songs": "Local Songs"
-		},
-		"setting_view": {
-			"about": "About",
-			"appearance": "Appearance",
-			"download": "Download",
-			"normal": "Normal",
-			"play": "Play"
-		}
-	},
-	"local_music": "Local Musics",
-	"localsongs": {
-		"addpaths": "Added Paths in Settings",
-		"downloaded": "Downloaded",
-		"downloading": "Downloading"
-	},
-	"login": "Login",
-	"logout": "Logout",
-	"manage_download": "Download",
-	"message": {
-		"getting_playlist_tracks": "Getting playlist tracks",
-		"homeview": {
-			"add_to_playlist_success": "Added to playlist",
-			"delete_fail": "Failed to delete",
-			"delete_success": "Successfully deleted",
-			"errorToCopyLink": "Error to copy link",
-			"linkCopied": "Link Copied",
-			"unknown_reason": "Unknown Reason"
-		},
-		"playlist_view": {
-			"added_to_playlist": "Added to playlist",
-			"scrolled_to_current_track": "Scrolled to current track"
-		},
-		"setting_view": {
-			"download": {
-				"only_desktop": "The download feature is only effective on desktop"
-			},
-			"only_desktop": "The zoom feature is only effective on desktop",
-			"zoom_applied": "Zoom applied",
-			"zoom_range_50_200": "Please enter a number between 50 and 200"
-		}
-	},
-	"need_login": "Please login first",
-	"playbar": {
-		"cancel_like": "Unlike",
-		"clear_playlist": "Clear Playlist",
-		"delete_from_playlist": "Remove from Playlist",
-		"like": "Like",
-		"listloop": "List Loop",
-		"listrandom": "List Random",
-		"loop": "Loop",
-		"next": "Next",
-		"order": "Order",
-		"pause": "Pause",
-		"play": "Play",
-		"playlist": "Playlist",
-		"playlist_panel": {
-			"like": "Like",
-			"title": "Title"
-		},
-		"previous": "Previous",
-		"quality": {
-			"desc": {
-				"exhigh": "Near CD Quality Detail Experience, Up to 320kbps",
-				"hires": "Richer and Clearer High-Resolution Sound Quality, Up to 192kHz/24bit",
-				"jyeffect": "Surround Sound Experience, Enhanced Audio Quality, 96kHz/24bit",
-				"jymaster": "Restore Audio Details, 192kHz/24bit",
-				"lossless": "High-Fidelity Lossless Sound Quality, Up to 48kHz/16bit",
-				"sky": "Immersive Experience, Up to 5.1 Channels",
-				"standard": "128kbps"
-			},
-			"exhigh": "Extreme High",
-			"hires": "Hi-Res",
-			"jyeffect": "JY Effect",
-			"jymaster": "JY Master",
-			"lossless": "Lossless",
-			"sky": "Sky",
-			"standard": "Standard"
-		},
-		"random": "Random",
-		"select_sound_quality": "Select Sound Quality",
-		"song_info": "Song Information",
-		"sound_quality": "Sound Quality",
-		"volume": "Volume"
-	},
-	"player": {
-		"local_file_not_found": "Local File Not Found",
-		"noUrlError": "Failed to get the song link, automatically playing the next track."
-	},
-	"playlist_biglist": {
-		"song_count": ""
-	},
-	"playlist_list": {
-		"author": "Author",
-		"create_time": "Release Date",
-		"creator": "Creator",
-		"play_count": "Play Count",
-		"song_count": "Number of Songs",
-		"song_counter": "",
-		"title": "Title"
-	},
-	"playlist_view": {
-		"add_to_playlist": "Add to playlist",
-		"author": "Author",
-		"comments": "Comments",
-		"created_time": "Created",
-		"creator": "Creator",
-		"download": "Download",
-		"list_added_to_download": "Added to download list",
-		"multi_select": "Multi Select",
-		"my_favorite_musics": "My Favorites",
-		"play": "Play",
-		"published_time": "Published",
-		"search": "Search",
-		"songs": "Songs",
-		"subscribe": "Subscribe",
-		"subscribed": "Subscribed"
-	},
-	"playui": {
-		"lyric": "Lyrics",
-		"noSheet": "No Sheet",
-		"noWiki": "No Wiki",
-		"sheet": "Sheets",
-		"wiki": "Wiki"
-	},
-	"quality": {
-		"default": "Unknown",
-		"exhigh": "ExHigh",
-		"higher": "Higher",
-		"hires": "Hi-Res",
-		"jyeffect": "JY Effect",
-		"jymaster": "JY Master",
-		"local": "Local",
-		"lossless": "Lossless",
-		"sky": "Sky",
-		"standard": "Standard"
-	},
-	"search_view": {
-		"albums": " albums",
-		"artists": " artists",
-		"playlists": " playlists",
-		"search_info_after": "are as follows: found",
-		"search_info_before": "The search results for",
-		"songs": " songs",
-		"switcher": {
-			"album": "Albums",
-			"artist": "Artists",
-			"lyric": "Lyrics",
-			"playlist": "Playlists",
-			"song": "Songs",
-			"user": " Users"
-		},
-		"users": "users"
-	},
-	"setting_view": {
-		"about": {
-			"author": "Author",
-			"backup": "Backup",
-			"changelog": "Changelog",
-			"export": "Export Settings To JSON",
-			"export_download": "Export Downloaded Songs",
-			"export_fail": "Export To JSON Failed",
-			"export_success": "Export To JSON Successfully",
-			"import": "Import Settings From JSON",
-			"import_download": "Import Downloaded Songs",
-			"import_no_file": "No File Selected",
-			"import_success": "Imported Successfully",
-			"issues": "Issues",
-			"license": "License",
-			"readme": "Readme",
-			"source_code": "Source",
-			"version": "Version"
-		},
-		"appearance": {
-			"click_to_create_theme": "Click to create a custom theme.",
-			"custom": "Custom",
-			"playlist": "Playlist",
-			"showCoverInPlaylist": "Show Cover In Playlist"
-		},
-		"apply": "Apply",
-		"click_to_reload": "Click to reload window.",
-		"close": "Close",
-		"close_always_ask": "Always ask before closing",
-		"close_to_minimize": "Close to Hide.",
-		"close_to_quit": "Close to Quit.",
-		"disable_gpu": "Disable Hardware Acceleration",
-		"disable_gpu_also": "(Also disable some animations)",
-		"display": {
-			"fullscreen": "Fullscreen",
-			"fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
-			"hideInSidebar": "Hide In Sidebar",
-			"press_f11_to_fullscreen": "Press F11 to Fullscreen",
-			"sidebar": "Sidebar"
-		},
-		"download": {
-			"add": "Add Path",
-			"clear": "Clear Path",
-			"click_clear": "Click to clear the path",
-			"delete": "Delete Path",
-			"local": "Local",
-			"path": "Path",
-			"quality": "Quality",
-			"select": "Select"
-		},
-		"gpu": "GPU",
-		"language": "Language",
-		"open_at_login": "Open at Login",
-		"open_sys": "System",
-		"play": {
-			"auto_play": "Auto Play When Launched",
-			"dbclick": "Playlist",
-			"dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
-			"dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
-			"device": "Device",
-			"launch": "Launch",
-			"playui": "Play UI",
-			"show_spectrum": "Show Spectrum",
-			"volume_leveling": "Volume",
-			"volume_leveling_content": "Balance the volume of different tracks."
-		},
-		"reload": "Reload",
-		"theme": "Theme",
-		"theme_name": {
-			"dark": "Dark",
-			"dark_high_contrast": "Dark High Contrast",
-			"light": "Light",
-			"light_high_contrast": "Light High Contrast"
-		},
-		"work_after_reload_window": "The changes will take effect after the window is reloaded.",
-		"work_after_restart_app": "The changes will take effect after the app is restarted.",
-		"zoom": "Zoom"
-	},
-	"settings": "Settings",
-	"sheet_view": {
-		"current_page_left": "Page ",
-		"current_page_right": "",
-		"next_page": "Next Page: ",
-		"prev_page": "Previous Page: ",
-		"scroll": "Scroll: ",
-		"total_page_left": "Total ",
-		"total_page_right": " Pages"
-	},
-	"sidebar": {
-		"created_playlist": "Created Playlists",
-		"subscribed_playlist": "Subscribed Playlists"
-	},
-	"song_added_failed": "Song Added Failed",
-	"song_added_successfully": "Song Added Successfully",
-	"song_info": {
-		"album_tns": "Album Translation",
-		"artist": "Artists",
-		"click_to_copy": "Click to Copy",
-		"click_to_view_album_details": "Click to View Album Details",
-		"click_to_view_artist_details": "Click to View Artist Details",
-		"song_id": "Song ID",
-		"song_info": "Song Information",
-		"song_link": "Song Link",
-		"song_name": "Song Name",
-		"song_path": "File Path",
-		"song_tns": "Song Translation"
-	},
-	"songs_table": {
-		"album": "Album",
-		"duration": "Duration",
-		"like": "Like",
-		"listen_count": "Listen Count",
-		"more": "More",
-		"popularity": "Popularity",
-		"sort": {
-			"album_ascending": "Album Ascending",
-			"album_descending": "Album Descending",
-			"artist_ascending": "Artist Ascending",
-			"artist_descending": "Artist Descending",
-			"default": "Default",
-			"duration_ascending": "Duration Ascending",
-			"duration_default": "",
-			"duration_descending": "Duration Descending",
-			"title_ascending": "Title Ascending",
-			"title_descending": "Title Descending"
-		},
-		"title": "Title",
-		"unknown_artist": "Unknown Artist",
-		"unknown_name": "Unknown Name"
-	},
-	"subscribed_album": "My Albums",
-	"titlebar": {
-		"about": "About",
-		"back": "Back",
-		"close": "Close",
-		"followers": "Followers",
-		"follows": "Follows",
-		"forward": "Forward",
-		"level": "Level",
-		"listenRank": "My Listen Rank",
-		"logout": "Logout",
-		"maximize": "Maximize",
-		"minimize": "Minimize",
-		"notLoggedIn": "Not Logged In",
-		"scanQRCodeToLogin": "Scan QR Code to Login",
-		"search": "Search",
-		"searchHistory": "Search History",
-		"settings": "Settings",
-		"suggestedSearches": "Suggested Searches",
-		"testPage": "Test Page",
-		"trending": "Trending"
-	},
-	"user_songs_rank_view": {
-		"alltime": "All Time",
-		"last_week": "Last Week"
-	},
-	"user_view": {
-		"albums": "Albums",
-		"detail": "Detail",
-		"listen_rank": "Listen Rank",
-		"songs": "Songs",
-		"total_listen": "Total Songs Listened "
-	},
-	"welcome": "Welcome",
-	"window": {
-		"close": "Close",
-		"title": "Title"
-	}
+  "add_to_playlist": "Add to playlist",
+  "album": "Album",
+  "cancel": "Cancel",
+  "cloud": "Cloud",
+  "comment": {
+    "all_comment": "All Comments",
+    "hot_order": "Popularity",
+    "recommend_order": "Recommended",
+    "time_order": "Time"
+  },
+  "confirm": {
+    "delete": "Sure to delete?",
+    "title": "Confirm"
+  },
+  "context": {
+    "addToPlaylistAll": "Add All to Playlist",
+    "copy_link": "Copy Link",
+    "delete_from_playlist": "Remove from Playlist",
+    "delete_playlist": "Delete Playlist",
+    "download": "Download",
+    "downloadAll": "Download All",
+    "editPlaylist": "Edit Playlist",
+    "edit_playlist": "Edit Playlist Information",
+    "info": "Song Info",
+    "nextplay": "Play Next",
+    "play": "Play",
+    "playAll": "Play All",
+    "subscribe": "Add to Playlist",
+    "view_comment": "View Comments"
+  },
+  "copy": {
+    "click_to_copy": "Click to Copy",
+    "click_to_paste": "Click to Paste",
+    "copied": "Copied",
+    "copy": "Copy",
+    "copy_failed": "Copy Failed",
+    "paste": "Paste",
+    "paste_failed": "Paste Failed",
+    "paste_failed_invalid_data": "Invalid Data",
+    "pasted": "Pasted"
+  },
+  "create_custom_theme": {
+    "color_from_str": "String To Color",
+    "font_color": "Font Color",
+    "font_color_primary": "Primary",
+    "font_color_quaternary": "Quaternary",
+    "font_color_secondary": "Secondary",
+    "font_color_tertiary": "Tertiary",
+    "font_color_type": "Font Color Type",
+    "font_color_type_single": "Single",
+    "font_color_type_various": "Various",
+    "highlight_color": "Highlight Color",
+    "preset": "Preset",
+    "theme_auto_background_type": "Auto Background Type",
+    "theme_background_color": "Background",
+    "theme_foreground_color": "Foreground",
+    "theme_name": "Name",
+    "theme_name_placeholder": "Please enter a theme name",
+    "theme_panel_color": "Panel",
+    "theme_type": "Type",
+    "theme_type_dark": "Dark",
+    "theme_type_light": "Light",
+    "theme_type_other": "Other",
+    "title": "Create Custom Theme"
+  },
+  "create_playlist": {
+    "create": "Create",
+    "error": "Failed to create playlist",
+    "input_playlist_name": "Playlist Name",
+    "no_name": "Please enter a name",
+    "private": "Private",
+    "success": "Successfully created playlist",
+    "title": "Create Playlist"
+  },
+  "default": "Default",
+  "edit_playlist": {
+    "description": "Description",
+    "input_desc": "Please enter a description",
+    "input_name": "Please enter a name",
+    "name": "Playlist Name"
+  },
+  "fans": "Fans",
+  "header": {
+    "local_music": {
+      "downloaded_songs": "Downloaded Songs",
+      "local_songs": "Local Songs"
+    },
+    "setting_view": {
+      "about": "About",
+      "appearance": "Appearance",
+      "download": "Download",
+      "normal": "Normal",
+      "play": "Play"
+    }
+  },
+  "local_music": "Local Musics",
+  "localsongs": {
+    "addpaths": "Added Paths in Settings",
+    "downloaded": "Downloaded",
+    "downloading": "Downloading"
+  },
+  "login": "Login",
+  "logout": "Logout",
+  "manage_download": "Download",
+  "message": {
+    "getting_playlist_tracks": "Getting playlist tracks",
+    "homeview": {
+      "add_to_playlist_success": "Added to playlist",
+      "delete_fail": "Failed to delete",
+      "delete_success": "Successfully deleted",
+      "errorToCopyLink": "Error to copy link",
+      "linkCopied": "Link Copied",
+      "unknown_reason": "Unknown Reason"
+    },
+    "playlist_view": {
+      "added_to_playlist": "Added to playlist",
+      "scrolled_to_current_track": "Scrolled to current track"
+    },
+    "setting_view": {
+      "download": {
+        "only_desktop": "The download feature is only effective on desktop"
+      },
+      "only_desktop": "The zoom feature is only effective on desktop",
+      "zoom_applied": "Zoom applied",
+      "zoom_range_50_200": "Please enter a number between 50 and 200"
+    }
+  },
+  "need_login": "Please login first",
+  "playbar": {
+    "cancel_like": "Unlike",
+    "clear_playlist": "Clear Playlist",
+    "delete_from_playlist": "Remove from Playlist",
+    "like": "Like",
+    "listloop": "List Loop",
+    "listrandom": "List Random",
+    "loop": "Loop",
+    "next": "Next",
+    "order": "Order",
+    "pause": "Pause",
+    "play": "Play",
+    "playlist": "Playlist",
+    "playlist_panel": {
+      "like": "Like",
+      "title": "Title"
+    },
+    "previous": "Previous",
+    "quality": {
+      "desc": {
+        "exhigh": "Near CD Quality Detail Experience, Up to 320kbps",
+        "hires": "Richer and Clearer High-Resolution Sound Quality, Up to 192kHz/24bit",
+        "jyeffect": "Surround Sound Experience, Enhanced Audio Quality, 96kHz/24bit",
+        "jymaster": "Restore Audio Details, 192kHz/24bit",
+        "lossless": "High-Fidelity Lossless Sound Quality, Up to 48kHz/16bit",
+        "sky": "Immersive Experience, Up to 5.1 Channels",
+        "standard": "128kbps"
+      },
+      "exhigh": "Extreme High",
+      "hires": "Hi-Res",
+      "jyeffect": "JY Effect",
+      "jymaster": "JY Master",
+      "lossless": "Lossless",
+      "sky": "Sky",
+      "standard": "Standard"
+    },
+    "random": "Random",
+    "select_sound_quality": "Select Sound Quality",
+    "song_info": "Song Information",
+    "sound_quality": "Sound Quality",
+    "volume": "Volume"
+  },
+  "player": {
+    "local_file_not_found": "Local File Not Found",
+    "noUrlError": "Failed to get the song link, automatically playing the next track."
+  },
+  "playlist_biglist": {
+    "song_count": ""
+  },
+  "playlist_list": {
+    "author": "Author",
+    "create_time": "Release Date",
+    "creator": "Creator",
+    "play_count": "Play Count",
+    "song_count": "Number of Songs",
+    "song_counter": "",
+    "title": "Title"
+  },
+  "playlist_view": {
+    "add_to_playlist": "Add to playlist",
+    "author": "Author",
+    "comments": "Comments",
+    "created_time": "Created",
+    "creator": "Creator",
+    "download": "Download",
+    "list_added_to_download": "Added to download list",
+    "multi_select": "Multi Select",
+    "my_favorite_musics": "My Favorites",
+    "play": "Play",
+    "published_time": "Published",
+    "search": "Search",
+    "songs": "Songs",
+    "subscribe": "Subscribe",
+    "subscribed": "Subscribed"
+  },
+  "playui": {
+    "lyric": "Lyrics",
+    "noSheet": "No Sheet",
+    "noWiki": "No Wiki",
+    "sheet": "Sheets",
+    "wiki": "Wiki"
+  },
+  "quality": {
+    "default": "Unknown",
+    "exhigh": "ExHigh",
+    "higher": "Higher",
+    "hires": "Hi-Res",
+    "jyeffect": "JY Effect",
+    "jymaster": "JY Master",
+    "local": "Local",
+    "lossless": "Lossless",
+    "sky": "Sky",
+    "standard": "Standard"
+  },
+  "search_view": {
+    "albums": " albums",
+    "artists": " artists",
+    "playlists": " playlists",
+    "search_info_after": "are as follows: found",
+    "search_info_before": "The search results for",
+    "songs": " songs",
+    "switcher": {
+      "album": "Albums",
+      "artist": "Artists",
+      "lyric": "Lyrics",
+      "playlist": "Playlists",
+      "song": "Songs",
+      "user": " Users"
+    },
+    "users": "users"
+  },
+  "setting_view": {
+    "about": {
+      "author": "Author",
+      "backup": "Backup",
+      "changelog": "Changelog",
+      "export": "Export Settings To JSON",
+      "export_download": "Export Downloaded Songs",
+      "export_fail": "Export To JSON Failed",
+      "export_success": "Export To JSON Successfully",
+      "import": "Import Settings From JSON",
+      "import_download": "Import Downloaded Songs",
+      "import_no_file": "No File Selected",
+      "import_success": "Imported Successfully",
+      "issues": "Issues",
+      "license": "License",
+      "readme": "Readme",
+      "source_code": "Source",
+      "version": "Version"
+    },
+    "appearance": {
+      "click_to_create_theme": "Click to create a custom theme.",
+      "custom": "Custom",
+      "playlist": "Playlist",
+      "showCoverInPlaylist": "Show Cover In Playlist"
+    },
+    "apply": "Apply",
+    "click_to_reload": "Click to reload window.",
+    "close": "Close",
+    "close_always_ask": "Always ask before closing",
+    "close_to_minimize": "Close to Hide.",
+    "close_to_quit": "Close to Quit.",
+    "disable_gpu": "Disable Hardware Acceleration",
+    "disable_gpu_also": "(Also disable some animations)",
+    "display": {
+      "fullscreen": "Fullscreen",
+      "fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
+      "hideInSidebar": "Hide In Sidebar",
+      "press_f11_to_fullscreen": "Press F11 to Fullscreen",
+      "sidebar": "Sidebar"
+    },
+    "download": {
+      "add": "Add Path",
+      "clear": "Clear Path",
+      "click_clear": "Click to clear the path",
+      "delete": "Delete Path",
+      "local": "Local",
+      "path": "Path",
+      "quality": "Quality",
+      "select": "Select"
+    },
+    "gpu": "GPU",
+    "language": "Language",
+    "open_at_login": "Open at Login",
+    "open_sys": "System",
+    "play": {
+      "auto_play": "Auto Play When Launched",
+      "dbclick": "Playlist",
+      "dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
+      "dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
+      "device": "Device",
+      "launch": "Launch",
+      "playui": "Play UI",
+      "show_spectrum": "Show Spectrum",
+      "volume_leveling": "Volume",
+      "volume_leveling_content": "Balance the volume of different tracks."
+    },
+    "reload": "Reload",
+    "theme": "Theme",
+    "theme_name": {
+      "dark": "Dark",
+      "dark_high_contrast": "Dark High Contrast",
+      "light": "Light",
+      "light_high_contrast": "Light High Contrast"
+    },
+    "work_after_reload_window": "The changes will take effect after the window is reloaded.",
+    "work_after_restart_app": "The changes will take effect after the app is restarted.",
+    "zoom": "Zoom"
+  },
+  "settings": "Settings",
+  "sheet_view": {
+    "current_page_left": "Page ",
+    "current_page_right": "",
+    "next_page": "Next Page: ",
+    "prev_page": "Previous Page: ",
+    "scroll": "Scroll: ",
+    "total_page_left": "Total ",
+    "total_page_right": " Pages"
+  },
+  "sidebar": {
+    "created_playlist": "Created Playlists",
+    "subscribed_playlist": "Subscribed Playlists"
+  },
+  "song_added_failed": "Song Added Failed",
+  "song_added_successfully": "Song Added Successfully",
+  "song_info": {
+    "album_tns": "Album Translation",
+    "artist": "Artists",
+    "click_to_copy": "Click to Copy",
+    "click_to_view_album_details": "Click to View Album Details",
+    "click_to_view_artist_details": "Click to View Artist Details",
+    "song_id": "Song ID",
+    "song_info": "Song Information",
+    "song_link": "Song Link",
+    "song_name": "Song Name",
+    "song_path": "File Path",
+    "song_tns": "Song Translation"
+  },
+  "songs_table": {
+    "album": "Album",
+    "duration": "Duration",
+    "like": "Like",
+    "listen_count": "Listen Count",
+    "more": "More",
+    "popularity": "Popularity",
+    "sort": {
+      "album_ascending": "Album Ascending",
+      "album_descending": "Album Descending",
+      "artist_ascending": "Artist Ascending",
+      "artist_descending": "Artist Descending",
+      "default": "Default",
+      "duration_ascending": "Duration Ascending",
+      "duration_default": "",
+      "duration_descending": "Duration Descending",
+      "title_ascending": "Title Ascending",
+      "title_descending": "Title Descending"
+    },
+    "title": "Title",
+    "unknown_artist": "Unknown Artist",
+    "unknown_name": "Unknown Name"
+  },
+  "subscribed_album": "My Albums",
+  "titlebar": {
+    "about": "About",
+    "back": "Back",
+    "close": "Close",
+    "followers": "Followers",
+    "follows": "Follows",
+    "forward": "Forward",
+    "level": "Level",
+    "listenRank": "My Listen Rank",
+    "logout": "Logout",
+    "maximize": "Maximize",
+    "minimize": "Minimize",
+    "notLoggedIn": "Not Logged In",
+    "scanQRCodeToLogin": "Scan QR Code to Login",
+    "search": "Search",
+    "searchHistory": "Search History",
+    "settings": "Settings",
+    "suggestedSearches": "Suggested Searches",
+    "testPage": "Test Page",
+    "trending": "Trending"
+  },
+  "user_songs_rank_view": {
+    "alltime": "All Time",
+    "last_week": "Last Week"
+  },
+  "user_view": {
+    "albums": "Albums",
+    "detail": "Detail",
+    "listen_rank": "Listen Rank",
+    "songs": "Songs",
+    "total_listen": "Total Songs Listened "
+  },
+  "welcome": "Welcome",
+  "window": {
+    "close": "Close",
+    "title": "Title"
+  }
 }

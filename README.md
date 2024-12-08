@@ -86,7 +86,7 @@
 npm install
 ```
 
-#### 使用electron
+### 使用electron
 
 运行Electron程序
 
@@ -100,7 +100,7 @@ npm run electron:serve
 npm run electron:build
 ```
 
-#### 使用tauri
+### 使用tauri
 
 1. 打包网易云音乐api程序:
 
@@ -131,18 +131,23 @@ npm run electron:build
 
    4. 在`NeteaseCloudMusicApi`目录下，根据平台运行命令:
 
-    win平台
-     ```shell
-     npm run pkgwin
-     ```
-     linux平台
-     ```shell
-     npm run pkglinux
-     ```
-     macos平台
-     ```shell
-     npm run pkgmacos
-     ```
+   win平台
+
+   ```shell
+   npm run pkgwin
+   ```
+
+   linux平台
+
+   ```shell
+   npm run pkglinux
+   ```
+
+   macos平台
+
+   ```shell
+   npm run pkgmacos
+   ```
 
    5. 在`NeteaseCloudMusicApi/bin`目录下，找到打包的程序，并将其复制到`XCMusic/src-tauri/resources/api`目录下。
 
@@ -198,13 +203,13 @@ npm run tauri:build
 4. XC系列01: XCMusic
 <div/>
 
-3. Für "Clara Josephine Schumann".
+5. Für "Clara Josephine Schumann".
 <div/>
 
-2. Prelude for TeXpert Code.
+6. Prelude for TeXpert Code.
 <div/>
 
-1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
+7. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
 
 **[⬆ 回到目录](#目录)**
 

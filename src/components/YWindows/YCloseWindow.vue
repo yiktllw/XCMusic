@@ -107,7 +107,7 @@ export default defineComponent({
     ensure() {
       if (window.electron?.isElectron) {
         window.electron.ipcRenderer.send(
-          this.closeBehavior === "minimize" ? "close" : "quit"
+          this.closeBehavior === "minimize" ? "close" : "quit",
         );
         this.window?.closeWindow();
       }

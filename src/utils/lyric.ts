@@ -59,7 +59,7 @@ export class Lyrics {
         "Unsupported lyric type:",
         type,
         "Supported types:",
-        this.#allowTypes
+        this.#allowTypes,
       );
     }
     if (type === "yrc") {

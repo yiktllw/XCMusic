@@ -32,9 +32,9 @@ import * as path from "path";
 import Store from "electron-store";
 
 // 设置磁盘缓存的最大大小
-app.commandLine.appendSwitch('disk-cache-size',`${100 * 1024 * 1024}`); 
+app.commandLine.appendSwitch("disk-cache-size", `${100 * 1024 * 1024}`);
 // 设置媒体缓存的最大大小
-app.commandLine.appendSwitch('media-cache-size', `${30 * 1024 * 1024}`); 
+app.commandLine.appendSwitch("media-cache-size", `${30 * 1024 * 1024}`);
 
 interface WindowState {
   width: number;
@@ -64,7 +64,6 @@ ipcMain.on("disable-gpu", () => {
 ipcMain.on("enable-gpu", () => {
   store.set("disableGpu", false);
 });
-
 
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },

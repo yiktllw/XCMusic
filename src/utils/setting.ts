@@ -456,7 +456,7 @@ export const settingGroup: SettingGroup = {
           setStorage(StorageKey.Setting_System_disableGpuAcceleration, value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send(
-              value ? "disable-gpu" : "enable-gpu"
+              value ? "disable-gpu" : "enable-gpu",
             );
           }
         }

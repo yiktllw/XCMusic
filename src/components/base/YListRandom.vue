@@ -33,15 +33,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.main{
+.main {
   width: 18px;
   height: 18px;
   min-width: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  .listrandom-img{
+
+  .listrandom-img {
     fill: rgb(var(--highlight-color-rgb));
   }
 }

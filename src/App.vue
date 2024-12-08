@@ -57,7 +57,9 @@ export default defineComponent({
   },
   methods: {
     handleFullScreen(event: { width: number; height: number }) {
-      const autoScale = getStorage(StorageKey.Setting_Display_FullscreenAutoZoom);
+      const autoScale = getStorage(
+        StorageKey.Setting_Display_FullscreenAutoZoom
+      );
       if (!autoScale) return;
       const { width, height } = event;
       const scalex = width / 1177;

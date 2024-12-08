@@ -15,7 +15,9 @@ interface SubscriberItem {
   type: string;
 }
 
-export class Subscriber<EventsCallbacks extends Record<string, (...args: any) => any>> {
+export class Subscriber<
+  EventsCallbacks extends Record<string, (...args: any) => any>,
+> {
   _subscribes: Array<SubscriberItem> = markRaw([]);
   /**
    *  单个订阅的全局索引
@@ -57,7 +59,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
    */
   updateSubscribe(globalIndex: string | number, func: Function) {
     let index = this._subscribes.findIndex(
-      (item) => item.globalIndex === globalIndex
+      (item) => item.globalIndex === globalIndex,
     );
     if (index !== -1) {
       this._subscribes[index].func = func;
@@ -72,7 +74,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
     /** 需要订阅的事件类型 */
     type: K,
     /** 回调函数 */
-    func: EventsCallbacks[K]
+    func: EventsCallbacks[K],
   ) {
     if (typeof func !== "function") {
       console.error("func is not a function: ", JSON.stringify(func, null, 4));
@@ -87,7 +89,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        JSON.stringify(this.allowedEvents, null, 4)
+        JSON.stringify(this.allowedEvents, null, 4),
       );
       return;
     }
@@ -103,7 +105,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
     // 如果有这个id的订阅
     else {
       let index = arrayWithId.findIndex(
-        (_item: { type: string | undefined }) => _item.type === type
+        (_item: { type: string | undefined }) => _item.type === type,
       );
       if (index === -1) {
         // 如果有这个id的订阅，但是没有这个type的订阅，则直接添加到订阅列表。
@@ -131,7 +133,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        JSON.stringify(this.allowedEvents, null, 4)
+        JSON.stringify(this.allowedEvents, null, 4),
       );
       return;
     }
@@ -141,7 +143,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
         if (item.type === type) {
           let index = this._subscribes.findIndex(
             (_item: { globalIndex: number }) =>
-              _item.globalIndex === item.globalIndex
+              _item.globalIndex === item.globalIndex,
           );
           this._subscribes.splice(index, 1);
         }
@@ -156,7 +158,7 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
     arrayWithId.forEach((item: { globalIndex: number }) => {
       let index = this._subscribes.findIndex(
         (_item: { globalIndex: number }) =>
-          _item.globalIndex === item.globalIndex
+          _item.globalIndex === item.globalIndex,
       );
       this._subscribes.splice(index, 1);
     });
@@ -165,13 +167,16 @@ export class Subscriber<EventsCallbacks extends Record<string, (...args: any) =>
    * 执行某种事件
    * @param {string} type - 要执行的事件类型
    */
-  exec<K extends keyof EventsCallbacks>(type: K, ...args: Parameters<EventsCallbacks[K]>) {
+  exec<K extends keyof EventsCallbacks>(
+    type: K,
+    ...args: Parameters<EventsCallbacks[K]>
+  ) {
     if (!(type in this.allowedEvents)) {
       console.error(
         "type is not in allowedEvents: ",
         type,
         "allowedEvents: ",
-        JSON.stringify(this.allowedEvents, null, 4)
+        JSON.stringify(this.allowedEvents, null, 4),
       );
       return;
     }
