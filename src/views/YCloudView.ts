@@ -57,8 +57,9 @@ export default defineComponent({
         }
       });
     },
-    downloadAll() {
-      User.getAllCloudTracks().then((res) => {
+    async downloadAll() {
+      Message.post("info", "message.getting_playlist_tracks", true);
+      await User.getAllCloudTracks().then((res) => {
         const allTracks = new Tracks({
           url: "/user/cloud",
           tracks: res,
