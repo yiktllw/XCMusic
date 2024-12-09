@@ -14,7 +14,7 @@ import YCustomWindow from "@/components/YWindows/YCustomWindow.vue";
 import YCloseWindow from "@/components/YWindows/YCloseWindow.vue";
 import YEditPlaylistWindow from "@/components/YWindows/YEditPlaylistWindow.vue";
 import { useStore } from "vuex";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
 import {
   IPlaylistCtxData,
@@ -22,7 +22,7 @@ import {
   playlistItems,
   IMenuClick,
 } from "@/dual/YContextMenuItemC";
-import { Comment, Playlist } from "@/utils/api";
+import { Comment, Playlist, Song } from "@/utils/api";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { IConfirm } from "@/utils/globalMsg";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
@@ -351,6 +351,19 @@ export default defineComponent({
         case "song-comment":
           if (!isLocal(arg.target.id)) {
             this.$router.push(`/comment/song/${arg.target.id}`);
+          }
+          break;
+        case "song-download":
+          if (!isLocal(arg.target.id)) {
+            Song.getUrl(arg.target.id, this.setting.download.quality).then(
+              (res) => {
+                this.download.add(
+                  res,
+                  toRaw(arg.target),
+                  this.setting.download.path
+                );
+              }
+            );
           }
           break;
         case "song-delete":
