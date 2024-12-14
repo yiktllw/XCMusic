@@ -28,7 +28,15 @@
           src="@/assets/download.svg"
           style="width: 15px; height: 15px; padding-right: 5px"
         />
-        {{ $t("playlist_view.download") }}
+        {{ $t("playlist_view.download_all") }}
+      </button>
+      <button :tabindex="-1" class="download-button" @click="downloadCurrentPage">
+        <img
+          class="g-icon"
+          src="@/assets/download.svg"
+          style="width: 15px; height: 15px; padding-right: 5px"
+        />
+        {{ $t("playlist_view.download_current_page") }}
       </button>
     </div>
     <YSongsTable

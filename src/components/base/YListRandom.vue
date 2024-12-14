@@ -1,7 +1,7 @@
 <template>
   <!-- 列表随机的图标 -->
   <!-- 使用这种svg形式可以动态调整svg颜色 -->
-  <div class="main">
+  <div class="main" v-bind="$attrs">
     <svg
       id="_图层_1"
       data-name="图层 1"

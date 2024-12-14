@@ -69,6 +69,10 @@ export default defineComponent({
         Message.post("success", "localsongs.downloading", true);
       });
     },
+    downloadCurrentPage() {
+      this.download.addList(this.tracks);
+      Message.post("success", "localsongs.downloading", true);
+    },
     playAll() {
       User.getAllCloudTracks().then((res) => {
         const allTracks = new Tracks({
