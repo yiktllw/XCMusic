@@ -152,13 +152,15 @@ npm run electron:build
 
    5. 在`NeteaseCloudMusicApi/bin`目录下，找到打包的程序，并将其复制到`XCMusic/src-tauri/resources/api`目录下。
 
-2. 运行tauri程序:
+2. 安装Rust开发环境
+
+3. 运行tauri程序:
 
 ```shell
 npm run tauri:serve
 ```
 
-3. 打包为二进制程序:
+4. 打包为二进制程序:
 
 ```shell
 npm run tauri:build
@@ -204,13 +206,13 @@ npm run tauri:build
 4. XC系列01: XCMusic
 <div/>
 
-5. Für "Clara Josephine Schumann".
+3. Für "Clara Josephine Schumann".
 <div/>
 
-6. Prelude for TeXpert Code.
+2. Prelude for TeXpert Code.
 <div/>
 
-7. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
+1. 图标来自于氢原子$ n=3, l=2, m=1 $时的波函数
 
 **[⬆ 回到目录](#目录)**
 

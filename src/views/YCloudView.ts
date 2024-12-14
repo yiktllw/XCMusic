@@ -41,7 +41,7 @@ export default defineComponent({
   },
   methods: {
     fetchTracks(newPage = false) {
-      const limit = 50;
+      const limit = 100;
       User.getCloudInfo({
         cookie: this.login.cookie,
         limit: limit,
