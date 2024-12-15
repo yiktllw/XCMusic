@@ -1,4 +1,4 @@
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
@@ -7,20 +7,24 @@ import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
 import { Message } from "@/dual/YMessageC";
+import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({
   name: "YCloudView",
   setup() {
     const store = useStore();
+    const top_ref = ref<HTMLElement | null>(null);
     return {
       login: store.state.login,
       download: store.state.download,
       player: store.state.player,
+      top_ref: top_ref,
     };
   },
   components: {
     YSongsTable,
     YPage,
+    YLoading,
   },
   mounted() {
     const color = YColor.stringToHexColor("CLOUD");
@@ -30,12 +34,14 @@ export default defineComponent({
   beforeUnmount() {},
   data() {
     return {
+      loading: true,
       tracks: [] as ITrack[],
       page: new YPageC(1),
     };
   },
   watch: {
     "page.current"() {
+      this.loading = true;
       this.fetchTracks();
     },
   },
@@ -51,6 +57,8 @@ export default defineComponent({
           url: "/user/cloud",
           tracks: res.data,
         }).tracks;
+        
+        this.loading = false;
 
         if (newPage) {
           this.page = new YPageC(Math.ceil(res.count / limit));

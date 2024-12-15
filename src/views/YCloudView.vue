@@ -1,7 +1,7 @@
 <template>
   <!--  音乐云盘界面  -->
   <div class="main">
-    <div class="title font-color-main">
+    <div class="title font-color-main" ref="top_ref">
       {{ $t("cloud") }}
     </div>
     <div class="play-buttons">
@@ -30,7 +30,11 @@
         />
         {{ $t("playlist_view.download_all") }}
       </button>
-      <button :tabindex="-1" class="download-button" @click="downloadCurrentPage">
+      <button
+        :tabindex="-1"
+        class="download-button"
+        @click="downloadCurrentPage"
+      >
         <img
           class="g-icon"
           src="@/assets/download.svg"
@@ -45,7 +49,9 @@
       :resortable="false"
       :show-header="false"
       :show-track-popularity="false"
+      v-if="!loading"
     />
+    <YLoading style="margin-top: 100px; margin-bottom: 100px;" v-else="loading" />
     <YPage v-model="page" />
   </div>
 </template>
