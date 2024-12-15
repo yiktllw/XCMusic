@@ -4,7 +4,8 @@
     <div class="title font-color-main">
       {{ $t("subscribed_album") }}
     </div>
-    <YPlaylistBiglist :type="'album'" :playlists="albums" />
+    <YPlaylistBiglist v-if="!loading" :type="'album'" :playlists="albums" />
+    <YLoading style="margin-top: 100px; margin-bottom: 100px" v-else />
     <YPage v-model="page" />
   </div>
 </template>

@@ -6,6 +6,7 @@ import { useStore } from "vuex";
 import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import { YColor } from "@/utils/color";
 import { IBigPlaylist } from "@/dual/YPlaylistList";
+import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({
   name: "YSubscribedAlbumView",
@@ -18,10 +19,12 @@ export default defineComponent({
   components: {
     YPage,
     YPlaylistBiglist,
+    YLoading,
   },
   data() {
     return {
       page: new YPageC(1),
+      loading: true,
       albums: [] as IBigPlaylist[],
     };
   },
@@ -31,6 +34,7 @@ export default defineComponent({
   },
   watch: {
     "page.current"() {
+      this.loading = true;
       this.getUserSubscribedAlbums();
     },
   },
@@ -54,9 +58,11 @@ export default defineComponent({
               size: album.size,
             };
           });
+          this.loading = false;
         })
         .catch((err) => {
           console.error("getUserSubscribedAlbums", err);
+          this.loading = false;
         });
     },
   },
