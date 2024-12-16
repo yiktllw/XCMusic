@@ -4,6 +4,7 @@ import YArtistList from "@/components/list/YArtistList.vue";
 import YSearchLyrics from "@/components/list/YSearchLyrics.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import YPage from "@/components/base/YPage.vue";
+import YLoading from "@/components/base/YLoading.vue";
 import { ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
@@ -46,6 +47,7 @@ export default defineComponent({
     YArtistList,
     YSearchLyrics,
     YPage,
+    YLoading,
   },
   data() {
     return {
@@ -90,6 +92,14 @@ export default defineComponent({
       ],
       // 上次搜索位置
       lastPosition: "song",
+      Loading: {
+        songs: true,
+        albums: true,
+        playlists: true,
+        artists: true,
+        lyrics: true,
+        users: true,
+      },
       songsPage: new YPageC(1),
       albumsPage: new YPageC(1),
       playlistsPage: new YPageC(1),
@@ -106,6 +116,7 @@ export default defineComponent({
     },
     // 搜索歌曲
     async fetchTracks(newPageInstance = true) {
+      this.Loading.songs = true;
       await Search.songs(this.search, this.songsPage.current)
         .then((result) => {
           this.switcher[0].tracks = markRaw(result.songs);
@@ -120,9 +131,11 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchTracks", err);
         });
+      this.Loading.songs = false;
     },
     // 搜索歌单
     async fetchPlaylists(newPageInstance = true) {
+      this.Loading.playlists = true;
       await Search.playlists(this.search, this.playlistsPage.current)
         .then((result) => {
           this.switcher[2].playlists = result.playlists?.map((playlist) => {
@@ -134,7 +147,7 @@ export default defineComponent({
           this.switcher[2].total = result.playlistCount;
           if (newPageInstance) {
             this.playlistsPage = new YPageC(
-              Math.ceil(result.playlistCount / 100),
+              Math.ceil(result.playlistCount / 100)
             );
           }
           this.playlistsPage.onPageChange = () => {
@@ -144,9 +157,11 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchPlaylists", err);
         });
+      this.Loading.playlists = false;
     },
     // 搜索专辑
     async fetchAlbums(newPageInstance = true) {
+      this.Loading.albums = true;
       await Search.albums(this.search, this.albumsPage.current)
         .then((result) => {
           this.switcher[1].playlists = result.albums?.map((album) => {
@@ -166,9 +181,11 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchAlbums", err);
         });
+      this.Loading.albums = false;
     },
     // 搜索歌手
     async fetchArtists(newPageInstance = true) {
+      this.Loading.artists = true;
       await Search.artists(this.search, this.artistsPage.current)
         .then((result) => {
           this.switcher[3].artists = result.artists?.map((artist) => {
@@ -188,9 +205,11 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchArtists", err);
         });
+      this.Loading.artists = false;
     },
     // 搜索歌词
     async fetchLyrics(newPageInstance = true) {
+      this.Loading.lyrics = true;
       await Search.songsWithLyrics(this.search, this.lyricsPage.current)
         .then((result) => {
           this.switcher[4].lyricsList = markRaw(result.songs);
@@ -205,9 +224,11 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchLyrics", err);
         });
+      this.Loading.lyrics = false;
     },
     // 搜索用户
     async fetchUsers(newPageInstance = true) {
+      this.Loading.users = true;
       await Search.users(this.search, this.usersPage.current)
         .then((result) => {
           this.switcher[5].users = result.userprofiles?.map((user) => {
@@ -219,7 +240,7 @@ export default defineComponent({
           this.switcher[5].total = result.userprofileCount;
           if (newPageInstance) {
             this.usersPage = new YPageC(
-              Math.ceil(result.userprofileCount / 100),
+              Math.ceil(result.userprofileCount / 100)
             );
           }
           this.usersPage.onPageChange = () => {
@@ -229,6 +250,7 @@ export default defineComponent({
         .catch((err) => {
           console.log("fetchUsers", err);
         });
+      this.Loading.users = false;
     },
     fetchData(position: string) {
       switch (position) {

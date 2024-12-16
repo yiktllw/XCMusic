@@ -76,7 +76,9 @@
           :showTrackCover="true"
           v-model="switcher[0].tracks"
           :id="'YSearchView.vue'"
+          v-if="!Loading.songs"
         />
+        <YLoading v-else />
         <YPage v-model="songsPage" />
       </div>
       <!-- 专辑 -->
@@ -85,27 +87,41 @@
           :playlists="switcher[1].playlists"
           stickyTop="50px"
           type="album"
+          v-if="!Loading.albums"
         />
+        <YLoading v-else />
         <YPage v-model="albumsPage" />
       </div>
       <!-- 歌单 -->
       <div class="playlists" v-else-if="position === 'playlist'">
-        <YPlaylistList :playlists="switcher[2].playlists" stickyTop="50px" />
+        <YPlaylistList
+          :playlists="switcher[2].playlists"
+          stickyTop="50px"
+          v-if="!Loading.playlists"
+        />
+        <YLoading v-else />
         <YPage v-model="playlistsPage" />
       </div>
       <!-- 歌手 -->
       <div class="artists" v-else-if="position === 'artist'">
-        <YArtistList :artists="switcher[3].artists" />
+        <YArtistList :artists="switcher[3].artists" v-if="!Loading.artists" />
+        <YLoading v-else />
         <YPage v-model="artistsPage" />
       </div>
       <!-- 歌词 -->
       <div class="lyrics" v-else-if="position === 'lyric'">
-        <YSearchLyrics v-model="switcher[4].lyricsList" />
+        <YSearchLyrics v-model="switcher[4].lyricsList" v-if="!Loading.lyrics" />
+        <YLoading v-else />
         <YPage v-model="lyricsPage" />
       </div>
       <!-- 用户 -->
       <div class="users" v-else-if="position === 'user'">
-        <YArtistList :artists="switcher[5].users" type="user" />
+        <YArtistList
+          :artists="switcher[5].users"
+          type="user"
+          v-if="!Loading.users"
+        />
+        <YLoading v-else />
         <YPage v-model="usersPage" />
       </div>
     </div>
