@@ -138,7 +138,7 @@ export default defineComponent({
       } catch (error) {
         Message.post(
           "error",
-          this.$t("message.setting_view.zoom_range_50_200"),
+          this.$t("message.setting_view.zoom_range_50_200")
         );
       }
     },
@@ -220,7 +220,7 @@ export default defineComponent({
       } else {
         Message.post(
           "info",
-          this.$t("message.setting_view.download.only_desktop"),
+          this.$t("message.setting_view.download.only_desktop")
         );
       }
     },
@@ -232,15 +232,15 @@ export default defineComponent({
       if (!window.electron?.isElectron) return;
       if (position === "default") {
         window.electron.shell.openExternal(
-          "https://github.com/yiktllw/XCMusic",
+          "https://github.com/yiktllw/XCMusic"
         );
       } else if (position === "issues") {
         window.electron.shell.openExternal(
-          "https://github.com/yiktllw/XCMusic/issues",
+          "https://github.com/yiktllw/XCMusic/issues"
         );
       } else if (position === "license") {
         window.electron.shell.openExternal(
-          "https://github.com/yiktllw/XCMusic/blob/master/LICENSE",
+          "https://github.com/yiktllw/XCMusic/blob/master/LICENSE"
         );
       }
     },
@@ -261,7 +261,7 @@ export default defineComponent({
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         this.devices = devices.filter(
-          (device) => device.kind === "audiooutput",
+          (device) => device.kind === "audiooutput"
         );
         this.selectedDevice = this.player.device;
         // console.log('Audio device Ids:', this.devices.map(device => device.deviceId));
@@ -299,14 +299,14 @@ export default defineComponent({
         GlobalMsgEvents.CloseCustomWindow,
         () => {
           this.fetchThemes();
-        },
+        }
       );
     },
     fetchThemes() {
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {
           return item.data;
-        },
+        }
       );
       this.themes = themes.concat(userCustomThemes);
     },
@@ -342,7 +342,7 @@ export default defineComponent({
       };
       const savedPath = await window.electron.ipcRenderer.invoke(
         "save-json",
-        data,
+        data
       );
       if (savedPath) {
         Message.post("success", this.$t("setting_view.about.export_success"));
@@ -359,7 +359,7 @@ export default defineComponent({
       };
       const savedPath = await window.electron.ipcRenderer.invoke(
         "save-json",
-        data,
+        data
       );
       if (savedPath) {
         Message.post("success", this.$t("setting_view.about.export_success"));
@@ -401,7 +401,7 @@ export default defineComponent({
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {
           return item.data;
-        },
+        }
       );
       this.themes = this.themes.concat(userCustomThemes);
       this.zoom = this.setting.display.zoom * 100;
@@ -427,7 +427,7 @@ export default defineComponent({
     handleScroll(event: Event) {
       if (event.type !== "scroll") return;
       let index = 0;
-      const scrollTop = this.scroll!.$el.scrollTop;
+      const scrollTop = this.scroll!.$refs.main.scrollTop;
       for (let i = this.rectData.length - 1; i >= 0; i--) {
         if (scrollTop <= this.rectData[i] - this.rectData[0] + 30) {
           index = i;
