@@ -9,10 +9,9 @@
 import axios from "axios";
 const fs = require("fs");
 const path = require("path");
-const NodeID3 = require("node-id3");
-import flac from "flac-metadata";
 import { ITrack } from "@/utils/tracks";
 import { BrowserWindow } from "electron";
+import { File, IPicture, ByteVector, PictureType } from "node-taglib-sharp";
 
 export interface IDownloadProgress {
   track: ITrack;
@@ -29,6 +28,7 @@ export class Download {
     track: ITrack,
     downloadDir: string,
     win: BrowserWindow | null,
+    lrc?: string
   ): Promise<string> {
     if (!fs.existsSync(downloadDir)) {
       // throw new Error('Invalid download directory');
@@ -62,7 +62,7 @@ export class Download {
         if (win) {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) /
-              (progressEvent.total || progressEvent.loaded),
+              (progressEvent.total || progressEvent.loaded)
           );
           const progress: IDownloadProgress = {
             track: track,
@@ -79,92 +79,34 @@ export class Download {
       writer.on("finish", async () => {
         fs.renameSync(tempFilePath, outputFilePath);
         // 如果文件是 mp3 或 flac，嵌入歌曲元数据
-        if (fileExtension === "mp3") {
-          let coverBuffer = null;
-          if (coverUrl) {
-            const coverResponse = await axios({
-              method: "get",
-              url: coverUrl,
-              responseType: "arraybuffer",
-              family: 4, // 使用 IPv4
-              timeout: 10000, // 设置超时时间为10秒
-            });
-            coverBuffer = Buffer.from(coverResponse.data);
-          }
+        if (fileExtension === "flac" || fileExtension === "mp3") {
+          const musicFile = File.createFromPath(outputFilePath);
 
-          const tags = {
-            title: name,
-            artist: artist,
-            album: album,
-            APIC: {
-              mime: "image/jpeg", // MIME 类型可以是 'image/jpeg' 或 'image/png'
-              type: 3, // 3 代表封面图像
-              description: "Cover",
-              imageBuffer: coverBuffer,
-            }, // APIC 用于封面图片
+          musicFile.tag.album = album;
+          musicFile.tag.title = name;
+          musicFile.tag.performers = [artist];
+
+          const coverResponse = await axios({
+            method: "get",
+            url: coverUrl,
+            responseType: "arraybuffer",
+            family: 4, // 使用 IPv4
+            timeout: 10000, // 设置超时时间为10秒
+          });
+          const picData = ByteVector.fromByteArray(coverResponse.data);
+          const pic: IPicture = {
+            mimeType: "image/jpeg",
+            type: PictureType.FrontCover,
+            data: picData,
+            description: "Cover",
+            filename: "",
           };
+          musicFile.tag.pictures = [pic];
+          
+          if (lrc) musicFile.tag.lyrics = lrc;
 
-          NodeID3.write(tags, outputFilePath);
-          resolve(outputFilePath);
-        }
-        // 如果文件是 flac，嵌入歌曲元数据
-        else if (fileExtension === "flac") {
-          const vendor = "reference libFLAC 1.2.1 20070917"; // 可选的供应商信息
-          const comments = [
-            `ARTIST=${artist}`,
-            `TITLE=${name}`,
-            `ALBUM=${album}`,
-          ];
-
-          const reader = fs.createReadStream(outputFilePath);
-          const writer = fs.createWriteStream(
-            outputFilePath.replace(".flac", "-updated.flac"),
-          );
-          const processor = new flac.Processor();
-
-          let mdbVorbis: flac.data.MetaDataBlockVorbisComment | null = null;
-
-          processor.on("preprocess", function (mdb) {
-            // 移除现有的 VORBIS_COMMENT 块（如果存在）
-            if (mdb.type === flac.Processor.MDB_TYPE_VORBIS_COMMENT) {
-              mdb.remove();
-            }
-            // 准备将新的 VORBIS_COMMENT 块作为最后一个元数据块添加
-            if (mdb.isLast) {
-              mdb.isLast = false;
-              mdbVorbis = flac.data.MetaDataBlockVorbisComment.create(
-                true,
-                vendor,
-                comments,
-              );
-            }
-          });
-
-          processor.on("postprocess", function (this: flac.Processor, mdb) {
-            if (mdbVorbis) {
-              // 将新的 VORBIS_COMMENT 块作为最后一个元数据块添加
-              this.push(mdbVorbis.publish());
-            }
-          });
-
-          reader.pipe(processor).pipe(writer);
-
-          writer.on("finish", () => {
-            // 如果目标文件存在，先删除
-            if (fs.existsSync(outputFilePath)) {
-              fs.unlinkSync(outputFilePath);
-            }
-            // 替换原始文件为更新后的文件
-            fs.renameSync(
-              outputFilePath.replace(".flac", "-updated.flac"),
-              outputFilePath,
-            );
-            resolve(outputFilePath);
-          });
-
-          writer.on("error", (err: Error) => {
-            console.error("Error writing FLAC metadata:", err);
-          });
+          musicFile.save();
+          musicFile.dispose();
         }
 
         resolve(outputFilePath);

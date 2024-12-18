@@ -138,11 +138,11 @@ ipcMain.handle("open-json", async (): Promise<null | string> => {
 
 ipcMain.on(
   "download-song",
-  async (event, songUrl: string, track: ITrack, downloadDir: string) => {
+  async (event, songUrl: string, track: ITrack, downloadDir: string, lrc?: string) => {
     const win = getCurrentWindow();
     try {
       // 下载歌曲文件
-      const filePath = await Download.song(songUrl, track, downloadDir, win);
+      const filePath = await Download.song(songUrl, track, downloadDir, win, lrc);
       event.reply("download-song-reply", filePath, {
         filePath: filePath,
         track: track,

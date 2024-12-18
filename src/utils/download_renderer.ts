@@ -10,10 +10,11 @@ import indexDB from "@/utils/indexDB";
 import { Subscriber } from "@/utils/subscribe";
 import { ITrack } from "@/utils/tracks";
 import { IDownloadProgress } from "@/utils/download";
-import { Song } from "@/utils/api";
+import { Lyrics, Song } from "@/utils/api";
 import { getDownloadDirectory } from "@/utils/setting";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { DownloadEvents } from "@/dual/download_renderer";
+import { toRaw } from "vue";
 
 export interface IDownloadedSong {
   id: number;
@@ -114,16 +115,19 @@ export class Download {
   /**
    * 添加单曲下载任务
    */
-  add(url: string, track: ITrack, downloadDir: string) {
+  async add(url: string, track: ITrack, downloadDir: string) {
     if (!window.electron?.isElectron) {
-      console.error("Not in Electron environment");
+      console.error("Not in desktop environment");
       return;
     }
     if (this.downloading.some((item) => item.track.id === track.id)) {
       console.error("Song is already downloading: ", { ...track });
       return;
     }
-    window.electron.ipcRenderer.send("download-song", url, track, downloadDir);
+    
+    const lrc = await Lyrics.getLrcStr(track.id);
+
+    window.electron.ipcRenderer.send("download-song", url, toRaw(track), downloadDir, lrc);
     this.downloading.push({
       track: track,
       percent: 0,
