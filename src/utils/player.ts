@@ -1003,7 +1003,7 @@ export class Player {
         const fileUrl = `file://${song.path.replace(/\\/g, "/")}`;
         return { url: fileUrl };
       } else {
-        Message.post("error", "player.local_file_not_found");
+        Message.post("error", "local_file_not_found");
         if (song) store.state.download.delete(song.id);
       }
     }
