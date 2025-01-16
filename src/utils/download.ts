@@ -18,6 +18,26 @@ export interface IDownloadProgress {
   percent: number;
 }
 
+export interface IDownloadTask {
+  track: ITrack;
+  /**
+   * 下载状态: pending: 等待下载; downloading: 正在下载; paused: 暂停; done: 下载完成; error: 下载出错.
+   */
+  status: "pending" | "downloading" | "paused" | "done" | "error";
+  /**
+   * 用于取消、暂停下载的 token
+   */
+  cancelToken: any;
+  /**
+   * 已下载的字节数, 用于断点续传
+   */
+  downloadedBytes: number;
+  /**
+   * 下载进度, 0-100
+   */
+  percent: number;
+}
+
 export class Download {
   /**
    * 下载歌曲文件并保存到本地
@@ -102,7 +122,7 @@ export class Download {
             filename: "",
           };
           musicFile.tag.pictures = [pic];
-          
+
           if (lrc) musicFile.tag.lyrics = lrc;
 
           musicFile.save();
