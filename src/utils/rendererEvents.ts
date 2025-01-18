@@ -10,6 +10,8 @@ import { ITrack } from "@/utils/tracks";
 import * as fs from "fs";
 import * as path from "path";
 import { ISaveJSONData } from "@/dual/YSettingView";
+import { setProxy } from "@/utils/userProxy";
+import { ProxyConfig } from "@/dual/userProxy.interface";
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -157,4 +159,8 @@ ipcMain.on("open-at-login", (event, autoLaunch) => {
   app.setLoginItemSettings({
     openAtLogin: autoLaunch,
   });
+});
+
+ipcMain.on("set-proxy", (event, proxyConfig: ProxyConfig) => {
+  setProxy(proxyConfig);
 });

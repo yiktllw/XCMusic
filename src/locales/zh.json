@@ -91,7 +91,8 @@
 			"appearance": "外观",
 			"download": "下载",
 			"normal": "常规",
-			"play": "播放"
+			"play": "播放",
+			"tools": "工具"
 		}
 	},
 	"local_music": "本地音乐",
@@ -313,6 +314,26 @@
 			"dark_high_contrast": "暗色高对比度",
 			"light": "亮色",
 			"light_high_contrast": "亮色高对比度"
+		},
+		"tools": {
+			"proxy": {
+				"apply": "应用",
+				"error": "设置代理失败",
+				"example_port": "例如: 7890",
+				"example_server": "例如: 127.0.0.1",
+				"http": "HTTP代理",
+				"none": "不使用代理",
+				"only_desktop": "此功能仅在桌面端有效",
+				"optional": "可选",
+				"password": "密码",
+				"port": "端口",
+				"server": "服务器",
+				"socks4": "SOCKS4代理",
+				"socks5": "SOCKS5代理",
+				"success": "设置代理成功",
+				"title": "代理",
+				"username": "用户名"
+			}
 		},
 		"work_after_reload_window": "重新加载窗口后生效",
 		"work_after_restart_app": "重启应用后生效",

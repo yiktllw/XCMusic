@@ -91,7 +91,8 @@
 			"appearance": "Appearance",
 			"download": "Download",
 			"normal": "Normal",
-			"play": "Play"
+			"play": "Play",
+			"tools": "Tools"
 		}
 	},
 	"local_music": "Local Musics",
@@ -313,6 +314,26 @@
 			"dark_high_contrast": "Dark High Contrast",
 			"light": "Light",
 			"light_high_contrast": "Light High Contrast"
+		},
+		"tools": {
+			"proxy": {
+				"apply": "Apply",
+				"error": "Failed to apply proxy settings",
+				"example_port": "Example: 7890",
+				"example_server": "Example: 127.0.0.1",
+				"http": "HTTP",
+				"none": "None",
+				"only_desktop": "The proxy feature is only effective on desktop",
+				"optional": "Optional",
+				"password": "Password",
+				"port": "Port",
+				"server": "Server",
+				"socks4": "SOCKS4",
+				"socks5": "SOCKS5",
+				"success": "Successfully applied proxy settings",
+				"title": "Proxy",
+				"username": "Username"
+			}
 		},
 		"work_after_reload_window": "The changes will take effect after the window is reloaded.",
 		"work_after_restart_app": "The changes will take effect after the app is restarted.",

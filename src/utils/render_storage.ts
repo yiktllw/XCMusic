@@ -4,6 +4,7 @@
  * 主要包装了localStorage，用于将数据JSON化，以防类型丢失
  *---------------------------------------------------------------*/
 
+import { ProxyConfig } from "@/dual/userProxy.interface";
 import { Theme1, Theme2 } from "./theme";
 import { ITrack } from "./tracks";
 
@@ -68,6 +69,8 @@ export enum StorageKey {
   Setting_TitleBar_CloseButton = "setting.titleBar.closeButton",
   /** 设置-标题栏-关闭时总是询问 */
   Setting_TitleBar_CloseAlwaysAsk = "setting.titleBar.closeAlwaysAsk",
+  /** 设置-工具-代理 */
+  Setting_Tools_Proxy = "setting.tool.proxy",
 }
 
 export type StorageMap = {
@@ -123,6 +126,7 @@ export type StorageMap = {
   [StorageKey.Setting_System_OpenAtLogin]: boolean;
   [StorageKey.Setting_TitleBar_CloseButton]: "quit" | "minimize";
   [StorageKey.Setting_TitleBar_CloseAlwaysAsk]: boolean;
+  [StorageKey.Setting_Tools_Proxy]: ProxyConfig;
 };
 
 interface IData {

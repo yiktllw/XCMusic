@@ -7,6 +7,7 @@
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
+import { ProxyConfig } from "@/dual/userProxy.interface";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { Theme1, Theme2, themes } from "@/utils/theme";
 let fs: any, path: any, os: any;
@@ -23,7 +24,7 @@ type SettingCatagory = {
     value: any;
     /** 设置项的默认值(暂未使用) */
     default: any;
-    /** 检验器，验证值是否有效 */
+    /** 检验器，验证值是否有效，若有效时，会执行对应的操作 */
     validation: (value: any) => boolean;
     /** 更好支持数字类型 */
     type?: "number";
@@ -104,10 +105,16 @@ export interface ISettings {
     /** 是否 总是询问关闭按钮行为 */
     closeAlwaysAsk: boolean;
   };
+  /** 工具设置 */
+  tools: {
+    /** 代理设置 */
+    proxy: ProxyConfig;
+  };
   /** 系统 */
   system: {
     /** 开机自启动 */
     openAtLogin: boolean;
+    /** 禁用硬件加速 */
     disableGpuAcceleration: boolean;
   };
 }
@@ -416,6 +423,49 @@ export const settingGroup: SettingGroup = {
       },
     },
   },
+  tools: {
+    proxy: {
+      value: getStorage(StorageKey.Setting_Tools_Proxy) ?? {
+        mode: "none",
+        server: "",
+        username: "",
+        password: "",
+      },
+      default: {
+        mode: "none",
+        server: "",
+        username: "",
+        password: "",
+      },
+      validation: (value: ProxyConfig) => {
+        let valid =
+          typeof value === "object" &&
+          typeof value.mode === "string" &&
+          ["none", "http", "socks4", "socks5", "browser"].includes(
+            value.mode
+          ) &&
+          typeof value.server === "string" &&
+          (value.mode === "none" || value.server !== "") &&
+          typeof value.username === "string" &&
+          typeof value.password === "string";
+        if (value.mode !== "none") {
+          try {
+            new URL(value.server);
+          } catch (e) {
+            valid = false;
+          }
+        }
+        if (valid) {
+          setStorage(StorageKey.Setting_Tools_Proxy, value);
+          // 值有效时，设置代理
+          if (window.electron?.isElectron) {
+            window.electron.ipcRenderer.send("set-proxy", value);
+          }
+        }
+        return valid;
+      },
+    },
+  },
   system: {
     openAtLogin: {
       value: getStorage(StorageKey.Setting_System_OpenAtLogin) ?? false,
@@ -456,7 +506,7 @@ export const settingGroup: SettingGroup = {
           setStorage(StorageKey.Setting_System_disableGpuAcceleration, value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send(
-              value ? "disable-gpu" : "enable-gpu",
+              value ? "disable-gpu" : "enable-gpu"
             );
           }
         }

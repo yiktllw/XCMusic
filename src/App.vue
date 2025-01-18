@@ -42,6 +42,12 @@ export default defineComponent({
     this.$i18n.locale = this.setting.display.language;
     // 初始化用来控制滚动位置的全局变量
     window.savedPositions = {};
+    // 初始化代理
+    const proxy = getStorage(StorageKey.Setting_Tools_Proxy);
+    if (proxy && proxy.mode !== "none") {
+      console.log("proxy: ", proxy);
+      window.electron.ipcRenderer.send("set-proxy", proxy);
+    }
   },
   beforeUnmount() {
     if (window.electron?.isElectron) {

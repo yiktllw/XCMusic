@@ -14,6 +14,8 @@ import {
 import { ISaveJSONData } from "@/dual/YSettingView";
 import YScroll from "@/components/base/YScroll.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { ProxyConfig } from "@/dual/userProxy.interface";
+
 /** 用于生成设置界面的背景色 */
 const str = "setting_view";
 
@@ -75,6 +77,12 @@ export default defineComponent({
         {
           num: 0,
           showNum: false,
+          position: "tools",
+          display: "header.setting_view.tools",
+        },
+        {
+          num: 0,
+          showNum: false,
           position: "about",
           display: "header.setting_view.about",
         },
@@ -103,7 +111,19 @@ export default defineComponent({
       hideInSidebar_download: false as boolean,
       hideInSidebar_cloud: false as boolean,
       rectData: [] as number[],
+      /** 禁用硬件加速 */
       disableGpu: false,
+      /** 代理 */
+      proxy: {
+        mode: "none",
+        server: "",
+        username: "",
+        password: "",
+      } as ProxyConfig,
+      /** 代理服务器地址 */
+      proxy_host: "",
+      /** 代理服务器端口 */
+      proxy_port: "",
     };
   },
   methods: {
@@ -333,6 +353,19 @@ export default defineComponent({
       this.setting.display.hideInSidebar = hideInSidebar;
       this.globalMsg.post(GlobalMsgEvents.RefreshSidebar);
     },
+    setProxy() {
+      if (window.electron?.isElectron) {
+        try {
+          this.proxy.server = `${this.proxy_host}:${this.proxy_port}`;
+          this.setting.tools.proxy = this.proxy;
+          Message.post("success", this.$t("setting_view.tools.proxy.success"));
+        } catch (error) {
+          Message.post("error", this.$t("setting_view.tools.proxy.error"));
+        }
+      } else {
+        Message.post("info", this.$t("setting_view.tools.proxy.only_desktop"));
+      }
+    },
     async exportToJSON_Setting() {
       if (!window.electron?.isElectron) return;
       const json = exportToJSON(this.setting);
@@ -421,6 +454,18 @@ export default defineComponent({
         this[`hideInSidebar_${item}`] = true;
       });
       this.disableGpu = this.setting.system.disableGpuAcceleration;
+      this.proxy = this.setting.tools.proxy;
+      if (this.proxy.mode !== "none") {
+        try {
+          const proxyurl = new URL(this.proxy.server);
+          this.proxy_host = proxyurl.hostname;
+          this.proxy_port = proxyurl.port;
+        } catch (error) {
+          console.warn("Error parsing proxy server:", error);
+          this.proxy_host = "";
+          this.proxy_port = "";
+        }
+      }
       this.getDevices();
       this.initRectData();
     },

@@ -468,6 +468,83 @@
             </div>
           </div>
         </div>
+        <div class="tools item" id="tools">
+          <div class="tools-title item-title">
+            {{ $t("header.setting_view.tools") }}
+          </div>
+          <div class="tools-content item-content">
+            <div class="content-item item-tools-proxy">
+              <div class="content-item-title">
+                {{ $t("setting_view.tools.proxy.title") }}
+              </div>
+              <div class="content-item-content">
+                <div class="proxy-choice">
+                  <select v-model="proxy.mode">
+                    <option value="none">
+                      {{ $t("setting_view.tools.proxy.none") }}
+                    </option>
+                    <option value="http">
+                      {{ $t("setting_view.tools.proxy.http") }}
+                    </option>
+                    <option value="socks4">
+                      {{ $t("setting_view.tools.proxy.socks4") }}
+                    </option>
+                    <option value="socks5">
+                      {{ $t("setting_view.tools.proxy.socks5") }}
+                    </option>
+                  </select>
+                  <div class="proxy-apply" @click="setProxy">
+                    {{ $t("setting_view.tools.proxy.apply") }}
+                  </div>
+                </div>
+                <div class="proxy-content" v-if="proxy.mode !== 'none'">
+                  <div class="proxy-line1 proxy-line">
+                    <span class="proxy-content-item-title">
+                      {{ $t("setting_view.tools.proxy.server") }}
+                    </span>
+                    <input
+                      class="proxy-input proxy-host"
+                      type="text"
+                      v-model="proxy_host"
+                      :placeholder="
+                        $t('setting_view.tools.proxy.example_server')
+                      "
+                    />
+                    <span class="proxy-content-item-title">
+                      {{ $t("setting_view.tools.proxy.port") }}
+                    </span>
+                    <input
+                      class="proxy-input proxy-port"
+                      type="text"
+                      v-model="proxy_port"
+                      :placeholder="$t('setting_view.tools.proxy.example_port')"
+                    />
+                  </div>
+                  <div class="proxy-line2 proxy-line">
+                    <span class="proxy-content-item-title">
+                      {{ $t("setting_view.tools.proxy.username") }}
+                    </span>
+                    <input
+                      class="proxy-input proxy-username"
+                      type="text"
+                      v-model="proxy.username"
+                      :placeholder="$t('setting_view.tools.proxy.optional')"
+                    />
+                    <span class="proxy-content-item-title">
+                      {{ $t("setting_view.tools.proxy.password") }}
+                    </span>
+                    <input
+                      class="proxy-input proxy-password"
+                      type="password"
+                      v-model="proxy.password"
+                      :placeholder="$t('setting_view.tools.proxy.optional')"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="about item" id="about">
           <div class="about-title item-title">
             {{ $t("header.setting_view.about") }}
@@ -676,13 +753,14 @@
 
             select {
               // width: 210px;
+              height: 28;
               min-width: 100px;
               padding: 2px 2px !important;
               border: 1px solid rgba(var(--foreground-color-rgb), $alpha: 0.3);
               background-color: transparent;
               color: var(--font-color-high);
               font-size: 16px;
-              border-radius: 5px;
+              border-radius: 20px;
               padding: 0 10px;
               margin-right: 10px;
               cursor: pointer;
@@ -694,6 +772,34 @@
 
               &:focus {
                 outline: none;
+              }
+            }
+
+            .proxy-choice {
+              display: flex;
+              flex-direction: row;
+
+              .proxy-apply {
+                cursor: pointer;
+                margin-left: 10px;
+                color: var(--font-color-high);
+
+                &:hover {
+                  color: var(--font-color-main);
+                }
+              }
+            }
+            
+            .proxy-content {
+              .proxy-line{
+                margin-top: 10px;
+              }
+              
+              .proxy-input {
+                margin: 0px 15px 0px 10px;
+                border-radius: 20px;
+                height: 25px;
+                padding: 0px 10px;
               }
             }
 
