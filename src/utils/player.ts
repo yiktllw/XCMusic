@@ -90,7 +90,7 @@ export class Player {
     | "jymaster" = "exhigh";
   /** 是否开启音量均衡功能 */
   _volume_leveling: boolean =
-    getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? false;
+    getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? true;
   /** 歌词 */
   _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
   /** 点歌功能 */
