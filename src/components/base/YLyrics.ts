@@ -101,8 +101,8 @@ export default defineComponent({
     if (wheelTimeout) clearTimeout(wheelTimeout);
     if (this.noScrollTimeout) clearTimeout(this.noScrollTimeout);
 
-    this.ctx?.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
-    this.canvas?.parentNode?.removeChild(this.canvas);
+    // this.ctx?.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+    // this.canvas?.parentNode?.removeChild(this.canvas);
     this.canvas = null;
     this.ctx = null;
   },
