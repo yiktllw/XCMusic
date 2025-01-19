@@ -23,6 +23,28 @@ import { isLocal } from "@/utils/localTracks_renderer";
 import { LrcItem, LrcItem2, Lyrics as _Lyrics, YrcItem } from "@/utils/lyric";
 import { UserPlaylist } from "@/dual/login";
 import { IPlaylist as IPlaylist_ } from "@/dual/YPlaylistList";
+import { ProxyConfig } from "@/dual/userProxy.interface";
+
+let proxyUrl: URL | undefined = undefined;
+
+export function setProxyUrl(proxyConfig: ProxyConfig) {
+  // `none` 表示不使用代理
+  if (proxyConfig.mode === "none") {
+    proxyUrl = undefined;
+    console.log("代理已禁用");
+  }
+  // 使用 HTTP 代理 / SOCKS 代理（SOCKS4 或 SOCKS5）
+  else {
+    try {
+      proxyUrl = new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
+      console.log(
+        `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyUrl.toString()}`
+      );
+    } catch (error) {
+      console.error("代理服务器地址无效");
+    }
+  }
+}
 
 // 创建 Axios 实例
 const apiClient = axios.create({
@@ -63,9 +85,13 @@ export async function useApi(
   /** api的相对路径 */
   relativePath: string,
   /** 剩余参数对象 */
-  params?: Object
+  params?: { [key: string]: any }
 ): Promise<any> {
   try {
+    if (proxyUrl) {
+      params = params || {};
+      params.proxy = proxyUrl.toString();
+    }
     const response = await apiClient.get(relativePath, { params });
     return response.data;
   } catch (error) {

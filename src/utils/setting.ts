@@ -10,6 +10,7 @@
 import { ProxyConfig } from "@/dual/userProxy.interface";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { Theme1, Theme2, themes } from "@/utils/theme";
+import { setProxyUrl } from "@/utils/api";
 let fs: any, path: any, os: any;
 
 if (window.electron?.isElectron) {
@@ -450,7 +451,7 @@ export const settingGroup: SettingGroup = {
           typeof value.password === "string";
         if (value.mode !== "none") {
           try {
-            new URL(value.server);
+            new URL(`${value.mode}://${value.server}`);
           } catch (e) {
             valid = false;
           }
@@ -459,6 +460,7 @@ export const settingGroup: SettingGroup = {
           setStorage(StorageKey.Setting_Tools_Proxy, value);
           // 值有效时，设置代理
           if (window.electron?.isElectron) {
+            setProxyUrl(value);
             window.electron.ipcRenderer.send("set-proxy", value);
           }
         }
