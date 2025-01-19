@@ -457,7 +457,7 @@ export default defineComponent({
       this.proxy = this.setting.tools.proxy;
       if (this.proxy.mode !== "none") {
         try {
-          const proxyurl = new URL(this.proxy.server);
+          const proxyurl = new URL(`${this.proxy.mode}://${this.proxy.server}`);
           this.proxy_host = proxyurl.hostname;
           this.proxy_port = proxyurl.port;
         } catch (error) {

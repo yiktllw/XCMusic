@@ -20,7 +20,7 @@ export function setProxy(proxyConfig: ProxyConfig) {
   else {
     let proxyUrl: URL;
     try {
-      proxyUrl = new URL(proxyConfig.server);
+      proxyUrl = new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
     } catch (error) {
       console.error("代理服务器地址无效");
       return;
@@ -29,7 +29,7 @@ export function setProxy(proxyConfig: ProxyConfig) {
     if (proxyConfig.username && proxyConfig.password) {
       proxyAuth = `${proxyConfig.username}:${proxyConfig.password}@`;
     }
-    let proxyRule = `${proxyConfig.mode}=${proxyAuth}http://${proxyUrl.host}`;
+    let proxyRule = ` ${proxyConfig.server}`;
     session.defaultSession.setProxy({ proxyRules: proxyRule }).then(() => {
       console.log(
         `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyConfig.server}`
