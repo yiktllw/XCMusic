@@ -7,6 +7,7 @@ import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import { Doc } from "@/utils/document";
 import { getStorage, StorageKey } from "@/utils/render_storage";
+import { setProxyUrl } from "@/utils/api";
 
 export default defineComponent({
   name: "App",
@@ -46,6 +47,7 @@ export default defineComponent({
     const proxy = getStorage(StorageKey.Setting_Tools_Proxy);
     if (proxy && proxy.mode !== "none") {
       console.log("proxy: ", proxy);
+      setProxyUrl(proxy);
       window.electron.ipcRenderer.send("set-proxy", proxy);
     }
   },
