@@ -25,23 +25,24 @@ import { UserPlaylist } from "@/dual/login";
 import { IPlaylist as IPlaylist_ } from "@/dual/YPlaylistList";
 import { ProxyConfig } from "@/dual/userProxy.interface";
 
-let proxyUrl: URL | undefined = undefined;
+let proxy: string | undefined = undefined;
 
 export function setProxyUrl(proxyConfig: ProxyConfig) {
   // `none` 表示不使用代理
   if (proxyConfig.mode === "none") {
-    proxyUrl = undefined;
+    proxy = undefined;
     console.log("代理已禁用");
   }
   // 使用 HTTP 代理 / SOCKS 代理（SOCKS4 或 SOCKS5）
   else {
     try {
-      proxyUrl = new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
-      console.log(
-        `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyUrl.toString()}`
-      );
+      // 验证代理的正确性
+      proxy = new URL(`${proxyConfig.mode}://${proxyConfig.server}`).toString();
+      if (proxyConfig.username && proxyConfig.password)
+        proxy = `${proxyConfig.mode}://${proxyConfig.username}:${proxyConfig.password}@${proxyConfig.server}`;
+      console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxy}`);
     } catch (error) {
-      console.error("代理服务器地址无效");
+      console.error("代理服务器地址无效: ", proxyConfig);
     }
   }
 }
@@ -88,9 +89,9 @@ export async function useApi(
   params?: { [key: string]: any }
 ): Promise<any> {
   try {
-    if (proxyUrl) {
+    if (proxy) {
       params = params || {};
-      params.proxy = proxyUrl.toString();
+      params.proxy = proxy;
     }
     const response = await apiClient.get(relativePath, { params });
     return response.data;

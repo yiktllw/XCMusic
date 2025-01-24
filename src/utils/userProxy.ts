@@ -22,17 +22,17 @@ export function setProxy(proxyConfig: ProxyConfig) {
     try {
       proxyUrl = new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
     } catch (error) {
-      console.error("代理服务器地址无效");
+      console.error("代理服务器地址无效: ", proxyConfig);
       return;
     }
     let proxyAuth = "";
     if (proxyConfig.username && proxyConfig.password) {
       proxyAuth = `${proxyConfig.username}:${proxyConfig.password}@`;
     }
-    let proxyRule = ` ${proxyConfig.server}`;
+    let proxyRule = `${proxyConfig.mode}://${proxyAuth}${proxyConfig.server}`;
     session.defaultSession.setProxy({ proxyRules: proxyRule }).then(() => {
       console.log(
-        `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyConfig.server}`
+        `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyRule}`
       );
     });
   }
