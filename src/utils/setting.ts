@@ -2,8 +2,8 @@
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * setting.ts 为渲染进程中，处理设置的工具
  * Setting类会在vuex store中被实例化
- * Setting类封闭了设置内容，提供了导入导出功能
- * Settings接口用于获取智能提示
+ * Setting类封装了设置内容，提供了导入导出功能
+ * ISettings接口用于获取智能提示
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
@@ -25,7 +25,7 @@ type SettingCatagory = {
     value: any;
     /** 设置项的默认值(暂未使用) */
     default: any;
-    /** 检验器，验证值是否有效，若有效时，会执行对应的操作 */
+    /** 检验器，验证值是否有效，若有效，会执行对应的操作 */
     validation: (value: any) => boolean;
     /** 更好支持数字类型 */
     type?: "number";
@@ -121,7 +121,7 @@ export interface ISettings {
 }
 
 /**
- * 设置类，用于实例化设置，内容与Settings接口一致
+ * 设置对象，用于实例化设置，内容与ISettings接口一致
  */
 export const settingGroup: SettingGroup = {
   play: {

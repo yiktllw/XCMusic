@@ -194,12 +194,15 @@
       margin: auto;
 
       .track-cover {
+        display: flex;
         width: 40vh;
+        height: 40vh;
         max-width: 40vw;
+        max-height: 40vw;
+        align-items: center;
 
         img {
           width: 100%;
-          height: 100%;
           border-radius: 10px;
         }
       }
