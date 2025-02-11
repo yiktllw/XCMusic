@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><svg id="_图层_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1224.3 1083.92"><defs><style>.cls-1{fill:#dca452;stroke-width:0px;}.cls-2{fill:#fff;font-family:AdobeSongStd-Light-GBpc-EUC-H, 'Adobe Song Std';font-size:942.6px;font-weight:300;}</style></defs><g id="_警告"><circle class="cls-1" cx="517" cy="517" r="472"/></g><text class="cls-2" transform="translate(281.7 844.5)"><tspan x="0" y="0">！</tspan></text></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="1034" height="1034" viewBox="0 0 1034 1034">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #dca452;
+      }
+    </style>
+  </defs>
+  <g id="_警告" data-name="警告">
+    <circle class="cls-2" cx="517" cy="517" r="472"/>
+    <path class="cls-1" d="M515.46,860.52c-29.22,0-52.79-23.57-52.79-52.79s23.56-52.79,52.79-52.79,52.79,23.57,52.79,52.79-23.56,52.79-52.79,52.79Zm10.37-164.01h-28.28l-32.05-405.32c-1.89-33.93,16.97-73.52,47.13-73.52,32.05,0,51.84,38.65,49.02,73.52l-35.82,405.32Z"/>
+  </g>
+</svg>
