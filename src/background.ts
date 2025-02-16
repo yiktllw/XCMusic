@@ -187,26 +187,6 @@ app.on("ready", async () => {
       if (!win) return;
       win.webContents.send("leave-fullscreen");
     });
-
-    // 处理窗口隐藏
-    win.on("hide", () => {
-      const showWindowMenuItem = menu.getMenuItemById("show-window");
-      if (showWindowMenuItem) {
-        showWindowMenuItem.enabled = true;
-      }
-      if (tray) tray.setContextMenu(menu);
-    });
-
-    // 处理窗口显示
-    win.on("show", () => {
-      if (menu && menu.getMenuItemById("show-window")) {
-        const showWindowMenuItem = menu.getMenuItemById("show-window");
-        if (showWindowMenuItem) {
-          showWindowMenuItem.enabled = false;
-        }
-      }
-      if (tray) tray.setContextMenu(menu);
-    });
   }
 
   // 创建托盘
@@ -235,6 +215,29 @@ app.on("ready", async () => {
   let menu = Menu.buildFromTemplate(_menu);
   tray.setContextMenu(menu);
   tray.setToolTip("XCMusic");
+
+  if (win) {
+    // 处理窗口隐藏
+    win.on("hide", () => {
+      if (!menu) return;
+      const showWindowMenuItem = menu.getMenuItemById("show-window");
+      if (showWindowMenuItem) {
+        showWindowMenuItem.enabled = true;
+      }
+      if (tray) tray.setContextMenu(menu);
+    });
+
+    // 处理窗口显示
+    win.on("show", () => {
+      if (menu && menu.getMenuItemById("show-window")) {
+        const showWindowMenuItem = menu.getMenuItemById("show-window");
+        if (showWindowMenuItem) {
+          showWindowMenuItem.enabled = false;
+        }
+      }
+      if (tray) tray.setContextMenu(menu);
+    });
+  }
 
   // 处理托盘点击事件
   tray.on("double-click", () => {
