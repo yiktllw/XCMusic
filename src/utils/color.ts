@@ -238,8 +238,7 @@ export namespace YColor {
    */
   export function setBackgroundColorHex2(hex: string) {
     try {
-      const setting_theme = getStorage(StorageKey.Setting_Display_Theme);
-      if (!setting_theme) return;
+      const setting_theme = getStorage(StorageKey.Setting_Display_Theme) ?? 'dark';
       const theme = YColor.findTheme(setting_theme);
       YColor.setBackgroundColorHex(
         YColor.stringToHexColor(hex),
