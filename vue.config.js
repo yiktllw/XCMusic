@@ -12,7 +12,7 @@ module.exports = defineConfig({
           icon: "src/assets/icons/icon.ico",
         },
         mac: {
-          icon: "src/assets/icons/icon.png",
+          icon: "src/assets/icons/icon512.png",
         },
         linux: {
           icon: "src/assets/icons/icon.png",
