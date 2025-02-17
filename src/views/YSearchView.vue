@@ -8,22 +8,22 @@
       <span class="font-color-high" style="font-size: 16px">
         {{ $t("search_view.search_info_after") }}
         <span v-if="position === 'song'">
-          {{ switcher[0].total }}{{ $t("search_view.songs") }}
+          {{ switcher[0].total }}{{ " " + $t("search_view.songs") }}
         </span>
         <span v-else-if="position === 'album'">
-          {{ switcher[1].total }}{{ $t("search_view.albums") }}
+          {{ switcher[1].total }}{{ " " +$t("search_view.albums") }}
         </span>
         <span v-else-if="position === 'playlist'">
-          {{ switcher[2].total }}{{ $t("search_view.playlists") }}
+          {{ switcher[2].total }}{{ " " +$t("search_view.playlists") }}
         </span>
         <span v-else-if="position === 'artist'">
-          {{ switcher[3].total }} {{ $t("search_view.artists") }}
+          {{ switcher[3].total }} {{ " " +$t("search_view.artists") }}
         </span>
         <span v-else-if="position === 'lyric'">
-          {{ switcher[4].total }}{{ $t("search_view.songs") }}
+          {{ switcher[4].total }}{{ " " +$t("search_view.songs") }}
         </span>
         <span v-else-if="position === 'user'">
-          {{ switcher[5].total }}{{ $t("search_view.users") }}
+          {{ switcher[5].total }}{{ " " +$t("search_view.users") }}
         </span>
       </span>
     </div>
