@@ -186,19 +186,19 @@
         >
           <img
             v-if="playMode === 'order'"
-            class="img-order img g-icon"
+            class="img-order img img-opacity-7 g-icon"
             src="@/assets/order.svg"
             :title="$t('playbar.order')"
           />
           <img
             v-if="playMode === 'listloop'"
-            class="img-listloop img g-icon"
+            class="img-listloop img img-opacity-7 g-icon"
             src="@/assets/listloop.svg"
             :title="$t('playbar.listloop')"
           />
           <img
             v-if="playMode === 'random'"
-            class="img-random img g-icon"
+            class="img-random img-opacity-7 img g-icon"
             src="@/assets/random.svg"
             :title="$t('playbar.random')"
           />
@@ -208,7 +208,7 @@
           />
           <img
             v-if="playMode === 'loop'"
-            class="img-loop img g-icon"
+            class="img-loop img img-opacity-7 g-icon"
             src="@/assets/loop.svg"
             :title="$t('playbar.loop')"
           />
@@ -808,6 +808,10 @@
       .img-loop {
         width: 22px;
         height: 22px;
+      }
+
+      .img-opacity-7 {
+        opacity: 0.7;
       }
 
       .playMode-switcher {
