@@ -21,11 +21,15 @@
       ref="scroll"
     >
       <div class="main font-color-main">
+        <!-- 常规 -->
         <div class="normal item" id="normal">
+          <!-- 常规-标题 -->
           <div class="normal-title item-title">
             {{ $t("header.setting_view.normal") }}
           </div>
+          <!-- 常规-内容 -->
           <div class="normal-content item-content">
+            <!-- 常规-语言 -->
             <div class="content-item item-languige">
               <div class="content-item-title">
                 {{ $t("setting_view.language") }}
@@ -51,6 +55,7 @@
                 <label for="setting_en"> English </label>
               </div>
             </div>
+            <!-- 常规-开机自启动 -->
             <div class="content-item">
               <div class="content-item-title">
                 {{ $t("setting_view.open_sys") }}
@@ -68,6 +73,7 @@
                 </label>
               </div>
             </div>
+            <!-- 常规-关闭按钮行为 -->
             <div class="content-item close-item">
               <div class="content-item-title">
                 {{ $t("setting_view.close") }}
@@ -113,6 +119,7 @@
                 </div>
               </div>
             </div>
+            <!-- 常规-硬件加速 -->
             <div class="content-item">
               <div class="content-item-title">
                 {{ $t("setting_view.gpu") }}
@@ -132,6 +139,7 @@
                 </label>
               </div>
             </div>
+            <!-- 常规-重载窗口 -->
             <div class="content-item">
               <div class="content-item-title">
                 {{ $t("setting_view.reload") }}
@@ -144,11 +152,15 @@
             </div>
           </div>
         </div>
+        <!-- 外观 -->
         <div class="appearance item" id="appearance">
+          <!-- 外观-标题 -->
           <div class="appearance-title item-title">
             {{ $t("header.setting_view.appearance") }}
           </div>
+          <!-- 外观-内容 -->
           <div class="appearance-content item-content">
+            <!-- 外观-主题 -->
             <div class="content-item item-theme">
               <div class="content-item-title item-theme-title">
                 {{ $t("setting_view.theme") }}
@@ -170,6 +182,7 @@
                 </select>
               </div>
             </div>
+            <!-- 外观-自定义主题 -->
             <div class="content-item item-custom">
               <div class="content-item-title">
                 {{ $t("setting_view.appearance.custom") }}
@@ -180,6 +193,7 @@
                 </div>
               </div>
             </div>
+            <!-- 外观-缩放 -->
             <div class="content-item item-zoom">
               <div class="content-item-title item-zoom-title">
                 {{ $t("setting_view.zoom") }}
@@ -199,6 +213,7 @@
                 </div>
               </div>
             </div>
+            <!-- 外观-全屏时自动缩放 -->
             <div class="content-item item-fullscreen-auto-zoom">
               <div class="content-item-title">
                 {{ $t("setting_view.display.fullscreen") }}
@@ -222,6 +237,7 @@
                 </label>
               </div>
             </div>
+            <!-- 外观-侧边栏样式 -->
             <div class="content-item item-sidebar">
               <div class="content-item-title">
                 {{ $t("setting_view.display.sidebar") }}
@@ -296,11 +312,15 @@
             </div>
           </div>
         </div>
+        <!-- 播放 -->
         <div class="play item" id="play">
+          <!-- 播放-标题 -->
           <div class="play-title item-title">
             {{ $t("header.setting_view.play") }}
           </div>
+          <!-- 播放-内容 -->
           <div class="play-content item-content">
+            <!-- 播放-启动时自动播放 -->
             <div class="content-item">
               <div class="content-item-title">
                 {{ $t("setting_view.play.launch") }}
@@ -318,6 +338,7 @@
                 </label>
               </div>
             </div>
+            <!-- 播放-音量均衡 -->
             <div class="content-item item-play-volume_leveling">
               <div class="content-item-title">
                 {{ $t("setting_view.play.volume_leveling") }}
@@ -335,6 +356,7 @@
                 </label>
               </div>
             </div>
+            <!-- 播放界面-频谱图 -->
             <div class="content-item item-playui">
               <div class="content-item-title">
                 {{ $t("setting_view.play.playui") }}
@@ -352,6 +374,7 @@
                 </label>
               </div>
             </div>
+            <!-- 播放-双击列表行为 -->
             <div class="content-item item-play-dbclick">
               <div class="content-item-title">
                 {{ $t("setting_view.play.dbclick") }}
@@ -385,6 +408,7 @@
                 </div>
               </div>
             </div>
+            <!-- 播放-输出设备 -->
             <div class="content-item">
               <div class="content-item-title">
                 {{ $t("setting_view.play.device") }}
@@ -402,11 +426,15 @@
             </div>
           </div>
         </div>
+        <!-- 下载 -->
         <div class="download item" id="download">
+          <!-- 下载-标题 -->
           <div class="download-title item-title">
             {{ $t("header.setting_view.download") }}
           </div>
+          <!-- 下载-内容 -->
           <div class="download-content item-content">
+            <!-- 下载-音质 -->
             <div class="content-item item-download-quality">
               <div class="content-item-title">
                 {{ $t("setting_view.download.quality") }}
@@ -427,6 +455,7 @@
                 </select>
               </div>
             </div>
+            <!-- 下载-下载路径 -->
             <div class="content-item item-download-path">
               <div class="content-item-title">
                 {{ $t("setting_view.download.path") }}
@@ -438,6 +467,7 @@
                 </div>
               </div>
             </div>
+            <!-- 下载-本地音乐路径 -->
             <div class="content-item item-download-local">
               <div class="content-item-title">
                 {{ $t("setting_view.download.local") }}
@@ -468,11 +498,15 @@
             </div>
           </div>
         </div>
+        <!-- 工具 -->
         <div class="tools item" id="tools">
+          <!-- 工具-标题 -->
           <div class="tools-title item-title">
             {{ $t("header.setting_view.tools") }}
           </div>
+          <!-- 工具-内容 -->
           <div class="tools-content item-content">
+            <!-- 工具-代理 -->
             <div class="content-item item-tools-proxy">
               <div class="content-item-title">
                 {{ $t("setting_view.tools.proxy.title") }}
@@ -545,11 +579,15 @@
             </div>
           </div>
         </div>
+        <!-- 关于 -->
         <div class="about item" id="about">
+          <!-- 关于-标题 -->
           <div class="about-title item-title">
             {{ $t("header.setting_view.about") }}
           </div>
+          <!-- 关于-内容 -->
           <div class="about-content item-content">
+            <!-- 关于-版本 -->
             <div class="content-item item-about-version">
               <div class="content-item-title">
                 {{ $t("setting_view.about.version") }}
@@ -558,6 +596,7 @@
                 {{ version }}
               </div>
             </div>
+            <!-- 关于-介绍 -->
             <div class="content-item item-about-github">
               <div class="content-item-title">
                 {{ $t("setting_view.about.readme") }}
@@ -569,6 +608,7 @@
                 </div>
               </div>
             </div>
+            <!-- 关于-GITHUB -->
             <div class="content-item item-about-github">
               <div class="content-item-title">GitHub</div>
               <div class="content-item-content">
@@ -588,6 +628,7 @@
                 </div>
               </div>
             </div>
+            <!-- 关于-备份 -->
             <div class="content-item item-backup">
               <div class="content-item-title">
                 {{ $t("setting_view.about.backup") }}
@@ -789,14 +830,14 @@
                 }
               }
             }
-            
+
             .proxy-content {
-              .proxy-line{
+              .proxy-line {
                 margin-top: 10px;
                 display: flex;
                 align-items: start;
               }
-              
+
               .proxy-input {
                 margin: 0px 15px 0px 10px;
                 border-radius: 20px;
