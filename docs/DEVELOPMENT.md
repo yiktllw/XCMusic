@@ -3,7 +3,7 @@
 
 可以使用electron或者tauri作为项目后端，由于tauri后端并未完全适配，更建议使用electron后端。
 
-## 安装依赖
+### 安装依赖
 
 ```shell
 npm install
@@ -20,6 +20,11 @@ npm run electron:serve
 
 ```shell
 npm run electron:build
+```
+
+如果在mac上因为找不到python出错，请在安装python后执行
+```bash
+node ./scripts/mac_build.js
 ```
 
 ### 使用tauri
