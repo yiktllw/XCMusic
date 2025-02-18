@@ -21,6 +21,7 @@ import {
   protocol,
   BrowserWindow,
   Tray,
+  nativeImage,
   Menu,
   ipcMain,
   screen,
@@ -97,8 +98,8 @@ async function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION === "true",
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      webviewTag: true,
+      // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      // webviewTag: true,
       webSecurity: false, // 允许加载本地资源
       backgroundThrottling: false, // 禁止后台时限制性能
     },
@@ -189,12 +190,32 @@ app.on("ready", async () => {
     });
   }
 
-  // 创建托盘
-  if (process.env.NODE_ENV === "development") {
-    tray = new Tray(path.join(__dirname, "../src/assets/icons/icon.ico"));
-  } else {
-    tray = new Tray(path.join(__dirname, "icons/icon.ico"));
-  }
+  // 不同环境下的图标路径
+  const trayIcons = {
+    win32: "icons/icon.ico",
+    win32_dev: "../src/assets/icons/icon.ico",
+    /** 暂无法使用 */
+    darwin: "icons/icon.icns",
+    /** 暂无法使用 */
+    darwin_dev: "../src/assets/icons/icon.svg",
+    /** 待测试 */
+    linux: "icons/icon.svg",
+    /** 待测试 */
+    linux_dev: "../src/assets/icons/icon.svg",
+  };
+
+  // 获取当前环境的图标路径
+  let is_dev: "_dev" | "" =
+    process.env.NODE_ENV === "development" ? "_dev" : "";
+  const icon_env: keyof typeof trayIcons = `${process.platform as "win32" | "darwin" | "linux"}${is_dev}`;
+
+  // 从获取的图标路径创建图片
+  const img = nativeImage.createFromPath(
+    path.join(__dirname, trayIcons[icon_env]),
+  );
+  // 从图片创建托盘
+  if (!img.isEmpty()) tray = new Tray(img);
+
   // 菜单模板
   let _menu = [
     {
@@ -213,8 +234,10 @@ app.on("ready", async () => {
     },
   ];
   let menu = Menu.buildFromTemplate(_menu);
-  tray.setContextMenu(menu);
-  tray.setToolTip("XCMusic");
+  if (tray) {
+    tray.setContextMenu(menu);
+    tray.setToolTip("XCMusic");
+  }
 
   if (win) {
     // 处理窗口隐藏
@@ -240,14 +263,15 @@ app.on("ready", async () => {
   }
 
   // 处理托盘点击事件
-  tray.on("double-click", () => {
-    if (!win) return;
-    if (win.isVisible()) {
-      win.hide();
-    } else {
-      win.show();
-    }
-  });
+  if (tray)
+    tray.on("double-click", () => {
+      if (!win) return;
+      if (win.isVisible()) {
+        win.hide();
+      } else {
+        win.show();
+      }
+    });
 });
 
 // Exit cleanly on request from parent process in development mode.
