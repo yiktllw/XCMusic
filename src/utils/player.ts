@@ -498,12 +498,17 @@ export class Player {
     });
     // 设置音量均衡
     let gainMsg = this.setGain(gain, peak);
+    // 返回调试信息
     return (
       "track gain:" +
-      gainData.toString() +
+      gainData
+        .map((value) => value ?? 0)
+        .map((value: number) => value.toFixed(3).toString()) +
       "\n" +
       " track peak:" +
-      peakData.toString() +
+      peakData
+        .map((value) => value ?? 0)
+        .map((value: number) => value.toFixed(3).toString()) +
       "\n" +
       gainMsg
     );

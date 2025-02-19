@@ -2,14 +2,19 @@
   <!-- 播放界面 -->
   <transition name="playui-slide">
     <div class="container theme-dark" v-if="show" ref="playuiContainer">
+      <!-- 标题栏 -->
       <div class="title-bar">
         <YTitlebar :type="'play-ui'" @close-panel="show = false" />
       </div>
+      <!-- 内容 -->
       <div class="main-content">
+        <!-- 左侧 -->
         <div class="content-left">
+          <!-- 歌曲信息-封面 -->
           <div class="track-cover">
             <img :src="track?.al?.picUrl" />
           </div>
+          <!-- 歌曲信息-文本 -->
           <div class="track-info">
             <div class="track-name font-color-main" :title="track.name">
               {{ track.name }}
@@ -35,7 +40,9 @@
             </div>
           </div>
         </div>
+        <!-- 右侧 -->
         <div class="content-right">
+          <!-- 导航： 歌词/百科/乐谱 -->
           <div class="switcher">
             <div
               class="switcher-lyric switcher-item"
@@ -59,12 +66,16 @@
               {{ $t("playui.sheet") }}
             </div>
           </div>
+          <!-- 歌词 -->
           <div class="lyrics" v-if="position === 'lyric'">
             <YLyrics class="ylyrics" />
           </div>
+          <!-- 百科和乐谱 -->
           <YScroll v-else style="height: calc(100vh - 350px); margin-left: 5px">
+            <!-- 百科 -->
             <div class="wiki font-color-main" v-if="position === 'wiki'">
               <div class="wiki-content">
+                <!-- 回忆坐标 -->
                 <div
                   class="wiki-first-listen"
                   v-if="firstListen?.creatives?.length ?? 0 > 0"
@@ -73,6 +84,7 @@
                     {{ firstListen?.uiElement.mainTitle.title }}
                   </div>
                   <div class="first-listen-content">
+                    <!-- 第一次听 -->
                     <div class="content-first-listen">
                       <div class="first-listen-title font-color-main">
                         {{ firstListenTitle }}
@@ -84,6 +96,7 @@
                         {{ firstListenTime }}
                       </div>
                     </div>
+                    <!-- 累计播放 -->
                     <div class="listen-count">
                       <div class="listen-count-title font-color-main">
                         {{ listenCountTitle }}
@@ -97,6 +110,7 @@
                     </div>
                   </div>
                 </div>
+                <!-- 音乐百科 -->
                 <div class="wiki-song" v-if="creatives.length > 0">
                   <div class="wiki-song-title">
                     {{ songWiki?.uiElement.mainTitle.title }}
@@ -133,6 +147,7 @@
                 </div>
               </div>
             </div>
+            <!-- 乐谱 -->
             <div class="sheet font-color-main" v-else-if="position === 'sheet'">
               <div class="sheet-list" v-if="sheets">
                 <div
@@ -158,9 +173,11 @@
           </YScroll>
         </div>
       </div>
+      <!-- 播放栏 -->
       <div class="play-bar">
         <YPlaybar :type="'play-ui'" @close-panel="show = false" ref="playBar" />
       </div>
+      <!-- 频谱图 -->
       <div class="spectrum-canvas">
         <YSpecCanvas />
       </div>
