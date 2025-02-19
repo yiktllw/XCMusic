@@ -338,6 +338,24 @@
                 </label>
               </div>
             </div>
+            <!-- 播放-记住播放进度 -->
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.remember_progress.title") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_remember_progress"
+                  name="remember_progress"
+                  v-model="rememberProgress"
+                  @change="setRememberProgress(rememberProgress)"
+                />
+                <label for="setting_remember_progress">
+                  {{ $t("setting_view.play.remember_progress.label") }}
+                </label>
+              </div>
+            </div>
             <!-- 播放-音量均衡 -->
             <div class="content-item item-play-volume_leveling">
               <div class="content-item-title">

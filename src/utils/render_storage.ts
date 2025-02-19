@@ -71,6 +71,10 @@ export enum StorageKey {
   Setting_TitleBar_CloseAlwaysAsk = "setting.titleBar.closeAlwaysAsk",
   /** 设置-工具-代理 */
   Setting_Tools_Proxy = "setting.tool.proxy",
+  /** 设置-播放-记住播放进度 */
+  Setting_Play_RememberTrackProgress = "setting.play.rememberTrackProgress",
+  /** 播放进度 */
+  Track_Progress = "track_progress",
 }
 
 export type StorageMap = {
@@ -127,6 +131,13 @@ export type StorageMap = {
   [StorageKey.Setting_TitleBar_CloseButton]: "quit" | "minimize";
   [StorageKey.Setting_TitleBar_CloseAlwaysAsk]: boolean;
   [StorageKey.Setting_Tools_Proxy]: ProxyConfig;
+  [StorageKey.Setting_Play_RememberTrackProgress]: boolean;
+  [StorageKey.Track_Progress]: {
+    /** 歌曲ID */
+    id: number;
+    /** 播放进度，0-1 */
+    normalizedProgress: number;
+  };
 };
 
 interface IData {

@@ -58,6 +58,8 @@ export interface ISettings {
     device: string;
     /** 是否启用自动播放 */
     autoPlay: boolean;
+    /** 是否记住歌曲播放进度 */
+    rememberTrackProgress: boolean;
   };
   /** 播放界面设置 */
   playui: {
@@ -206,6 +208,17 @@ export const settingGroup: SettingGroup = {
         if (valid) {
           value = strToBool(value);
           setStorage(StorageKey.Setting_Play_AutoPlay, value);
+        }
+        return valid;
+      },
+    },
+    rememberTrackProgress: {
+      value: getStorage(StorageKey.Setting_Play_RememberTrackProgress) ?? false,
+      default: false,
+      validation(value: boolean) {
+        let valid = typeof value === typeof true;
+        if (valid) {
+          setStorage(StorageKey.Setting_Play_RememberTrackProgress, value);
         }
         return valid;
       },
@@ -443,7 +456,7 @@ export const settingGroup: SettingGroup = {
           typeof value === "object" &&
           typeof value.mode === "string" &&
           ["none", "http", "socks4", "socks5", "browser"].includes(
-            value.mode
+            value.mode,
           ) &&
           typeof value.server === "string" &&
           (value.mode === "none" || value.server !== "") &&
@@ -508,7 +521,7 @@ export const settingGroup: SettingGroup = {
           setStorage(StorageKey.Setting_System_disableGpuAcceleration, value);
           if (window.electron?.isElectron) {
             window.electron.ipcRenderer.send(
-              value ? "disable-gpu" : "enable-gpu"
+              value ? "disable-gpu" : "enable-gpu",
             );
           }
         }

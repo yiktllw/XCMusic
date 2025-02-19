@@ -73,11 +73,11 @@ export class Player {
   /** 音量 */
   _volume: number = 1;
   /** 当前播放时间 */
-  _currentTime: number | string = 0;
+  _currentTime: number = 0;
   /** 播放进度 */
-  _progress: number | string = 0;
+  _progress: number = 0;
   /** 歌曲总时长 */
-  _duration: number | string = 0;
+  _duration: number = 0;
   /** 音质 */
   _quality:
     | "standard"
@@ -151,8 +151,14 @@ export class Player {
           const lastTrack = getStorage(StorageKey.CurrentTrack);
           if (lastTrack) {
             this.subscriber.on("indexDB", PlayerEvents.playerReady, () => {
-              const autoPlay = getStorage(StorageKey.Setting_Play_AutoPlay) ?? false;
-              this.playTrack(lastTrack, autoPlay ?? true, 1600);
+              const autoPlay =
+                getStorage(StorageKey.Setting_Play_AutoPlay) ?? false;
+              this.playTrack(
+                lastTrack,
+                autoPlay ?? true,
+                1600,
+                getStorage(StorageKey.Track_Progress) ?? undefined,
+              );
             });
           }
           this.subscriber.exec(PlayerEvents.playlist);
@@ -287,6 +293,16 @@ export class Player {
         );
         this.subscriber.exec(PlayerEvents.time);
         this.subscriber.exec(PlayerEvents.trackReady);
+
+        // 记录当前歌曲的播放进度
+        if (
+          getStorage(StorageKey.Setting_Play_RememberTrackProgress) === true
+        ) {
+          setStorage(StorageKey.Track_Progress, {
+            id: this.currentTrack?.id,
+            normalizedProgress: this._progress,
+          });
+        }
       }
 
       this._updateTime = setTimeout(update, 300); // 递归调用 setTimeout
@@ -335,7 +351,15 @@ export class Player {
    * @param {Object} track 歌曲对象
    * @param {Boolean} autoPlay 是否自动播放
    */
-  async playTrack(track: ITrack, autoPlay: boolean = true, delay: number = 0) {
+  async playTrack(
+    track: ITrack,
+    autoPlay: boolean = true,
+    delay: number = 0,
+    progress?: {
+      id: number;
+      normalizedProgress: number;
+    },
+  ) {
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
       (_track) => _track.id === track.id,
@@ -382,10 +406,27 @@ export class Player {
 
       if (autoPlay) {
         try {
-          // 更新播放状态
+          // 更新播放状态，当且仅当程序启动时，delay>0
           if (delay > 0) {
             setTimeout(() => {
-              this._audio.play();
+              this._audio.play().then(() => {
+                // 只需要在程序启动时调用此方法，也就是delay>0时
+                // 从记忆的进度开始播放
+                if (
+                  progress &&
+                  progress.normalizedProgress > 0 &&
+                  progress.normalizedProgress <= 1 &&
+                  progress.id === track.id &&
+                  getStorage(StorageKey.Setting_Play_RememberTrackProgress) ===
+                    true
+                ) {
+                  this._audio.currentTime =
+                    this._audio.duration * progress.normalizedProgress;
+                  console.log(
+                    `seek to: ${this._audio.duration * progress?.normalizedProgress}`,
+                  );
+                }
+              });
               this._outputAudio.play();
               this.playState = "play";
             }, delay);
@@ -399,6 +440,7 @@ export class Player {
           console.error(error);
         }
       }
+
       this.updateTime();
       console.log(
         "Playing",
