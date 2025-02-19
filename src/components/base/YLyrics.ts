@@ -571,15 +571,13 @@ export default defineComponent({
 
       for (const lyric of lyrics) {
         // 遍历歌词，根据歌词类型进行格式化
-        if (lyric.type === "lrc" && Array.isArray(lyric.content)) {
-          // 如果是 lrc，且content是数组(特殊内容)
-          res.push({
-            lines: [lyric.content.map((line) => line.tx).join(" ")],
-            breakLineOn: [0],
-          });
-        } else if (lyric.type === "lrc") {
+        if (lyric.type === "lrc") {
+          if (Array.isArray(lyric.content)) {
+            // 如果是 lrc，且content是数组(特殊内容，比如作曲家)
+            lyric.content = lyric.content.map((line) => line.tx).join(" ");
+          }
           // 如果是 lrc，且content是字符串
-          let content = lyric.content as string;
+          let content = lyric.content;
 
           /** 用来存储单行的内容 */
           let singleLine = "";
