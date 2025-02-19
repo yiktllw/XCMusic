@@ -72,7 +72,10 @@
       >
         <div class="search-panel" id="panel">
           <YScroll>
-            <div class="search-history" v-if="searchHistory.length > 0">
+            <div
+              class="search-history"
+              v-if="searchHistory.length > 0 && searchSuggestions.length === 0"
+            >
               <div class="search-history-title">
                 {{ $t("titlebar.searchHistory") }}
               </div>
