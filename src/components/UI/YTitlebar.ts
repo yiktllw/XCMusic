@@ -224,6 +224,7 @@ export default defineComponent({
       console.log("search:", text);
     },
     async getSearchSuggestions(event: Event) {
+      this.search_panel?._showPanel();
       const searchText = (event.target as HTMLInputElement)?.value;
       this.searchSuggestions = await Search.getSearchSuggestion(searchText);
       // 确保选中的搜索建议不超出范围
