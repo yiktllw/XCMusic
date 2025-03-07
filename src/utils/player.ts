@@ -9,7 +9,7 @@ import { Lyrics, Playlist, Song } from "@/utils/api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { SongPickerEvents } from "@/dual/damakuSongPicker";
-import { PlayerEvents } from "@/dual/player";
+import { IEqualizer, PlayerEvents, equalizerFreqs } from "@/dual/player";
 import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
@@ -109,6 +109,7 @@ export class Player {
   _sourceNode: MediaElementAudioSourceNode | undefined;
   _destination: MediaStreamAudioDestinationNode | undefined;
   _analyserNode: AnalyserNode | undefined;
+  _biquads: BiquadFilterNode[] = [];
   noUrlCount: number = 0;
   constructor() {
     this._audio.onerror = () => this.handleAudioError(this._audio.error);
@@ -578,14 +579,57 @@ export class Player {
         this._audio,
       );
 
+      // 均衡器
+      const equalizerSettings = getStorage(
+        StorageKey.Setting_Play_Equalizer,
+      ) ?? {
+        _32Hz: 0,
+        _64Hz: 0,
+        _125Hz: 0,
+        _250Hz: 0,
+        _500Hz: 0,
+        _1kHz: 0,
+        _2kHz: 0,
+        _4kHz: 0,
+        _8kHz: 0,
+        _16kHz: 0,
+      };
+
+      // 创建滤波器
+      (
+        Object.keys(equalizerFreqs) as Array<keyof typeof equalizerFreqs>
+      ).forEach((key, index) => {
+        this._biquads.push(this._audioContext!.createBiquadFilter());
+        this._biquads[index].type = "peaking";
+        this._biquads[index].frequency.value = equalizerFreqs[key];
+        this._biquads[index].Q.value = 1.4;
+        this._biquads[index].gain.value = equalizerSettings[key];
+      });
+
       // 创建一个增益节点
       this._gainNode = this._audioContext.createGain();
 
       // 创建一个新的音频目标，用来输出音频
       this._destination = this._audioContext.createMediaStreamDestination();
 
-      this._sourceNode.connect(this._gainNode);
-      this._gainNode.connect(this._destination);
+      // 连接节点
+      const sourceNode = this._sourceNode;
+      const gainNode = this._gainNode;
+
+      if (equalizerSettings && this._biquads.length > 0) {
+        sourceNode.connect(this._biquads[0]);
+        this._biquads.forEach((biquad, index) => {
+          if (index < this._biquads.length - 1) {
+            this._biquads[index].connect(this._biquads[index + 1]);
+          } else if (index === this._biquads.length - 1) {
+            biquad.connect(gainNode);
+          }
+        });
+      } else {
+        sourceNode.connect(gainNode);
+      }
+
+      gainNode.connect(this._destination);
 
       if (getStorage(StorageKey.Setting_PlayUI_Spectrum)) {
         // 创建 AnalyserNode
@@ -600,6 +644,44 @@ export class Player {
 
       this.setDevice(getStorage(StorageKey.Setting_Play_Device) ?? "default");
     }
+  }
+  /**
+   * 设置均衡器
+   */
+  setEqualizer(equalizer: IEqualizer) {
+    if (!this._audioContext) return;
+    if (!this._biquads.length) return;
+    (Object.keys(equalizer) as Array<keyof IEqualizer>).forEach(
+      (key, index) => {
+        this._biquads[index].gain.value = equalizer[key];
+      },
+    );
+  }
+  /**
+   * 获取当前均衡器参数
+   */
+  getEqualizer(): IEqualizer {
+    let equalizer: IEqualizer = {
+      _32Hz: 0,
+      _64Hz: 0,
+      _125Hz: 0,
+      _250Hz: 0,
+      _500Hz: 0,
+      _1kHz: 0,
+      _2kHz: 0,
+      _4kHz: 0,
+      _8kHz: 0,
+      _16kHz: 0,
+    };
+
+    if (!this._audioContext || !this._biquads.length) return equalizer;
+
+    (Object.keys(equalizerFreqs) as Array<keyof typeof equalizerFreqs>).forEach(
+      (key, index) => {
+        equalizer[key] = this._biquads[index].gain.value;
+      },
+    );
+    return equalizer;
   }
   /**
    * 随机播放

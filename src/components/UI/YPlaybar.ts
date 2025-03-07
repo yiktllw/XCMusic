@@ -274,6 +274,11 @@ export default defineComponent({
         data: JSON.stringify(this.currentTrack),
       });
     },
+    openEqualizer() {
+      window.postMessage({
+        type: "open-equalizer",
+      });
+    },
     handleSubscribe() {
       window.postMessage({
         type: "subscribe-now-playing",

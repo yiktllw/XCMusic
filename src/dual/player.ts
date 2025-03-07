@@ -30,3 +30,54 @@ export enum PlayerEvents {
   /** 歌曲音量均衡的增益 */
   gain = "gain",
 }
+
+/** 音频增益接口 */
+export interface IEqualizer {
+  /** 32Hz */
+  _32Hz: number;
+  /** 64Hz */
+  _64Hz: number;
+  /** 125Hz */
+  _125Hz: number;
+  /** 250Hz */
+  _250Hz: number;
+  /** 500Hz */
+  _500Hz: number;
+  /** 1kHz */
+  _1kHz: number;
+  /** 2kHz */
+  _2kHz: number;
+  /** 4kHz */
+  _4kHz: number;
+  /** 8kHz */
+  _8kHz: number;
+  /** 16kHz */
+  _16kHz: number;
+}
+
+// 均衡器的频率
+export const equalizerFreqs = {
+  _32Hz: 32,
+  _64Hz: 64,
+  _125Hz: 125,
+  _250Hz: 250,
+  _500Hz: 500,
+  _1kHz: 1000,
+  _2kHz: 2000,
+  _4kHz: 4000,
+  _8kHz: 8000,
+  _16kHz: 16000,
+} as const;
+
+export const equalizerFreqsDisplay = {
+  _32Hz: "32",
+  _64Hz: "64",
+  _125Hz: "125",
+  _250Hz: "250",
+  _500Hz: "500",
+  _1kHz: "1k",
+  _2kHz: "2k",
+  _4kHz: "4k",
+  _8kHz: "8k",
+  _16kHz: "16k",
+};

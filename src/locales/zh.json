@@ -80,6 +80,11 @@
     "input_name": "请输入歌单名称",
     "name": "歌单名称"
   },
+  "equalizer": {
+    "apply": "应用",
+    "reset": "重置",
+    "title": "均衡器"
+  },
   "fans": "粉丝",
   "header": {
     "local_music": {

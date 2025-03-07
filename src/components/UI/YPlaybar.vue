@@ -360,6 +360,13 @@
             </div>
           </div>
         </YPanel>
+        <!-- 均衡器按钮 -->
+        <img
+          class="img volume-img g-icon"
+          src="@/assets/equalizer.svg"
+          style="width: 20px; height: 20px; margin-right: 18px"
+          @click="openEqualizer"
+        />
         <!-- 音量按钮 -->
         <img
           class="img volume-img g-icon"

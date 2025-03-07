@@ -79,6 +79,10 @@
         v-if="showEditPlaylistWindow"
         @new-window-state="handleNewWindowState_editPlaylistWindow"
       />
+      <YEqualizerWindow
+        v-if="showEqualizerWindow"
+        @new-window-state="handleNewWindowState_equalizerWindow"
+      />
     </div>
     <div class="message-container">
       <div></div>

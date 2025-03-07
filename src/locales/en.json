@@ -80,6 +80,11 @@
     "input_name": "Please enter a name",
     "name": "Playlist Name"
   },
+  "equalizer": {
+    "apply": "Apply",
+    "reset": "Reset",
+    "title": "Equalizer"
+  },
   "fans": "Fans",
   "header": {
     "local_music": {

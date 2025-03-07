@@ -13,6 +13,7 @@ import YConfirmWindow from "@/components/YWindows/YConfirmWindow.vue";
 import YCustomWindow from "@/components/YWindows/YCustomWindow.vue";
 import YCloseWindow from "@/components/YWindows/YCloseWindow.vue";
 import YEditPlaylistWindow from "@/components/YWindows/YEditPlaylistWindow.vue";
+import YEqualizerWindow from "@/components/YWindows/YEqualizerWindow.vue";
 import { useStore } from "vuex";
 import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
@@ -54,6 +55,7 @@ export default defineComponent({
       confirm: null as unknown as IConfirm,
       showConfirmWindow: false,
       showEditPlaylistWindow: false,
+      showEqualizerWindow: false,
       playlist_to_edit: null as IPlaylist | null,
       msg: {
         type: "none",
@@ -79,6 +81,7 @@ export default defineComponent({
     YCloseWindow,
     YConfirmWindow,
     YEditPlaylistWindow,
+    YEqualizerWindow,
   },
   computed: {},
   setup() {
@@ -119,7 +122,7 @@ export default defineComponent({
       () => {
         this.showCreatePlaylist = true;
         this.showPreventContainer = true;
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -128,7 +131,7 @@ export default defineComponent({
         this.showLoginWindow = true;
         this.showPreventContainer = true;
         this.base64Image = data ?? "";
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -136,7 +139,7 @@ export default defineComponent({
       () => {
         this.showLoginWindow = false;
         this.showPreventContainer = false;
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -144,7 +147,7 @@ export default defineComponent({
       () => {
         this.showCustomWindow = true;
         this.showPreventContainer = true;
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -152,7 +155,7 @@ export default defineComponent({
       () => {
         this.showCloseWindow = true;
         this.showPreventContainer = true;
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -184,7 +187,7 @@ export default defineComponent({
             this.menu[4].display = false;
             break;
         }
-      }
+      },
     );
     this.globalMsg.subscriber.on(
       "HomeView",
@@ -193,7 +196,7 @@ export default defineComponent({
         this.confirm = args;
         this.showConfirmWindow = true;
         this.showPreventContainer = true;
-      }
+      },
     );
   },
   beforeUnmount() {
@@ -209,7 +212,7 @@ export default defineComponent({
     showPreventContainer(val) {
       if (val) {
         const useGpu = getStorage(
-          StorageKey.Setting_System_disableGpuAcceleration
+          StorageKey.Setting_System_disableGpuAcceleration,
         );
         if (useGpu) {
           this.$nextTick(() => {
@@ -282,6 +285,9 @@ export default defineComponent({
           this.showSongInfo = true;
           this.showPreventContainer = true;
         }
+      } else if (event.data.type === "open-equalizer") {
+        this.showEqualizerWindow = true;
+        this.showPreventContainer = true;
       } else if (event.data.type === "subscribe-now-playing") {
         if (!this.player.currentTrack) {
           return;
@@ -345,7 +351,7 @@ export default defineComponent({
           this.player.nextPlay(arg.target);
           Message.post(
             "success",
-            this.$t("message.homeview.add_to_playlist_success")
+            this.$t("message.homeview.add_to_playlist_success"),
           );
           break;
         case "song-comment":
@@ -360,9 +366,9 @@ export default defineComponent({
                 this.download.add(
                   res,
                   toRaw(arg.target),
-                  this.setting.download.path
+                  this.setting.download.path,
                 );
-              }
+              },
             );
           }
           break;
@@ -379,13 +385,13 @@ export default defineComponent({
                 Message.post(
                   "success",
                   this.$t("message.homeview.linkCopied") +
-                    `: https://music.163.com/song?id=${arg.target.id}`
+                    `: https://music.163.com/song?id=${arg.target.id}`,
                 );
               })
               .catch((error) => {
                 Message.post(
                   "error",
-                  `${this.$t("message.homeview.errorToCopyLink")}: ${error}`
+                  `${this.$t("message.homeview.errorToCopyLink")}: ${error}`,
                 );
               });
           }
@@ -406,28 +412,28 @@ export default defineComponent({
           Message.post("info", "message.getting_playlist_tracks", true);
           Playlist.getAllTracks(
             arg.target.id,
-            arg.target.playlist.trackCount
+            arg.target.playlist.trackCount,
           ).then((res) => {
             this.player.playAll(res);
             this.player.playlistId = arg.target.id;
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",
-              true
+              true,
             );
           });
         case "playlist-addtoplaylist":
           Message.post("info", "message.getting_playlist_tracks", true);
           Playlist.getAllTracks(
             arg.target.id,
-            arg.target.playlist.trackCount
+            arg.target.playlist.trackCount,
           ).then((res) => {
             this.player.addPlaylist(res);
             this.player.playlistId = arg.target.id;
             Message.post(
               "success",
               "message.playlist_view.added_to_playlist",
-              true
+              true,
             );
           });
           break;
@@ -435,12 +441,12 @@ export default defineComponent({
           Message.post("info", "message.getting_playlist_tracks", true);
           Playlist.getAllTracks(
             arg.target.id,
-            arg.target.playlist.trackCount
+            arg.target.playlist.trackCount,
           ).then((res) => {
             this.download.addList(res);
             Message.post(
               "success",
-              this.$t("playlist_view.list_added_to_download")
+              this.$t("playlist_view.list_added_to_download"),
             );
           });
           break;
@@ -469,7 +475,7 @@ export default defineComponent({
     },
     async deleteFromPlaylist(
       trackId: string | number,
-      playlistId: string | number
+      playlistId: string | number,
     ) {
       if (playlistId === -1) {
         return;
@@ -484,20 +490,20 @@ export default defineComponent({
             Message.post("success", this.$t("message.homeview.delete_success"));
             this.globalMsg.post(
               GlobalMsgEvents.RefreshPlaylist,
-              playlistId as number
+              playlistId as number,
             );
           } else {
             Message.post(
               "error",
               this.$t("message.homeview.delete_fail") +
-                `: ${res.message ?? res.status ?? this.$t("message.homeview.unknown_reason")}`
+                `: ${res.message ?? res.status ?? this.$t("message.homeview.unknown_reason")}`,
             );
           }
         })
         .catch((error) => {
           Message.post(
             "error",
-            this.$t("message.homeview.delete_fail") + `: ${error}`
+            this.$t("message.homeview.delete_fail") + `: ${error}`,
           );
         });
     },
@@ -547,6 +553,12 @@ export default defineComponent({
     handleNewWindowState_editPlaylistWindow(val: boolean) {
       if (val === false) {
         this.showEditPlaylistWindow = false;
+        this.showPreventContainer = false;
+      }
+    },
+    handleNewWindowState_equalizerWindow(val: boolean) {
+      if (val === false) {
+        this.showEqualizerWindow = false;
         this.showPreventContainer = false;
       }
     },

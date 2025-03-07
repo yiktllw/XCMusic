@@ -11,6 +11,7 @@ import { ProxyConfig } from "@/dual/userProxy.interface";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { Theme1, Theme2, themes } from "@/utils/theme";
 import { setProxyUrl } from "@/utils/api";
+import { IEqualizer } from "@/dual/player";
 let fs: any, path: any, os: any;
 
 if (window.electron?.isElectron) {
@@ -60,6 +61,8 @@ export interface ISettings {
     autoPlay: boolean;
     /** 是否记住歌曲播放进度 */
     rememberTrackProgress: boolean;
+    /** 均衡器设置 */
+    equalizer: IEqualizer;
   };
   /** 播放界面设置 */
   playui: {
@@ -219,6 +222,58 @@ export const settingGroup: SettingGroup = {
         let valid = typeof value === typeof true;
         if (valid) {
           setStorage(StorageKey.Setting_Play_RememberTrackProgress, value);
+        }
+        return valid;
+      },
+    },
+    equalizer: {
+      value: getStorage(StorageKey.Setting_Play_Equalizer) ?? {
+        _32Hz: 0,
+        _64Hz: 0,
+        _125Hz: 0,
+        _250Hz: 0,
+        _500Hz: 0,
+        _1kHz: 0,
+        _2kHz: 0,
+        _4kHz: 0,
+        _8kHz: 0,
+        _16kHz: 0,
+      },
+      default: {
+        _32Hz: 0,
+        _64Hz: 0,
+        _125Hz: 0,
+        _250Hz: 0,
+        _500Hz: 0,
+        _1kHz: 0,
+        _2kHz: 0,
+        _4kHz: 0,
+        _8kHz: 0,
+        _16kHz: 0,
+      },
+      validation: (value: IEqualizer) => {
+        const keys = [
+          "_32Hz",
+          "_64Hz",
+          "_125Hz",
+          "_250Hz",
+          "_500Hz",
+          "_1kHz",
+          "_2kHz",
+          "_4kHz",
+          "_8kHz",
+          "_16kHz",
+        ];
+        const valid =
+          typeof value === "object" &&
+          keys.every(
+            (key) =>
+              typeof value[key as keyof typeof value] === "number" &&
+              (value[key as keyof typeof value] as number) >= -12 &&
+              (value[key as keyof typeof value] as number) <= 12,
+          );
+        if (valid) {
+          setStorage(StorageKey.Setting_Play_Equalizer, value);
         }
         return valid;
       },

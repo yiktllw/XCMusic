@@ -7,6 +7,7 @@
 import { ProxyConfig } from "@/dual/userProxy.interface";
 import { Theme1, Theme2 } from "./theme";
 import { ITrack } from "./tracks";
+import { IEqualizer } from "@/dual/player";
 
 export enum StorageKey {
   /** 当前歌曲 */
@@ -75,6 +76,8 @@ export enum StorageKey {
   Setting_Play_RememberTrackProgress = "setting.play.rememberTrackProgress",
   /** 播放进度 */
   Track_Progress = "track_progress",
+  /** 均衡器设置 */
+  Setting_Play_Equalizer = "setting.play.equalizer",
 }
 
 export type StorageMap = {
@@ -138,6 +141,7 @@ export type StorageMap = {
     /** 播放进度，0-1 */
     normalizedProgress: number;
   };
+  [StorageKey.Setting_Play_Equalizer]: IEqualizer;
 };
 
 interface IData {
