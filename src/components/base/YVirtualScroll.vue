@@ -1,29 +1,29 @@
+<!-- VirtualScroll.vue -->
 <template>
   <div ref="container" class="virtual-scroll-container" @scroll="handleScroll">
     <div class="virtual-scroll-content" :style="{ height: totalHeight + 'px' }">
       <div
         v-for="item in visibleItems"
         :key="item.key"
-        class="virtual-item"
-        :style="itemStyle(item)"
+        :style="itemStyle(item as VirtualItem<T>) as any"
       >
         <slot
           v-if="item.type === 'item'"
           name="item"
-          :item="item.data"
-          :index="item.index"
+          :item="item.data! as T"
+          :index="item.index!"
         />
         <slot
           v-else-if="item.type === 'slot'"
-          :name="`slot-${item.slotType}`"
-          :index="item.slotIndex"
+          :name="`slot-${item.slotType!}`"
+          :index="item.slotIndex!"
         />
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { computed, ref, watchEffect, onMounted, onUnmounted } from "vue";
 
 type SlotConfig = {
@@ -32,66 +32,61 @@ type SlotConfig = {
   height: number;
 };
 
-type VirtualItem = {
+type VirtualItem<T> = {
   type: "item" | "slot";
   key: string | number;
   height: number;
   offset: number;
-  data?: any;
+  data?: T;
   index?: number;
   slotType?: "prepend" | "append" | "index";
   slotIndex?: number;
 };
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-  itemHeight: {
-    type: [Number, Function],
-    required: true,
-  },
-  slots: {
-    type: Array as () => SlotConfig[],
-    default: () => [],
-  },
-});
+const props = defineProps<{
+  items: T[];
+  itemHeight: number | ((item: T) => number);
+  slots?: SlotConfig[];
+}>();
+
+defineSlots<{
+  item?: (props: { item: T; index: number }) => any;
+  "slot-prepend"?: (props: {}) => any;
+  "slot-append"?: (props: {}) => any;
+  "slot-index"?: (props: { index: number }) => any;
+}>();
 
 const container = ref<HTMLElement>();
 const scrollTop = ref(0);
 const containerHeight = ref(0);
 const totalHeight = ref(0);
-const virtualItems = ref<VirtualItem[]>([]);
+const virtualItems = ref<VirtualItem<T>[]>([]);
 
-// 生成虚拟列表项
 const generateVirtualItems = computed(() => {
-  const items: VirtualItem[] = [];
+  const items: VirtualItem<T>[] = [];
   let offset = 0;
 
-  // 处理前置插槽
-  props.slots
-    .filter((s) => s.type === "prepend")
-    .forEach((slot, i) => {
+  props.slots?.forEach((slot) => {
+    if (slot.type === "prepend") {
       items.push({
         type: "slot",
-        key: `prepend-${i}`,
+        key: `prepend-${slot.index ?? ""}`,
         height: slot.height,
         offset,
         slotType: "prepend",
       });
       offset += slot.height;
-    });
+    }
+  });
 
-  // 处理数据项和索引插槽
   props.items.forEach((item, index) => {
-    // 处理索引位置的插槽
+    // 处理索引插槽
     props.slots
-      .filter((s) => s.type === "index" && s.index === index)
-      .forEach((slot, i) => {
+      ?.filter((s) => s.type === "index" && s.index === index)
+      .forEach((slot) => {
         items.push({
           type: "slot",
-          key: `index-${index}-${i}`,
+          key: `index-${index}`,
           height: slot.height,
           offset,
           slotType: "index",
@@ -100,7 +95,6 @@ const generateVirtualItems = computed(() => {
         offset += slot.height;
       });
 
-    // 添加数据项
     const height =
       typeof props.itemHeight === "function"
         ? props.itemHeight(item)
@@ -111,79 +105,65 @@ const generateVirtualItems = computed(() => {
       key: index,
       height,
       offset,
-      data: item,
+      data: item as T, // 显式类型断言
       index,
     });
     offset += height;
   });
 
-  // 处理后置插槽
-  props.slots
-    .filter((s) => s.type === "append")
-    .forEach((slot, i) => {
+  props.slots?.forEach((slot) => {
+    if (slot.type === "append") {
       items.push({
         type: "slot",
-        key: `append-${i}`,
+        key: `append-${slot.index ?? ""}`,
         height: slot.height,
         offset,
         slotType: "append",
       });
       offset += slot.height;
-    });
+    }
+  });
 
   totalHeight.value = offset;
   return items;
 });
 
-// 可见项计算
+// 可见项计算（显式类型声明）
 const visibleItems = computed(() => {
   if (!container.value) return [];
   const start = scrollTop.value;
   const end = start + containerHeight.value;
-
   return virtualItems.value.filter(
     (item) => item.offset + item.height > start && item.offset < end,
   );
 });
 
-// 处理滚动事件
 const handleScroll = () => {
-  if (container.value) {
-    scrollTop.value = container.value.scrollTop;
-  }
+  if (container.value) scrollTop.value = container.value.scrollTop;
 };
 
-// 滚动到指定位置
 const scrollToIndex = (index: number) => {
   const item = virtualItems.value.find(
     (item) => item.type === "item" && item.index === index,
   );
-
   if (item && container.value) {
     const targetPos = item.offset + item.height / 2 - containerHeight.value / 2;
-    container.value.scrollTo({
-      top: targetPos,
-      behavior: "smooth",
-    });
+    container.value.scrollTo({ top: targetPos, behavior: "smooth" });
   }
 };
 
-// 样式计算
-const itemStyle = (item: VirtualItem): Record<string, string> => ({
+const itemStyle = (item: VirtualItem<T>) => ({
   position: "absolute",
   top: `${item.offset}px`,
   height: `${item.height}px`,
   width: "100%",
 });
 
-// 生命周期处理
 onMounted(() => {
   if (container.value) {
     containerHeight.value = container.value.clientHeight;
     const resizeObserver = new ResizeObserver(() => {
-      if (container.value) {
-        containerHeight.value = container.value.clientHeight;
-      }
+      containerHeight.value = container.value?.clientHeight || 0;
     });
     resizeObserver.observe(container.value);
     onUnmounted(() => resizeObserver.disconnect());
@@ -194,18 +174,16 @@ watchEffect(() => {
   virtualItems.value = generateVirtualItems.value;
 });
 
-defineExpose({
-  scrollToIndex,
-});
+defineExpose({ scrollToIndex });
 </script>
 
 <style>
+/* 样式保持不变 */
 .virtual-scroll-container {
   height: 100%;
   overflow-y: auto;
   position: relative;
 }
-
 .virtual-scroll-content {
   position: relative;
 }

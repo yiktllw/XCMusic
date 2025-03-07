@@ -4,7 +4,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
-  name: "YCreatePlaylist",
+  name: "YEqualizerWindow",
   components: {
     YWindow,
   },
@@ -61,9 +61,6 @@ export default defineComponent({
         console.error(e);
       }
     },
-    cancel() {
-      this.window?.closeWindow();
-    },
     reset() {
       this.equalizer = {
         _32Hz: 0,
@@ -78,9 +75,6 @@ export default defineComponent({
         _16kHz: 0,
       };
       this.apply();
-    },
-    ensure() {
-      this.window?.closeWindow();
     },
   },
 });
