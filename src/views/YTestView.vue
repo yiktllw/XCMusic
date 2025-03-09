@@ -13,7 +13,7 @@
     <!-- <div class="button font-color-main" @click="setEq">
       点击设置EQ
     </div> -->
-    <YSongsTableNew />
+    <YSongsTableNew :options="options" />
   </div>
 </template>
 

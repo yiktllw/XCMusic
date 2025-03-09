@@ -2,6 +2,10 @@ import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
+import {
+  getDefaultColumns,
+  type ISongsTableProps,
+} from "@/components/list/YSongsTableNew/types";
 
 export default defineComponent({
   name: "YTestView",
@@ -19,7 +23,18 @@ export default defineComponent({
   },
   computed: {},
   data() {
-    return {};
+    let columnsOptions = getDefaultColumns();
+    columnsOptions.popularity = false;
+    return {
+      options: {
+        id_for_subscribe: "test",
+        songs: [],
+        mode: "playlist",
+        columns: columnsOptions,
+        editable: false,
+        allow_play_all: true,
+      } as ISongsTableProps,
+    };
   },
   methods: {
     clearCache() {
@@ -46,6 +61,7 @@ export default defineComponent({
   },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
+    this.options.songs = this.player.playlist.slice();
     window.test = this.player;
   },
   beforeUnmount() {},
