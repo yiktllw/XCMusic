@@ -63,7 +63,7 @@
       width: 40px;
 
       input[type="range"] {
-        appearance: slider-vertical;
+        // appearance: slider-vertical;
         -webkit-appearance: slider-vertical;
         width: 8px;
         height: 210px;
