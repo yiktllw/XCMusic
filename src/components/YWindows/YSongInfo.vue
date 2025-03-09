@@ -53,6 +53,7 @@
                   <span
                     @click="openArtist(artist.id)"
                     :title="$t('song_info.click_to_view_artist_details')"
+                    class="underline"
                   >
                     {{ artist.name }}
                   </span>
@@ -70,7 +71,7 @@
             <div class="left">
               <span class="song-info-item-title">专辑：</span>
               <span
-                class="song-info-item-content album"
+                class="song-info-item-content album underline"
                 @click="openAlbum(track.al.id)"
                 :title="$t('song_info.click_to_view_album_details')"
               >
@@ -153,6 +154,12 @@
 <script src="./YSongInfo.ts" lang="ts"></script>
 
 <style lang="scss" scoped>
+.underline {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .song-info {
   display: flex;
 
