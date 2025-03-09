@@ -362,6 +362,7 @@
         </YPanel>
         <!-- 均衡器按钮 -->
         <img
+          :title="$t('equalizer.title')"
           class="img volume-img g-icon"
           src="@/assets/equalizer.svg"
           style="width: 20px; height: 20px; margin-right: 18px"
