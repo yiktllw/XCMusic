@@ -109,7 +109,7 @@ export default defineComponent({
     },
   },
   name: "YSongsTable",
-  setup(props: { modelValue: Array<ITrack> }) {
+  setup(props) {
     const tracks = ref<Array<ITrack>>(props.modelValue);
     watch(
       () => props.modelValue,

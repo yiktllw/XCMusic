@@ -177,14 +177,7 @@ export default defineComponent({
 
       Like.toggle(this.player.currentTrack.id, status).then((res) => {
         if (res?.code === 200) {
-          this.login.reloadLikelist().then(() => {
-            console.log(
-              `toggled ${this.player.currentTrack?.id} like status from ${status} to ${!status} successfully `,
-              JSON.stringify(res, null, 4),
-              "\nnow includes in likelist:",
-              this.login.likelist.includes(this.player.currentTrack?.id),
-            );
-          });
+          this.login.reloadLikelist();
         } else {
           console.error(
             "Failed to toggle like status",
