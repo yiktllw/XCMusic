@@ -31,7 +31,6 @@ export default defineComponent({
         songs: [],
         mode: "playlist",
         columns: columnsOptions,
-        editable: false,
         allow_play_all: true,
       } as ISongsTableProps,
     };

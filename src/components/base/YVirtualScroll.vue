@@ -142,13 +142,16 @@ const handleScroll = () => {
   if (container.value) scrollTop.value = container.value.scrollTop;
 };
 
-const scrollToIndex = (index: number) => {
+const scrollToIndex = (index: number, noAnimation = false) => {
   const item = virtualItems.value.find(
     (item) => item.type === "item" && item.index === index,
   );
   if (item && container.value) {
     const targetPos = item.offset + item.height / 2 - containerHeight.value / 2;
-    container.value.scrollTo({ top: targetPos, behavior: "smooth" });
+    container.value.scrollTo({
+      top: targetPos,
+      behavior: noAnimation ? "instant" : "smooth",
+    });
   }
 };
 

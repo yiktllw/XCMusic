@@ -2,6 +2,11 @@ import { defineComponent, ref } from "vue";
 import { Comment, Like, Song } from "@/utils/api";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
+import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
+import {
+  type ISongsTableProps,
+  getDefaultColumns,
+} from "@/components/list/YSongsTableNew/types";
 import YPanel from "@/components/base/YPanel.vue";
 import YProgressBar from "@/components/base/YProgressBar.vue";
 import YProgressBarV from "@/components/base/YProgressBarV.vue";
@@ -18,6 +23,7 @@ export default defineComponent({
   name: "YPlaybar",
   components: {
     YSongsTable,
+    YSongsTableNew,
     YPanel,
     YProgressBar,
     YProgressBarV,
@@ -28,7 +34,7 @@ export default defineComponent({
   },
   setup() {
     const quality_panel = ref<InstanceType<typeof YPanel> | null>();
-    const songstable = ref<InstanceType<typeof YSongsTable> | null>();
+    const songstable = ref<InstanceType<typeof YSongsTableNew> | null>();
     const play_mode_panel = ref<InstanceType<typeof YPanel> | null>();
     const play_mode_panel_trigger = ref<HTMLElement | null>();
     const quality_panel_trigger = ref<HTMLElement | null>();
@@ -65,7 +71,23 @@ export default defineComponent({
   },
   emits: ["close-panel", "open-panel"],
   data() {
+    const columnsOptions = getDefaultColumns();
+    columnsOptions.popularity = false;
+    columnsOptions.album = false;
+    columnsOptions.duration = false;
+    columnsOptions.index = false;
+
+    const songs_table_options = {
+      editable: true,
+      id_for_subscribe: "YPlaybar.vue",
+      songs: [] as ITrack[],
+      mode: "playlist",
+      columns: columnsOptions,
+      allow_play_all: false,
+      showDeleteButton: true,
+    } as ISongsTableProps;
     return {
+      songs_table_options,
       qualityGroup: [
         {
           name: "jymaster",
@@ -145,6 +167,7 @@ export default defineComponent({
     volume() {
       this.player.volume = this.volume;
     },
+    showSongs(val) {},
   },
   computed: {
     likelist() {
@@ -285,13 +308,11 @@ export default defineComponent({
       this.$emit("close-panel");
     },
     scrollToCurrentTrack() {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          if (this.songstable) {
-            this.songstable.scrollToCurrentTrack(false);
-          }
-        }, 300);
-      });
+      setTimeout(() => {
+        if (this.songstable) {
+          this.songstable.scrollToCurrentTrack(true);
+        }
+      }, 300);
     },
     async downloadCurrentTrack() {
       if (!this.currentTrack || isLocal(this.currentTrack.id)) {
@@ -350,12 +371,12 @@ export default defineComponent({
         this.qualityDisplay = this.player.qualityDisplay;
       },
     );
-    this.playlist = this.player.playlist;
+    this.songs_table_options.songs = this.player.playlist;
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.playlist,
       () => {
-        this.playlist = this.player.playlist;
+        this.songs_table_options.songs = this.player.playlist;
       },
     );
     this.playState = this.player.playState;

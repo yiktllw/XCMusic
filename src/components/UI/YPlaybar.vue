@@ -415,7 +415,7 @@
             style="width: 20px; height: 20px; margin-left: 10px"
           />
           <div class="number">
-            {{ playlist.length }}
+            {{ songs_table_options.songs.length }}
           </div>
         </div>
         <!-- 播放列表面板 -->
@@ -444,7 +444,7 @@
                     font-weight: bold;
                   "
                 >
-                  {{ playlist.length }}
+                  {{ songs_table_options.songs.length }}
                 </div>
               </div>
               <div class="title-right">
@@ -472,7 +472,7 @@
               </div>
             </div>
             <YScroll>
-              <YSongsTable
+              <!-- <YSongsTable
                 v-if="showSongs"
                 class="songs-table"
                 v-model="playlist"
@@ -486,6 +486,12 @@
                 :limit="500"
                 :id="'YPlaybar.vue'"
                 :scroll-to-current-track-on-mount="true"
+                ref="songstable"
+              /> -->
+              <YSongsTableNew
+                v-if="showSongs"
+                :options="songs_table_options"
+                class="songs-table"
                 ref="songstable"
               />
             </YScroll>

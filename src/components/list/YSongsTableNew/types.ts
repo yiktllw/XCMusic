@@ -6,8 +6,9 @@ export interface ISongsTableProps {
   songs: ITrack[];
   mode: "playlist" | "album";
   columns: IColumn;
-  editable: boolean;
+  editable?: true | undefined;
   allow_play_all: boolean;
+  showDeleteButton?: true | undefined;
 }
 
 interface IColumn {

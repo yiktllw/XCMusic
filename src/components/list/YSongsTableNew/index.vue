@@ -3,8 +3,8 @@
     :items="options.songs"
     :item-height="60"
     :slots="[
-      { type: 'prepend', height: 50 },
-      { type: 'append', height: 50 },
+      // { type: 'prepend', height: 50 },
+      // { type: 'append', height: 50 },
       // { type: 'index', index: 5, height: 30 },
     ]"
     class="font-color-main virtual-scroll g-scrollable"
@@ -15,6 +15,7 @@
       <div
         class="song-item"
         @contextmenu="openContextMenu($event, item, 'show')"
+        @dblclick="handleDoubleClick(item)"
       >
         <div class="align-left">
           <div class="index font-color-standard" v-if="options.columns.index">
@@ -119,6 +120,13 @@
               @click="openContextMenu($event, item, 'toogle')"
               :src="require('@/assets/detail.svg')"
             />
+            <img
+              class="menu-img g-icon"
+              :title="$t('playbar.delete_from_playlist')"
+              @click="deleteSong(item.id)"
+              :src="require('@/assets/delete.svg')"
+              v-if="options.showDeleteButton"
+            />
           </div>
           <div
             class="song-album font-color-standard"
@@ -173,13 +181,13 @@
       </div>
     </template>
 
-    <template #slot-prepend>
+    <!-- <template #slot-prepend>
       <div style="height: 50px">前置内容</div>
     </template>
 
     <template #slot-append>
       <div style="height: 50px">后置内容</div>
-    </template>
+    </template> -->
 
     <!-- <template #slot-index="{ index }">
       <div style="height: 30px">固定在位置 {{ index }} 的内容</div>
@@ -316,6 +324,26 @@ export default defineComponent({
         },
       });
     },
+    handleDoubleClick(item: ITrack) {
+      if (this.options.allow_play_all && this.setting.play.dbclick === "all") {
+        this.player.playlist = this.options.songs.slice();
+      }
+      this.player.playTrack(item);
+    },
+    deleteSong(id: number) {
+      if (!this.options.editable) return;
+      this.options.songs = this.options.songs.filter((item) => item.id !== id);
+      if (this.options.id_for_subscribe === "YPlaybar.vue")
+        this.player.deleteTrack(id);
+    },
+    scrollToCurrentTrack(noAnimation = false) {
+      const index = this.options.songs.findIndex(
+        (item) => item.id === this.nowPlayingId,
+      );
+      if (index !== -1) {
+        (this.virtualScroll as any)?.scrollToIndex(index, noAnimation);
+      }
+    },
   },
 });
 </script>
@@ -323,7 +351,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .virtual-scroll {
   width: 100%;
-  height: calc(100vh - 65px - 85px);
+  // height: calc(100vh - 65px - 85px);
 
   .song-item {
     display: flex;
