@@ -1,5 +1,5 @@
-import { State } from "@/store";
-import { Store } from "vuex"; // 导入 Store
+import { type State } from "@/store";
+import { type Store } from "vuex"; // 导入 Store
 
 // 声明 Vuex 模块
 declare module "vuex" {

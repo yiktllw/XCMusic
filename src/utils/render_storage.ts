@@ -4,10 +4,10 @@
  * 主要包装了localStorage，用于将数据JSON化，以防类型丢失
  *---------------------------------------------------------------*/
 
-import { ProxyConfig } from "@/dual/userProxy.interface";
-import { Theme1, Theme2 } from "./theme";
-import { ITrack } from "./tracks";
-import { IEqualizer } from "@/dual/player";
+import { type ProxyConfig } from "@/dual/userProxy.interface";
+import { type Theme1, type Theme2 } from "./theme";
+import { type ITrack } from "./tracks";
+import { type IEqualizer } from "@/dual/player";
 
 export enum StorageKey {
   /** 当前歌曲 */

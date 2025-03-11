@@ -7,11 +7,11 @@
  * SettingGroup对象是所有设置的内容
  *---------------------------------------------------------------*/
 
-import { ProxyConfig } from "@/dual/userProxy.interface";
+import { type ProxyConfig } from "@/dual/userProxy.interface";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
-import { Theme1, Theme2, themes } from "@/utils/theme";
+import { type Theme1, type Theme2, themes } from "@/utils/theme";
 import { setProxyUrl } from "@/utils/api";
-import { IEqualizer } from "@/dual/player";
+import { type IEqualizer } from "@/dual/player";
 let fs: any, path: any, os: any;
 
 if (window.electron?.isElectron) {
@@ -520,7 +520,7 @@ export const settingGroup: SettingGroup = {
         if (value.mode !== "none") {
           try {
             new URL(`${value.mode}://${value.server}`);
-          } catch (e) {
+          } catch {
             valid = false;
           }
         }
@@ -751,7 +751,7 @@ export function isValidDirectory(directoryPath: string): boolean {
   }
   try {
     return fs.existsSync(directoryPath);
-  } catch (err) {
+  } catch {
     return false; // 如果出现错误，说明目录无效
   }
 }

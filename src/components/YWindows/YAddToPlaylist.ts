@@ -4,7 +4,7 @@ import { defineComponent, ref } from "vue";
 import { Message } from "@/dual/YMessageC";
 import { Playlist } from "@/utils/api";
 import { useStore } from "vuex";
-import { IPlaylist } from "@/utils/login";
+import { type IPlaylist } from "@/utils/login";
 import { LoginEvents } from "@/dual/login";
 
 export default defineComponent({
@@ -67,7 +67,7 @@ export default defineComponent({
       LoginEvents.userPlaylists,
       () => {
         this.userPlaylists = this.login.userPlaylists;
-      }
+      },
     );
   },
   beforeUnmount() {

@@ -3,7 +3,16 @@
  * YContextMenuItemC.ts 为YContextMenu组件配套的处理工具
  *---------------------------------------------------------------*/
 
-import { IPlaylist } from "@/utils/login";
+import { type IPlaylist } from "@/utils/login";
+import play_ from "@/assets/play_.svg";
+import addtoplaylist from "@/assets/addtoplaylist.svg";
+import subscribe from "@/assets/subscribe.svg";
+import smalldownload from "@/assets/smalldownload.svg";
+import comment from "@/assets/comment.svg";
+import link from "@/assets/link.svg";
+import info from "@/assets/info.svg";
+import _delete from "@/assets/delete.svg";
+import edit from "@/assets/edit.svg";
 
 interface ICtxMenuItem {
   /** 显示的文字 */
@@ -102,56 +111,56 @@ export class YContextMenuItemC implements ICtxMenuItem {
 export const songItems = [
   new YContextMenuItemC({
     label: "context.play",
-    icon: require("@/assets/play_.svg"),
+    icon: play_,
     role: "song-play",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.nextplay",
-    icon: require("@/assets/addtoplaylist.svg"),
+    icon: addtoplaylist,
     role: "song-addtoplaylist",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.subscribe",
-    icon: require("@/assets/subscribe.svg"),
+    icon: subscribe,
     role: "song-subscribe",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.download",
-    icon: require("@/assets/smalldownload.svg"),
+    icon: smalldownload,
     role: "song-download",
     showSeparator: true,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.view_comment",
-    icon: require("@/assets/comment.svg"),
+    icon: comment,
     role: "song-comment",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.copy_link",
-    icon: require("@/assets/link.svg"),
+    icon: link,
     role: "song-copylink",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.info",
-    icon: require("@/assets/info.svg"),
+    icon: info,
     role: "song-infomation",
     showSeparator: true,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.delete_from_playlist",
-    icon: require("@/assets/delete.svg"),
+    icon: _delete,
     role: "song-delete",
     showSeparator: false,
     display: false,
@@ -161,35 +170,35 @@ export const songItems = [
 export const playlistItems = [
   new YContextMenuItemC({
     label: "context.playAll",
-    icon: require("@/assets/play_.svg"),
+    icon: play_,
     role: "playlist-play",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.addToPlaylistAll",
-    icon: require("@/assets/addtoplaylist.svg"),
+    icon: addtoplaylist,
     role: "playlist-addtoplaylist",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.downloadAll",
-    icon: require("@/assets/smalldownload.svg"),
+    icon: smalldownload,
     role: "playlist-download",
     showSeparator: false,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.editPlaylist",
-    icon: require("@/assets/edit.svg"),
+    icon: edit,
     role: "playlist-edit",
     showSeparator: true,
     display: true,
   }),
   new YContextMenuItemC({
     label: "context.delete_playlist",
-    icon: require("@/assets/delete.svg"),
+    icon: _delete,
     role: "playlist-delete",
     showSeparator: false,
     display: false,

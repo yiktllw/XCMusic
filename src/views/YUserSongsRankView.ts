@@ -1,7 +1,7 @@
 import { defineComponent } from "vue";
 import YHeader from "@/components/base/YHeader.vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
 import { YColor } from "@/utils/color";

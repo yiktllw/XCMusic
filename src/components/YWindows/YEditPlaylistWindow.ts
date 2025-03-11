@@ -1,6 +1,6 @@
 import { defineComponent, ref } from "vue";
 import YWindow from "@/components/base/YWindow.vue";
-import { IPlaylist } from "@/utils/login";
+import { type IPlaylist } from "@/utils/login";
 import { Playlist } from "@/utils/api";
 import { useStore } from "vuex";
 

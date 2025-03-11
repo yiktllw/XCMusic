@@ -5,7 +5,7 @@ import YArtistList from "@/components/list/YArtistList.vue";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
-import { IArtist } from "@/dual/YArtistList";
+import { type IArtist } from "@/dual/YArtistList";
 
 export default defineComponent({
   name: "YFollowView",

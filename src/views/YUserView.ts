@@ -10,8 +10,8 @@ import { useStore } from "vuex";
 import { YPageC } from "@/dual/YPageC";
 import { markRaw, defineComponent } from "vue";
 import songsRank from "@/assets/songsrank.svg";
-import { Theme1, Theme2 } from "@/utils/theme";
-import { IArtist, IUser } from "@/dual/YUserView";
+import { type Theme1, type Theme2 } from "@/utils/theme";
+import { type IArtist, type IUser } from "@/dual/YUserView";
 
 export default defineComponent({
   name: "YUserView",

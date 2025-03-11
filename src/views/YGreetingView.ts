@@ -1,5 +1,5 @@
 import { YColor } from "@/utils/color";
-import { Theme1, Theme2 } from "@/utils/theme";
+import { type Theme1, type Theme2 } from "@/utils/theme";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 

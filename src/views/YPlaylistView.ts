@@ -2,17 +2,20 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import YLoading from "@/components/base/YLoading.vue";
 import YComment from "@/components/list/YComment.vue";
 import { Message } from "@/dual/YMessageC";
-import { ITrack, Tracks } from "@/utils/tracks";
+import { type ITrack, Tracks } from "@/utils/tracks";
 import { Playlist, User } from "@/utils/api";
 import { formatDate_yyyymmdd } from "@/utils/time";
 import { YColor } from "@/utils/color";
-import { Theme1, Theme2 } from "@/utils/theme";
+import { type Theme1, type Theme2 } from "@/utils/theme";
 import { useStore } from "vuex";
 import { preparePlaylist } from "@/utils/playlist";
 import { markRaw, ref, defineComponent } from "vue";
-import { AlReels } from "@/dual/YSongsTable";
-import { IArtist } from "@/dual/YPlaylistView";
-import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
+import { type AlReels } from "@/dual/YSongsTable";
+import { type IArtist } from "@/dual/YPlaylistView";
+import {
+  type RouteLocationNormalized,
+  type NavigationGuardNext,
+} from "vue-router";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { LoginEvents } from "@/dual/login";
 

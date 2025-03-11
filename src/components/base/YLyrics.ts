@@ -1,5 +1,5 @@
 import { PlayerEvents } from "@/dual/player";
-import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
+import type { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
@@ -167,7 +167,7 @@ export default defineComponent({
     handleLyricsChange(newVal: Array<LrcItem | LrcItem2 | YrcItem>) {
       this.formattedLyrics = this.formatLyrics(newVal);
       // 计算每行歌词的Y坐标
-      this.lineY = new Array(this.formattedLyrics.length, 0);
+      this.lineY = [this.formattedLyrics.length, 0];
       for (let i = 0; i < this.formattedLyrics.length - 1; i++) {
         if (this.formattedLyrics[i].lines.length === 1) {
           if (this.formattedLyrics[i].lines[0] === "") {

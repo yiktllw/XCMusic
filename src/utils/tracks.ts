@@ -6,7 +6,8 @@
  *---------------------------------------------------------------*/
 
 import { Song } from "@/utils/api";
-import { IUser } from "./api.interface";
+import { type IUser } from "./api.interface";
+import songsvg from "@/assets/song.svg";
 
 function generateUniqueString(address: string): string {
   const crypto = window.api?.crypto;
@@ -131,7 +132,7 @@ export class Tracks {
             (album: { id: number }) => album.id === track.al.id,
           );
           if (index === -1) {
-            track.al.picUrl = require("@/assets/song.svg");
+            track.al.picUrl = songsvg;
           } else {
             track.al.picUrl = params.albums[index].picUrl;
           }
@@ -168,7 +169,7 @@ export class Tracks {
             interface IReel {
               songList: Array<{
                 songId: number;
-                song: Object;
+                song: object;
                 songName: string;
                 songIndex: number;
               }>;

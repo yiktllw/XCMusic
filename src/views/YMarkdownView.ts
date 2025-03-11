@@ -4,17 +4,16 @@ import README from "@/../README.md";
 import CHANGELOG from "@/../CHANGELOG.md";
 import { YColor } from "@/utils/color";
 
-let path: null | any = null,
-  shell: null | any = null;
+// let path: null | any = null,
+let shell: null | any = null;
 if (window.electron?.isElectron) {
-  path = window.api.path;
+  // path = window.api.path;
   shell = window.electron.shell;
 }
 
 const renderer = new marked.Renderer();
 renderer.image = ({
   href,
-  title,
   text,
 }: {
   href: string;

@@ -5,13 +5,13 @@ import YSearchLyrics from "@/components/list/YSearchLyrics.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import YPage from "@/components/base/YPage.vue";
 import YLoading from "@/components/base/YLoading.vue";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
 import { Search } from "@/utils/api";
 import { markRaw, defineComponent } from "vue";
-import { IPlaylist } from "@/dual/YPlaylistList";
-import { IArtist } from "@/dual/YArtistList";
+import { type IPlaylist } from "@/dual/YPlaylistList";
+import { type IArtist } from "@/dual/YArtistList";
 
 export default defineComponent({
   name: "YSearchView",
@@ -147,7 +147,7 @@ export default defineComponent({
           this.switcher[2].total = result.playlistCount;
           if (newPageInstance) {
             this.playlistsPage = new YPageC(
-              Math.ceil(result.playlistCount / 100)
+              Math.ceil(result.playlistCount / 100),
             );
           }
           this.playlistsPage.onPageChange = () => {
@@ -240,7 +240,7 @@ export default defineComponent({
           this.switcher[5].total = result.userprofileCount;
           if (newPageInstance) {
             this.usersPage = new YPageC(
-              Math.ceil(result.userprofileCount / 100)
+              Math.ceil(result.userprofileCount / 100),
             );
           }
           this.usersPage.onPageChange = () => {

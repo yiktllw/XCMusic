@@ -68,7 +68,7 @@ export default defineComponent({
     this.noSelect = null;
   },
   watch: {
-    progress(newValue, oldValue) {
+    progress(newValue) {
       // 在进度条归零(下一首)时，暂时移除动画
       if (newValue === 0) {
         this.big_frame?.classList.remove("ani");

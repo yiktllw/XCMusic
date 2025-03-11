@@ -12,13 +12,10 @@
  *  -test: any;
  *---------------------------------------------------------------*/
 
-import { Setting } from "@/utils/setting";
-import { shell, webFrame } from "electron";
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
-import crypto from "crypto";
-import https from "https";
+import { type shell } from "electron";
+import type * as fs from "fs";
+import type * as path from "path";
+import type * as os from "os";
 
 interface MemoryUsageDetails {
   // Docs: https://electronjs.org/docs/api/structures/memory-usage-details
@@ -62,7 +59,7 @@ interface api {
   os: typeof os;
   path: typeof path;
   crypto: (str: string) => string;
-  NodeID3: typeof NodeID3;
+  // NodeID3: typeof NodeID3;
   pathJoin: (...args: string[]) => string;
   readFile: (
     path: string,

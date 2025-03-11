@@ -11,7 +11,7 @@ import { YTrackC } from "@/dual/YTrackC";
 import { Search } from "@/utils/api";
 import { Subscriber } from "@/utils//subscribe";
 import { markRaw } from "vue";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { SongPickerEvents } from "@/dual/damakuSongPicker";
 type SongPickerFuncs = {
   [SongPickerEvents.Track]: () => void;

@@ -2,10 +2,10 @@ import { Message } from "@/dual/YMessageC";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import YScroll from "@/components/base/YScroll.vue";
-import { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
-import { IPlaylist } from "@/utils/login";
+import { type IPlaylistCtxData } from "@/dual/YContextMenuItemC";
+import { type IPlaylist } from "@/utils/login";
 import { LoginEvents } from "@/dual/login";
-import { TSideBarItems } from "@/utils/setting";
+import { type TSideBarItems } from "@/utils/setting";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { OpenedPlaylistEvents } from "@/utils/openedPlaylist";
 

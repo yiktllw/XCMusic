@@ -8,10 +8,10 @@
 
 import { Subscriber } from "@/utils/subscribe";
 import { Login as LoginApi, User } from "@/utils/api";
-import { reactive, markRaw, Reactive } from "vue";
+import { markRaw } from "vue";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { LoginEvents } from "@/dual/login";
-import { IBigPlaylist } from "@/dual/YPlaylistList";
+import { type IBigPlaylist } from "@/dual/YPlaylistList";
 
 export interface IPlaylist {
   /** 歌单名 */

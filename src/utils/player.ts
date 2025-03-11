@@ -9,20 +9,22 @@ import { Lyrics, Playlist, Song } from "@/utils/api";
 import { Subscriber } from "@/utils/subscribe";
 import { SongPicker } from "@/utils/damakuSongPicker";
 import { SongPickerEvents } from "@/dual/damakuSongPicker";
-import { IEqualizer, PlayerEvents, equalizerFreqs } from "@/dual/player";
+import { type IEqualizer, PlayerEvents, equalizerFreqs } from "@/dual/player";
 import { Message } from "@/dual/YMessageC";
 import store from "@/store";
 import indexDB from "@/utils/indexDB";
 import i18n from "@/i18n";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { qualities } from "@/utils/setting";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
-import { LrcItem, LrcItem2, YrcItem } from "@/utils/lyric";
-var fs: any, path: any;
+import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
+import songsvg from "@/assets/song.svg";
+
+var fs: any; //, path: any;
 if (window.electron?.isElectron) {
   fs = window.api.fs;
-  path = window.api.path;
+  // path = window.api.path;
 }
 
 type QualityInfo = {
@@ -191,7 +193,7 @@ export class Player {
   initMediaSession() {
     this.subscriber.on("mediaSession", PlayerEvents.track, () => {
       let imgSrc = this.currentTrack?.al?.picUrl;
-      if (!imgSrc) imgSrc = require("@/assets/song.svg");
+      if (!imgSrc) imgSrc = songsvg;
       let metaData = {
         title: this.currentTrackName ?? "未知歌曲",
         artist: this.currentTrackArtists
@@ -385,7 +387,7 @@ export class Player {
       let nourl = false;
       let result = null;
       if (!isLocal(track.id)) {
-        result = await this.getUrl(track.id).catch((error) => {
+        result = await this.getUrl(track.id).catch(() => {
           if (navigator.onLine && this.noUrlCount < 10) {
             this.next();
             nourl = true;
@@ -1120,7 +1122,7 @@ export class Player {
    * 获取歌曲url
    */
   async getUrl(id: number | string) {
-    let response = null;
+    // let response = null;
     if (isLocal(id)) return null;
     const downloads = store.state.download.downloadedSongs;
     if (

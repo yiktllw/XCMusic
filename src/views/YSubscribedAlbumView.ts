@@ -5,7 +5,7 @@ import YPage from "@/components/base/YPage.vue";
 import { useStore } from "vuex";
 import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import { YColor } from "@/utils/color";
-import { IBigPlaylist } from "@/dual/YPlaylistList";
+import { type IBigPlaylist } from "@/dual/YPlaylistList";
 import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({

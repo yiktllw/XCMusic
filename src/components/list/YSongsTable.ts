@@ -10,8 +10,8 @@ import upArrow from "@/assets/up-arrow.svg";
 import downArrow from "@/assets/down-arrow.svg";
 import updownArrow from "@/assets/updown-arrow.svg";
 import { isLocal } from "@/utils/localTracks_renderer";
-import { ITrack } from "@/utils/tracks";
-import { AlReels } from "@/dual/YSongsTable";
+import { type ITrack } from "@/utils/tracks";
+import { type AlReels } from "@/dual/YSongsTable";
 import { PlayerEvents } from "@/dual/player";
 import { DownloadEvents } from "@/dual/download_renderer";
 
@@ -257,7 +257,7 @@ export default defineComponent({
     window.removeEventListener("mousemove", this.resize);
   },
   watch: {
-    tracks(newVal, oldVal) {
+    tracks(newVal) {
       this.alWidth = this.setting.display.albumWidth;
       this.page = new YPageC(Math.ceil(newVal.length / this.limit) || 1);
     },
@@ -316,6 +316,7 @@ export default defineComponent({
     },
     // 根据新的专辑宽度调整歌曲名称和专辑的宽度
     resizeByNewWidth(newWidth: number) {
+      // eslint-disable-next-line no-undef
       let track_albums: NodeListOf<Element> | null =
         document.querySelectorAll(".track-album-ref");
       track_albums.forEach((element) => {

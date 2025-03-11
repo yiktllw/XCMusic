@@ -2,7 +2,7 @@ import { defineComponent, ref } from "vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
-import { ITrack, Tracks } from "@/utils/tracks";
+import { type ITrack, Tracks } from "@/utils/tracks";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
@@ -57,7 +57,7 @@ export default defineComponent({
           url: "/user/cloud",
           tracks: res.data,
         }).tracks;
-        
+
         this.loading = false;
 
         if (newPage) {

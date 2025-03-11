@@ -1,6 +1,6 @@
 import { defineComponent, ref, watch } from "vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 
 export default defineComponent({
   name: "YSearchLyrics",

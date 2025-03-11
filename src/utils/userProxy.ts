@@ -4,7 +4,7 @@
  * 支持http、socks4、socks5、浏览器代理
  *---------------------------------------------------------------*/
 import { session } from "electron";
-import { ProxyConfig } from "@/dual/userProxy.interface";
+import { type ProxyConfig } from "@/dual/userProxy.interface";
 
 /**
  * 设置代理
@@ -18,11 +18,10 @@ export function setProxy(proxyConfig: ProxyConfig) {
   }
   // 使用 HTTP 代理 / SOCKS 代理（SOCKS4 或 SOCKS5）
   else {
-    let proxyUrl: URL;
     try {
-      proxyUrl = new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
+      new URL(`${proxyConfig.mode}://${proxyConfig.server}`);
     } catch (error) {
-      console.error("代理服务器地址无效: ", proxyConfig);
+      console.error("代理服务器地址无效: ", proxyConfig, error);
       return;
     }
     let proxyAuth = "";
@@ -31,9 +30,7 @@ export function setProxy(proxyConfig: ProxyConfig) {
     }
     let proxyRule = `${proxyConfig.mode}://${proxyAuth}${proxyConfig.server}`;
     session.defaultSession.setProxy({ proxyRules: proxyRule }).then(() => {
-      console.log(
-        `使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyRule}`
-      );
+      console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyRule}`);
     });
   }
 }

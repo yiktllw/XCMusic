@@ -1,5 +1,5 @@
 import YWindow from "@/components/base/YWindow.vue";
-import { IEqualizer, equalizerFreqsDisplay } from "@/dual/player";
+import { type IEqualizer, equalizerFreqsDisplay } from "@/dual/player";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 

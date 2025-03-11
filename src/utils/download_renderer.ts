@@ -8,8 +8,8 @@
 
 import indexDB from "@/utils/indexDB";
 import { Subscriber } from "@/utils/subscribe";
-import { ITrack } from "@/utils/tracks";
-import { IDownloadProgress } from "@/utils/download";
+import { type ITrack } from "@/utils/tracks";
+import { type IDownloadProgress } from "@/utils/download";
 import { Lyrics, Song } from "@/utils/api";
 import { getDownloadDirectory } from "@/utils/setting";
 import { getStorage, StorageKey } from "@/utils/render_storage";
@@ -56,7 +56,7 @@ export class Download {
           data: {
             filePath: string;
             track: ITrack;
-          }
+          },
         ) => {
           const { filePath, track } = data;
           await this.db.addDownloadedSong({
@@ -70,23 +70,23 @@ export class Download {
             path: filePath,
           });
           this.downloading = this.downloading.filter(
-            (item) => item.track.id !== track.id
+            (item) => item.track.id !== track.id,
           );
           this.subscriber.exec(DownloadEvents.Doing);
           this.subscriber.exec(DownloadEvents.Complete, track);
-        }
+        },
       );
       window.electron.ipcRenderer.on(
         "download-progress",
         (data: IDownloadProgress) => {
           const index = this.downloading.findIndex(
-            (item) => item.track.id === data.track.id
+            (item) => item.track.id === data.track.id,
           );
           if (index !== -1) {
             this.downloading[index] = data;
           }
           this.subscriber.exec(DownloadEvents.Doing);
-        }
+        },
       );
       this.subscriber.on(
         "download_renderer",
@@ -98,7 +98,7 @@ export class Download {
 
             const url = await Song.getUrl(
               song.id,
-              getStorage(StorageKey.Setting_Download_Quality) ?? "standard"
+              getStorage(StorageKey.Setting_Download_Quality) ?? "standard",
             );
             const downloadDir =
               getStorage(StorageKey.Setting_Download_Path) ??
@@ -107,7 +107,7 @@ export class Download {
 
             this.add(url, song, downloadDir);
           }
-        }
+        },
       );
     }
   }
@@ -132,7 +132,7 @@ export class Download {
       toRaw(url),
       toRaw(track),
       toRaw(downloadDir),
-      toRaw(lrc)
+      toRaw(lrc),
     );
     this.downloading.push({
       track: track,
@@ -148,7 +148,7 @@ export class Download {
     const list = _list.filter(
       (item) =>
         !this.downloadlist.some((song) => song.id === item.id) &&
-        !this.downloadedSongIds.includes(item.id)
+        !this.downloadedSongIds.includes(item.id),
     );
     if (list.length === 0) console.log("no new songs to download");
     this.downloadlist.push(...list);
@@ -166,7 +166,7 @@ export class Download {
     }
     await this.db.deleteDownloadedSong(id);
     this.downloadedSongs = this.downloadedSongs.filter(
-      (song) => song.id !== id
+      (song) => song.id !== id,
     );
     this.subscriber.exec(DownloadEvents.Complete);
   }
@@ -216,7 +216,7 @@ export class Download {
             id: song.id,
             name: song.name,
             path: song.path,
-          })
+          }),
         );
       }
     });

@@ -18,17 +18,17 @@ import { useStore } from "vuex";
 import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
 import {
-  IPlaylistCtxData,
+  type IPlaylistCtxData,
   songItems,
   playlistItems,
-  IMenuClick,
+  type IMenuClick,
 } from "@/dual/YContextMenuItemC";
 import { Comment, Playlist, Song } from "@/utils/api";
 import { isLocal } from "@/utils/localTracks_renderer";
-import { IConfirm } from "@/utils/globalMsg";
+import { type IConfirm } from "@/utils/globalMsg";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
-import { ITrack } from "@/utils/tracks";
-import { IPlaylist } from "@/utils/login";
+import { type ITrack } from "@/utils/tracks";
+import { type IPlaylist } from "@/utils/login";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 
 export default defineComponent({
@@ -422,6 +422,7 @@ export default defineComponent({
               true,
             );
           });
+          break;
         case "playlist-addtoplaylist":
           Message.post("info", "message.getting_playlist_tracks", true);
           Playlist.getAllTracks(
@@ -450,18 +451,19 @@ export default defineComponent({
             );
           });
           break;
-        case "playlist-edit":
+        case "playlist-edit": {
           const _playlist: IPlaylist = arg.target.playlist;
           this.playlist_to_edit = _playlist;
           this.showEditPlaylistWindow = true;
           this.showPreventContainer = true;
           break;
-        case "playlist-delete":
+        }
+        case "playlist-delete": {
           const confirm: IConfirm = {
             content: this.$t("confirm.delete"),
             needTranslate: false,
             callback: () => {
-              Playlist.Delete(arg.target.id).then((res) => {
+              Playlist.Delete(arg.target.id).then(() => {
                 this.login.refreshUserPlaylists();
                 // console.log("Delete playlist:", JSON.stringify(res, null, 4));
               });
@@ -469,6 +471,7 @@ export default defineComponent({
           };
           this.globalMsg.confirm(confirm);
           break;
+        }
         default:
           break;
       }

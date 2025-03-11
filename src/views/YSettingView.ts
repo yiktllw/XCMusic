@@ -9,12 +9,12 @@ import {
   exportToJSON,
   importFromJSON,
   qualities,
-  TSideBarItems,
+  type TSideBarItems,
 } from "@/utils/setting";
-import { ISaveJSONData } from "@/dual/YSettingView";
+import { type ISaveJSONData } from "@/dual/YSettingView";
 import YScroll from "@/components/base/YScroll.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
-import { ProxyConfig } from "@/dual/userProxy.interface";
+import { type ProxyConfig } from "@/dual/userProxy.interface";
 
 /** 用于生成设置界面的背景色 */
 const str = "setting_view";
@@ -156,7 +156,7 @@ export default defineComponent({
         } else {
           Message.post("info", this.$t("message.setting_view.only_desktop"));
         }
-      } catch (error) {
+      } catch {
         Message.post(
           "error",
           this.$t("message.setting_view.zoom_range_50_200"),
@@ -209,7 +209,7 @@ export default defineComponent({
         const path = await this.getFolderPath();
         this.localPaths.push(path);
         this.setting.download.localPaths = this.localPaths;
-      } catch (error) {
+      } catch {
         return;
       }
     },
@@ -226,7 +226,7 @@ export default defineComponent({
         const path = await this.getFolderPath();
         this.localPaths[index] = path;
         this.setting.download.localPaths = this.localPaths;
-      } catch (error) {
+      } catch {
         return;
       }
     },
@@ -364,7 +364,7 @@ export default defineComponent({
           this.proxy.server = `${this.proxy_host}:${this.proxy_port}`;
           this.setting.tools.proxy = this.proxy;
           Message.post("success", this.$t("setting_view.tools.proxy.success"));
-        } catch (error) {
+        } catch {
           Message.post("error", this.$t("setting_view.tools.proxy.error"));
         }
       } else {

@@ -1,7 +1,7 @@
 import { defineComponent, ref } from "vue";
 import YWindow from "@/components/base/YWindow.vue";
 import YScroll from "@/components/base/YScroll.vue";
-import { Theme, Theme2 } from "@/utils/theme";
+import { Theme, type Theme2 } from "@/utils/theme";
 import { useStore } from "vuex";
 import { YColor } from "@/utils/color";
 import { darkThemeColors, hexToRgb } from "@/utils/color";
@@ -9,7 +9,7 @@ import { Doc } from "@/utils/document";
 import { themes } from "@/utils/theme";
 import { Message } from "@/dual/YMessageC";
 import themecss from "@/utils/theme.txt";
-import { CSSClass } from "@/dual/YCustomWindow";
+import { type CSSClass } from "@/dual/YCustomWindow";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export default defineComponent({
@@ -110,7 +110,7 @@ export default defineComponent({
       } else {
         return YColor.getLightThemeColor(
           darkThemeColors[this.nowBackgroundIndex],
-          this.background
+          this.background,
         );
       }
     },
@@ -195,7 +195,7 @@ export default defineComponent({
             highlight = this.rgbStrToHex(lineContent.replace(highlightTxt, ""));
           } else if (lineContent.startsWith(fontColorTxt)) {
             fontColorAll = this.rgbStrToHex(
-              lineContent.replace(fontColorTxt, "")
+              lineContent.replace(fontColorTxt, ""),
             );
           } else if (lineContent.startsWith(backgroundTxt)) {
             background = lineContent.replace(backgroundTxt, "").trim();
@@ -290,7 +290,7 @@ export default defineComponent({
         },
         () => {
           Message.post("error", `${this.$t("copy.copy_failed")}${text}`);
-        }
+        },
       );
     },
     paste(
@@ -303,7 +303,7 @@ export default defineComponent({
         | "fontColorMain"
         | "fontColorHigh"
         | "fontColorStandard"
-        | "fontColorLow"
+        | "fontColorLow",
     ) {
       navigator.clipboard.readText().then(
         (text) => {
@@ -323,13 +323,13 @@ export default defineComponent({
           } else {
             Message.post(
               "error",
-              `${this.$t("copy.paste_failed_invalid_data")}${text}`
+              `${this.$t("copy.paste_failed_invalid_data")}${text}`,
             );
           }
         },
         () => {
           Message.post("error", this.$t("copy.paste_failed"));
-        }
+        },
       );
     },
   },

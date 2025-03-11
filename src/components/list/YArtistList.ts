@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { IArtist } from "@/dual/YArtistList";
+import { type IArtist } from "@/dual/YArtistList";
 
 export default defineComponent({
   name: "YArtistList",

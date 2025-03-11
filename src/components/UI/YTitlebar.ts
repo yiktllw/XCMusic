@@ -3,7 +3,7 @@ import { Login, Search, User } from "@/utils/api";
 import { useStore } from "vuex";
 import YPanel from "@/components/base/YPanel.vue";
 import YScroll from "@/components/base/YScroll.vue";
-import { IHotSearch, ISearchSuggestion } from "@/dual/YTitlebar";
+import { type IHotSearch, type ISearchSuggestion } from "@/dual/YTitlebar";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { LoginEvents } from "@/dual/login";
 

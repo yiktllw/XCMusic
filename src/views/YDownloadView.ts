@@ -1,9 +1,9 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
-import { ITrack, TrackIds } from "@/utils/tracks";
+import { type ITrack, TrackIds } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
-import { ITrackWithProgress } from "@/dual/YLocalSongsView";
+import { type ITrackWithProgress } from "@/dual/YLocalSongsView";
 import { DownloadEvents } from "@/dual/download_renderer";
 import YLoading from "@/components/base/YLoading.vue";
 
@@ -38,7 +38,7 @@ export default defineComponent({
   },
   mounted() {
     YColor.setBackgroundColorHex2(
-      YColor.stringToHexColor("Downloaded Music   ")
+      YColor.stringToHexColor("Downloaded Music   "),
     );
     this.getDownloadedTracks();
     this.download.subscriber.on(
@@ -48,7 +48,7 @@ export default defineComponent({
         await this.getDownloadedTracks();
         this.downloading = this.download.downloading;
         this.downloadingKey += 1;
-      }
+      },
     );
     this.downloading = this.download.downloading;
     this.download.subscriber.on("YLocalSongsView", DownloadEvents.Doing, () => {

@@ -7,7 +7,11 @@ import { Song } from "@/utils/api";
 import { getColorFromImg, YColor } from "@/utils/color";
 import YSpecCanvas from "@/components/base/YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
-import { ICreative, SheetList, SongWikiSummary } from "@/dual/YPlayUI";
+import {
+  type ICreative,
+  type SheetList,
+  type SongWikiSummary,
+} from "@/dual/YPlayUI";
 import YLyrics from "@/components/base/YLyrics.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { PlayerEvents } from "@/dual/player";
@@ -167,8 +171,7 @@ export default defineComponent({
       }
     },
     position(newPos) {
-      if (newPos === "lyric") {
-      } else if (newPos === "wiki") {
+      if (newPos === "wiki") {
         this.$nextTick(() => {
           const container = this.lyricContainer?.$el;
           if (!container) {

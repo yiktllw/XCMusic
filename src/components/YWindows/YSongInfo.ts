@@ -4,7 +4,7 @@ import YScroll from "@/components/base/YScroll.vue";
 import { Message } from "@/dual/YMessageC";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { useStore } from "vuex";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 
 export default defineComponent({
@@ -47,7 +47,7 @@ export default defineComponent({
         },
         () => {
           Message.post("error", `复制失败: ${text}`);
-        }
+        },
       );
     },
     openArtist(id: number | string) {

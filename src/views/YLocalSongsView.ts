@@ -1,9 +1,9 @@
 import { defineComponent, toRaw } from "vue";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
-import { ITrack, Tracks } from "@/utils/tracks";
+import { type ITrack, Tracks } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
-import { musicFile } from "@/utils/localTracks";
+import { type musicFile } from "@/utils/localTracks";
 import YLoading from "@/components/base/YLoading.vue";
 
 export default defineComponent({

@@ -16,6 +16,7 @@ export interface IArtist {
 /**
  * 用户
  */
+// eslint-disable-next-line no-redeclare
 export interface IArtist {
   userId: number;
   nickname: string;

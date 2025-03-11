@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import { formatDate_yyyymmdd } from "@/utils/time";
-import { IPlaylist } from "@/dual/YPlaylistList";
+import { type IPlaylist } from "@/dual/YPlaylistList";
 
 export default defineComponent({
   name: "YPlaylistList",

@@ -1,7 +1,7 @@
 import { createStore } from "vuex"; // 使用 createStore 创建 Vuex store
 import { Player } from "@/utils/player"; // 引入 Player 类
 import { Login } from "@/utils/login";
-import { Setting, ISettings } from "@/utils/setting";
+import { Setting, type ISettings } from "@/utils/setting";
 import { OpenedPlaylist } from "@/utils/openedPlaylist";
 import { markRaw } from "vue";
 import { Download } from "@/utils/download_renderer";

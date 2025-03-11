@@ -13,7 +13,7 @@ import YProgressBarV from "@/components/base/YProgressBarV.vue";
 import YTextBanner from "@/components/base/YTextBanner.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import YListRandom from "@/components/base/YListRandom.vue";
 import { PlayerEvents } from "@/dual/player";
 import { DownloadEvents } from "@/dual/download_renderer";
@@ -167,7 +167,6 @@ export default defineComponent({
     volume() {
       this.player.volume = this.volume;
     },
-    showSongs(val) {},
   },
   computed: {
     likelist() {

@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from "vue";
+import { defineComponent, type PropType } from "vue";
 
 interface SwitcherItem {
   num: number;

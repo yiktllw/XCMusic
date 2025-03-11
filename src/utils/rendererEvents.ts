@@ -6,12 +6,12 @@
 import { ipcMain, BrowserWindow, dialog, app } from "electron";
 import { Download } from "@/utils/download";
 import { scanMusicDirectory } from "@/utils/localTracks";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import * as fs from "fs";
 import * as path from "path";
-import { ISaveJSONData } from "@/dual/YSettingView";
+import { type ISaveJSONData } from "@/dual/YSettingView";
 import { setProxy } from "@/utils/userProxy";
-import { ProxyConfig } from "@/dual/userProxy.interface";
+import { type ProxyConfig } from "@/dual/userProxy.interface";
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -140,11 +140,23 @@ ipcMain.handle("open-json", async (): Promise<null | string> => {
 
 ipcMain.on(
   "download-song",
-  async (event, songUrl: string, track: ITrack, downloadDir: string, lrc?: string) => {
+  async (
+    event,
+    songUrl: string,
+    track: ITrack,
+    downloadDir: string,
+    lrc?: string,
+  ) => {
     const win = getCurrentWindow();
     try {
       // 下载歌曲文件
-      const filePath = await Download.song(songUrl, track, downloadDir, win, lrc);
+      const filePath = await Download.song(
+        songUrl,
+        track,
+        downloadDir,
+        win,
+        lrc,
+      );
       event.reply("download-song-reply", filePath, {
         filePath: filePath,
         track: track,

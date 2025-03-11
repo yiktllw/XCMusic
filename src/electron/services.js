@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // From YesPlayMusic
 
 import clc from "cli-color";

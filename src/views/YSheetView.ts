@@ -4,7 +4,7 @@ import { Song } from "@/utils/api";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
-import { ISheet } from "@/dual/YSheetView";
+import { type ISheet } from "@/dual/YSheetView";
 
 export default defineComponent({
   name: "YSheetView",

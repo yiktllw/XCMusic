@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * download.ts 为主进程中下载歌曲的函数
@@ -9,9 +10,14 @@
 import axios from "axios";
 const fs = require("fs");
 const path = require("path");
-import { ITrack } from "@/utils/tracks";
-import { BrowserWindow } from "electron";
-import { File, IPicture, ByteVector, PictureType } from "node-taglib-sharp";
+import { type ITrack } from "@/utils/tracks";
+import { type BrowserWindow } from "electron";
+import {
+  File,
+  type IPicture,
+  ByteVector,
+  PictureType,
+} from "node-taglib-sharp";
 
 export interface IDownloadProgress {
   track: ITrack;
@@ -48,7 +54,7 @@ export class Download {
     track: ITrack,
     downloadDir: string,
     win: BrowserWindow | null,
-    lrc?: string
+    lrc?: string,
   ): Promise<string> {
     if (!fs.existsSync(downloadDir)) {
       // throw new Error('Invalid download directory');
@@ -82,7 +88,7 @@ export class Download {
         if (win) {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) /
-              (progressEvent.total || progressEvent.loaded)
+              (progressEvent.total || progressEvent.loaded),
           );
           const progress: IDownloadProgress = {
             track: track,

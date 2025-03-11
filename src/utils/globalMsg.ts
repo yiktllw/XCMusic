@@ -6,7 +6,7 @@
  * 2. 要求用户确认某些操作
  *---------------------------------------------------------------*/
 
-import { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
+import { type IPlaylistCtxData } from "@/dual/YContextMenuItemC";
 import { Subscriber } from "@/utils/subscribe";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 

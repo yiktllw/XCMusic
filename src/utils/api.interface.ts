@@ -3,12 +3,12 @@
  * api.interface.ts 是 api.ts 的接口定义
  *---------------------------------------------------------------*/
 
-import { SheetList } from "@/dual/YPlayUI";
-import { ITrack } from "@/utils/tracks";
-import { IPlaylist as IPlaylist_List } from "@/dual/YPlaylistList";
-import { IArtist } from "@/dual/YArtistList";
-import { IArtist as IArtist_ } from "@/dual/YPlaylistView";
-import { ISheet } from "@/dual/YSheetView";
+import { type SheetList } from "@/dual/YPlayUI";
+import { type ITrack } from "@/utils/tracks";
+import { type IPlaylist as IPlaylist_List } from "@/dual/YPlaylistList";
+import { type IArtist } from "@/dual/YArtistList";
+import { type IArtist as IArtist_ } from "@/dual/YPlaylistView";
+import { type ISheet } from "@/dual/YSheetView";
 
 namespace Public {
   export interface IPrivilege {

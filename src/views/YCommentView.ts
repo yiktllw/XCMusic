@@ -3,7 +3,7 @@ import YComment from "@/components/list/YComment.vue";
 import { YTrackC } from "@/dual/YTrackC";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
-import { Theme1, Theme2 } from "@/utils/theme";
+import { type Theme1, type Theme2 } from "@/utils/theme";
 
 export default defineComponent({
   name: "YCommentView",

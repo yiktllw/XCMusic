@@ -1,5 +1,5 @@
 import { Song } from "@/utils/api";
-import { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 
 export class YTrackC implements ITrack {
   /*

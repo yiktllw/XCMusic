@@ -125,7 +125,7 @@ export class Lyrics {
             startTime: obj.t,
             words: obj.c.map((item: { tx: string }) => ({ text: item.tx })),
           });
-        } catch (e) {
+        } catch {
           // 忽略解析错误行
           console.log("Error parsing line of yrc:", line);
         }
@@ -168,7 +168,7 @@ export class Lyrics {
           });
           return; // 继续处理下一行
         }
-      } catch (e) {
+      } catch {
         // 解析失败则继续按 LRC 格式处理
       }
 
@@ -191,7 +191,7 @@ export class Lyrics {
 
         // 将歌词文本转化为歌词片段对象
         const lyricItem = {
-          type: "lrc" as "lrc",
+          type: "lrc" as const,
           startTime: timeInMillis,
           content: lyricText,
         };

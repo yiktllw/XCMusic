@@ -8,7 +8,7 @@
  *---------------------------------------------------------------*/
 
 import Color from "color";
-import { Theme1, Theme2, themes } from "@/utils/theme";
+import { type Theme1, type Theme2, themes } from "@/utils/theme";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 
 type COLOR = {
@@ -238,7 +238,8 @@ export namespace YColor {
    */
   export function setBackgroundColorHex2(hex: string) {
     try {
-      const setting_theme = getStorage(StorageKey.Setting_Display_Theme) ?? 'dark';
+      const setting_theme =
+        getStorage(StorageKey.Setting_Display_Theme) ?? "dark";
       const theme = YColor.findTheme(setting_theme);
       YColor.setBackgroundColorHex(
         YColor.stringToHexColor(hex),

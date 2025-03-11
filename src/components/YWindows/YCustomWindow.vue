@@ -508,6 +508,7 @@
 </template>
 
 <script src="./YCustomWindow.ts" lang="ts">
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Theme, Theme2 } from "@/utils/theme";
 </script>
 

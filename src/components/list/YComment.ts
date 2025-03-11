@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import YPage from "@/components/base/YPage.vue";
-import { YCommentC, Types } from "@/dual/YCommentC";
+import { YCommentC, type Types } from "@/dual/YCommentC";
 import { formatDate_yyyymmdd } from "@/utils/time";
 import YLoading from "@/components/base/YLoading.vue";
 

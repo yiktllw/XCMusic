@@ -1,5 +1,6 @@
 <script setup lang="js">
 const progress = defineModel();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emits = defineEmits(["update:modelValue", "set-progress-end"]);
 </script>
 

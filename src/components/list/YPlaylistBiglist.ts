@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { IBigPlaylist, IPlaylist } from "@/dual/YPlaylistList";
+import type { IBigPlaylist, IPlaylist } from "@/dual/YPlaylistList";
 export default defineComponent({
   name: "YPlaylistBiglist",
   props: {

@@ -1,6 +1,6 @@
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, type PropType, ref } from "vue";
 import YWindow from "@/components/base/YWindow.vue";
-import { IConfirm } from "@/utils/globalMsg";
+import { type IConfirm } from "@/utils/globalMsg";
 
 export default defineComponent({
   name: "YCreatePlaylist",

@@ -23,6 +23,7 @@ export interface IPlaylist {
 /**
  * 专辑
  */
+// eslint-disable-next-line no-redeclare
 export interface IPlaylist {
   id: number | string;
   name: string;
