@@ -24,35 +24,34 @@
  * 20. env.isDevelopment 是否为开发环境
  *---------------------------------------------------------------*/
 
-const {
-  contextBridge,
-  app,
-  ipcRenderer,
-  shell,
-  webFrame,
-} = require("electron");
+import { contextBridge, ipcRenderer, shell, webFrame } from "electron";
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
-const crypto = require("crypto");
+import fs, {
+  readFileSync,
+  writeFileSync,
+  existsSync as _existsSync,
+  mkdirSync,
+} from "fs";
+import path, { join } from "path";
+import os, { homedir } from "os";
+import { createHash } from "crypto";
 
 contextBridge.exposeInMainWorld("api", {
-  pathJoin: (...args) => path.join(...args), // 暴露 path.join
+  pathJoin: (...args) => join(...args), // 暴露 path.join
   readFile: (filePath) => {
-    return fs.readFileSync(filePath, "utf-8"); // 读取文件
+    return readFileSync(filePath, "utf-8"); // 读取文件
   },
   writeFile: (filePath, data) => {
-    fs.writeFileSync(filePath, data, "utf-8"); // 写入文件
+    writeFileSync(filePath, data, "utf-8"); // 写入文件
   },
-  existsSync: (path) => fs.existsSync(path, "utf-8"), // 判断文件是否存在
-  makeDirSync: (path) => fs.mkdirSync(path, { recursive: true }), // 创建文件夹
-  homeDir: () => os.homedir(), // 获取用户主目录
+  existsSync: (path) => _existsSync(path, "utf-8"), // 判断文件是否存在
+  makeDirSync: (path) => mkdirSync(path, { recursive: true }), // 创建文件夹
+  homeDir: () => homedir(), // 获取用户主目录
   fs: fs,
   path: path,
   os: os,
   crypto: (str) => {
-    return crypto.createHash("sha256").update(str).digest("hex");
+    return createHash("sha256").update(str).digest("hex");
   }, // 加密字符串
 });
 contextBridge.exposeInMainWorld("electron", {
@@ -71,9 +70,11 @@ contextBridge.exposeInMainWorld("electron", {
   shell: shell,
   clearCache: () => webFrame.clearCache(),
   getResourceUsage: () => webFrame.getResourceUsage(),
+  // eslint-disable-next-line no-undef
   getProcessInfo: () => process.memoryUsage(),
 });
 
 contextBridge.exposeInMainWorld("env", {
+  // eslint-disable-next-line no-undef
   isDevelopment: process.env.NODE_ENV === "development",
 });

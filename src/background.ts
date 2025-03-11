@@ -97,7 +97,7 @@ async function createWindow() {
     minHeight: 700,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION === "true",
+      nodeIntegration: true,
       // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       // webviewTag: true,
       webSecurity: false, // 允许加载本地资源

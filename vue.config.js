@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { defineConfig } = require("@vue/cli-service");
 const webpack = require("webpack"); // 引入 webpack 以使用 DefinePlugin 插件
 
