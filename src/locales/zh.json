@@ -359,8 +359,8 @@
     "total_page_right": " 页"
   },
   "sidebar": {
-    "created_playlist": "创建的歌单",
-    "subscribed_playlist": "收藏的歌单"
+    "created_playlist": "创建歌单",
+    "subscribed_playlist": "收藏歌单"
   },
   "song_added_failed": "添加歌曲失败",
   "song_added_successfully": "添加歌曲成功",
