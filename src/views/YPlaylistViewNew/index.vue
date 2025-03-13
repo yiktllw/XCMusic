@@ -45,7 +45,9 @@
             id="playlist-cover"
             :src="playlistDetail.cover"
             @load="setBkgColor"
+            v-if="playlistDetail.cover"
           />
+          <div class="cover" v-else />
           <div class="gradient-overlay" v-if="playlistDetail.playCount > 0" />
           <div class="play-info" v-if="playlistDetail.playCount > 0">
             <img class="play-icon" :src="play_svg" />
@@ -60,6 +62,7 @@
               (playlistDetail.transName ? '\n' : '') +
               playlistDetail.transName
             "
+            v-if="playlistDetail.name"
           >
             {{ playlistDetail.name }}
             <span v-if="playlistDetail.transName" class="font-color-standard">
@@ -67,7 +70,11 @@
             </span>
           </h2>
           <div class="artists font-color-high">
-            <div class="creator" v-if="type === 'playlist'" @click="openUser()">
+            <div
+              class="creator"
+              v-if="type === 'playlist' && playlistDetail.creatorName"
+              @click="openUser()"
+            >
               <img :src="playlistDetail.creatorAvatar" class="avatar" />
               {{ playlistDetail.creatorName }}
             </div>
@@ -288,6 +295,7 @@ export default defineComponent({
           this.playlistDetail = res;
           this.songsTableProps.reelOptions = undefined;
           this.songsTableProps.songs = this.playlistDetail.tracks.slice();
+          this.loading = false;
           if (res.trackCount > 1000)
             Playlist.getAllTracks(this.playlistId, res.trackCount).then(
               (res2) => {
@@ -443,6 +451,7 @@ export default defineComponent({
     .left {
       position: relative;
       .cover {
+        width: 160px;
         height: 160px;
         border-radius: 10px;
       }
