@@ -1,10 +1,9 @@
 <template>
-  <div v-if="loading" style="display: flex; justify-self: start">
+  <div v-if="loading" class="skeleton">
     <ContentLoader
-      :speed="4"
-      :width="800"
-      :height="420"
-      :viewBox="'0 0 800 420'"
+      :speed="1.5"
+      :width="1000"
+      :height="800"
       primaryColor="rgba(var(--foreground-color-rgb), 0.2)"
       secondaryColor="rgba(var(--foreground-color-rgb), 0.1)"
     >
@@ -17,23 +16,48 @@
       <rect x="190" y="150" rx="8" ry="8" width="320" height="16" />
       <rect x="20" y="195" rx="8" ry="8" width="120" height="16" />
       <!-- 歌曲 -->
-      <rect x="24" y="243" rx="5" ry="5" width="20" height="10" />
-      <rect x="60" y="230" rx="8" ry="8" width="40" height="40" />
-      <rect x="110" y="233" rx="5" ry="5" width="400" height="10" />
-      <rect x="110" y="253" rx="5" ry="5" width="200" height="10" />
-      <rect x="540" y="243" rx="5" ry="5" width="200" height="10" />
-      <!-- 歌曲2 -->
-      <rect x="24" y="303" rx="5" ry="5" width="20" height="10" />
-      <rect x="60" y="290" rx="8" ry="8" width="40" height="40" />
-      <rect x="110" y="293" rx="5" ry="5" width="400" height="10" />
-      <rect x="110" y="313" rx="5" ry="5" width="200" height="10" />
-      <rect x="540" y="303" rx="5" ry="5" width="200" height="10" />
-      <!-- 歌曲3 -->
-      <rect x="24" y="363" rx="5" ry="5" width="20" height="10" />
-      <rect x="60" y="350" rx="8" ry="8" width="40" height="40" />
-      <rect x="110" y="353" rx="5" ry="5" width="400" height="10" />
-      <rect x="110" y="373" rx="5" ry="5" width="200" height="10" />
-      <rect x="540" y="363" rx="5" ry="5" width="200" height="10" />
+      <template v-for="index in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
+        <rect
+          x="24"
+          :y="243 + 60 * index"
+          rx="5"
+          ry="5"
+          width="20"
+          height="10"
+        />
+        <rect
+          x="60"
+          :y="230 + 60 * index"
+          rx="8"
+          ry="8"
+          width="40"
+          height="40"
+        />
+        <rect
+          x="110"
+          :y="233 + 60 * index"
+          rx="5"
+          ry="5"
+          width="400"
+          height="10"
+        />
+        <rect
+          x="110"
+          :y="253 + 60 * index"
+          rx="5"
+          ry="5"
+          width="200"
+          height="10"
+        />
+        <rect
+          x="540"
+          :y="243 + 60 * index"
+          rx="5"
+          ry="5"
+          width="200"
+          height="10"
+        />
+      </template>
     </ContentLoader>
   </div>
   <YSongsTableNew v-else class="songs-table" :options="songsTableProps">
@@ -438,6 +462,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.skeleton {
+  align-items: start;
+  justify-content: start;
+  justify-self: start;
+  overflow: hidden;
+  height: 100%;
+}
 .songs-table {
   width: calc(100% - 20px);
   height: calc(100vh - 85px - 65px);
