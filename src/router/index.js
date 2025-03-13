@@ -26,7 +26,7 @@ const routes = [
       {
         path: "playlist/:id",
         name: "Playlist",
-        component: () => import("@/views/YPlaylistView.vue"),
+        component: () => import("@/views/YPlaylistViewNew/index.vue"),
         props: (route) => ({
           playlistId: Number(route.params.id),
           type: "playlist",
@@ -38,7 +38,7 @@ const routes = [
       {
         path: "album/:id",
         name: "Album",
-        component: () => import("@/views/YPlaylistView.vue"),
+        component: () => import("@/views/YPlaylistViewNew/index.vue"),
         props: (route) => ({
           playlistId: Number(route.params.id),
           type: "album",

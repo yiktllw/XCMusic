@@ -471,8 +471,7 @@
                 {{ $t("playbar.playlist_panel.like") }}
               </div>
             </div>
-            <YScroll>
-              <!-- <YSongsTable
+            <!-- <YSongsTable
                 v-if="showSongs"
                 class="songs-table"
                 v-model="playlist"
@@ -488,13 +487,12 @@
                 :scroll-to-current-track-on-mount="true"
                 ref="songstable"
               /> -->
-              <YSongsTableNew
-                v-if="showSongs"
-                :options="songs_table_options"
-                class="songs-table"
-                ref="songstable"
-              />
-            </YScroll>
+            <YSongsTableNew
+              v-if="showSongs"
+              :options="songs_table_options"
+              class="songs-table"
+              ref="songstable"
+            />
             <YLoading style="margin: auto" v-if="!showSongs" />
           </div>
         </YPanel>

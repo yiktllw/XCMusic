@@ -1,4 +1,5 @@
 import type { ITrack } from "@/utils/tracks";
+import type { AlReels } from "@/dual/YSongsTable";
 
 export interface ISongsTableProps {
   // 由于同时有数个组件使用此组件，所以需要提供id来区分订阅事件。
@@ -8,7 +9,15 @@ export interface ISongsTableProps {
   columns: IColumn;
   editable?: true | undefined;
   allow_play_all: boolean;
+  reelOptions?: reelOptions;
   showDeleteButton?: true | undefined;
+  showHeader?: true | undefined;
+  playlistId?: number;
+}
+
+interface reelOptions {
+  showReels: boolean;
+  reels: AlReels[];
 }
 
 interface IColumn {
@@ -34,3 +43,33 @@ const defaultColumns: IColumn = {
 } as const;
 
 export const getDefaultColumns = () => ({ ...defaultColumns }) as IColumn;
+
+export function getSongsTableOptions(
+  id: "YPlaylistView-playlist" | "YPlaylistView-album",
+): ISongsTableProps {
+  let columnsOptions = getDefaultColumns();
+  let options: ISongsTableProps = {
+    id_for_subscribe: "",
+    songs: [] as ITrack[],
+    mode: "playlist",
+    columns: columnsOptions,
+    allow_play_all: true,
+  };
+  switch (id) {
+    case "YPlaylistView-playlist":
+      options.id_for_subscribe = "YPlaylistView";
+      options.columns.popularity = false;
+      options.showHeader = true;
+      break;
+    case "YPlaylistView-album":
+      options.id_for_subscribe = "YPlaylistView";
+      options.columns.album = false;
+      options.columns.cover = false;
+      options.mode = "album";
+      options.showHeader = true;
+      break;
+    default:
+      break;
+  }
+  return options;
+}

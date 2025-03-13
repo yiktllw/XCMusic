@@ -1,16 +1,12 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
-import {
-  getDefaultColumns,
-  type ISongsTableProps,
-} from "@/components/list/YSongsTableNew/types";
+import YPlaylistViewNew from "@/views/YPlaylistViewNew/index.vue";
 
 export default defineComponent({
   name: "YTestView",
   components: {
-    YSongsTableNew,
+    YPlaylistViewNew,
   },
   setup() {
     const store = useStore();
@@ -23,23 +19,12 @@ export default defineComponent({
   },
   computed: {},
   data() {
-    let columnsOptions = getDefaultColumns();
-    columnsOptions.popularity = false;
-    return {
-      options: {
-        id_for_subscribe: "test",
-        songs: [],
-        mode: "playlist",
-        columns: columnsOptions,
-        allow_play_all: true,
-      } as ISongsTableProps,
-    };
+    return {};
   },
   methods: {
     clearCache() {
       window.electron.clearCache();
       console.log("clearCache");
-      const usage = window.electron.getResourceUsage();
       const test = window.electron.getProcessInfo();
       console.log(JSON.stringify(test, null, 4));
     },
@@ -60,8 +45,22 @@ export default defineComponent({
   },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
-    this.options.songs = this.player.playlist.slice();
-    window.test = this.player;
+    // Playlist.getAlbum(34588440).then((res) => {
+    //   if (!res) return;
+    //   this.options.reelOptions = {
+    //     showReels: true,
+    //     reels: res.showreels,
+    //   };
+    //   this.options.songs = new Tracks({
+    //     url: "/api/album/v3/detail",
+    //     tracks: res.songs,
+    //     params: {
+    //       reels: res.showreels,
+    //     },
+    //   }).tracks;
+    // });
+    // this.options.songs = this.player.playlist.slice();
+    // window.test = this.player;
   },
   beforeUnmount() {},
 });

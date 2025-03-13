@@ -157,7 +157,7 @@ export class Tracks {
         } else if (url === "/api/album/v3/detail") {
           track = item;
           track.cd = parseInt(track.cd);
-          if (params.needIndex) {
+          if (params?.needIndex) {
             resultTrack = {
               ...resultTrack,
               originalIndex: params.page
@@ -186,7 +186,7 @@ export class Tracks {
           }
         } else if (url === "/playlist/track/all" || url === "/album") {
           track = item;
-          if (params.needIndex) {
+          if (params?.needIndex) {
             resultTrack = {
               ...resultTrack,
               originalIndex: params.page
@@ -232,6 +232,16 @@ export class Tracks {
             dt: _item.simpleSong.dt,
             pop: _item.simpleSong.pop,
           };
+        } else if (url === "/playlist/detail") {
+          track = item;
+          if (params?.needIndex) {
+            resultTrack = {
+              ...resultTrack,
+              originalIndex: params.page
+                ? (params.page - 1) * 500 + index
+                : index,
+            };
+          }
         }
         resultTrack.id = track.id;
         resultTrack.name = track.name;

@@ -2,11 +2,7 @@
   <YVirtualScroll
     :items="options.songs"
     :item-height="60"
-    :slots="[
-      // { type: 'prepend', height: 50 },
-      // { type: 'append', height: 50 },
-      // { type: 'index', index: 5, height: 30 },
-    ]"
+    :slots="slots"
     class="font-color-main virtual-scroll g-scrollable"
     ref="virtualScroll"
   >
@@ -26,6 +22,7 @@
           </div>
           <img
             class="song-img"
+            :class="options.columns.index ? '' : 'no-index'"
             :src="item._picUrl ?? undefined"
             v-if="options.columns.cover"
           />
@@ -40,10 +37,16 @@
               }"
               v-if="options.columns.title"
               :title="
-                item.tns.length > 0 ? item.name + '\n' + item.tns[0] : item.name
+                item.tns?.length > 0
+                  ? item.name + '\n' + item.tns[0]
+                  : item.name
               "
             >
-              {{ item.name }}
+              {{
+                options.mode === "album" && options.reelOptions?.showReels
+                  ? item.reelName
+                  : item.name
+              }}
               <span
                 :style="{
                   color:
@@ -51,7 +54,7 @@
                       ? 'rgba(var(--highlight-color-rgb), .6)'
                       : 'var(--font-color-standard)',
                 }"
-                v-if="item.tns.length > 0"
+                v-if="item.tns?.length > 0"
                 >&nbsp;({{ item.tns[0] }})</span
               >
             </div>
@@ -61,7 +64,7 @@
             >
               <img
                 class="success-img"
-                :src="require('@/assets/success.svg')"
+                :src="success_svg"
                 v-if="downloadedSongIds.includes(item.id)"
               />
               <template
@@ -84,7 +87,7 @@
                   >
                     {{ artist.name }}
                   </span>
-                  <span v-if="artist_index !== item.ar.length - 1"
+                  <span v-if="artist_index !== item.ar?.length - 1"
                     >&nbsp;/&nbsp;</span
                   >
                 </span>
@@ -100,31 +103,31 @@
               :title="$t('context.download')"
               @click="downloadSong(item)"
               v-if="!downloadedSongIds.includes(item.id)"
-              :src="require('@/assets/smalldownload.svg')"
+              :src="smalldownload_svg"
             />
             <img
               class="menu-img g-icon"
               :title="$t('context.subscribe')"
               @click="open_addToPlaylist(item.id)"
-              :src="require('@/assets/subscribe.svg')"
+              :src="subscribe_svg"
             />
             <img
               class="menu-img menu-img-comment g-icon"
               :title="$t('context.view_comment')"
               @click="openComment(item.id)"
-              :src="require('@/assets/comment.svg')"
+              :src="comment_svg"
             />
             <img
               class="menu-img g-icon"
               :title="$t('songs_table.more')"
               @click="openContextMenu($event, item, 'toogle')"
-              :src="require('@/assets/detail.svg')"
+              :src="detail_svg"
             />
             <img
               class="menu-img g-icon"
               :title="$t('playbar.delete_from_playlist')"
               @click="deleteSong(item.id)"
-              :src="require('@/assets/delete.svg')"
+              :src="delete_svg"
               v-if="options.showDeleteButton"
             />
           </div>
@@ -132,7 +135,7 @@
             class="song-album font-color-standard"
             v-if="options.columns.album"
             :title="
-              item.al.tns.length > 0
+              item.al.tns?.length > 0
                 ? item.al.name + '\n' + item.al.tns[0]
                 : item.al.name
             "
@@ -141,7 +144,7 @@
               {{ item.al.name }}
             </span>
             <span v-else>{{ $t("songs_table.unknown_album") }}</span>
-            <span v-if="item.al.tns.length > 0"
+            <span v-if="item.al.tns?.length > 0"
               >&nbsp;({{ item.al.tns[0] }})</span
             >
           </div>
@@ -150,7 +153,7 @@
               v-if="likelist.includes(item.id)"
               class="like-img"
               :title="$t('playbar.cancel_like')"
-              :src="require('@/assets/likes.svg')"
+              :src="likes_svg"
               @click="_toogleLike(item.id, true)"
             />
             <img
@@ -158,7 +161,7 @@
               class="like-img g-icon"
               style="opacity: 0.65"
               :title="$t('playbar.like')"
-              :src="require('@/assets/unlikes.svg')"
+              :src="unlikes_svg"
               @click="_toogleLike(item.id, false)"
             />
           </div>
@@ -181,17 +184,35 @@
       </div>
     </template>
 
-    <!-- <template #slot-prepend>
-      <div style="height: 50px">前置内容</div>
+    <template #slot-prepend>
+      <slot name="slot-prepend" />
     </template>
 
     <template #slot-append>
-      <div style="height: 50px">后置内容</div>
-    </template> -->
+      <slot name="slot-append" />
+    </template>
 
-    <!-- <template #slot-index="{ index }">
-      <div style="height: 30px">固定在位置 {{ index }} 的内容</div>
-    </template> -->
+    <template
+      #slot-index="{ index }"
+      v-if="options.reelOptions?.showReels && options.mode === 'album'"
+    >
+      <div class="reel">
+        <div class="reel-title">
+          {{
+            options.reelOptions.reels[first_tracks.indexOf(index)]
+              .showreelName ?? $t("songs_table.unknown_name")
+          }}
+        </div>
+        <div
+          class="reel-artists"
+          v-for="artist in options.reelOptions.reels[
+            first_tracks.indexOf(index)
+          ].otherArtists"
+        >
+          {{ artist }}
+        </div>
+      </div>
+    </template>
   </YVirtualScroll>
 </template>
 
@@ -199,6 +220,7 @@
 import { defineComponent, useTemplateRef } from "vue";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import YVirtualScroll from "@/components/base/YVirtualScroll.vue";
+import type { SlotConfig } from "@/components/base/YVirtualScroll.interface";
 import YPlaying from "@/components/base/YPlaying.vue";
 import { useStore } from "vuex";
 import type { ITrack } from "@/utils/tracks";
@@ -209,6 +231,14 @@ import { type ISongsTableProps } from "./types";
 import { DownloadEvents } from "@/dual/download_renderer";
 import { toRaw } from "vue";
 import { PlayerEvents } from "@/dual/player";
+import success_svg from "@/assets/success.svg";
+import smalldownload_svg from "@/assets/smalldownload.svg";
+import subscribe_svg from "@/assets/subscribe.svg";
+import comment_svg from "@/assets/comment.svg";
+import detail_svg from "@/assets/detail.svg";
+import delete_svg from "@/assets/delete.svg";
+import likes_svg from "@/assets/likes.svg";
+import unlikes_svg from "@/assets/unlikes.svg";
 
 export default defineComponent({
   components: {
@@ -236,9 +266,30 @@ export default defineComponent({
     };
   },
   data() {
+    const defaultSlot: SlotConfig[] = [
+      {
+        type: "prepend",
+        height: this.options.showHeader ? 235 : 0,
+      },
+      {
+        type: "append",
+        height: 5,
+      },
+    ];
     return {
       nowPlayingId: 0,
       downloadedSongIds: [] as number[],
+      defaultSlot: defaultSlot,
+      slots: defaultSlot as SlotConfig[],
+      first_tracks: [] as number[],
+      success_svg,
+      smalldownload_svg,
+      subscribe_svg,
+      comment_svg,
+      detail_svg,
+      delete_svg,
+      likes_svg,
+      unlikes_svg,
     };
   },
   computed: {
@@ -266,6 +317,17 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.download.subscriber.offAll(this.options.id_for_subscribe);
+    this.player.subscriber.offAll(this.options.id_for_subscribe);
+  },
+  watch: {
+    "options.reelOptions.showReels": {
+      handler: "computeReels",
+      immediate: true,
+    },
+    "options.reelOptions": {
+      handler: "computeReels",
+      immediate: true,
+    },
   },
   methods: {
     _toogleLike(id: number, status: boolean) {
@@ -310,6 +372,10 @@ export default defineComponent({
     },
     openContextMenu(event: MouseEvent, item: ITrack, type: "toogle" | "show") {
       event.preventDefault();
+      let from = -1;
+      if (this.options.editable && this.options.mode === "playlist") {
+        from = this.options.playlistId ?? -1;
+      }
       window.postMessage({
         type:
           type === "show"
@@ -319,8 +385,7 @@ export default defineComponent({
           x: event.clientX,
           y: event.clientY,
           track: JSON.stringify(toRaw(item)),
-          // 待修改
-          from: -1,
+          from,
         },
       });
     },
@@ -344,13 +409,50 @@ export default defineComponent({
         (this.virtualScroll as any)?.scrollToIndex(index, noAnimation);
       }
     },
+    computeReels() {
+      if (
+        !this.options.reelOptions?.showReels ||
+        this.options.mode !== "album"
+      ) {
+        this.first_tracks = [];
+        this.slots = this.defaultSlot.slice();
+        return;
+      }
+
+      const NAME_HEIGHT = 29;
+      const ARTISTS_HEIGHT = 26;
+      const SPACE_HEIGHT = 15;
+
+      const reels = this.options.reelOptions.reels;
+      const songs = this.options.songs;
+
+      const first_tracks = songs.filter((item) => item.songInReelIndex === 0);
+
+      this.first_tracks = [];
+      this.slots = this.defaultSlot.slice();
+
+      reels.forEach((reel, index) => {
+        const song = first_tracks[index];
+        const slotIndexInSongs = songs.indexOf(song);
+
+        this.first_tracks.push(slotIndexInSongs);
+        this.slots.push({
+          type: "index",
+          index: slotIndexInSongs,
+          height:
+            SPACE_HEIGHT +
+            NAME_HEIGHT +
+            ARTISTS_HEIGHT * reel.otherArtists.length,
+        });
+      });
+    },
   },
 });
 </script>
 
 <style lang="scss" scoped>
 .virtual-scroll {
-  width: 100%;
+  // width: 100%;
   // height: calc(100vh - 65px - 85px);
 
   .song-item {
@@ -436,7 +538,7 @@ export default defineComponent({
       }
 
       .index {
-        min-width: 65px;
+        min-width: 55px;
         height: 40px;
         display: flex;
         justify-content: center;
@@ -448,6 +550,10 @@ export default defineComponent({
         height: 40px;
         border-radius: 5px;
         margin-right: 15px;
+      }
+
+      .no-index {
+        margin-left: 15px;
       }
     }
 
@@ -506,6 +612,22 @@ export default defineComponent({
         }
       }
     }
+  }
+}
+
+.reel {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 15px 0 0 20px;
+
+  .reel-title {
+    height: 29px;
+  }
+  .reel-artists {
+    height: 26px;
+    font-size: 15px;
+    color: var(--font-color-standard);
   }
 }
 </style>

@@ -183,7 +183,7 @@ export default defineComponent({
                 throw error;
               }),
             this.login.userId
-              ? User.getPlaylists(this.login.userId as unknown as number)
+              ? User.getPlaylists(this.login.userId)
                   .then((myFavoriteId) => {
                     // 如果是我喜欢的音乐
                     if (myFavoriteId[0].id == id) {

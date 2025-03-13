@@ -25,12 +25,7 @@
 
 <script setup lang="ts" generic="T">
 import { computed, ref, watchEffect, onMounted, onUnmounted } from "vue";
-
-type SlotConfig = {
-  type: "prepend" | "append" | "index";
-  index?: number;
-  height: number;
-};
+import type { SlotConfig } from "./YVirtualScroll.interface";
 
 type VirtualItem<T> = {
   type: "item" | "slot";
@@ -51,8 +46,8 @@ const props = defineProps<{
 
 defineSlots<{
   item?: (props: { item: T; index: number }) => any;
-  "slot-prepend"?: (props: {}) => any;
-  "slot-append"?: (props: {}) => any;
+  "slot-prepend"?: (props: object) => any;
+  "slot-append"?: (props: object) => any;
   "slot-index"?: (props: { index: number }) => any;
 }>();
 

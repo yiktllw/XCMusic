@@ -13,7 +13,11 @@
     <!-- <div class="button font-color-main" @click="setEq">
       点击设置EQ
     </div> -->
-    <YSongsTableNew :options="options" />
+    <YPlaylistViewNew
+      class="songs-table"
+      :playlistId="7409047725"
+      :type="'playlist'"
+    />
   </div>
 </template>
 
@@ -41,5 +45,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+}
+
+.songs-table {
+  width: calc(100% - 40px);
 }
 </style>
