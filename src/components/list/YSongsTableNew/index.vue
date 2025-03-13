@@ -43,7 +43,9 @@
               "
             >
               {{
-                options.mode === "album" && options.reelOptions?.showReels
+                options.mode === "album" &&
+                options.reelOptions?.showReels &&
+                item.reelName
                   ? item.reelName
                   : item.name
               }}
@@ -431,7 +433,7 @@ export default defineComponent({
       this.first_tracks = [];
       this.slots = this.defaultSlot.slice();
 
-      reels.forEach((reel, index) => {
+      reels?.forEach((reel, index) => {
         const song = first_tracks[index];
         const slotIndexInSongs = songs.indexOf(song);
 
