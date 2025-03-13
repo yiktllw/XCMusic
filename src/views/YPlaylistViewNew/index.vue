@@ -1,5 +1,42 @@
 <template>
-  <YSongsTableNew class="songs-table" :options="songsTableProps">
+  <div v-if="loading" style="display: flex; justify-self: start">
+    <ContentLoader
+      :speed="4"
+      :width="800"
+      :height="420"
+      :viewBox="'0 0 800 420'"
+      primaryColor="rgba(var(--foreground-color-rgb), 0.2)"
+      secondaryColor="rgba(var(--foreground-color-rgb), 0.1)"
+    >
+      <!-- 封面 -->
+      <rect x="20" y="20" rx="10" ry="10" width="160" height="160" />
+      <!-- 标题等信息 -->
+      <rect x="190" y="30" rx="8" ry="8" width="160" height="16" />
+      <rect x="190" y="70" rx="8" ry="8" width="80" height="16" />
+      <rect x="190" y="110" rx="8" ry="8" width="80" height="16" />
+      <rect x="190" y="150" rx="8" ry="8" width="320" height="16" />
+      <rect x="20" y="195" rx="8" ry="8" width="120" height="16" />
+      <!-- 歌曲 -->
+      <rect x="24" y="243" rx="5" ry="5" width="20" height="10" />
+      <rect x="60" y="230" rx="8" ry="8" width="40" height="40" />
+      <rect x="110" y="233" rx="5" ry="5" width="400" height="10" />
+      <rect x="110" y="253" rx="5" ry="5" width="200" height="10" />
+      <rect x="540" y="243" rx="5" ry="5" width="200" height="10" />
+      <!-- 歌曲2 -->
+      <rect x="24" y="303" rx="5" ry="5" width="20" height="10" />
+      <rect x="60" y="290" rx="8" ry="8" width="40" height="40" />
+      <rect x="110" y="293" rx="5" ry="5" width="400" height="10" />
+      <rect x="110" y="313" rx="5" ry="5" width="200" height="10" />
+      <rect x="540" y="303" rx="5" ry="5" width="200" height="10" />
+      <!-- 歌曲3 -->
+      <rect x="24" y="363" rx="5" ry="5" width="20" height="10" />
+      <rect x="60" y="350" rx="8" ry="8" width="40" height="40" />
+      <rect x="110" y="353" rx="5" ry="5" width="400" height="10" />
+      <rect x="110" y="373" rx="5" ry="5" width="200" height="10" />
+      <rect x="540" y="363" rx="5" ry="5" width="200" height="10" />
+    </ContentLoader>
+  </div>
+  <YSongsTableNew v-else class="songs-table" :options="songsTableProps">
     <template #slot-prepend>
       <div class="info">
         <div class="left">
@@ -158,11 +195,13 @@ import { useStore } from "vuex";
 import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
 import { Message } from "@/dual/YMessageC";
+import { ContentLoader } from "vue-content-loader";
 
 export default defineComponent({
   name: "YPlaylistViewNew",
   components: {
     YSongsTableNew,
+    ContentLoader,
   },
   props: {
     playlistId: {
@@ -213,6 +252,7 @@ export default defineComponent({
       userSubscribeIds: [] as number[],
       userSubscribeAlbumIds: [] as number[],
       userCreateIds: [] as number[],
+      loading: true,
     };
   },
   mounted() {
@@ -223,6 +263,7 @@ export default defineComponent({
   },
   methods: {
     async init() {
+      this.loading = true;
       this.searchQuery = "";
       this.songsTableProps = getSongsTableOptions(`YPlaylistView-${this.type}`);
       this.userSubscribeIds = this.login.userSubscribeIds.slice();
@@ -242,7 +283,7 @@ export default defineComponent({
         if (this.userCreateIds.includes(this.playlistId)) {
           this.songsTableProps.editable = true;
         }
-        getPlaylistDetail(this.playlistId).then((res) => {
+        await getPlaylistDetail(this.playlistId).then((res) => {
           if (res.id !== this.playlistId) return;
           this.playlistDetail = res;
           this.songsTableProps.reelOptions = undefined;
@@ -259,7 +300,7 @@ export default defineComponent({
       } else {
         this.songsTableProps.playlistId = -1;
         this.songsTableProps.editable = undefined;
-        getAlbumDetail(this.playlistId).then((res) => {
+        await getAlbumDetail(this.playlistId).then((res) => {
           if (res.id !== this.playlistId) return;
           this.playlistDetail = res;
           this.songsTableProps.songs = this.playlistDetail.tracks.slice();
@@ -269,6 +310,7 @@ export default defineComponent({
           };
         });
       }
+      this.loading = false;
       this.updateTracks();
     },
     setBkgColor() {
