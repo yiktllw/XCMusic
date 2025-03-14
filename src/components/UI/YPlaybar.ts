@@ -6,7 +6,7 @@ import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
 import {
   type ISongsTableProps,
   getDefaultColumns,
-} from "@/components/list/YSongsTableNew/types";
+} from "@/components/list/YSongsTableNew/utils";
 import YPanel from "@/components/base/YPanel.vue";
 import YProgressBar from "@/components/base/YProgressBar.vue";
 import YProgressBarV from "@/components/base/YProgressBarV.vue";

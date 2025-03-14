@@ -1,13 +1,10 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import YPlaylistViewNew from "@/views/YPlaylistViewNew/index.vue";
 
 export default defineComponent({
   name: "YTestView",
-  components: {
-    YPlaylistViewNew,
-  },
+  components: {},
   setup() {
     const store = useStore();
 
@@ -45,22 +42,6 @@ export default defineComponent({
   },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
-    // Playlist.getAlbum(34588440).then((res) => {
-    //   if (!res) return;
-    //   this.options.reelOptions = {
-    //     showReels: true,
-    //     reels: res.showreels,
-    //   };
-    //   this.options.songs = new Tracks({
-    //     url: "/api/album/v3/detail",
-    //     tracks: res.songs,
-    //     params: {
-    //       reels: res.showreels,
-    //     },
-    //   }).tracks;
-    // });
-    // this.options.songs = this.player.playlist.slice();
-    // window.test = this.player;
   },
   beforeUnmount() {},
 });

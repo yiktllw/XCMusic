@@ -134,7 +134,7 @@
             />
           </div>
           <div
-            class="song-album font-color-standard"
+            class="song-album album-width font-color-standard"
             v-if="options.columns.album"
             :title="
               item.al.tns?.length > 0
@@ -188,6 +188,60 @@
 
     <template #slot-prepend>
       <slot name="slot-prepend" />
+      <div
+        v-if="options.slot_prepend?.showTableHeader"
+        class="song-item table-header font-color-standard"
+      >
+        <div class="align-left table-header-left">
+          <div v-if="options.columns.index" class="index">#</div>
+          <div
+            class="song-info title-title title-item"
+            v-if="options.columns.title || options.columns.artist"
+            @click="handleSort('info')"
+          >
+            {{ $t("songs_table.title") }}
+            <img class="sort-icon" :src="currentSort('info').icon" />
+            <span class="sort-text">
+              {{ $t(currentSort("info").text) }}
+            </span>
+          </div>
+        </div>
+        <div class="align-right">
+          <div
+            class="album-width title-album title-item"
+            v-if="options.columns.album"
+            @click="handleSort('album')"
+          >
+            {{ $t("songs_table.album") }}
+            <img class="sort-icon" :src="currentSort('album').icon" />
+            <span class="sort-text">
+              {{ $t(currentSort("album").text) }}
+            </span>
+          </div>
+          <div
+            class="song-like title-like title-item"
+            v-if="options.columns.like"
+          >
+            {{ $t("songs_table.like") }}
+          </div>
+          <div
+            class="song-duration title-duration title-item"
+            v-if="options.columns.duration"
+            @click="handleSort('duration')"
+          >
+            {{ $t("songs_table.duration") }}
+            <img class="sort-icon" :src="currentSort('duration').icon" />
+          </div>
+          <div
+            class="popularity title-popularity title-item"
+            v-if="options.columns.popularity"
+            @click="handleSort('popularity')"
+          >
+            {{ $t("songs_table.popularity") }}
+            <img class="sort-icon" :src="currentSort('popularity').icon" />
+          </div>
+        </div>
+      </div>
     </template>
 
     <template #slot-append>
@@ -229,7 +283,13 @@ import type { ITrack } from "@/utils/tracks";
 import { formatTime_mmss_From_ms } from "./time";
 import { isLocal } from "@/utils/localTracks_renderer";
 import { Like, Song } from "@/utils/api";
-import { type ISongsTableProps } from "./types";
+import {
+  type ISongsTableProps,
+  type SortRole,
+  type ISortOptions,
+  getSort,
+  getNextPosition,
+} from "./utils";
 import { DownloadEvents } from "@/dual/download_renderer";
 import { toRaw } from "vue";
 import { PlayerEvents } from "@/dual/player";
@@ -268,16 +328,28 @@ export default defineComponent({
     };
   },
   data() {
+    let prependHeight = 0;
+    const TABLE_HEADER_HEIGHT = 40;
+    if (this.options.showHeader) {
+      if (this.options.slot_prepend) {
+        if (this.options.slot_prepend.showTableHeader)
+          prependHeight += TABLE_HEADER_HEIGHT;
+      }
+      if (this.options.slot_prepend?.showPrepend) {
+        prependHeight += this.options.slot_prepend.prependHeight;
+      }
+    }
     const defaultSlot: SlotConfig[] = [
       {
         type: "prepend",
-        height: this.options.showHeader ? 235 : 0,
+        height: prependHeight,
       },
       {
         type: "append",
         height: 5,
       },
     ];
+
     return {
       nowPlayingId: 0,
       downloadedSongIds: [] as number[],
@@ -292,6 +364,7 @@ export default defineComponent({
       delete_svg,
       likes_svg,
       unlikes_svg,
+      sort: getSort(),
     };
   },
   computed: {
@@ -448,6 +521,68 @@ export default defineComponent({
         });
       });
     },
+    handleSort(key: "info" | "album" | "duration" | "popularity") {
+      const ori_position = this.sort[key].position;
+      (Object.keys(this.sort) as Array<typeof key>).forEach((k) => {
+        this.sort[k].position = "default";
+      });
+      this.sort[key].position = getNextPosition(ori_position, key);
+
+      this.sortTracks(this.sort[key].position);
+    },
+
+    sortTracks(sortRole: SortRole) {
+      switch (sortRole) {
+        case "default":
+          this.options.songs.sort((a, b) => a.originalIndex - b.originalIndex);
+          break;
+        case "title_asc":
+          this.options.songs.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case "title_desc":
+          this.options.songs.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case "artist_asc":
+          this.options.songs.sort((a, b) =>
+            a.ar[0].name?.localeCompare(b.ar[0].name),
+          );
+          break;
+        case "artist_desc":
+          this.options.songs.sort((a, b) =>
+            b.ar[0].name?.localeCompare(a.ar[0].name),
+          );
+          break;
+        case "album_asc":
+          this.options.songs.sort((a, b) =>
+            a.al.name?.localeCompare(b.al.name),
+          );
+          break;
+        case "album_desc":
+          this.options.songs.sort((a, b) =>
+            b.al.name?.localeCompare(a.al.name),
+          );
+          break;
+        case "duration_asc":
+          this.options.songs.sort((a, b) => a.dt - b.dt);
+          break;
+        case "duration_desc":
+          this.options.songs.sort((a, b) => b.dt - a.dt);
+          break;
+        case "popularity_asc":
+          this.options.songs.sort((a, b) => a.pop - b.pop);
+          break;
+        case "popularity_desc":
+          this.options.songs.sort((a, b) => b.pop - a.pop);
+          break;
+      }
+    },
+    currentSort(
+      key: "info" | "album" | "duration" | "popularity",
+    ): ISortOptions {
+      return this.sort[key].options.filter(
+        (item) => item.role === this.sort[key].position,
+      )[0];
+    },
   },
 });
 </script>
@@ -539,6 +674,12 @@ export default defineComponent({
         }
       }
 
+      .title-title {
+        width: 100%;
+        justify-content: start !important;
+        padding: 0 0 0 5px;
+      }
+
       .index {
         min-width: 55px;
         height: 40px;
@@ -563,9 +704,10 @@ export default defineComponent({
       display: flex;
       flex-direction: row;
 
-      .song-album {
+      .album-width {
         width: 200px;
-        padding-right: 20px;
+      }
+      .song-album {
         font-size: 15px;
         text-align: left;
         white-space: nowrap;
@@ -577,27 +719,57 @@ export default defineComponent({
           text-decoration: underline;
         }
       }
+      .title-album {
+        display: flex;
+        align-items: center;
+        padding-left: 5px;
+        &:hover {
+          text-decoration: none;
+        }
+      }
 
       .song-like {
-        width: 50px;
+        width: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         .like-img {
           width: 18px;
           height: 18px;
           cursor: pointer;
         }
       }
+      .title-like {
+        cursor: unset;
+        &:hover {
+          background: transparent;
+        }
+      }
 
       .song-duration {
+        display: flex;
+        padding-left: 5px;
+        text-wrap: nowrap;
+        align-items: center;
         font-size: 14px;
-        width: 70px;
+        width: 60px;
+        .sort-icon {
+          margin: 0 0 0 2px !important;
+        }
+      }
+
+      .title-duration {
+        width: 50px;
+        margin-right: 10px;
+        font-size: 16px;
       }
 
       .popularity {
         display: flex;
         align-items: center;
+        padding-left: 5px;
         width: 60px;
         position: relative;
-        transform: translateY(-2px);
 
         .popularity-bar {
           position: absolute;
@@ -613,6 +785,49 @@ export default defineComponent({
           border-radius: 5px;
         }
       }
+      .title-popularity {
+        transform: none;
+        .sort-icon {
+          margin: 0 0 0 2px !important;
+        }
+      }
+    }
+  }
+  .table-header {
+    .table-header-left {
+      width: 100%;
+    }
+    .title-item {
+      display: flex;
+      align-items: center;
+      flex-direction: row !important;
+      height: 27px;
+      border-radius: 5px;
+      cursor: pointer;
+      &:hover {
+        background: rgba(var(--foreground-color-rgb), 0.1);
+        .sort-icon {
+          display: unset;
+        }
+        .sort-text {
+          display: unset;
+        }
+      }
+      .sort-icon {
+        display: none;
+        width: 14px;
+        margin: 0 0 0 13px;
+        opacity: 0.6;
+      }
+      .sort-text {
+        display: none;
+      }
+    }
+    margin-top: 3px;
+    height: 40px;
+    border-radius: 0;
+    &:hover {
+      background-color: transparent;
     }
   }
 }

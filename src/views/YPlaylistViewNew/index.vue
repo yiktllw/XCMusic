@@ -144,7 +144,12 @@
               <img :src="download_svg" class="icn g-icon" />
               <span>{{ $t("playlist_view.download") }}</span>
             </button>
-            <button :tabindex="-1" class="btn" @click="subscribe">
+            <button
+              v-if="!userCreateIds.includes(playlistId)"
+              :tabindex="-1"
+              class="btn"
+              @click="subscribe"
+            >
               <img :src="subscribe_svg" class="icn g-icon" />
               {{
                 (type === "playlist" &&
@@ -205,13 +210,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
-import { getSongsTableOptions } from "@/components/list/YSongsTableNew/types";
+import { getSongsTableOptions } from "@/components/list/YSongsTableNew/utils";
 import {
   getAlbumDetail,
   getPlaylistDetail,
   getDefaultPlaylistDetail,
 } from "./utils";
-import type { ITrack } from "@/utils/tracks";
+import { type ITrack } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import type { Theme1, Theme2 } from "@/utils/theme";
@@ -630,6 +635,7 @@ export default defineComponent({
       display: flex;
       margin-left: auto;
       opacity: 0.5;
+      transform: translateY(-8px);
 
       .search-input {
         padding: 8px 30px 8px 30px;

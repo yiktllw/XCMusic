@@ -1,7 +1,7 @@
 <template>
   <!-- 测试界面 -->
   <div class="display">
-    <!-- <div
+    <div
       class="button font-color-main"
       @click="$router.push({ path: '/audio/test' })"
     >
@@ -9,15 +9,10 @@
     </div>
     <div class="button font-color-main" @click="clearCache">
       点击清除webFrame缓存
-    </div> -->
+    </div>
     <!-- <div class="button font-color-main" @click="setEq">
       点击设置EQ
     </div> -->
-    <YPlaylistViewNew
-      class="songs-table"
-      :playlistId="7409047725"
-      :type="'playlist'"
-    />
   </div>
 </template>
 

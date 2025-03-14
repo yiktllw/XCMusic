@@ -55,6 +55,9 @@ export async function getPlaylistDetail(id: number): Promise<IPlaylistDetail> {
     result.tracks = new Tracks({
       url: "/playlist/detail",
       tracks: playlist.tracks,
+      params: {
+        needIndex: true,
+      },
     }).tracks;
   });
   return result;

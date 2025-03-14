@@ -158,12 +158,9 @@ export class Tracks {
           track = item;
           track.cd = parseInt(track.cd);
           if (params?.needIndex) {
-            resultTrack = {
-              ...resultTrack,
-              originalIndex: params.page
-                ? (params.page - 1) * 500 + index
-                : index,
-            };
+            resultTrack.originalIndex = params.page
+              ? (params.page - 1) * 500 + index
+              : index;
           }
           if (params.reels) {
             interface IReel {
@@ -187,12 +184,9 @@ export class Tracks {
         } else if (url === "/playlist/track/all" || url === "/album") {
           track = item;
           if (params?.needIndex) {
-            resultTrack = {
-              ...resultTrack,
-              originalIndex: params.page
-                ? (params.page - 1) * 500 + index
-                : index,
-            };
+            resultTrack.originalIndex = params.page
+              ? (params.page - 1) * 500 + index
+              : index;
           }
           if (url === "/album" && params.alPicUrl) {
             track.al.picUrl = params.alPicUrl;
@@ -235,12 +229,9 @@ export class Tracks {
         } else if (url === "/playlist/detail") {
           track = item;
           if (params?.needIndex) {
-            resultTrack = {
-              ...resultTrack,
-              originalIndex: params.page
-                ? (params.page - 1) * 500 + index
-                : index,
-            };
+            resultTrack.originalIndex = params.page
+              ? (params.page - 1) * 500 + index
+              : index;
           }
         }
         resultTrack.id = track.id;
