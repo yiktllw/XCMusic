@@ -622,14 +622,21 @@ export default defineComponent({
   flex-direction: column;
   text-align: left;
   padding: 15px 0 0 20px;
+  overflow: hidden;
 
   .reel-title {
     height: 29px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
   }
   .reel-artists {
     height: 26px;
     font-size: 15px;
     color: var(--font-color-standard);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
   }
 }
 </style>
