@@ -80,7 +80,7 @@ ipcMain.handle("select-folder", async () => {
   }
 });
 
-ipcMain.handle("get-local-tracks", async (event, dirPath) => {
+ipcMain.handle("get-local-tracks", async (_event, dirPath) => {
   try {
     const tracks = await scanMusicDirectory(dirPath);
     return tracks;
