@@ -115,24 +115,26 @@ const routes = [
         },
       },
       {
-        path: "comment/album/:id",
+        path: "comment/album/:id/info/:info",
         name: "AlbumComment",
         component: () => import("@/views/YCommentView.vue"),
         props: (route) => ({
           id: Number(route.params.id),
           type: "album",
+          info: JSON.parse(decodeURIComponent(route.params.info)),
         }),
         meta: {
           keepAlive: false,
         },
       },
       {
-        path: "comment/playlist/:id",
+        path: "comment/playlist/:id/info/:info",
         name: "PlaylistComment",
         component: () => import("@/views/YCommentView.vue"),
         props: (route) => ({
           id: Number(route.params.id),
           type: "playlist",
+          info: JSON.parse(decodeURIComponent(route.params.info)),
         }),
         meta: {
           keepAlive: false,

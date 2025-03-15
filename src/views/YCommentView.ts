@@ -4,6 +4,7 @@ import { YTrackC } from "@/dual/YTrackC";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
 import { type Theme1, type Theme2 } from "@/utils/theme";
+import type { ICommentInfo } from "@/dual/YCommentC";
 
 export default defineComponent({
   name: "YCommentView",
@@ -18,6 +19,10 @@ export default defineComponent({
     id: {
       type: Number,
       required: true,
+    },
+    info: {
+      type: Object as () => ICommentInfo,
+      required: false,
     },
   },
   setup() {
@@ -48,6 +53,9 @@ export default defineComponent({
     openArtist(id: number | string) {
       this.$router.push({ path: `/artist/${id}` });
     },
+    openUser(id: number | string) {
+      this.$router.push({ path: `/user/${id}` });
+    },
     async trackLoaded() {
       try {
         let theme = YColor.findTheme(this.setting.display.theme);
@@ -67,5 +75,18 @@ export default defineComponent({
     this.track.onTrackLoaded = async () => {
       await this.trackLoaded();
     };
+    if ((this.type === "album" || this.type === "playlist") && this.info) {
+      try {
+        let theme = YColor.findTheme(this.setting.display.theme);
+        YColor.setBkColorFromImg(
+          this.info.cover,
+          document,
+          (theme as Theme1).type,
+          (theme as Theme2).background,
+        );
+      } catch (error) {
+        console.error("YCommentView", error);
+      }
+    }
   },
 });

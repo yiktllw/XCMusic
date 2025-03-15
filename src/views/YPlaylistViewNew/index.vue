@@ -401,7 +401,18 @@ export default defineComponent({
       Message.post("info", "功能暂未实现");
     },
     openComment() {
-      this.$router.push({ path: `/comment/${this.type}/${this.playlistId}` });
+      this.$router.push({
+        path: `/comment/${this.type}/${this.playlistId}/info/${encodeURIComponent(
+          JSON.stringify({
+            name: this.playlistDetail.name,
+            transName: this.playlistDetail.transName,
+            cover: this.playlistDetail.cover,
+            creatorId: this.playlistDetail.creatorId,
+            creatorName: this.playlistDetail.creatorName,
+            artists: this.playlistDetail.artists,
+          }),
+        )}`,
+      });
     },
     openUser() {
       this.$router.push({ path: `/user/${this.playlistDetail.creatorId}` });
