@@ -136,6 +136,9 @@
           <div
             class="song-album album-width font-color-standard"
             v-if="options.columns.album"
+            :style="{
+              width: alWidth + 'px !important',
+            }"
             :title="
               item.al.tns?.length > 0
                 ? item.al.name + '\n' + item.al.tns[0]
@@ -207,8 +210,12 @@
           </div>
         </div>
         <div class="align-right">
+          <div class="set-album-width" @mousedown="handleResizeMouseDown" />
           <div
             class="album-width title-album title-item"
+            :style="{
+              width: alWidth + 'px !important',
+            }"
             v-if="options.columns.album"
             @click="handleSort('album')"
           >
@@ -365,6 +372,7 @@ export default defineComponent({
       likes_svg,
       unlikes_svg,
       sort: getSort(),
+      alWidth: 200,
     };
   },
   computed: {
@@ -382,6 +390,7 @@ export default defineComponent({
       },
     );
     this.downloadedSongIds = this.download.downloadedSongIds.slice();
+    this.alWidth = this.setting.display.albumWidth;
     this.download.subscriber.on(
       this.options.id_for_subscribe,
       DownloadEvents.Complete,
@@ -583,6 +592,25 @@ export default defineComponent({
         (item) => item.role === this.sort[key].position,
       )[0];
     },
+    handleResizeMouseDown(event: MouseEvent) {
+      const startX = event.clientX;
+      let dx = 0;
+      const originalWidth = this.alWidth;
+      const onMouseMove = (e: MouseEvent) => {
+        dx = -e.clientX + startX;
+        try {
+          this.setting.display.albumWidth = originalWidth + dx;
+          this.alWidth = this.setting.display.albumWidth;
+        } catch {}
+      };
+      document.addEventListener("mousemove", onMouseMove);
+
+      const removeListener = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", removeListener);
+      };
+      document.addEventListener("mouseup", removeListener);
+    },
   },
 });
 </script>
@@ -703,6 +731,12 @@ export default defineComponent({
     .align-right {
       display: flex;
       flex-direction: row;
+
+      .set-album-width {
+        width: 10px;
+        height: 25px;
+        cursor: ew-resize;
+      }
 
       .album-width {
         width: 200px;
