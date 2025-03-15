@@ -1,5 +1,5 @@
 
-以下操作均基于Node.js，如果没有安装，请先安装[Node.js](https://nodejs.org/zh-cn)，建议使用nodejs 18及以上版本。
+以下操作均基于Node.js，如果没有安装，请先安装[Node.js](https://nodejs.org/zh-cn)，建议使用nodejs 20及以上版本。
 
 可以使用electron或者tauri作为项目后端，由于tauri后端并未完全适配，更建议使用electron后端。
 
