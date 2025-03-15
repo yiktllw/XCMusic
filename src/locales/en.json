@@ -301,6 +301,7 @@
     "open_at_login": "Open at Login",
     "open_sys": "System",
     "play": {
+      "allow_consecutive_albums": "Allow consecutive tracks from the same album during shuffle playback.",
       "auto_play": "Auto Play When Launched",
       "dbclick": "Playlist",
       "dbclick_playall": "Double-click the playlist to add all songs to the playlist.",

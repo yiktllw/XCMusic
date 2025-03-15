@@ -768,11 +768,61 @@ export class Player {
     if (this._mode === "listrandom") {
       // 如果播放模式为随机播放
       this._playlist = list.sort(() => Math.random() - 0.5);
+      if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
+        this._playlist = this.getGroupedPlaylist(this._playlist);
+      }
     } else if (this._playlist !== list) {
       // 如果播放模式为其它模式
       this._playlist = list;
     }
     this.subscriber.exec(PlayerEvents.playlist);
+  }
+  private getGroupedPlaylist(list: ITrack[]) {
+    // 统计每个al.id的出现次数
+    const countMap = new Map<number, number>();
+    for (const item of list) {
+      const alId = item.al.id;
+      countMap.set(alId, (countMap.get(alId) || 0) + 1);
+    }
+
+    // 收集重复的al.id的元素数组
+    const groupMap = new Map<number, typeof list>();
+    for (const item of list) {
+      const alId = item.al.id;
+      if (countMap.get(alId)! > 1) {
+        if (!groupMap.has(alId)) {
+          groupMap.set(alId, []);
+        }
+        groupMap.get(alId)!.push(item);
+      }
+    }
+
+    // 对每个重复的组按id升序排序
+    groupMap.forEach((items) => {
+      items.sort((a, b) => a.id - b.id);
+    });
+
+    // 构建结果数组，保持稳定性
+    const result: typeof list = [];
+    const processedAlIds = new Set<number>();
+
+    for (const item of list) {
+      const alId = item.al.id;
+      if (countMap.get(alId)! === 1) {
+        // 唯一元素直接添加
+        result.push(item);
+      } else {
+        if (!processedAlIds.has(alId)) {
+          // 处理重复组，添加排序后的元素
+          const group = groupMap.get(alId)!;
+          result.push(...group);
+          processedAlIds.add(alId);
+        }
+        // 已处理的重复元素跳过
+      }
+    }
+
+    return result;
   }
   deleteTrack(id: string | number) {
     let index = this._playlist.findIndex((track) => track.id === id);
@@ -821,6 +871,9 @@ export class Player {
             track,
           );
         });
+        if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
+          this._playlist = this.getGroupedPlaylist(this._playlist);
+        }
       } else {
         // 顺序插入到播放列表
         this._playlist.push(...tracksToAdd);

@@ -125,6 +125,7 @@ export default defineComponent({
       proxy_host: "",
       /** 代理服务器端口 */
       proxy_port: "",
+      allowConsecutiveAlbums: false,
     };
   },
   methods: {
@@ -191,6 +192,10 @@ export default defineComponent({
           Message.post("info", "setting_view.work_after_reload_window", true);
         }
       }
+    },
+    setAllowConsecutiveAlbums(bool: boolean) {
+      this.setting.play.allowConsecutiveAlbums = bool;
+      this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
     },
     async getFolderPath() {
       if (window.electron?.isElectron) {
@@ -456,6 +461,7 @@ export default defineComponent({
       this.openAtLogin = this.setting.system.openAtLogin;
       this.autoPlay = this.setting.play.autoPlay;
       this.rememberProgress = this.setting.play.rememberTrackProgress;
+      this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
       this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
         this[`hideInSidebar_${item}`] = true;
       });

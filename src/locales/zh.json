@@ -301,6 +301,7 @@
     "open_at_login": "开机自启动",
     "open_sys": "开机",
     "play": {
+      "allow_consecutive_albums": "在列表随机播放时，连续播放来自同一专辑的歌曲",
       "auto_play": "启动时自动播放",
       "dbclick": "播放列表",
       "dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",

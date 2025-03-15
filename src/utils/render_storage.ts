@@ -78,6 +78,8 @@ export enum StorageKey {
   Track_Progress = "track_progress",
   /** 均衡器设置 */
   Setting_Play_Equalizer = "setting.play.equalizer",
+  /** 设置-播放-（列表随机）连续播放同一专辑的歌曲 */
+  Setting_Play_AllowConsecutiveAlbums = "setting.play.allowConsecutiveAlbums",
 }
 
 export type StorageMap = {
@@ -142,6 +144,7 @@ export type StorageMap = {
     normalizedProgress: number;
   };
   [StorageKey.Setting_Play_Equalizer]: IEqualizer;
+  [StorageKey.Setting_Play_AllowConsecutiveAlbums]: boolean;
 };
 
 interface IData {

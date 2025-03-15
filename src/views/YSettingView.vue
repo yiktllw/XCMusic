@@ -392,6 +392,24 @@
                 </label>
               </div>
             </div>
+            <!-- 播放界面-列表随机 -->
+            <div class="content-item item-playui">
+              <div class="content-item-title">
+                {{ $t("playbar.listrandom") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_list_random"
+                  name="setting_list_random"
+                  v-model="allowConsecutiveAlbums"
+                  @change="setAllowConsecutiveAlbums(allowConsecutiveAlbums)"
+                />
+                <label for="setting_list_random">
+                  {{ $t("setting_view.play.allow_consecutive_albums") }}
+                </label>
+              </div>
+            </div>
             <!-- 播放-双击列表行为 -->
             <div class="content-item item-play-dbclick">
               <div class="content-item-title">

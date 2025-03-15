@@ -63,6 +63,8 @@ export interface ISettings {
     rememberTrackProgress: boolean;
     /** 均衡器设置 */
     equalizer: IEqualizer;
+    /** 列表随机时，连续播放同一专辑的歌曲 */
+    allowConsecutiveAlbums: boolean;
   };
   /** 播放界面设置 */
   playui: {
@@ -274,6 +276,19 @@ export const settingGroup: SettingGroup = {
           );
         if (valid) {
           setStorage(StorageKey.Setting_Play_Equalizer, value);
+        }
+        return valid;
+      },
+    },
+    allowConsecutiveAlbums: {
+      value:
+        getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums) ?? false,
+      default: false,
+      validation: (value: boolean) => {
+        let valid = validBoolean(value);
+        if (valid) {
+          value = strToBool(value);
+          setStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums, value);
         }
         return valid;
       },
