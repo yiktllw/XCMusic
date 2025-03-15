@@ -9,7 +9,7 @@
       </template>
       <YScroll>
         <div class="song-info-content">
-          <div class="song-info-item">
+          <div class="song-info-item" v-if="track.name">
             <div class="left">
               <span class="song-info-item-title">
                 {{ $t("song_info.song_name") }} ：
@@ -39,7 +39,11 @@
               :title="$t('song_info.click_to_copy')"
             />
           </div>
-          <div class="song-info-item" style="justify-content: start">
+          <div
+            class="song-info-item"
+            style="justify-content: start"
+            v-if="track.ar[0].name"
+          >
             <span class="song-info-item-title"
               >{{ $t("song_info.artist") }} ：</span
             >
@@ -67,7 +71,7 @@
               </div>
             </div>
           </div>
-          <div class="song-info-item">
+          <div class="song-info-item" v-if="track.al.name">
             <div class="left">
               <span class="song-info-item-title">专辑：</span>
               <span
