@@ -183,12 +183,10 @@
           <input
             type="text"
             @keydown.enter="
-              handleSearch(($event.target as HTMLInputElement).value, true)
+              handleSearch(($event.target as HTMLInputElement).value)
             "
             @keydown.escape="handleEscape"
-            @input="
-              handleSearch(($event.target as HTMLInputElement).value, false)
-            "
+            @input="handleSearch(($event.target as HTMLInputElement).value)"
             :placeholder="$t('playlist_view.search') + '...'"
             spellcheck="false"
             v-model="searchQuery"
@@ -417,16 +415,8 @@ export default defineComponent({
     openUser() {
       this.$router.push({ path: `/user/${this.playlistDetail.creatorId}` });
     },
-    handleSearch(input: string, fromEnter: boolean) {
-      // // 更新搜索关键字
-      // if (
-      //   fromEnter ||
-      //   this.playlistDetail.tracks.length < 500 ||
-      //   input === ""
-      // ) {
+    handleSearch(input: string) {
       this.searchQuery = input;
-      console.log("search", input);
-      // }
     },
     updateTracks() {
       if (!this.searchQuery) {

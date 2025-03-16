@@ -6,7 +6,7 @@
 import { useApi } from "@/utils/api";
 import { YPageC } from "@/dual/YPageC";
 import { isLocal } from "@/utils/localTracks_renderer";
-import { IArtist } from "./YPlaylistView";
+import type { IArtist } from "./YPlaylistView";
 export type Types = "song" | "playlist" | "album";
 
 /** 在专辑、歌单的评论界面中使用的信息 */

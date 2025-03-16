@@ -601,7 +601,9 @@ export default defineComponent({
         try {
           this.setting.display.albumWidth = originalWidth + dx;
           this.alWidth = this.setting.display.albumWidth;
-        } catch {}
+        } catch {
+          // do nothing
+        }
       };
       document.addEventListener("mousemove", onMouseMove);
 
