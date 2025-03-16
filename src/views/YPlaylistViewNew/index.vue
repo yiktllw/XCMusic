@@ -645,6 +645,7 @@ export default defineComponent({
       position: relative;
       display: flex;
       margin-left: auto;
+      margin-right: 10px;
       opacity: 0.5;
       transform: translateY(-8px);
 
