@@ -183,6 +183,14 @@ export class Player {
     });
     this.initMediaSession();
 
+    this.subscriber.on("player-group-playlist", PlayerEvents.playlist, () => {
+      const nowPlaying = this.currentTrack.id;
+      this.setPlaylistToGrouped();
+      this._current = this._playlist.findIndex(
+        (track) => track.id === nowPlaying,
+      );
+    });
+
     setTimeout(() => {
       this.subscriber.exec(PlayerEvents.playerReady);
     }, 500);
@@ -768,14 +776,19 @@ export class Player {
     if (this._mode === "listrandom") {
       // 如果播放模式为随机播放
       this._playlist = list.sort(() => Math.random() - 0.5);
-      if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
-        this._playlist = this.getGroupedPlaylist(this._playlist);
-      }
     } else if (this._playlist !== list) {
       // 如果播放模式为其它模式
       this._playlist = list;
     }
     this.subscriber.exec(PlayerEvents.playlist);
+  }
+  private setPlaylistToGrouped() {
+    if (
+      this._mode === "listrandom" &&
+      getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)
+    ) {
+      this._playlist = this.getGroupedPlaylist(this._playlist);
+    }
   }
   private getGroupedPlaylist(list: ITrack[]) {
     // 统计每个al.id的出现次数
@@ -871,9 +884,6 @@ export class Player {
             track,
           );
         });
-        if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
-          this._playlist = this.getGroupedPlaylist(this._playlist);
-        }
       } else {
         // 顺序插入到播放列表
         this._playlist.push(...tracksToAdd);
@@ -1086,13 +1096,15 @@ export class Player {
       let ori_track = this._playlist[this._current];
       if (!ori_track) return;
       // 否则随机排序
-      this._playlist = this._playlist.sort(() => Math.random() - 0.5);
+      this._playlist.sort(() => Math.random() - 0.5);
       // 找到当前歌曲的索引
       if (ori_track) {
         this._current = this._playlist.findIndex(
           (track) => track.id === ori_track.id,
         );
       }
+
+      this.subscriber.exec(PlayerEvents.playlist);
     }
   }
   /**
