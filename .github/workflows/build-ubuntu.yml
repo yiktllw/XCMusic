@@ -11,9 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read  # 最小权限原则
-
     steps:
     - name: Clean Electron Cache
       run: |
@@ -21,11 +18,6 @@ jobs:
         rm -rf ~/.cache/electron-builder
 
     - uses: actions/checkout@v4
-
-    - name: Install Linux Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libgtk-3-0 libnss3 libxss1 libasound2 libgbm-dev
 
     - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
