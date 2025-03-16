@@ -29,3 +29,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run electron:build -- --publish never
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: electron-build-${{ runner.os }}
+        path: |
+          dist_electron/*
+          !dist_electron/builder-effective-config.yaml
+          !dist_electron/builder-debug.yml
