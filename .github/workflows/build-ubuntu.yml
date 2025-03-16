@@ -1,10 +1,7 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Electron Build (Ubuntu)
 
 on:
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch:
   push:
     branches: [ "master" ]
   pull_request:
@@ -12,28 +9,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    permissions:
+      contents: read  # 最小权限原则
 
     steps:
+    - name: Clean Electron Cache
+      run: |
+        rm -rf ~/.cache/electron
+        rm -rf ~/.cache/electron-builder
+
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    - name: Install Linux Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-0 libnss3 libxss1 libasound2 libgbm-dev
+
+    - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        node-version: "20"
+        cache: "npm"
+
     - run: npm ci
+
     - run: npm run electron:build -- --publish never
+
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: electron-build-${{ runner.os }}
+        name: "electron-build-ubuntu-$(date +%Y%m%d)"
         path: |
           dist_electron/*
-          !dist_electron/builder-effective-config.yaml
-          !dist_electron/builder-debug.yml
+          !dist_electron/*.yml
+        retention-days: 7
