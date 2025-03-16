@@ -22,7 +22,7 @@
         </div>
         <div class="item">
           <div class="item-title">
-            {{ $t("edit_playlist.name") }}
+            {{ $t("edit_playlist.description") }}
           </div>
           <textarea
             class="input font-size-large"
