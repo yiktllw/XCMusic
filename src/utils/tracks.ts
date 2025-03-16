@@ -218,11 +218,11 @@ export class Tracks {
             id: _item.simpleSong.id,
             name: _item.simpleSong.name,
             al: {
-              id: _item.simpleSong.al.id,
+              id: _item.simpleSong.al?.id,
               name: _item.album,
-              picUrl: _item.simpleSong.al.picUrl,
+              picUrl: _item.simpleSong.al?.picUrl,
             },
-            ar: _item.simpleSong.ar,
+            ar: _item.simpleSong.ar ?? [],
             dt: _item.simpleSong.dt,
             pop: _item.simpleSong.pop,
           };

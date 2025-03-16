@@ -53,7 +53,6 @@ export default defineComponent({
         limit: limit,
         offset: (this.page.current - 1) * limit,
       }).then((res) => {
-        console.warn(JSON.stringify(res, null, 2));
         this.tracks = new Tracks({
           url: "/user/cloud",
           tracks: res.data,

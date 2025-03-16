@@ -265,7 +265,7 @@ export namespace IUser {
       tns: Array<string>;
       /** 歌手别名 */
       alias: Array<string>;
-    }>;
+    }> | null;
     /** 歌曲别名 */
     alia: Array<string>;
     /** 人气 */
@@ -294,7 +294,7 @@ export namespace IUser {
       tns: Array<string>;
       /** 未知参数 */
       pic: number;
-    };
+    } | null;
     /** 时长 */
     dt: number;
     /** h音质信息 */
