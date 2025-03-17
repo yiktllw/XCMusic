@@ -269,6 +269,11 @@ export default defineComponent({
     searchQuery() {
       this.updateTracks();
     },
+    userCreateIds() {
+      this.songsTableProps.columns.popularity = !this.userCreateIds.includes(
+        this.playlistId,
+      );
+    },
   },
   setup() {
     const store = useStore();
