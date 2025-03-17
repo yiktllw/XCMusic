@@ -60,7 +60,12 @@
       </template>
     </ContentLoader>
   </div>
-  <YSongsTableNew v-else class="songs-table" :options="songsTableProps">
+  <YSongsTableNew
+    v-else
+    class="songs-table"
+    :options="songsTableProps"
+    ref="songsTable"
+  >
     <template #slot-prepend>
       <div class="info">
         <div class="left">
@@ -203,10 +208,15 @@
       </div>
     </template>
   </YSongsTableNew>
+  <div class="scroll-buttons">
+    <div class="button" @click="scrollToCurrentTrack">
+      <img src="@/assets/position.svg" class="g-icon" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, useTemplateRef } from "vue";
 import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
 import { getSongsTableOptions } from "@/components/list/YSongsTableNew/utils";
 import {
@@ -230,6 +240,7 @@ import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
 import { Message } from "@/dual/YMessageC";
 import { ContentLoader } from "vue-content-loader";
+import { ComponentExposed } from "vue-component-type-helpers";
 
 export default defineComponent({
   name: "YPlaylistViewNew",
@@ -261,11 +272,14 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const songsTable =
+      useTemplateRef<ComponentExposed<typeof YSongsTableNew>>("songsTable");
 
     return {
       player: store.state.player,
       download: store.state.download,
       login: store.state.login,
+      songsTable,
     };
   },
   data() {
@@ -462,6 +476,9 @@ export default defineComponent({
     handleEscape(event: KeyboardEvent) {
       if (this.searchQuery === "") (event.target as HTMLElement)?.blur();
       else this.searchQuery = "";
+    },
+    scrollToCurrentTrack() {
+      this.songsTable?.scrollToCurrentTrack();
     },
   },
 });
@@ -675,6 +692,41 @@ export default defineComponent({
         height: 15px;
         -webkit-user-drag: none;
         cursor: pointer;
+      }
+    }
+  }
+}
+
+.scroll-buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: var(--panel-background-color);
+    border-style: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 0 5px rgba($color: #000000, $alpha: 0.4);
+    padding: 0;
+
+    img {
+      width: 32.1px;
+      height: 32.1px;
+      opacity: 0.6;
+    }
+
+    &:hover {
+      img {
+        opacity: 1;
       }
     }
   }
