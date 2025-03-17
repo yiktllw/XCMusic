@@ -293,7 +293,7 @@ export default defineComponent({
       this.track = this.player.currentTrack;
     }
     this.player.subscriber.on("YPlayUI", PlayerEvents.track, async () => {
-      this.track = this.player.currentTrack;
+      this.track = this.player.currentTrack!;
       let requests = [
         this.setBackgroundColor(),
         this.getWiki(),

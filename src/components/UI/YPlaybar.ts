@@ -323,7 +323,7 @@ export default defineComponent({
       );
       this.download.add(
         url,
-        this.player.currentTrack,
+        this.player.currentTrack!,
         this.setting.download.path,
       );
     },

@@ -622,7 +622,7 @@ export default defineComponent({
       if (!this.player.currentTrack) return;
       let currentTrackIndex = null;
       const currentTrack = this.tracks.find((track, index) => {
-        if (track.id === this.player.currentTrack.id) {
+        if (track.id === this.player.currentTrack?.id) {
           currentTrackIndex = index;
           return true;
         }

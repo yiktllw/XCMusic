@@ -184,7 +184,7 @@ export class Player {
     this.initMediaSession();
 
     this.subscriber.on("player-group-playlist", PlayerEvents.playlist, () => {
-      const nowPlaying = this.currentTrack.id;
+      const nowPlaying = this.currentTrack?.id;
       this.setPlaylistToGrouped();
       this._current = this._playlist.findIndex(
         (track) => track.id === nowPlaying,
@@ -310,7 +310,7 @@ export class Player {
           getStorage(StorageKey.Setting_Play_RememberTrackProgress) === true
         ) {
           setStorage(StorageKey.Track_Progress, {
-            id: this.currentTrack?.id,
+            id: this.currentTrack?.id ?? 0,
             normalizedProgress: this._progress,
           });
         }
@@ -490,8 +490,8 @@ export class Player {
       "jymaster",
     ];
     for (let i = 0; i < prop.length; i++) {
-      gainData.push(this.currentTrack[prop[i]]?.gain);
-      peakData.push(this.currentTrack[prop[i]]?.peak);
+      gainData.push(this.currentTrack![prop[i]]?.gain);
+      peakData.push(this.currentTrack![prop[i]]?.peak);
     }
     gainData.forEach((value) => {
       if (gain === null || (value && value > gain) || gain === undefined) {
@@ -536,7 +536,7 @@ export class Player {
     requests = [
       this.getQuality(id, "standard").then((res: QualityInfo | null) => {
         this.currentTrack = {
-          ...this.currentTrack,
+          ...this.currentTrack!,
           l: res,
         };
       }),
@@ -547,7 +547,7 @@ export class Player {
           const index = qualities.indexOf(this.quality);
           const abbr = abbrQualities[index];
           this.currentTrack = {
-            ...this.currentTrack,
+            ...this.currentTrack!,
             [abbr]: res,
           };
         }),
@@ -710,14 +710,14 @@ export class Player {
       // 如果历史记录中没有下一首歌曲
       // 随机播放下一首
       this._current = Math.floor(Math.random() * this.playlistCount);
-      this.appendToHistory(this.currentTrack);
+      this.appendToHistory(this.currentTrack!);
     } else if (direction === -1) {
       // 如果历史记录中没有上一首歌曲
       // 随机播放上一首
       this._current = Math.floor(Math.random() * this.playlistCount);
-      this.insertToHistory(this.currentTrack);
+      this.insertToHistory(this.currentTrack!);
     }
-    await this.playTrack(this.currentTrack);
+    await this.playTrack(this.currentTrack!);
   }
   /**
    * 下一首
@@ -731,11 +731,11 @@ export class Player {
       await this.randomPlay(1);
     } else if (this._mode === "loop") {
       // 循环播放
-      await this.playTrack(this.currentTrack);
+      await this.playTrack(this.currentTrack!);
     } else {
       // 顺序播放下一首
       this._current = (this._current + 1) % this.playlistCount;
-      await this.playTrack(this.currentTrack);
+      await this.playTrack(this.currentTrack!);
     }
   }
   /**
@@ -752,7 +752,7 @@ export class Player {
       // 顺序播放上一首
       this._current =
         (this._current - 1 + this.playlistCount) % this.playlistCount;
-      await this.playTrack(this.currentTrack);
+      await this.playTrack(this.currentTrack!);
     }
   }
   /**
@@ -842,7 +842,7 @@ export class Player {
     if (index === -1) return;
     this._playlist.splice(index, 1);
     if (index === this._current) {
-      this.playTrack(this.currentTrack);
+      this.playTrack(this.currentTrack!);
     }
     this.subscriber.exec(PlayerEvents.playlist);
   }
@@ -896,7 +896,7 @@ export class Player {
       );
     }
     if (playFirst) {
-      this.playTrack(this.currentTrack, false);
+      this.playTrack(this.currentTrack!, false);
     }
     this.subscriber.exec(PlayerEvents.playlist);
   }
@@ -953,7 +953,7 @@ export class Player {
       this.randomPlay(1);
     } else {
       // 如果不为随机播放，则播放第一首
-      await this.playTrack(this.currentTrack);
+      await this.playTrack(this.currentTrack!);
     }
   }
   /**
@@ -1003,13 +1003,13 @@ export class Player {
   /**
    * 获取当前歌曲
    */
-  get currentTrack() {
+  get currentTrack(): ITrack | null {
     return this._playlist[this._current];
   }
   /**
    * 设置当前歌曲
    */
-  set currentTrack(value) {
+  set currentTrack(value: ITrack) {
     if (this._playlist.length > 0 && this._playlist[this._current]) {
       this._playlist[this._current] = value;
       // this.Execute({ type: 'track' });

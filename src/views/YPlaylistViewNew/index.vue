@@ -240,7 +240,7 @@ import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
 import { Message } from "@/dual/YMessageC";
 import { ContentLoader } from "vue-content-loader";
-import { ComponentExposed } from "vue-component-type-helpers";
+import { type ComponentExposed } from "vue-component-type-helpers";
 
 export default defineComponent({
   name: "YPlaylistViewNew",
