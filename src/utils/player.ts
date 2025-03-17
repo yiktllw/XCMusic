@@ -922,9 +922,14 @@ export class Player {
       (_track) => _track.id === track.id,
     );
     if (trackIndex !== -1) {
+      // 如果和当前播放的歌曲相同
+      if (trackIndex === this._current) return;
       // 如果在播放列表中，则将其移动到下一首
-      let exchange = this._playlist[this._current + 1];
-      this._playlist[this._current + 1] = this._playlist[trackIndex];
+      let exchangeIndex = 0;
+      if (this._current + 1 <= this.playlist.length - 1)
+        exchangeIndex = this._current + 1;
+      let exchange = this._playlist[exchangeIndex];
+      this._playlist[exchangeIndex] = this._playlist[trackIndex];
       this._playlist[trackIndex] = exchange;
     } else {
       // 如果不在播放列表中，则添加到下一首
