@@ -149,7 +149,7 @@
               {{ item.al.name }}
             </span>
             <span v-else>{{ $t("songs_table.unknown_album") }}</span>
-            <span v-if="item.al.tns?.length > 0"
+            <span v-if="item.al.tns?.length > 0" @click="openAlbum(item.al.id)"
               >&nbsp;({{ item.al.tns[0] }})</span
             >
           </div>
