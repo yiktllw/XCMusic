@@ -642,6 +642,9 @@
                 <div class="github-link" @click="openChangelog">
                   {{ $t("setting_view.about.changelog") }}
                 </div>
+                <div class="github-link" @click="openPrivileges">
+                  {{ $t("setting_view.about.privileges") }}
+                </div>
               </div>
             </div>
             <!-- 关于-GITHUB -->

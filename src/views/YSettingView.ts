@@ -282,6 +282,10 @@ export default defineComponent({
       if (!window.electron?.isElectron) return;
       this.$router.push({ path: "/markdown/CHANGELOG" });
     },
+    openPrivileges() {
+      if (!window.electron?.isElectron) return;
+      this.$router.push({ path: "/markdown/PRIVILEGES" });
+    },
     async getDevices() {
       // window.test = this.player;
       try {

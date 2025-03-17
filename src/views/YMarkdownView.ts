@@ -2,6 +2,7 @@ import { defineComponent, ref } from "vue";
 import { marked } from "marked";
 import README from "@/../README.md";
 import CHANGELOG from "@/../CHANGELOG.md";
+import PRIVILEGES from "@/../docs/PRIVILEGES.md";
 import { YColor } from "@/utils/color";
 
 // let path: null | any = null,
@@ -22,6 +23,8 @@ renderer.image = ({
 }) => {
   return `<img src="${href}" alt="${text}" style="max-width: 100%;"/>`;
 };
+renderer.options.gfm = true;
+renderer.options.breaks = true;
 
 marked.setOptions({
   renderer: renderer,
@@ -50,6 +53,8 @@ export default defineComponent({
         return marked.parse(README);
       } else if (this.file === "CHANGELOG") {
         return marked.parse(CHANGELOG);
+      } else if (this.file === "PRIVILEGES") {
+        return marked.parse(PRIVILEGES);
       }
     },
   },
