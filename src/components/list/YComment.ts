@@ -2,7 +2,7 @@ import { defineComponent } from "vue";
 import YPage from "@/components/base/YPage.vue";
 import { YCommentC, type Types } from "@/dual/YCommentC";
 import { formatDate_yyyymmdd } from "@/utils/time";
-import YLoading from "@/components/base/YLoading.vue";
+import { ContentLoader } from "vue-content-loader";
 
 export default defineComponent({
   name: "YComment",
@@ -22,7 +22,7 @@ export default defineComponent({
   },
   components: {
     YPage,
-    YLoading,
+    ContentLoader,
   },
   watch: {
     type() {

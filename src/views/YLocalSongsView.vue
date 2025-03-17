@@ -15,7 +15,7 @@
           </div>
         </div>
       </div>
-      <YLoading v-if="loading" />
+      <YSongsTableSkeleton style="margin-top: 10px" v-if="loading" />
       <YSongsTable
         v-else
         :resortable="false"

@@ -493,7 +493,7 @@
               class="songs-table"
               ref="songstable"
             />
-            <YLoading style="margin: auto" v-if="!showSongs" />
+            <YSongsTableSkeleton type="small" style="margin-top: 10px" v-else />
           </div>
         </YPanel>
       </div>

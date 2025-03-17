@@ -5,13 +5,13 @@ import { type ITrack, TrackIds } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { type ITrackWithProgress } from "@/dual/YLocalSongsView";
 import { DownloadEvents } from "@/dual/download_renderer";
-import YLoading from "@/components/base/YLoading.vue";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
 export default defineComponent({
   name: "YLocalSongsView",
   components: {
     YSongsTable,
-    YLoading,
+    YSongsTableSkeleton,
   },
   setup() {
     const store = useStore();

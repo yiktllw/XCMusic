@@ -17,7 +17,7 @@ import { type ITrack } from "@/utils/tracks";
 import YListRandom from "@/components/base/YListRandom.vue";
 import { PlayerEvents } from "@/dual/player";
 import { DownloadEvents } from "@/dual/download_renderer";
-import YLoading from "../base/YLoading.vue";
+import YSongsTableSkeleton from "../list/YSongsTableSkeleton.vue";
 
 export default defineComponent({
   name: "YPlaybar",
@@ -30,7 +30,7 @@ export default defineComponent({
     YTextBanner,
     YScroll,
     YListRandom,
-    YLoading,
+    YSongsTableSkeleton,
   },
   setup() {
     const quality_panel = ref<InstanceType<typeof YPanel> | null>();

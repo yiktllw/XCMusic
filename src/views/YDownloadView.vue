@@ -32,7 +32,7 @@
       :id="'YLocalSongsView.vue'"
       v-if="!loading"
     />
-    <YLoading style="margin-top: 100px;" v-else />
+    <YSongsTableSkeleton style="margin-top: 40px" v-else />
   </div>
 </template>
 

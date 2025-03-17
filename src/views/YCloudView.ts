@@ -7,7 +7,7 @@ import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
 import { Message } from "@/dual/YMessageC";
-import YLoading from "@/components/base/YLoading.vue";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
 export default defineComponent({
   name: "YCloudView",
@@ -24,7 +24,7 @@ export default defineComponent({
   components: {
     YSongsTable,
     YPage,
-    YLoading,
+    YSongsTableSkeleton,
   },
   mounted() {
     const color = YColor.stringToHexColor("CLOUD");

@@ -1,6 +1,35 @@
 <template>
   <!-- 评论组件 -->
-  <YLoading v-if="loading" />
+  <div v-if="loading" class="skeleton">
+    <ContentLoader
+      :speed="1.5"
+      :width="1000"
+      :height="800"
+      primaryColor="rgba(var(--foreground-color-rgb), 0.2)"
+      secondaryColor="rgba(var(--foreground-color-rgb), 0.1)"
+    >
+      <!-- 标题 -->
+      <rect x="0" y="0" rx="8" ry="8" width="120" height="16" />
+      <!-- 评论 -->
+      <template v-for="i in 7">
+        <!-- 头像 -->
+        <rect
+          x="0"
+          :y="(i - 1) * 110 + 50"
+          rx="25"
+          ry="25"
+          width="50"
+          height="50"
+        />
+        <!-- 用户名 -->
+        <rect x="60" :y="(i - 1) * 110 + 50" rx="6" width="180" height="12" />
+        <!-- 评论内容 -->
+        <rect x="60" :y="(i - 1) * 110 + 80" rx="6" width="800" height="12" />
+        <rect x="60" :y="(i - 1) * 110 + 110" rx="5" width="100" height="10" />
+        <!-- 评论时间 -->
+      </template>
+    </ContentLoader>
+  </div>
   <div v-else class="comment-main">
     <div class="header">
       <div class="header-left">
@@ -82,6 +111,13 @@
 <script src="./YComment.ts" lang="ts"></script>
 
 <style lang="scss" scoped>
+.skeleton {
+  align-items: start;
+  justify-content: start;
+  justify-self: start;
+  overflow: hidden;
+  height: 100%;
+}
 .comment-main {
   display: flex;
   flex-direction: column;

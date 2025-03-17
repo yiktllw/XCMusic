@@ -51,7 +51,7 @@
       :show-track-popularity="false"
       v-if="!loading"
     />
-    <YLoading style="margin-top: 100px; margin-bottom: 100px;" v-else="loading" />
+    <YSongsTableSkeleton style="margin-top: 10px" v-else />
     <YPage v-model="page" />
   </div>
 </template>

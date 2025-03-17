@@ -4,13 +4,13 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import { type ITrack, Tracks } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { type musicFile } from "@/utils/localTracks";
-import YLoading from "@/components/base/YLoading.vue";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
 export default defineComponent({
   name: "YLocalSongsView",
   components: {
     YSongsTable,
-    YLoading,
+    YSongsTableSkeleton,
   },
   setup() {
     const store = useStore();
