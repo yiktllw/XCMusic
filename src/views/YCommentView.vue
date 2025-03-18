@@ -15,7 +15,10 @@
           :title="track.al.name"
           @click="openAlbum(track.al.id)"
         >
-          {{ $t("songs_table.album") }}:&nbsp;{{ track.al.name }}
+          {{ $t("songs_table.album") }}:&nbsp;
+          <span class="name">
+            {{ track.al.name }}
+          </span>
         </div>
         <div class="track-artist">
           {{ $t("song_info.artist") }}:&nbsp;<span
@@ -23,7 +26,7 @@
             :title="artist.name"
             @click="openArtist(artist.id)"
           >
-            {{ artist.name }}
+            <span class="name">{{ artist.name }}</span>
             <span v-if="index !== track.ar.length - 1">&nbsp;/&nbsp;</span>
           </span>
         </div>

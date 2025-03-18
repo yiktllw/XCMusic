@@ -4,6 +4,8 @@ import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import YLoading from "@/components/base/YLoading.vue";
 import YPage from "@/components/base/YPage.vue";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
+import { ContentLoader } from "vue-content-loader";
 import { User } from "@/utils/api";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
@@ -32,10 +34,6 @@ export default defineComponent({
     userId() {
       this.fetchUser();
     },
-    // type变化时，重新获取用户信息
-    type() {
-      this.fetchUser();
-    },
   },
   components: {
     YScroll,
@@ -44,6 +42,8 @@ export default defineComponent({
     YSongsTable,
     YLoading,
     YPage,
+    ContentLoader,
+    YSongsTableSkeleton,
   },
   data() {
     return {
@@ -102,6 +102,8 @@ export default defineComponent({
     },
     // 获取 用户/歌手 信息
     async fetchUser() {
+      const mainScroll = document.getElementById("yscroll-display-area");
+      if (mainScroll) mainScroll.scrollTop = 0;
       // 如果 userId 为 0，返回
       if (this.userId === 0) {
         console.log("invalid userId");

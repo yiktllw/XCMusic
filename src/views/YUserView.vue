@@ -1,8 +1,8 @@
 <template>
   <!-- 用户/歌手界面 -->
-  <div class="container font-color-main" v-if="user">
+  <div class="container font-color-main">
     <!-- 用户信息 -->
-    <div class="user-info">
+    <div class="user-info" v-if="user">
       <!-- 头像 -->
       <div class="avatar">
         <img class="avatar-img" :src="user.picUrl" v-if="user.picUrl" />
@@ -65,8 +65,21 @@
         </div>
       </div>
     </div>
+    <ContentLoader
+      :speed="1.5"
+      :width="400"
+      :height="176"
+      primaryColor="rgba(var(--foreground-color-rgb), 0.2)"
+      secondaryColor="rgba(var(--foreground-color-rgb), 0.1)"
+      v-else
+    >
+      <rect x="0" y="0" rx="80" ry="80" width="160" height="160" />
+      <rect x="180" y="35" rx="8" ry="8" width="200" height="16" />
+      <rect x="180" y="70" rx="8" ry="8" width="100" height="16" />
+      <rect x="180" y="105" rx="8" ry="8" width="100" height="16" />
+    </ContentLoader>
     <!-- 导航 -->
-    <div class="switcher font-color-standard">
+    <div class="switcher font-color-standard" v-if="user">
       <!-- 导航元素 -->
       <button
         :tabindex="-1"
@@ -124,7 +137,7 @@
       </div>
     </div>
     <!-- 用户/歌手主界面 -->
-    <div class="content">
+    <div class="content" v-if="user">
       <!-- 用户主界面 -->
       <div class="content-user" v-if="type === 'user'">
         <!-- 歌单界面 -->
@@ -161,10 +174,15 @@
             v-if="(user as IArtist).tracks"
             :id="'YUserView.vue'"
           />
-          <YPage v-model="page" />
+          <YPage v-model="page" v-show="(user as IArtist).tracks.length > 0" />
         </div>
         <!-- 加载中 -->
-        <YLoading v-if="!(user as IArtist).tracks" />
+        <YSongsTableSkeleton
+          style="margin-top: 10px"
+          v-if="
+            (user as IArtist).tracks.length === 0 && user.position === 'song'
+          "
+        />
         <!-- 歌单界面 -->
         <div
           class="playlist-list"
@@ -215,8 +233,7 @@
 </template>
 
 <script src="./YUserView.ts" lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IArtist, IUser } from "@/dual/YUserView";
+import type { IArtist, IUser } from "@/dual/YUserView";
 </script>
 
 <style lang="scss" scoped>

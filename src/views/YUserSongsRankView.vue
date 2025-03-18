@@ -11,7 +11,9 @@
     v-model="displayTracks"
     style="margin: 0px 20px 0px 10px"
     :id="'YUserSongRankView.vue'"
+    v-if="!loading"
   />
+  <YSongsTableSkeleton v-else style="margin-top: 20px" />
 </template>
 
 <script src="./YUserSongsRankView.ts" lang="ts"></script>

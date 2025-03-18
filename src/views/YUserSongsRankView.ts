@@ -5,6 +5,7 @@ import { type ITrack } from "@/utils/tracks";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
 import { YColor } from "@/utils/color";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
 export default defineComponent({
   name: "YUserSongsRank",
@@ -17,6 +18,7 @@ export default defineComponent({
   components: {
     YHeader,
     YSongsTable,
+    YSongsTableSkeleton,
   },
   setup() {
     const store = useStore();
@@ -33,6 +35,7 @@ export default defineComponent({
   },
   data() {
     return {
+      loading: true,
       switcher: [
         {
           num: 0,
@@ -57,11 +60,23 @@ export default defineComponent({
       this.position = position;
     },
     async fetchUserSongsRank() {
-      await User.songsRank(this.userId, "week").then((res) => {
+      let _loading = {
+        recent: true,
+        alltime: true,
+      };
+      User.songsRank(this.userId, "week").then((res) => {
         this.recentTracks = res;
+        _loading.recent = false;
+        if (_loading.alltime === false) {
+          this.loading = false;
+        }
       });
-      await User.songsRank(this.userId, "alltime").then((res) => {
+      User.songsRank(this.userId, "alltime").then((res) => {
         this.alltimeTracks = res;
+        _loading.alltime = false;
+        if (_loading.recent === false) {
+          this.loading = false;
+        }
       });
     },
   },
