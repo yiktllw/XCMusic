@@ -11,19 +11,19 @@
           {{ switcher[0].total }}{{ " " + $t("search_view.songs") }}
         </span>
         <span v-else-if="position === 'album'">
-          {{ switcher[1].total }}{{ " " +$t("search_view.albums") }}
+          {{ switcher[1].total }}{{ " " + $t("search_view.albums") }}
         </span>
         <span v-else-if="position === 'playlist'">
-          {{ switcher[2].total }}{{ " " +$t("search_view.playlists") }}
+          {{ switcher[2].total }}{{ " " + $t("search_view.playlists") }}
         </span>
         <span v-else-if="position === 'artist'">
-          {{ switcher[3].total }} {{ " " +$t("search_view.artists") }}
+          {{ switcher[3].total }} {{ " " + $t("search_view.artists") }}
         </span>
         <span v-else-if="position === 'lyric'">
-          {{ switcher[4].total }}{{ " " +$t("search_view.songs") }}
+          {{ switcher[4].total }}{{ " " + $t("search_view.songs") }}
         </span>
         <span v-else-if="position === 'user'">
-          {{ switcher[5].total }}{{ " " +$t("search_view.users") }}
+          {{ switcher[5].total }}{{ " " + $t("search_view.users") }}
         </span>
       </span>
     </div>
@@ -78,7 +78,7 @@
           :id="'YSearchView.vue'"
           v-if="!Loading.songs"
         />
-        <YLoading v-else />
+        <YSongsTableSkeleton v-else />
         <YPage v-model="songsPage" />
       </div>
       <!-- 专辑 -->
@@ -89,7 +89,7 @@
           type="album"
           v-if="!Loading.albums"
         />
-        <YLoading v-else />
+        <YSongsTableSkeleton v-else />
         <YPage v-model="albumsPage" />
       </div>
       <!-- 歌单 -->
@@ -99,7 +99,7 @@
           stickyTop="50px"
           v-if="!Loading.playlists"
         />
-        <YLoading v-else />
+        <YSongsTableSkeleton v-else />
         <YPage v-model="playlistsPage" />
       </div>
       <!-- 歌手 -->
@@ -110,7 +110,10 @@
       </div>
       <!-- 歌词 -->
       <div class="lyrics" v-else-if="position === 'lyric'">
-        <YSearchLyrics v-model="switcher[4].lyricsList" v-if="!Loading.lyrics" />
+        <YSearchLyrics
+          v-model="switcher[4].lyricsList"
+          v-if="!Loading.lyrics"
+        />
         <YLoading v-else />
         <YPage v-model="lyricsPage" />
       </div>

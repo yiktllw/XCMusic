@@ -5,6 +5,7 @@ import YSearchLyrics from "@/components/list/YSearchLyrics.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import YPage from "@/components/base/YPage.vue";
 import YLoading from "@/components/base/YLoading.vue";
+import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 import { type ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
 import { YColor } from "@/utils/color";
@@ -48,6 +49,7 @@ export default defineComponent({
     YSearchLyrics,
     YPage,
     YLoading,
+    YSongsTableSkeleton,
   },
   data() {
     return {
