@@ -15,16 +15,19 @@
             <div>-12dB</div>
           </div>
           <div v-for="eqkey in eqkeys" class="eq-item font-color-standard">
-            <input
-              type="range"
-              v-model.number="equalizer[eqkey]"
-              orient="vertical"
-              min="-12"
-              max="12"
-              step="1"
-              class="vertical-slider"
-              @change="apply"
-            />
+            <div class="slider-container">
+              <input
+                type="range"
+                v-model.number="equalizer[eqkey]"
+                orient="vertical"
+                min="-12"
+                max="12"
+                step="1"
+                class="vertical-slider"
+                @change="apply"
+              />
+              <div class="value-display">{{ equalizer[eqkey] }}</div>
+            </div>
             <div class="freq-name">
               {{ freaDisplay[eqkey] }}
             </div>
@@ -71,6 +74,31 @@
         &::-webkit-slider-thumb {
           cursor: pointer;
         }
+      }
+
+      .slider-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .value-display {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: -30px;
+        background: #333;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+
+      .vertical-slider:active + .value-display {
+        opacity: 1;
       }
 
       .freq-name {
