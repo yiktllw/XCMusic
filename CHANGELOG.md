@@ -2,6 +2,75 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/yiktllw/XCMusic/compare/v0.2.8...v0.3.0) (2025-03-20)
+
+
+### Features
+
+* 可以记忆退出时的播放进度并恢复 ([0eadd9f](https://github.com/yiktllw/XCMusic/commit/0eadd9fffe430f3ce8ebce8ac0a8f39d132a9a75))
+* 能够在新歌单界面调整专辑栏宽度 ([3165287](https://github.com/yiktllw/XCMusic/commit/316528713f6daaa048480a29e7ce0460149b2079))
+* 实现歌单界面的排序和搜索 ([c460976](https://github.com/yiktllw/XCMusic/commit/c460976d4b68fbcc9662ab0cb45db3e57502ad01))
+* 实现设置：列表随机时，是否连续播放同一专辑的歌曲 ([cb779a3](https://github.com/yiktllw/XCMusic/commit/cb779a3762080cde49c686adc0b5d480a9bc0b93))
+* 实现设置代理 ([a19333c](https://github.com/yiktllw/XCMusic/commit/a19333c2245441273ed4ad789e14fbadbd0f85bd))
+* 实现下载全部云盘歌曲 ([b50a119](https://github.com/yiktllw/XCMusic/commit/b50a119b02eb8bd937a563587b4789930c533003))
+* 实现http代理的身份验证 ([9de5845](https://github.com/yiktllw/XCMusic/commit/9de5845dd6a086b2ae0c72465e3ca3908082b8ba))
+* 使用虚拟滚动列表重写歌单界面和专辑界面 ([135ce35](https://github.com/yiktllw/XCMusic/commit/135ce35d7b3e00343caecd9eeefe7011a41ef86e))
+* 收藏的专辑界面添加加载动画 ([d21f699](https://github.com/yiktllw/XCMusic/commit/d21f699526b66c6c1a7d082e3b9dc4f741913378))
+* 添加骨架屏（评论、播放列表、云盘、下载、本地歌曲） ([b33a96d](https://github.com/yiktllw/XCMusic/commit/b33a96d20aaee7842a95de9e797b5def4791794a))
+* 添加骨架屏（评论界面、用户界面、歌手界面、听歌排行界面） ([2d5d94a](https://github.com/yiktllw/XCMusic/commit/2d5d94af385dd9dab6fa202532fb695ec828ea2d))
+* 添加骨架屏（搜索界面） ([37faf09](https://github.com/yiktllw/XCMusic/commit/37faf096175481d5a6bbe0e6618119cd91c2a096))
+* 添加均衡器图标的title提示 ([d4f0404](https://github.com/yiktllw/XCMusic/commit/d4f04049ceb9b5b5035764a130a5c2696a2eccf0))
+* 添加云盘下载当前页功能 ([533cf96](https://github.com/yiktllw/XCMusic/commit/533cf9672d6530bfeaef13cc4198b30af581dc57))
+* 完成虚拟滚动的歌曲列表 ([7596f67](https://github.com/yiktllw/XCMusic/commit/7596f67f785cab3ae6c72c8a54d421403981072b))
+* 完善专辑和歌单的评论界面 ([9def456](https://github.com/yiktllw/XCMusic/commit/9def456e0309ad414010000dfe2560a1b1d774fb))
+* 为歌单、专辑界面添加骨架屏 ([17b9ef6](https://github.com/yiktllw/XCMusic/commit/17b9ef653b3a915f4b777f0b0aa7f6fbca4ed0de))
+* 为搜索界面添加加载动画 ([26a6142](https://github.com/yiktllw/XCMusic/commit/26a6142e55cf79869e82d388eb3c2fdf6fa1e0de))
+* 为下载界面添加加载动画 ([d58cee9](https://github.com/yiktllw/XCMusic/commit/d58cee9d0f1764984c316a8c85befc289d8d9da0))
+* 下载时添加元数据(封面和lrc歌词) ([49c4df6](https://github.com/yiktllw/XCMusic/commit/49c4df66003c77407545b2d1acdf9edca27da45f))
+* 新增点击云盘下载按钮的调试信息 ([6138e23](https://github.com/yiktllw/XCMusic/commit/6138e236d85af8ea32726bb01a376c4ba70f2594))
+* 新增均衡器 ([73aed88](https://github.com/yiktllw/XCMusic/commit/73aed887a4da23465b3a805700bc716260062779))
+* 新增均衡器图标 ([a782d6c](https://github.com/yiktllw/XCMusic/commit/a782d6cf7a981b3acd014c4446860dea1a08a988))
+* 新增权限说明（设置-关于-介绍-权限说明） ([72d063d](https://github.com/yiktllw/XCMusic/commit/72d063db3b2d73c349976b67148ee070d2f4cbbb))
+* 新增虚拟滚动组件 ([aa5b3d8](https://github.com/yiktllw/XCMusic/commit/aa5b3d8c8c0cac6a5db75fc011f560367fee6f99))
+* 新增rust的网易云音乐api代码 ([a784a43](https://github.com/yiktllw/XCMusic/commit/a784a43045a9ebaee4533a82ee9c9772978330a2))
+* 修复CHANGELOG的错误，更新README ([231d990](https://github.com/yiktllw/XCMusic/commit/231d990ec1140ff86a561099933b0c4e72981af0))
+* 修改播放栏-播放模式图标样式 ([f651416](https://github.com/yiktllw/XCMusic/commit/f6514162cf379c26687484ef442bc3934d954aac))
+* 修改设置文本 ([00895e9](https://github.com/yiktllw/XCMusic/commit/00895e9ff2625137a61e7616c66579bbc96906bb))
+* 修改音乐云盘单页歌曲数为100 ([7cafa0c](https://github.com/yiktllw/XCMusic/commit/7cafa0c8963d1d57236b4547426e2c6d45ce18de))
+* 云盘界面增加加载动画 ([25a00ee](https://github.com/yiktllw/XCMusic/commit/25a00eee018e0802a59dc0424a99cefbb5975312))
+* 在播放栏的播放列表中使用虚拟滚动歌单 ([18a720a](https://github.com/yiktllw/XCMusic/commit/18a720aee924d71a66e3d9bf58ac30b54ff9ef38))
+* 在歌曲信息界面，鼠标悬停在歌手、专辑上时，显示下划线以提示可以点击查看更多信息 ([7d6f782](https://github.com/yiktllw/XCMusic/commit/7d6f782b9f55e68d9d0303716620435e5c80e5a0))
+* 在键入搜索时不显示搜索历史 ([3eb0dc5](https://github.com/yiktllw/XCMusic/commit/3eb0dc51a3b7fe404ed360c2248efc8325ccfaa7))
+* 在均衡器窗口中，添加数字显示 ([8d92566](https://github.com/yiktllw/XCMusic/commit/8d92566a1138dd1436aac269be592868b3f35e8a))
+* 在新歌单、专辑界面增加滚动到当前歌曲按钮 ([ee8704d](https://github.com/yiktllw/XCMusic/commit/ee8704d7408455f7246cab51f125e084d5c3a1d0))
+
+
+### Bug Fixes
+
+* 修复“下一首播放”功能的异常 ([a543425](https://github.com/yiktllw/XCMusic/commit/a543425626d39080bae138544e482aa86ea1be32))
+* 修复背景颜色异常 ([4b9051c](https://github.com/yiktllw/XCMusic/commit/4b9051caf7fddab99c2a46a917c087008ee4d8db))
+* 修复播放界面切歌时封面比例不同导致的跳动；修改注释 ([b811f7d](https://github.com/yiktllw/XCMusic/commit/b811f7de5c505189096606fcb435f97df408d7d3))
+* 修复部分矢量图在某些设备显示异常的问题 ([3e8b99b](https://github.com/yiktllw/XCMusic/commit/3e8b99b557a8057874d01ffc4fba48171e914f2b))
+* 修复歌词中的作曲家等信息可能超出单行长度的问题 ([4715af9](https://github.com/yiktllw/XCMusic/commit/4715af966214b86664f79464658e63e48f296d4a))
+* 修复歌单界面、专辑界面骨架屏显示问题 ([2631c5f](https://github.com/yiktllw/XCMusic/commit/2631c5f6430636ae02f57965e314580edf2034cd))
+* 修复歌单界面布局问题 ([bf031c3](https://github.com/yiktllw/XCMusic/commit/bf031c309ae867522bdb3365e4f38f2f894d6da4))
+* 修复关闭播放界面时，歌词提前消失的bug ([b264faa](https://github.com/yiktllw/XCMusic/commit/b264faa6baf296dacb29e3247c20f28f0c7ce5bb))
+* 修复列表随机的bug ([34dfd79](https://github.com/yiktllw/XCMusic/commit/34dfd79bb1e3bbb9cb98d680830ff85f32f04825))
+* 修复设置界面滚动时导航栏不更新的错误 ([e0cf611](https://github.com/yiktllw/XCMusic/commit/e0cf61128f0bd7675a7ba67c4691f3cf73d8deec))
+* 修复输出搜索时可能不显示搜索面板的bug ([d0c4b28](https://github.com/yiktllw/XCMusic/commit/d0c4b2873749bf5690c124b6a57c944a2698560f))
+* 修复新歌单中，专辑按钮的翻译部分无法点击的问题 ([aadad1b](https://github.com/yiktllw/XCMusic/commit/aadad1b252c3db872109548dd427dc0c9ac68b3e))
+* 修复音乐云盘可能一直加载的问题([#11](https://github.com/yiktllw/XCMusic/issues/11) , [#13](https://github.com/yiktllw/XCMusic/issues/13)) ([a7006f4](https://github.com/yiktllw/XCMusic/commit/a7006f442b2c885d692e6c1ce8e3c86cafaef8ad))
+* 修复音量均衡默认不开启的问题 ([e0f53ad](https://github.com/yiktllw/XCMusic/commit/e0f53ad3725db801d7a0666bd01d37665f5fb300))
+* 修复英文的设置界面排版问题 ([f81dc10](https://github.com/yiktllw/XCMusic/commit/f81dc100e75dd546a407cdd30e6cfa4881fedc1b))
+* 修复右键菜单的下载功能失效的问题 ([767b1a5](https://github.com/yiktllw/XCMusic/commit/767b1a5168660d484275d473d4d873907f8e8be7))
+* 修复云盘歌曲的歌曲信息界面异常 ([07a0d7a](https://github.com/yiktllw/XCMusic/commit/07a0d7a5a115c043e25a8d00033f6ceef20f88f7))
+* 修复专辑界面显示问题 ([ec3ad50](https://github.com/yiktllw/XCMusic/commit/ec3ad50309d22ea658c6cc8c78cf36327ab9d79e))
+* 修复专辑界面reel文本溢出时的显示问题 ([7db7c81](https://github.com/yiktllw/XCMusic/commit/7db7c81a25974f6a096defaca12f4c2f4ccf1215))
+* 修正本地文件缺失提示的文本错误 ([e384f66](https://github.com/yiktllw/XCMusic/commit/e384f66a8ef7523792ed74621f15ab6cfeb9ae84))
+* 修正搜索界面的文本 ([35c043b](https://github.com/yiktllw/XCMusic/commit/35c043b0a2ff3a0f3400db09292f04bb376f39af))
+* 修正文本错误（编辑歌单信息窗口） ([f391ca6](https://github.com/yiktllw/XCMusic/commit/f391ca6c0776de0dc2b585dc5785fe952c020c4f))
+* fix proxy settings ([80f3948](https://github.com/yiktllw/XCMusic/commit/80f39480cfa9018f82592aa0702baf92f2623101))
+
 ### 0.2.9 (2025-01-18)
 
 
