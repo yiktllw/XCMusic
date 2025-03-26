@@ -49,7 +49,7 @@ export default defineComponent({
     handleButtonClick(buttonId: number | string) {
       const url = `/playlist/${buttonId}`;
       this.$router.push(url);
-      console.log(`Button with ID ${buttonId} clicked`);
+      // console.log(`Button with ID ${buttonId} clicked`);
     },
     initResize() {
       window.addEventListener("mousemove", this.resize);

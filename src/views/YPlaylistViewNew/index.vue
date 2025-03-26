@@ -404,15 +404,14 @@ export default defineComponent({
       ) {
         type = "off";
       }
-      let res;
       if (this.type === "playlist") {
-        res = await Playlist.subPlaylist(this.playlistId, type);
+        await Playlist.subPlaylist(this.playlistId, type);
         this.login.refreshUserPlaylists();
       } else {
-        res = await Playlist.subAlbum(this.playlistId, type);
+        await Playlist.subAlbum(this.playlistId, type);
         this.login.refreshUserAlbums();
       }
-      console.log(type, res);
+      // console.log(type, res);
     },
     multiChoice() {
       Message.post("info", "功能暂未实现");

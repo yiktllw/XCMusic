@@ -13,7 +13,7 @@ export function setProxy(proxyConfig: ProxyConfig) {
   // `none` 表示不使用代理
   if (proxyConfig.mode === "none") {
     session.defaultSession.setProxy({ proxyRules: "" }).then(() => {
-      console.log("代理已禁用");
+      // console.log("代理已禁用");
     });
   }
   // 使用 HTTP 代理 / SOCKS 代理（SOCKS4 或 SOCKS5）
@@ -30,7 +30,7 @@ export function setProxy(proxyConfig: ProxyConfig) {
     }
     let proxyRule = `${proxyConfig.mode}://${proxyAuth}${proxyConfig.server}`;
     session.defaultSession.setProxy({ proxyRules: proxyRule }).then(() => {
-      console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyRule}`);
+      // console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxyRule}`);
     });
   }
 }

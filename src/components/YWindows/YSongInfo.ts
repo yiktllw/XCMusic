@@ -42,7 +42,7 @@ export default defineComponent({
     copy(text: string) {
       navigator.clipboard.writeText(text).then(
         () => {
-          console.log("复制成功: ", text);
+          // console.log("复制成功: ", text);
           Message.post("success", `复制成功: ${text}`);
         },
         () => {

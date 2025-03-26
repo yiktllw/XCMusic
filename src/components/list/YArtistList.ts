@@ -18,10 +18,10 @@ export default defineComponent({
   methods: {
     openUserPage(id: number | string) {
       if (this.type === "artist") {
-        console.log("open artist page :", id);
+        // console.log("open artist page :", id);
         this.$router.push({ path: `/artist/${id}` });
       } else if (this.type === "user") {
-        console.log("open user page :", id);
+        // console.log("open user page :", id);
         this.$router.push({ path: `/user/${id}` });
       }
     },

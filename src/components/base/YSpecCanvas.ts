@@ -34,7 +34,7 @@ export default defineComponent({
     setupCanvas() {
       const canvas = this.canvas;
       if (!canvas) {
-        console.log("canvas not found");
+        // console.log("canvas not found");
         return;
       }
 
@@ -47,7 +47,7 @@ export default defineComponent({
 
       const canvasCtx = canvas.getContext("2d");
       if (!canvasCtx) {
-        console.log("canvas context not found");
+        // console.log("canvas context not found");
         return;
       }
       canvasCtx.scale(scale, scale); // 适配缩放
@@ -64,7 +64,7 @@ export default defineComponent({
         }
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
         if (!this.dataArray) {
-          console.log("dataArray not found");
+          // console.log("dataArray not found");
           return;
         }
 

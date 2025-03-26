@@ -114,7 +114,7 @@ export class Player {
   _biquads: BiquadFilterNode[] = [];
   noUrlCount: number = 0;
   constructor() {
-    this._audio.onerror = () => this.handleAudioError(this._audio.error);
+    this._audio.onerror = () => this.handleAudioError();
     // 初始化音量均衡控件
     this.initAudioContext();
     this._audio.crossOrigin = "anonymous";
@@ -267,8 +267,8 @@ export class Player {
       }
     });
   }
-  async handleAudioError(error: MediaError | null) {
-    console.log("Audio Error", error);
+  async handleAudioError() {
+    // console.log("Audio Error", error);
     if (!this.currentTrack) return;
     if (navigator.onLine) {
       await this.reloadUrl();
@@ -336,15 +336,15 @@ export class Player {
         await this._audio.play();
       }
       this.updateTime();
-      console.log(
-        "Reload url",
-        {
-          id: this.currentTrack.id,
-          name: this.currentTrack.name,
-        },
-        "\nurl:",
-        url,
-      );
+      // console.log(
+      //   "Reload url",
+      //   {
+      //     id: this.currentTrack.id,
+      //     name: this.currentTrack.name,
+      //   },
+      //   "\nurl:",
+      //   url,
+      // );
     } catch (error) {
       console.error(
         "failed to reload url of track: ",
@@ -378,10 +378,10 @@ export class Player {
     if (trackIndex === -1) {
       // 如果不在播放列表中则添加到播放列表
       this.addTrack(track);
-      console.log("Track not in playlist, added to playlist and played", {
-        id: track.id,
-        name: track.name,
-      });
+      // console.log("Track not in playlist, added to playlist and played", {
+      //   id: track.id,
+      //   name: track.name,
+      // });
       await this.playTrack(track);
     } else {
       // 如果在播放列表中
@@ -412,8 +412,8 @@ export class Player {
       this._audio.src = url;
       this._audio.onended = () => this.next();
 
-      let autoPlayMsg = "Not autoplay";
-      const gainMsg = await this.gainTrack(track.id);
+      // let autoPlayMsg = "Not autoplay";
+      await this.gainTrack(track.id);
 
       if (autoPlay) {
         try {
@@ -433,9 +433,9 @@ export class Player {
                 ) {
                   this._audio.currentTime =
                     this._audio.duration * progress.normalizedProgress;
-                  console.log(
-                    `seek to: ${this._audio.duration * progress?.normalizedProgress}`,
-                  );
+                  // console.log(
+                  //   `seek to: ${this._audio.duration * progress?.normalizedProgress}`,
+                  // );
                 }
               });
               this._outputAudio.play();
@@ -446,25 +446,25 @@ export class Player {
             this._outputAudio.play();
             this.playState = "play";
           }
-          autoPlayMsg = "Autoplay";
+          // autoPlayMsg = "Autoplay";
         } catch (error) {
           console.error(error);
         }
       }
 
       this.updateTime();
-      console.log(
-        "Playing",
-        { id: track.id, name: track.name },
-        "\n",
-        "track url:",
-        url,
-        "\n",
-        "gain message: \n",
-        gainMsg,
-        "\n",
-        autoPlayMsg,
-      );
+      // console.log(
+      //   "Playing",
+      //   { id: track.id, name: track.name },
+      //   "\n",
+      //   "track url:",
+      //   url,
+      //   "\n",
+      //   "gain message: \n",
+      //   gainMsg,
+      //   "\n",
+      //   autoPlayMsg,
+      // );
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
       this.subscriber.exec(PlayerEvents.trackReady);
@@ -985,13 +985,13 @@ export class Player {
    */
   async updatePlaycount() {
     if (!getStorage(StorageKey.LoginCookie)) return;
-    await Playlist.updatePlaycount(this._playlistId as number).then((res) => {
-      console.log(
-        "update playlist playcount: ",
-        this._playlistId,
-        "response",
-        JSON.stringify(res, null, 4),
-      );
+    await Playlist.updatePlaycount(this._playlistId as number).then(() => {
+      // console.log(
+      //   "update playlist playcount: ",
+      //   this._playlistId,
+      //   "response",
+      //   JSON.stringify(res, null, 4),
+      // );
     });
   }
   /**
@@ -1066,7 +1066,7 @@ export class Player {
       value !== "loop" &&
       value !== "listrandom"
     ) {
-      console.log("Mode not supported: ", value);
+      // console.log("Mode not supported: ", value);
       return;
     }
     // 如果播放模式改变
@@ -1176,7 +1176,7 @@ export class Player {
         }
         this.subscriber.exec(PlayerEvents.playState);
       } else {
-        console.log("Audio not ready");
+        // console.log("Audio not ready");
       }
     } else {
       console.error("PlayState not supported: ", value);
@@ -1367,7 +1367,7 @@ export class Player {
       this.reloadUrl();
       this.subscriber.exec(PlayerEvents.quality);
     } else {
-      console.log("Quality not supported: ", value);
+      // console.log("Quality not supported: ", value);
     }
   }
   /**
@@ -1508,8 +1508,8 @@ export class Player {
   set volumeLeveling(value: boolean) {
     this._volume_leveling = value;
     if (!this.currentTrack) return;
-    this.gainTrack(this.currentTrack?.id).then((msg) => {
-      console.log("Volume leveling:", msg);
+    this.gainTrack(this.currentTrack?.id).then(() => {
+      // console.log("Volume leveling:", msg);
     });
   }
   /**

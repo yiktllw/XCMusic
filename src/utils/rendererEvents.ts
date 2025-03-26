@@ -34,7 +34,7 @@ ipcMain.on("maximize", () => {
       win.maximize();
     }
   }
-  console.log(process.memoryUsage());
+  // console.log(process.memoryUsage());
 });
 
 // 监听关闭事件
@@ -60,7 +60,7 @@ ipcMain.on("clear-cache", () => {
     win.webContents.session
       .clearCache()
       .then(() => {
-        console.log("Network cache cleared");
+        // console.log("Network cache cleared");
       })
       .catch((err) => {
         console.error("Error clearing cache:", err);

@@ -215,7 +215,7 @@ export default defineComponent({
     // 下一首
     async goTo(direction: string) {
       let forward = direction === "forward" ? true : false;
-      console.log(forward ? "next" : "previous");
+      // console.log(forward ? "next" : "previous");
       forward ? this.player.next() : this.player.previous();
     },
     tooglePlayMode(
@@ -234,7 +234,7 @@ export default defineComponent({
       if (!artistId || isLocal(artistId)) {
         return;
       }
-      console.log("Artist ID:", artistId);
+      // console.log("Artist ID:", artistId);
       this.$router.push({ path: "/artist/" + artistId });
     },
     updateVolumeInSetting() {
@@ -250,7 +250,7 @@ export default defineComponent({
         | "exhigh"
         | "standard",
     ) {
-      console.log("setQuality:", quality);
+      // console.log("setQuality:", quality);
       this.player.quality = quality;
       this.setting.play.quality = quality;
       this.quality_panel?.tooglePanel();
@@ -334,7 +334,7 @@ export default defineComponent({
       this.showSongs = false;
     },
     handlePlaylistPanelMounted() {
-      console.log("playlist panel mounted");
+      // console.log("playlist panel mounted");
       this.showSongs = true;
     },
   },

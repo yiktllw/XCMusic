@@ -106,7 +106,7 @@ export default defineComponent({
       // 如果已登录，则打开用户信息窗口
       if (this.login.cookie && this.login.status) {
         this.user_info_panel?.tooglePanel();
-        console.log("open userInfo");
+        // console.log("open userInfo");
       } else {
         // 如果未登录，则显示二维码登录
         let qrKey = await Login.getQrKey();
@@ -149,7 +149,7 @@ export default defineComponent({
       if (window.electron?.isElectron) {
         window.electron.ipcRenderer.send("minimize");
       } else {
-        console.log("not in electron, cannot minimize");
+        // console.log("not in electron, cannot minimize");
       }
     },
     /** 最大化 */
@@ -157,7 +157,7 @@ export default defineComponent({
       if (window.electron?.isElectron) {
         window.electron.ipcRenderer.send("maximize");
       } else {
-        console.log("not in electron, cannot maximize");
+        // console.log("not in electron, cannot maximize");
       }
     },
     /** 关闭 */
@@ -175,7 +175,7 @@ export default defineComponent({
           window.electron.ipcRenderer.send("quit");
         }
       } else {
-        console.log("not in electron, cannot close");
+        // console.log("not in electron, cannot close");
       }
     },
     /** 搜索事件 */
@@ -184,7 +184,7 @@ export default defineComponent({
     },
     search(text: string) {
       if (text === "") {
-        console.log("search text is empty");
+        // console.log("search text is empty");
         return;
       }
       this.$router.push({ path: `/search/${text}/default` });
@@ -195,7 +195,7 @@ export default defineComponent({
         this.searchHistory.length > 0 &&
         this.searchHistory.length <= SEARCH_HISTORY_LENGTH
       ) {
-        console.log("search0");
+        // console.log("search0");
         if (!this.searchHistory.includes(text)) {
           this.searchHistory = [text, ...this.searchHistory];
         } else {
@@ -221,7 +221,7 @@ export default defineComponent({
           ];
         }
       }
-      console.log("search:", text);
+      // console.log("search:", text);
     },
     async getSearchSuggestions(event: Event) {
       this.search_panel?._showPanel();

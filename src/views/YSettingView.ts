@@ -238,7 +238,7 @@ export default defineComponent({
     async selectFile() {
       if (window.electron?.isElectron) {
         const path = await window.electron.ipcRenderer.invoke("select-folder");
-        console.log(path);
+        // console.log(path);
         if (path && typeof path === "string") {
           this.setting.download.path = path;
           this.downloadPath = this.setting.download.path;
@@ -311,7 +311,7 @@ export default defineComponent({
             this.setting.play.device = deviceId;
           });
           // this.selectedDevice = audioElement.sinkId;
-          console.log(`Audio output set to device: ${deviceId}`);
+          // console.log(`Audio output set to device: ${deviceId}`);
         } else {
           console.error("Browser does not support setSinkId.");
         }

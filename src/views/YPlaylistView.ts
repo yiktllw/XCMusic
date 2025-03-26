@@ -332,7 +332,7 @@ export default defineComponent({
     },
     // 处理搜索
     handleSearch(input: string, fromEnter: boolean) {
-      console.log("search", input);
+      // console.log("search", input);
       // 更新搜索关键字
       if (fromEnter) {
         this.searchQuery = input;
@@ -387,7 +387,7 @@ export default defineComponent({
     },
     // 播放歌单
     async playAll() {
-      console.log("playAll");
+      // console.log("playAll");
       // 预处理歌单
       let playlist = preparePlaylist(this.playlist.tracks);
       this.player.playAll(playlist);
@@ -411,7 +411,7 @@ export default defineComponent({
     },
     // 播放歌曲
     async playSongs(track: ITrack) {
-      console.log("playSongs");
+      // console.log("playSongs");
       await this.player.playTrack(track);
       this.player.playlistId = this.playlistId;
       this.player.playState = "play";
@@ -450,15 +450,14 @@ export default defineComponent({
       ) {
         type = "off";
       }
-      let res;
       if (this.type === "playlist") {
-        res = await Playlist.subPlaylist(this.playlistId, type);
+        await Playlist.subPlaylist(this.playlistId, type);
         this.login.refreshUserPlaylists();
       } else {
-        res = await Playlist.subAlbum(this.playlistId, type);
+        await Playlist.subAlbum(this.playlistId, type);
         this.login.refreshUserAlbums();
       }
-      console.log(type, res);
+      // console.log(type, res);
     },
     multiChoice() {
       Message.post("info", "功能暂未实现");
@@ -469,7 +468,7 @@ export default defineComponent({
       `YPlaylistView`,
       GlobalMsgEvents.RefreshPlaylist,
       () => {
-        console.log("refresh-playlist");
+        // console.log("refresh-playlist");
         this.fetchPlaylist(this.playlistId, true);
       },
     );

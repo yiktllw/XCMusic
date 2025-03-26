@@ -8,8 +8,8 @@
  *---------------------------------------------------------------*/
 
 import axios from "axios";
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 import { type ITrack } from "@/utils/tracks";
 import { type BrowserWindow } from "electron";
 import {

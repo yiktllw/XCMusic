@@ -85,8 +85,8 @@ export class Login {
         this.userName = res.nickname;
         this.avatar = res.avatarUrl + "?param=200y200";
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        // console.log(error);
       });
     await this.reloadLikelist();
     await this.refreshUserPlaylists();

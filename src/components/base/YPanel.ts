@@ -126,7 +126,7 @@ export default defineComponent({
           this.showPanel
         ) {
           this.showPanel = false;
-          console.log("handleClickOutside and close panel");
+          // console.log("handleClickOutside and close panel");
         }
       } else if (panelDom) {
         if (
@@ -135,7 +135,7 @@ export default defineComponent({
           this.showPanel
         ) {
           this.showPanel = false;
-          console.log("No trigger, handleClickOutside and close panel");
+          // console.log("No trigger, handleClickOutside and close panel");
         }
       }
     },

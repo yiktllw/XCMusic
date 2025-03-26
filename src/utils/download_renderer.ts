@@ -150,7 +150,7 @@ export class Download {
         !this.downloadlist.some((song) => song.id === item.id) &&
         !this.downloadedSongIds.includes(item.id),
     );
-    if (list.length === 0) console.log("no new songs to download");
+    // if (list.length === 0) console.log("no new songs to download");
     this.downloadlist.push(...list);
     this.subscriber.exec(DownloadEvents.List);
     this.subscriber.exec(DownloadEvents.Doing);

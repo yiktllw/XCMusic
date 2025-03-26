@@ -34,7 +34,8 @@ export default defineComponent({
         : this.$router.push({ path: `/album/${id}` });
     },
     openUserPage(id: number | string) {
-      console.log("open user page: ", id);
+      const mode = this.type === "playlist" ? "user" : "artist";
+      this.$router.push({ path: `/${mode}/${id}` });
     },
     formatedPlayCount(count: number) {
       return count > 10000 ? `${(count / 10000).toFixed(1)}万` : count;

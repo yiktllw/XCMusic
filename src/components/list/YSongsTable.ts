@@ -267,7 +267,7 @@ export default defineComponent({
       return isLocal(id);
     },
     async playSongAndPlaylist(track: ITrack) {
-      console.log("Play Song And Playlist:", track.id);
+      // console.log("Play Song And Playlist:", track.id);
       if (!this.canSendPlaylist || this.setting.play.dbclick === "single") {
         await this.player.playTrack(track);
       } else {
@@ -334,13 +334,13 @@ export default defineComponent({
     handleArtistClick(artistId: number | string) {
       if (!artistId || isLocal(artistId)) return;
       this.$router.push(`/artist/${artistId}`);
-      console.log("Open Artist with ID:", artistId);
+      // console.log("Open Artist with ID:", artistId);
     },
     // 处理专辑点击
     handleAlbumClick(albumId: number | string) {
       if (!albumId || isLocal(albumId)) return;
       this.$router.push(`/album/${albumId}`);
-      console.log("Open Album with ID:", albumId);
+      // console.log("Open Album with ID:", albumId);
     },
     // 切换标题排序状态
     handleSort() {
@@ -381,32 +381,32 @@ export default defineComponent({
       // 根据不同的排序 key 进行排序操作
       switch (sortKey) {
         case "default":
-          console.log("使用默认排序");
+          // console.log("使用默认排序");
           // 处理默认排序逻辑
           this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
           break;
         case "titleAsc":
-          console.log("按标题升序排序");
+          // console.log("按标题升序排序");
           // 处理按标题升序排序逻辑
           this.tracks.sort((a, b) => a.name.localeCompare(b.name));
           break;
         case "titleDesc":
-          console.log("按标题降序排序");
+          // console.log("按标题降序排序");
           // 处理按标题降序排序逻辑
           this.tracks.sort((a, b) => b.name.localeCompare(a.name));
           break;
         case "artistAsc":
-          console.log("按歌手升序排序");
+          // console.log("按歌手升序排序");
           // 处理按歌手升序排序逻辑
           this.tracks.sort((a, b) => a.ar[0].name.localeCompare(b.ar[0].name));
           break;
         case "artistDesc":
-          console.log("按歌手降序排序");
+          // console.log("按歌手降序排序");
           // 处理按歌手降序排序逻辑
           this.tracks.sort((a, b) => b.ar[0].name.localeCompare(a.ar[0].name));
           break;
         default:
-          console.log("未知排序选项");
+        // console.log("未知排序选项");
       }
     },
     // 专辑排序
@@ -414,22 +414,22 @@ export default defineComponent({
       // 根据不同的排序 key 进行排序操作
       switch (sortKey) {
         case "default":
-          console.log("使用默认排序");
+          // console.log("使用默认排序");
           // 处理默认排序逻辑
           this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
           break;
         case "albumAsc":
-          console.log("按专辑升序排序");
+          // console.log("按专辑升序排序");
           // 处理按专辑升序排序逻辑
           this.tracks.sort((a, b) => a.al.name.localeCompare(b.al.name));
           break;
         case "albumDesc":
-          console.log("按专辑降序排序");
+          // console.log("按专辑降序排序");
           // 处理按专辑降序排序逻辑
           this.tracks.sort((a, b) => b.al.name.localeCompare(a.al.name));
           break;
         default:
-          console.log("未知排序选项");
+        // console.log("未知排序选项");
       }
     },
     // 时长排序
@@ -437,26 +437,26 @@ export default defineComponent({
       // 根据不同的排序 key 进行排序操作
       switch (sortKey) {
         case "default":
-          console.log("使用默认排序");
+          // console.log("使用默认排序");
           // 处理默认排序逻辑
           this.tracks.sort((a, b) => a.originalIndex - b.originalIndex);
           break;
         case "albumAsc":
-          console.log("按时间升序排序");
+          // console.log("按时间升序排序");
           // 处理按时间升序排序逻辑
           this.tracks.sort(
             (a, b) => parseFloat(a.dt.toString()) - parseFloat(b.dt.toString()),
           );
           break;
         case "albumDesc":
-          console.log("按时间降序排序");
+          // console.log("按时间降序排序");
           // 处理按时间降序排序逻辑
           this.tracks.sort(
             (a, b) => parseFloat(b.dt.toString()) - parseFloat(a.dt.toString()),
           );
           break;
         default:
-          console.log("未知排序选项");
+        // console.log("未知排序选项");
       }
     },
     formatLyric(lyric: string) {
@@ -615,7 +615,7 @@ export default defineComponent({
           ids: [id],
         },
       });
-      console.log("Open Add To Playlist:", id);
+      // console.log("Open Add To Playlist:", id);
       // 在HomeView中处理
     },
     scrollToCurrentTrack(smooth = true) {

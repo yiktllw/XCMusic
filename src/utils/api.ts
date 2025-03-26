@@ -36,7 +36,7 @@ export function setProxyUrl(proxyConfig: ProxyConfig) {
   // `none` 表示不使用代理
   if (proxyConfig.mode === "none") {
     proxy = undefined;
-    console.log("代理已禁用");
+    // console.log("代理已禁用");
   }
   // 使用 HTTP 代理 / SOCKS 代理（SOCKS4 或 SOCKS5）
   else {
@@ -45,7 +45,7 @@ export function setProxyUrl(proxyConfig: ProxyConfig) {
       proxy = new URL(`${proxyConfig.mode}://${proxyConfig.server}`).toString();
       if (proxyConfig.username && proxyConfig.password)
         proxy = `${proxyConfig.mode}://${proxyConfig.username}:${proxyConfig.password}@${proxyConfig.server}`;
-      console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxy}`);
+      // console.log(`使用 ${proxyConfig.mode.toUpperCase()} 代理: ${proxy}`);
     } catch (error) {
       console.error("代理服务器地址无效: ", proxyConfig, error);
     }
@@ -202,7 +202,7 @@ export namespace Playlist {
 
     // 如果没有传入歌曲数量，获取歌单详情
     if (!_trackCount) {
-      console.log("Fetching track count");
+      // console.log("Fetching track count");
       await getDetail(playlistId)
         .then((res) => {
           trackCount = res.playlist.trackCount;
@@ -259,11 +259,9 @@ export namespace Playlist {
     // 如果需要刷新，添加时间戳
     if (refresh) params["timestamp"] = new Date().getTime();
 
-    let getTracks = await useApi("/playlist/track/all", params).catch(
-      (error) => {
-        console.log("Failed to fetch tracks:", error);
-      },
-    );
+    let getTracks = await useApi("/playlist/track/all", params).catch(() => {
+      // console.log("Failed to fetch tracks:", error);
+    });
 
     // 加入新的属性 originalIndex，用于排序
     return new Tracks({
@@ -654,7 +652,7 @@ export namespace Search {
   ): Promise<ISearchSuggestion[]> {
     // 如果关键词为空，直接返回空数组
     if (keyword === "" || !keyword) {
-      console.log("Empty keyword");
+      // console.log("Empty keyword");
       return [];
     }
     interface Ires {
@@ -672,7 +670,7 @@ export namespace Search {
     });
 
     if (res.code !== 200) {
-      console.log("Failed to get search suggestion:", res);
+      // console.log("Failed to get search suggestion:", res);
       return [];
     }
 
@@ -1221,8 +1219,8 @@ export namespace User {
     const res = await useApi("/artist/album", {
       id: id,
       limit: 1900,
-    }).catch((err) => {
-      console.log("fetch artist albums error:", err);
+    }).catch(() => {
+      // console.log("fetch artist albums error:", err);
       return {
         hotAlbums: [],
       };

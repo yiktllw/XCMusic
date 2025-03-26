@@ -256,7 +256,7 @@ export namespace YColor {
    */
   export function getColorFromThreeLetters(letters: string): string {
     if (letters.length < 3) {
-      console.log("letters length less than 3");
+      // console.log("letters length less than 3");
       return "#FFFFFF";
     }
     let i1 = letters.toLocaleLowerCase().charCodeAt(0) - 97;
@@ -270,7 +270,7 @@ export namespace YColor {
     let g = Math.ceil(group[i2] * 2.5);
     let b = Math.ceil(group[i3] * 2.5);
     const result = YColor.rgbToHex(r, g, b);
-    console.log("getColorFromThreeLetters: ", letters, "color: ", result);
+    // console.log("getColorFromThreeLetters: ", letters, "color: ", result);
     return result;
   }
 
@@ -455,8 +455,8 @@ export async function getColorFromImg(
       img.onerror = (error) => {
         reject(error); // 处理图片加载错误
       };
-    }).catch((error) => {
-      console.log("get color from image error: ", error, ", return null"); // 捕获错误
+    }).catch(() => {
+      // console.log("get color from image error: ", error, ", return null"); // 捕获错误
       return null; // 返回 null
     })) ?? null;
 

@@ -78,7 +78,7 @@ export default defineComponent({
         | "album"
         | "detail",
     ) {
-      console.log("switch position", position);
+      // console.log("switch position", position);
       this.user!.position = position;
       switch (position) {
         case "createdPlaylist":
@@ -106,12 +106,12 @@ export default defineComponent({
       if (mainScroll) mainScroll.scrollTop = 0;
       // 如果 userId 为 0，返回
       if (this.userId === 0) {
-        console.log("invalid userId");
+        // console.log("invalid userId");
         return;
       }
       if (this.type === "user") {
         // 如果 type 为 user，获取用户信息
-        console.log("fetch user");
+        // console.log("fetch user");
         let response = await User.detail(this.userId);
         if (!response) return;
         // 处理用户信息
@@ -187,7 +187,7 @@ export default defineComponent({
         return;
       }
       // 获取用户的歌单
-      console.log("fetch user playlist");
+      // console.log("fetch user playlist");
       const response = await User.getPlaylists(this.userId);
       // 清空用户的歌单
       (this.user as IUser).userPlaylists = [
@@ -257,8 +257,8 @@ export default defineComponent({
           }
           (this.user as IArtist).tracks = markRaw(response.songs);
         })
-        .catch((err) => {
-          console.log("fetch artist songs error:", err);
+        .catch(() => {
+          // console.log("fetch artist songs error:", err);
         });
     },
     async fetchArtistIntro() {
@@ -279,8 +279,8 @@ export default defineComponent({
           // 添加歌手的描述
           (this.user as IArtist).intro = [...desc, ...response];
         })
-        .catch((err) => {
-          console.log("fetch artist intro error:", err);
+        .catch(() => {
+          // console.log("fetch artist intro error:", err);
         });
     },
     openUserFollow(id: number, type: string) {

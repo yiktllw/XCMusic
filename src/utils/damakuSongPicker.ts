@@ -92,7 +92,7 @@ export class SongPicker {
 
       // 将更新后的内容写回文件
       await window.api.writeFile(this.filePath, updatedLines.join("\n"));
-      console.log("行已删除: ", line);
+      // console.log("行已删除: ", line);
     } catch (err) {
       console.error("删除行失败:", err);
     }

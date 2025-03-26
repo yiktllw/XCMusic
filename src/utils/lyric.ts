@@ -127,7 +127,7 @@ export class Lyrics {
           });
         } catch {
           // 忽略解析错误行
-          console.log("Error parsing line of yrc:", line);
+          // console.log("Error parsing line of yrc:", line);
         }
       }
     }

@@ -38,7 +38,7 @@ class IndexedDB {
         // 创建对象存储
         if (!db.objectStoreNames.contains(this.storeName)) {
           db.createObjectStore(this.storeName, { keyPath: "id" });
-          console.log(`Object store "${this.storeName}" created.`);
+          // console.log(`Object store "${this.storeName}" created.`);
         }
       };
 

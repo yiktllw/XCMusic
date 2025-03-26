@@ -260,7 +260,7 @@ export default defineComponent({
         .then((res) => {
           if (!res) return;
           if (res.code !== 200) {
-            console.log("id: ", this.track.id, "获取曲谱失败, ", res.code);
+            // console.log("id: ", this.track.id, "获取曲谱失败, ", res.code);
           }
           const data = res.data;
           if (data.musicSheetSimpleInfoVOS) {

@@ -113,7 +113,7 @@ export default defineComponent({
   methods: {
     // 切换搜索位置
     handleSwitcher(position: string) {
-      console.log("switch position", position);
+      // console.log("switch position", position);
       this.$router.push({ path: `/search/${this.search}/${position}` });
     },
     // 搜索歌曲
@@ -130,8 +130,8 @@ export default defineComponent({
             this.fetchTracks(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchTracks", err);
+        .catch(() => {
+          // console.log("fetchTracks", err);
         });
       this.Loading.songs = false;
     },
@@ -156,8 +156,8 @@ export default defineComponent({
             this.fetchPlaylists(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchPlaylists", err);
+        .catch(() => {
+          // console.log("fetchPlaylists", err);
         });
       this.Loading.playlists = false;
     },
@@ -180,8 +180,8 @@ export default defineComponent({
             this.fetchAlbums(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchAlbums", err);
+        .catch(() => {
+          // console.log("fetchAlbums", err);
         });
       this.Loading.albums = false;
     },
@@ -204,8 +204,8 @@ export default defineComponent({
             this.fetchArtists(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchArtists", err);
+        .catch(() => {
+          // console.log("fetchArtists", err);
         });
       this.Loading.artists = false;
     },
@@ -223,8 +223,8 @@ export default defineComponent({
             this.fetchLyrics(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchLyrics", err);
+        .catch(() => {
+          // console.log("fetchLyrics", err);
         });
       this.Loading.lyrics = false;
     },
@@ -249,8 +249,8 @@ export default defineComponent({
             this.fetchUsers(false);
           };
         })
-        .catch((err) => {
-          console.log("fetchUsers", err);
+        .catch(() => {
+          // console.log("fetchUsers", err);
         });
       this.Loading.users = false;
     },

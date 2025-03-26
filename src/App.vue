@@ -24,15 +24,15 @@ export default defineComponent({
     if (window.electron?.isElectron) {
       window.electron.ipcRenderer.send(
         "zoom",
-        parseFloat(this.setting.display.zoom.toString())
+        parseFloat(this.setting.display.zoom.toString()),
       );
       window.electron.ipcRenderer.on(
         "fullscreen-window-size",
-        this.handleFullScreen
+        this.handleFullScreen,
       );
       window.electron.ipcRenderer.on(
         "leave-fullscreen",
-        this.handleLeaveFullScreen
+        this.handleLeaveFullScreen,
       );
     }
     // 初始化用户自定义主题
@@ -46,7 +46,7 @@ export default defineComponent({
     // 初始化代理
     const proxy = getStorage(StorageKey.Setting_Tools_Proxy);
     if (proxy && proxy.mode !== "none") {
-      console.log("proxy: ", proxy);
+      // console.log("proxy: ", proxy);
       setProxyUrl(proxy);
       window.electron.ipcRenderer.send("set-proxy", proxy);
     }
@@ -55,31 +55,31 @@ export default defineComponent({
     if (window.electron?.isElectron) {
       window.electron.ipcRenderer.removeListener(
         "fullscreen-window-size",
-        this.handleFullScreen
+        this.handleFullScreen,
       );
       window.electron.ipcRenderer.removeListener(
         "leave-fullscreen",
-        this.handleLeaveFullScreen
+        this.handleLeaveFullScreen,
       );
     }
   },
   methods: {
     handleFullScreen(event: { width: number; height: number }) {
       const autoScale = getStorage(
-        StorageKey.Setting_Display_FullscreenAutoZoom
+        StorageKey.Setting_Display_FullscreenAutoZoom,
       );
       if (!autoScale) return;
       const { width, height } = event;
       const scalex = width / 1177;
       const scaley = height / 777;
       const scale = Math.min(scalex, scaley);
-      console.log("fullscreen size: ", width, height, "scale: ", scale);
+      // console.log("fullscreen size: ", width, height, "scale: ", scale);
       window.electron.ipcRenderer.send("zoom", scale);
     },
     handleLeaveFullScreen() {
       window.electron.ipcRenderer.send(
         "zoom",
-        parseFloat(this.setting.display.zoom.toString())
+        parseFloat(this.setting.display.zoom.toString()),
       );
     },
   },
