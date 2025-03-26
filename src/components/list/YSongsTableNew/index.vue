@@ -381,15 +381,13 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.nowPlayingId = this.player.currentTrack?.id ?? 0;
     this.player.subscriber.on(
       this.options.id_for_subscribe,
       PlayerEvents.track,
       () => {
         this.nowPlayingId = this.player.currentTrack?.id ?? 0;
       },
-    );
-    this.downloadedSongIds = this.download.downloadedSongIds.slice();
+    )?.();
     this.alWidth = this.setting.display.albumWidth;
     this.download.subscriber.on(
       this.options.id_for_subscribe,
@@ -397,7 +395,7 @@ export default defineComponent({
       () => {
         this.downloadedSongIds = this.download.downloadedSongIds.slice();
       },
-    );
+    )?.();
   },
   beforeUnmount() {
     this.download.subscriber.offAll(this.options.id_for_subscribe);

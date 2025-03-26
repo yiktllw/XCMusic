@@ -228,14 +228,12 @@ export default defineComponent({
     }
 
     this.alWidth = this.setting.display.albumWidth;
-    this.nowPlaying = this.player.currentTrack?.id ?? 0;
     this.player.subscriber.on(this.id, PlayerEvents.track, () => {
       this.nowPlaying = this.player.currentTrack?.id ?? 0;
-    });
-    this.downloadedSongIds = this.download.downloadedSongIds;
+    })?.();
     this.download.subscriber.on(this.id, DownloadEvents.Complete, () => {
       this.downloadedSongIds = this.download.downloadedSongIds;
-    });
+    })?.();
     this.UL?.addEventListener("mousemove", this.handleUlMouseMove);
     this.UL?.addEventListener("mouseleave", this.handleUlMouseLeave);
     this.UL?.addEventListener("dblclick", this.handleUlDbClick);

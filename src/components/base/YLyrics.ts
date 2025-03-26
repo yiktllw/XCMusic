@@ -82,10 +82,9 @@ export default defineComponent({
       this.handleLyricsChange(this.lyrics);
     });
 
-    this.lyrics = this.player.lyrics;
     this.player.subscriber.on("YLyrics", PlayerEvents.lyrics, () => {
       this.lyrics = this.player.lyrics;
-    });
+    })?.();
 
     this.setScale();
   },

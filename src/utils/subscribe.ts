@@ -67,6 +67,7 @@ export class Subscriber<
   }
   /**
    * 订阅一种事件
+   * @returns 返回订阅的回调函数，可以?.()调用，来达到立即执行的效果
    */
   on<K extends keyof EventsCallbacks>(
     /** 用来标识订阅者的唯一ID */
@@ -75,7 +76,7 @@ export class Subscriber<
     type: K,
     /** 回调函数 */
     func: EventsCallbacks[K],
-  ) {
+  ): EventsCallbacks[K] | undefined {
     if (typeof func !== "function") {
       console.error("func is not a function: ", JSON.stringify(func, null, 4));
       return;
@@ -119,6 +120,7 @@ export class Subscriber<
         this.updateSubscribe(arrayWithId[index]?.globalIndex, func);
       }
     }
+    return func;
   }
 
   /**

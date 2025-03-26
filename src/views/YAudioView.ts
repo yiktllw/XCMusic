@@ -21,10 +21,9 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.currentGain = this.player._gainNode?.gain.value;
     this.player.subscriber.on("YAudioView", PlayerEvents.gain, () => {
       this.currentGain = this.player._gainNode?.gain.value;
-    });
+    })?.();
   },
   beforeUnmount() {
     this.player.subscriber.offAll("YAudioView");

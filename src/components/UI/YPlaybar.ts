@@ -370,24 +370,20 @@ export default defineComponent({
         this.qualityDisplay = this.player.qualityDisplay;
       },
     );
-    this.songs_table_options.songs = this.player.playlist;
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.playlist,
       () => {
         this.songs_table_options.songs = this.player.playlist;
       },
-    );
-    this.playState = this.player.playState;
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.playState,
       () => {
         this.playState = this.player.playState;
       },
-    );
-    this.currentTrack = this.player.currentTrack;
-    this.setCommentCount();
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.track,
@@ -395,10 +391,7 @@ export default defineComponent({
         this.currentTrack = this.player.currentTrack;
         await this.setCommentCount();
       },
-    );
-    this.currentTime = this.player.currentTime;
-    this.duration = this.player.duration as number;
-    this.progress = this.player.progress;
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.time,
@@ -407,39 +400,35 @@ export default defineComponent({
         this.currentTime = this.player.currentTime;
         this.progress = this.player.progress;
       },
-    );
-    this.playMode = this.player.mode;
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.mode,
       () => {
         this.playMode = this.player.mode;
       },
-    );
-    this.volume = this.player.volume;
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.volume,
       () => {
         this.volume = this.player.volume;
       },
-    );
-    this.qualityDisplay = this.player.qualityDisplay;
+    )?.();
     this.player.subscriber.on(
       "YPlaybar" + `${this.type}`,
       PlayerEvents.quality,
       () => {
         this.qualityDisplay = this.player.qualityDisplay;
       },
-    );
-    this.downloadedSongIds = this.download.downloadedSongIds;
+    )?.();
     this.download.subscriber.on(
       "YPlaybar" + `${this.type}`,
       DownloadEvents.Complete,
       () => {
         this.downloadedSongIds = this.download.downloadedSongIds;
       },
-    );
+    )?.();
   },
   beforeUnmount() {
     this.player.subscriber.offAll("YPlaybar" + `${this.type}`);

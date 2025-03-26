@@ -98,12 +98,10 @@ export default defineComponent({
   },
   mounted() {
     this.sidebarWidth = this.setting.display.sidebarWidth;
-    this.userPlaylists = this.login.userPlaylists;
-    this.userSubscribes = this.login.userSubscribes;
     this.login.subscriber.on("YSidebar", LoginEvents.userPlaylists, () => {
       this.userPlaylists = this.login.userPlaylists;
       this.userSubscribes = this.login.userSubscribes;
-    });
+    })?.();
     this.OpenedPlaylist.subscriber.on(
       "YSidebar",
       OpenedPlaylistEvents.id,
