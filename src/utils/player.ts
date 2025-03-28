@@ -148,9 +148,6 @@ export class Player {
       try {
         this.db.fetchPlaylist().then((res) => {
           this._playlist = res;
-          if (this._mode === "listrandom") {
-            this._playlist = this._playlist.sort(() => Math.random() - 0.5);
-          }
           const lastTrack = getStorage(StorageKey.CurrentTrack);
           if (lastTrack) {
             this.subscriber.on("indexDB", PlayerEvents.playerReady, () => {

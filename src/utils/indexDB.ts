@@ -78,13 +78,13 @@ class IndexedDB {
 
       clearRequest.onsuccess = () => {
         // 清空成功后添加新数组
-        const addPromises = array.map((item) => {
+        const addPromises = array.map((item, index) => {
           // 使用 JSON.stringify 转换对象为字符串
           const jsonString = JSON.stringify(item);
 
           return new Promise<void>((addResolve, addReject) => {
             const addRequest = store?.add({
-              id: item.id,
+              id: index,
               data: jsonString,
             });
             addRequest.onsuccess = () => addResolve();
