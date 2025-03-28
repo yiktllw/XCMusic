@@ -233,7 +233,7 @@
 </template>
 
 <script src="./YUserView.ts" lang="ts">
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { IArtist, IUser } from "@/dual/YUserView";
 </script>
 
