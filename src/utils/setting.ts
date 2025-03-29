@@ -12,8 +12,12 @@ import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { type Theme1, type Theme2, themes } from "@/utils/theme";
 import { setProxyUrl } from "@/utils/api";
 import { type IEqualizer } from "@/dual/player";
-let fs: any, path: any, os: any;
+import {
+  defaultPreferences,
+  type ILyricsPreferences,
+} from "@/components/base/YLyricsNew/utils";
 
+let fs: any, path: any, os: any;
 if (window.electron?.isElectron) {
   fs = window.api.fs;
   path = window.api.path;
@@ -70,6 +74,10 @@ export interface ISettings {
   playui: {
     /** 是否显示播放界面的频谱图 */
     spectrum: boolean;
+    /** 是否使用新版歌词 */
+    showNewLyrics: boolean;
+    /** 歌词偏好 */
+    lyricsPreferences: ILyricsPreferences;
   };
   /** 下载设置 */
   download: {
@@ -309,6 +317,33 @@ export const settingGroup: SettingGroup = {
           setStorage(StorageKey.Setting_PlayUI_Spectrum, value);
           valid = true;
         }
+        return valid;
+      },
+    },
+    showNewLyrics: {
+      value: getStorage(StorageKey.Setting_PlayUI_ShowNewLyrics) ?? false,
+      default: false,
+      validation: (value) => {
+        let valid = validBoolean(value);
+        if (valid) setStorage(StorageKey.Setting_PlayUI_ShowNewLyrics, value);
+        return valid;
+      },
+    },
+    lyricsPreferences: {
+      value:
+        getStorage(StorageKey.Setting_PlayUI_LyricsPreference) ??
+        defaultPreferences,
+      default: defaultPreferences,
+      validation: (value: ILyricsPreferences) => {
+        let valid = typeof value === typeof defaultPreferences;
+        valid =
+          valid &&
+          value.fontSize >= 10 &&
+          value.fontSize <= 50 &&
+          value.paddingTop >= 10 &&
+          value.paddingTop <= 100;
+        if (valid)
+          setStorage(StorageKey.Setting_PlayUI_LyricsPreference, value);
         return valid;
       },
     },

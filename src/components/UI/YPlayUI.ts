@@ -15,6 +15,7 @@ import {
 import YLyrics from "@/components/base/YLyrics.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { PlayerEvents } from "@/dual/player";
+import YLyricsNew from "@/components/base/YLyricsNew/index.vue";
 
 export default defineComponent({
   name: "YPlayUI",
@@ -24,6 +25,7 @@ export default defineComponent({
     YScroll,
     YSpecCanvas,
     YLyrics,
+    YLyricsNew,
   },
   setup() {
     const lyricContainer = ref<InstanceType<typeof YScroll> | null>();
@@ -154,6 +156,7 @@ export default defineComponent({
       currentLine: 0,
       startTime: null as number | null,
       scrollAnimationFrame: null as number | null,
+      showNewLyrics: false,
     };
   },
   emits: ["show-panel", "close-panel"],
@@ -310,6 +313,7 @@ export default defineComponent({
     this.globalMsg.subscriber.on("YPlayUI", GlobalMsgEvents.ClosePlayUI, () => {
       this.closePanel();
     });
+    this.showNewLyrics = this.setting.playui.showNewLyrics;
   },
   beforeUnmount() {
     this.player.subscriber.offAll("YPlayUI");

@@ -410,6 +410,24 @@
                 </label>
               </div>
             </div>
+            <!-- 播放界面-使用新歌词组件 -->
+            <div class="content-item item-playui">
+              <div class="content-item-title">
+                {{ $t("playui.show_new_lyrics.title") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_new_lyrics"
+                  name="setting_new_lyrics"
+                  v-model="showNewLyrics"
+                  @change="setShowNewLyrics(showNewLyrics)"
+                />
+                <label for="setting_new_lyrics">
+                  {{ $t("playui.show_new_lyrics.describe") }}
+                </label>
+              </div>
+            </div>
             <!-- 播放-双击列表行为 -->
             <div class="content-item item-play-dbclick">
               <div class="content-item-title">

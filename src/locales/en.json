@@ -215,6 +215,10 @@
     "noSheet": "No Sheet",
     "noWiki": "No Wiki",
     "sheet": "Sheets",
+    "show_new_lyrics": {
+      "describe": "Use the new lyrics component",
+      "title": "Lyrics"
+    },
     "wiki": "Wiki"
   },
   "quality": {

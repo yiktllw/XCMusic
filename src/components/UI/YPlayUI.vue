@@ -67,8 +67,15 @@
             </div>
           </div>
           <!-- 歌词 -->
-          <div class="lyrics" v-if="position === 'lyric'">
-            <YLyrics class="ylyrics" />
+          <div
+            class="lyrics"
+            :style="{
+              overflow: showNewLyrics ? 'unset' : 'hidden',
+            }"
+            v-if="position === 'lyric'"
+          >
+            <YLyricsNew v-if="showNewLyrics" class="ylyrics-new" />
+            <YLyrics v-else class="ylyrics" />
           </div>
           <!-- 百科和乐谱 -->
           <YScroll v-else style="height: calc(100vh - 350px); margin-left: 5px">
@@ -319,11 +326,17 @@
 
       .lyrics {
         max-height: calc(100vh - 350px);
-        overflow: hidden;
         padding: 0 0 00px 0;
+        width: 100%;
 
         .ylyrics {
           margin: calc((100vh - 350px) / 2 - 285px) 0 0 0;
+        }
+        .ylyrics-new {
+          width: calc(100% - 100px);
+          max-width: 38vw;
+          height: calc(100vh - 350px);
+          margin: 0;
         }
       }
 

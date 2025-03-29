@@ -215,6 +215,10 @@
     "noSheet": "暂无曲谱",
     "noWiki": "暂无百科",
     "sheet": "曲谱",
+    "show_new_lyrics": {
+      "describe": "使用新版歌词组件",
+      "title": "歌词"
+    },
     "wiki": "百科"
   },
   "quality": {

@@ -2,16 +2,18 @@
   <YSmoothScroll
     :duration="500"
     :ease="(t: number) => t * (2 - t)"
-    style="
-      height: 500px;
-      max-width: 800px;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: row;
-    "
+    style="overflow-x: hidden; display: flex; flex-direction: row"
     ref="smoothScroll"
   >
-    <div>
+    <div
+      :style="{
+        '--lyrics-font-size': `${preferences.fontSize}px`,
+        '--lyrics-font-family': `${preferences.fontFamily}`,
+        '--lyrics-padding-top': `${preferences.paddingTop}px`,
+        '--lyrics-padding-bottom': `${preferences.paddingTop}px`,
+        '--lyrics-font-weight': `${preferences.fontWeight}`,
+      }"
+    >
       <div style="height: 50%" />
       <div
         ref="container"
@@ -19,7 +21,7 @@
       ></div>
       <div style="height: 50%" />
     </div>
-    <div style="width: 30%; height: 100%" />
+    <div style="width: 25%; height: 100%" />
   </YSmoothScroll>
 </template>
 
@@ -36,6 +38,7 @@ import { Lyrics } from "@/utils/api";
 import { PlayerEvents } from "@/dual/player";
 import { isLocal } from "@/utils/localTracks_renderer";
 import YSmoothScroll from "@/components/base/YSmoothScroll/index.vue";
+import { defaultPreferences, type ILyricsPreferences } from "./utils";
 
 /** 时间线接口 */
 type ITimelineItems = Array<{
@@ -52,6 +55,15 @@ const smoothScroll = ref<InstanceType<typeof YSmoothScroll>>();
 
 /** 歌词 */
 const lyrics = ref<IYrcItem[]>([]);
+/** 歌词偏好设置 */
+const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
+/** 系统字体 */
+const systemFonts = ref<string[]>([]);
+if (window.electron?.isElectron) {
+  window.electron.ipcRenderer.invoke("get-fonts").then((fonts) => {
+    systemFonts.value = fonts;
+  });
+}
 /** 时间线 */
 const timeline = ref<ITimelineItems>();
 /** 以index为键的时间线的Hash Map */
@@ -384,7 +396,11 @@ watch(currentLineIndex, () => {
     text-align: left;
     padding-left: 0;
 
-    font-size: 20px;
+    font-size: var(--lyrics-font-size);
+    font-family: var(--lyrics-font-family);
+    padding-top: var(--lyrics-padding-top);
+    padding-bottom: var(--lyrics-padding-bottom);
+    font-weight: var(--lyrics-font-weight);
   }
 }
 </style>

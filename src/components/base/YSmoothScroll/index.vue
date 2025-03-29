@@ -10,16 +10,16 @@ import { ref } from "vue";
 const props = defineProps({
   ease: {
     type: Function,
-    default: (t: number) => t, // 默认线性动画
+    default: (t: number) => t,
   },
   duration: {
     type: Number,
-    default: 1000, // 默认动画时长1秒
+    default: 1000,
   },
 });
 
 const container = ref<HTMLElement>();
-let isAnimating = false;
+let rafId: number | null = null;
 let startTime: number | null = null;
 let startScrollTop = 0;
 let targetScrollTop = 0;
@@ -36,14 +36,18 @@ const animate = (timestamp: number | null) => {
   container.value!.scrollTop = currentScroll;
 
   if (progress < 1) {
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
   } else {
-    isAnimating = false;
+    rafId = null;
   }
 };
 
-const scrollTo = (target: HTMLElement, immediate?: boolean) => {
-  if (isAnimating) return;
+const scrollTo = (target: HTMLElement | string, immediate?: boolean) => {
+  // 取消正在进行的动画
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 
   let element;
   if (typeof target === "string") {
@@ -57,30 +61,26 @@ const scrollTo = (target: HTMLElement, immediate?: boolean) => {
   const containerRect = container.value.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
 
-  // 计算元素中间位置和容器中间位置的差值
   const elementMiddle =
     elementRect.top - containerRect.top + elementRect.height / 2;
   const containerMiddle = containerRect.height / 2;
   const delta = elementMiddle - containerMiddle;
 
-  // 计算目标滚动位置并限制范围
   let newScrollTop = container.value.scrollTop + delta;
   const maxScrollTop =
     container.value.scrollHeight - container.value.clientHeight;
   newScrollTop = Math.max(0, Math.min(newScrollTop, maxScrollTop));
 
   targetScrollTop = newScrollTop;
-
   startScrollTop = container.value.scrollTop;
-  isAnimating = true;
   startTime = null;
 
   if (immediate) {
     container.value.scrollTop = targetScrollTop;
-    isAnimating = false;
     return;
   }
-  requestAnimationFrame(animate);
+
+  rafId = requestAnimationFrame(animate);
 };
 
 defineExpose({
@@ -91,7 +91,7 @@ defineExpose({
 <style scoped>
 .scroll-container {
   overflow-y: auto;
-  height: 100%; /* 根据实际需求调整容器高度 */
+  height: 100%;
   position: relative;
 }
 </style>

@@ -126,6 +126,8 @@ export default defineComponent({
       /** 代理服务器端口 */
       proxy_port: "",
       allowConsecutiveAlbums: false,
+      /** 使用新歌词组件 */
+      showNewLyrics: false,
     };
   },
   methods: {
@@ -196,6 +198,10 @@ export default defineComponent({
     setAllowConsecutiveAlbums(bool: boolean) {
       this.setting.play.allowConsecutiveAlbums = bool;
       this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
+    },
+    setShowNewLyrics(bool: boolean) {
+      this.setting.playui.showNewLyrics = bool;
+      this.showNewLyrics = this.setting.playui.showNewLyrics;
     },
     async getFolderPath() {
       if (window.electron?.isElectron) {
@@ -466,6 +472,7 @@ export default defineComponent({
       this.autoPlay = this.setting.play.autoPlay;
       this.rememberProgress = this.setting.play.rememberTrackProgress;
       this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
+      this.showNewLyrics = this.setting.playui.showNewLyrics;
       this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
         this[`hideInSidebar_${item}`] = true;
       });

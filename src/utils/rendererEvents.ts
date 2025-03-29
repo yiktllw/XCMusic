@@ -12,6 +12,7 @@ import * as path from "path";
 import { type ISaveJSONData } from "@/dual/YSettingView";
 import { setProxy } from "@/utils/userProxy";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
+import { getFonts } from "font-list";
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -89,6 +90,10 @@ ipcMain.handle("get-local-tracks", async (_event, dirPath) => {
     console.error("Error scanning music directory:", err);
     return [];
   }
+});
+
+ipcMain.handle("get-fonts", async () => {
+  return await getFonts();
 });
 
 ipcMain.handle(
