@@ -18,6 +18,7 @@ import type {
   ISearch,
   ISong,
   IUser,
+  ILyrics,
 } from "@/utils/api.interface";
 import { isLocal } from "@/utils/localTracks_renderer";
 import {
@@ -890,6 +891,26 @@ export namespace Search {
  * 歌词相关API
  */
 export namespace Lyrics {
+  /**
+   * 获取歌词原始字符串
+   */
+  export async function getLyricOriginalStr(
+    id: number,
+  ): Promise<ILyrics.OriginalResponse | null> {
+    return await useApi("/lyric/new", { id })
+      .then((res) => {
+        const str: string = res?.yrc?.lyric ?? res?.lrc?.lyric;
+        const type: "yrc" | "lrc" = res?.yrc ? "yrc" : "lrc";
+        return {
+          type,
+          data: str,
+        };
+      })
+      .catch(() => {
+        return null;
+      });
+  }
+
   /**
    * 获取歌词
    */

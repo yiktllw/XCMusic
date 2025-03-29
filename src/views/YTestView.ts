@@ -1,10 +1,13 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
+import YLyricsNew from "@/components/base/YLyricsNew/index.vue";
 
 export default defineComponent({
   name: "YTestView",
-  components: {},
+  components: {
+    YLyricsNew,
+  },
   setup() {
     const store = useStore();
 

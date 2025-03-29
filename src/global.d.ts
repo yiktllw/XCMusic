@@ -88,6 +88,16 @@ interface env {
   isDevelopment: boolean;
 }
 
+interface ScrollTimelineOptions {
+  source: Element | Document;
+  axis?: "block" | "inline" | "x" | "y";
+}
+
+interface ViewTimelineOptions {
+  subject: Element;
+  axis?: "block" | "inline" | "x" | "y";
+}
+
 declare global {
   interface Window {
     electron: electron;
@@ -95,5 +105,13 @@ declare global {
     savedPositions: savedPositions;
     test: any;
     env: env;
+  }
+
+  declare class ScrollTimeline extends AnimationTimeline {
+    constructor(options: ScrollTimelineOptions);
+  }
+
+  declare class ViewTimeline {
+    constructor(options: ViewTimelineOptions);
   }
 }

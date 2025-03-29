@@ -25,7 +25,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@yiktllw/lrc-parser": "^1.0.0",
+    "@yiktllw/lrc-parser": "^1.2.1",
     "@yiktllw/ncm-api": "4.24.2",
     "axios": "^1.7.3",
     "cli-color": "^2.0.4",

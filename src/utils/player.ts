@@ -333,15 +333,6 @@ export class Player {
         await this._audio.play();
       }
       this.updateTime();
-      // console.log(
-      //   "Reload url",
-      //   {
-      //     id: this.currentTrack.id,
-      //     name: this.currentTrack.name,
-      //   },
-      //   "\nurl:",
-      //   url,
-      // );
     } catch (error) {
       console.error(
         "failed to reload url of track: ",
@@ -375,10 +366,6 @@ export class Player {
     if (trackIndex === -1) {
       // 如果不在播放列表中则添加到播放列表
       this.addTrack(track);
-      // console.log("Track not in playlist, added to playlist and played", {
-      //   id: track.id,
-      //   name: track.name,
-      // });
       await this.playTrack(track);
     } else {
       // 如果在播放列表中
@@ -430,9 +417,6 @@ export class Player {
                 ) {
                   this._audio.currentTime =
                     this._audio.duration * progress.normalizedProgress;
-                  // console.log(
-                  //   `seek to: ${this._audio.duration * progress?.normalizedProgress}`,
-                  // );
                 }
               });
               this._outputAudio.play();

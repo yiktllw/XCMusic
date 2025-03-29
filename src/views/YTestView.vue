@@ -13,6 +13,7 @@
     <!-- <div class="button font-color-main" @click="setEq">
       点击设置EQ
     </div> -->
+    <YLyricsNew />
   </div>
 </template>
 

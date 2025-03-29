@@ -753,3 +753,10 @@ export namespace ILogin {
     cookie: string;
   }
 }
+
+export namespace ILyrics {
+  export interface OriginalResponse {
+    type: "lrc" | "yrc";
+    data: string;
+  }
+}
