@@ -85,6 +85,7 @@ const scrollTo = (target: HTMLElement | string, immediate?: boolean) => {
 
 defineExpose({
   scrollTo,
+  container,
 });
 </script>
 

@@ -1,28 +1,43 @@
 <template>
-  <YSmoothScroll
-    :duration="500"
-    :ease="(t: number) => t * (2 - t)"
-    style="overflow-x: hidden; display: flex; flex-direction: row"
-    ref="smoothScroll"
-  >
-    <div
-      :style="{
-        '--lyrics-font-size': `${preferences.fontSize}px`,
-        '--lyrics-font-family': `${preferences.fontFamily}`,
-        '--lyrics-padding-top': `${preferences.paddingTop}px`,
-        '--lyrics-padding-bottom': `${preferences.paddingTop}px`,
-        '--lyrics-font-weight': `${preferences.fontWeight}`,
-      }"
+  <div class="main">
+    <YSmoothScroll
+      :duration="500"
+      :ease="(t: number) => t * (2 - t)"
+      style="overflow-x: hidden; display: flex; flex-direction: row"
+      ref="smoothScroll"
     >
-      <div style="height: 50%" />
       <div
-        ref="container"
-        class="font-color-main container lyrics-new-container"
-      ></div>
-      <div style="height: 50%" />
-    </div>
-    <div style="width: 25%; height: 100%" />
-  </YSmoothScroll>
+        :style="{
+          '--lyrics-font-size': `${preferences.fontSize}px`,
+          '--lyrics-font-family': `${preferences.fontFamily}`,
+          '--lyrics-padding-top': `${preferences.paddingTop}px`,
+          '--lyrics-padding-bottom': `${preferences.paddingTop}px`,
+          '--lyrics-font-weight': `${preferences.fontWeight}`,
+        }"
+      >
+        <div style="height: 50%" />
+        <div
+          ref="container"
+          class="font-color-main container lyrics-new-container"
+        ></div>
+        <div style="height: 50%" />
+      </div>
+      <div style="width: 25%; height: 100%" />
+    </YSmoothScroll>
+    <Transition name="fade">
+      <div class="middle-line" v-if="doNotScrollToCurrentLine" ref="middleLine">
+        <div class="play-button" @click="seekToLine">
+          <img class="play-img" src="@/assets/play.svg" />
+        </div>
+        <div class="line" />
+        <div class="time font-color-standard">
+          {{
+            format_ms_to_mmss(lyrics[userScrollLineElementIndex]?.startTime.ms)
+          }}
+        </div>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -87,6 +102,10 @@ const _lineElements = ref<Array<HTMLElement>>([]);
 /** 在用户滚动后，暂时禁止自动滚动 */
 const doNotScrollToCurrentLine = ref(false);
 const doNotScrollToCurrentLineTimeout = ref<NodeJS.Timeout>();
+/** 用户滚动到的行元素 */
+const userScrollLineElementIndex = ref<number>(0);
+/** 中线元素 */
+const middleLine = ref<HTMLElement>();
 
 /** 主容器 */
 const container = ref<HTMLElement>();
@@ -236,6 +255,82 @@ const handleUserScroll = () => {
   }, 3000);
 };
 
+interface SortedElement {
+  element: HTMLElement;
+  y: number;
+}
+/**
+ * 在已排序的 Y 轴位置列表中查找最近元素
+ * @param targetY - 目标 Y 坐标（基于视口坐标系）
+ * @param sortedElements - 已按 y 升序排序的数组
+ * @returns 最接近的 DOM 元素，如果输入为空则返回 null
+ */
+function findClosestYInSorted(
+  targetY: number,
+  sortedElements: SortedElement[],
+) {
+  if (!sortedElements?.length) return null;
+
+  let left = 0;
+  let right = sortedElements.length - 1;
+  let closestIndex = 0;
+  let minDiff = Infinity;
+
+  // 二分查找核心逻辑
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const currentY = sortedElements[mid].y;
+    const diff = Math.abs(currentY - targetY);
+
+    // 更新最小差距
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIndex = mid;
+    }
+
+    // 缩小搜索范围
+    if (currentY < targetY) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  // 检查相邻元素（处理边界情况）
+  const candidates = [closestIndex - 1, closestIndex, closestIndex + 1].filter(
+    (i) => i >= 0 && i < sortedElements.length,
+  );
+
+  // 找出实际最小差距元素
+  let finalClosestIndex = closestIndex;
+  for (const i of candidates) {
+    const diff = Math.abs(sortedElements[i].y - targetY);
+    if (diff < minDiff) {
+      minDiff = diff;
+      finalClosestIndex = i;
+    }
+  }
+
+  return {
+    element: sortedElements[finalClosestIndex].element,
+    index: finalClosestIndex,
+  };
+}
+
+const format_ms_to_mmss = (ms: number | undefined) => {
+  if (ms === undefined) return "00:00";
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
+
+const seekToLine = () => {
+  if (!lyrics.value[userScrollLineElementIndex.value]) return;
+
+  player.currentTime =
+    lyrics.value[userScrollLineElementIndex.value].startTime.seconds;
+};
+
 /** 滚动到当前行 */
 const scrollToCurrentLine = (immediate?: boolean) => {
   if (doNotScrollToCurrentLine.value) return;
@@ -257,12 +352,28 @@ const no_lyrics_element = {
   ],
 };
 
+const calcClosestLine = () => {
+  if (!doNotScrollToCurrentLine.value) return;
+  const targetY = middleLine.value!.getBoundingClientRect().top;
+  userScrollLineElementIndex.value =
+    findClosestYInSorted(
+      targetY,
+      lineElements.value.map((item) => {
+        return {
+          element: item,
+          y: item.getBoundingClientRect().top,
+        };
+      }),
+    )?.index ?? 0;
+};
+
 onMounted(() => {
   player.subscriber.on("YLyricsNew", PlayerEvents.track, () => {
     // 重置索引
     animationIndex.value = 0;
     currentLineIndex.value = 0;
     container.value!.scrollTop = 0;
+    userScrollLineElementIndex.value = 0;
 
     player.subscriber.off("YLyricsNew", PlayerEvents.playState);
     if (!player.currentTrack?.id || isLocal(player.currentTrack.id)) return;
@@ -304,16 +415,16 @@ onMounted(() => {
     });
   })?.();
 
-  container.value?.addEventListener("wheel", handleUserScroll);
-  container.value?.addEventListener("touchmove", handleUserScroll);
+  smoothScroll.value?.container?.addEventListener("wheel", handleUserScroll);
+  smoothScroll.value?.container?.addEventListener("scroll", calcClosestLine);
 });
 
 onBeforeUnmount(() => {
   player.subscriber.offAll("YLyricsNew");
   animationFrame.value && cancelAnimationFrame(animationFrame.value);
 
-  container.value?.removeEventListener("wheel", handleUserScroll);
-  container.value?.removeEventListener("touchmove", handleUserScroll);
+  smoothScroll.value?.container?.removeEventListener("wheel", handleUserScroll);
+  smoothScroll.value?.container?.removeEventListener("scroll", calcClosestLine);
 });
 
 // 监听动画位置变化
@@ -381,8 +492,59 @@ watch(currentLineIndex, () => {
 </script>
 
 <style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.main {
+  position: relative;
+}
 .container {
   position: relative;
+}
+.middle-line {
+  top: calc(50% - 10px);
+  left: -32.1px;
+  display: flex;
+  width: calc(100% + 80px);
+  align-items: center;
+  flex-direction: row;
+  position: absolute;
+  pointer-events: none;
+  .play-button {
+    margin-right: 5px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    pointer-events: all;
+    .play-img {
+      width: 18px;
+      opacity: 0.7;
+      cursor: pointer;
+    }
+    &:hover {
+      .play-img {
+        opacity: 1;
+      }
+    }
+  }
+  .line {
+    width: 100%;
+    height: 2px;
+    border-radius: 1px;
+    background-color: rgba(var(--foreground-color-rgb), 0.1);
+  }
+  .time {
+    font-size: 17px;
+    font-weight: bold;
+    margin-left: 10px;
+  }
 }
 </style>
 
