@@ -4,6 +4,7 @@
       :duration="500"
       :ease="(t: number) => t * (2 - t)"
       style="overflow-x: hidden; display: flex; flex-direction: row"
+      class="smooth-scroll"
       ref="smoothScroll"
     >
       <div
@@ -11,8 +12,15 @@
           '--lyrics-font-size': `${preferences.fontSize}px`,
           '--lyrics-font-family': `${preferences.fontFamily}`,
           '--lyrics-padding-top': `${preferences.paddingTop}px`,
-          '--lyrics-padding-bottom': `${preferences.paddingTop}px`,
+          '--lyrics-padding-bottom': `${preferences.paddingBottom}px`,
           '--lyrics-font-weight': `${preferences.fontWeight}`,
+          '--lyrics-font-style': `${preferences.isItalic ? 'italic' : 'normal'}`,
+          '--tns-lyrics-font-size': `${preferences.tns_fontSize}px`,
+          '--tns-lyrics-font-family': `${preferences.tns_fontFamily}`,
+          '--tns-lyrics-padding-top': `${preferences.tns_paddingTop}px`,
+          '--tns-lyrics-padding-bottom': `${preferences.tns_paddingBottom}px`,
+          '--tns-lyrics-font-weight': `${preferences.tns_fontWeight}`,
+          '--tns-lyrics-font-style': `${preferences.tns_isItalic ? 'italic' : 'normal'}`,
         }"
       >
         <div style="height: 50%" />
@@ -22,7 +30,7 @@
         ></div>
         <div style="height: 50%" />
       </div>
-      <div style="width: 25%; height: 100%" />
+      <div style="width: 25%; min-width: 25%; height: 100%" />
     </YSmoothScroll>
     <Transition name="fade">
       <div class="middle-line" v-if="doNotScrollToCurrentLine" ref="middleLine">
@@ -54,6 +62,7 @@ import { PlayerEvents } from "@/dual/player";
 import { isLocal } from "@/utils/localTracks_renderer";
 import YSmoothScroll from "@/components/base/YSmoothScroll/index.vue";
 import { defaultPreferences, type ILyricsPreferences } from "./utils";
+import { nextTick } from "vue";
 
 /** 时间线接口 */
 type ITimelineItems = Array<{
@@ -70,6 +79,9 @@ const smoothScroll = ref<InstanceType<typeof YSmoothScroll>>();
 
 /** 歌词 */
 const lyrics = ref<IYrcItem[]>([]);
+/** 歌词翻译 */
+const tlyrics = ref<IYrcItem[]>([]);
+const tlyricsMap = ref<Map<number, IYrcItem>>(new Map());
 /** 歌词偏好设置 */
 const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
 /** 系统字体 */
@@ -125,8 +137,10 @@ const computeLyricsElements = () => {
   _lineAnimations.value.forEach((item) => item.cancel());
   _lineAnimations.value = [];
 
+  const tnsLyricsKeys = Array.from(tlyricsMap.value.keys());
+
   // 生成新的元素，并计算动画
-  animations.value = lyrics.value.flatMap((line) => {
+  animations.value = lyrics.value.flatMap((line, lineIndex) => {
     const lineKeyframes = [
       { transform: "scale(1)", opacity: 0 },
       { transform: "scale(1.3)", opacity: 1 },
@@ -166,6 +180,36 @@ const computeLyricsElements = () => {
     const _lineAnimation = _lineElement.animate(_lineKeyframes, lineOptions);
     _lineAnimation.pause();
     _lineAnimations.value.push(_lineAnimation);
+
+    // 生成翻译行元素
+    let tnsText = tlyricsMap.value.get(line.startTime.ms)?.words[0].text;
+    if (!tnsText && tlyrics.value.length > 0) {
+      // 如果没有直接对应的翻译，查找区间的翻译
+      const _key = tnsLyricsKeys.find((key) => {
+        if (key >= line.startTime.ms) {
+          if (key < line.startTime.ms + line.duration.ms) {
+            return true;
+          } else if (
+            lineIndex === lyrics.value.length - 1 ||
+            key < lyrics.value[lineIndex + 1].startTime.ms
+          ) {
+            return true;
+          }
+        }
+      });
+      if (_key) {
+        tnsText = tlyricsMap.value.get(_key)?.words[0].text;
+        // tnsLyricsKeys.splice(0, 1);
+      }
+    }
+    if (tnsText) {
+      const tlineElement = document.createElement("div");
+      const _a = document.createElement("span");
+      _a.textContent = tnsText;
+      tlineElement.appendChild(_a);
+      tlineElement.className = "lyrics-new-line-tns font-color-standard";
+      container.value?.appendChild(tlineElement);
+    }
 
     // 返回逐字动画
     return line.words.map((word) => {
@@ -334,7 +378,7 @@ const seekToLine = () => {
 /** 滚动到当前行 */
 const scrollToCurrentLine = (immediate?: boolean) => {
   if (doNotScrollToCurrentLine.value) return;
-  smoothScroll.value!.scrollTo(
+  smoothScroll.value?.scrollTo(
     lineElements.value[currentLineIndex.value],
     immediate,
   );
@@ -372,14 +416,14 @@ onMounted(() => {
     // 重置索引
     animationIndex.value = 0;
     currentLineIndex.value = 0;
-    container.value!.scrollTop = 0;
+    if (container.value) container.value.scrollTop = 0;
     userScrollLineElementIndex.value = 0;
 
     player.subscriber.off("YLyricsNew", PlayerEvents.playState);
     if (!player.currentTrack?.id || isLocal(player.currentTrack.id)) return;
 
     // 获取歌词
-    Lyrics.getLyricOriginalStr(player.currentTrack.id).then((res) => {
+    Lyrics.getLyricOriginalStr(player.currentTrack.id).then(async (res) => {
       if (!res?.data) {
         lyrics.value = [no_lyrics_element];
       } else if (res.type === "lrc") {
@@ -402,11 +446,34 @@ onMounted(() => {
 
       if (lyrics.value.length === 0) lyrics.value = [no_lyrics_element];
 
+      await Lyrics.getLyricsTns(player.currentTrack!.id).then((_res) => {
+        tlyrics.value = [];
+        tlyricsMap.value.clear();
+        if (!_res) return;
+        tlyrics.value = parseNcmLrc(_res).map((item) => {
+          const _item = {
+            startTime: item.startTime,
+            duration: new TimeSpan(0, "ms"),
+            words: [
+              {
+                startTime: item.startTime,
+                duration: new TimeSpan(0, "ms"),
+                text: item.text,
+              },
+            ],
+          };
+          tlyricsMap.value.set(item.startTime.ms, _item);
+          return _item;
+        });
+      });
+
       computeTimeLine();
       computeLyricsElements();
       processLyricsElements();
       startTimeUpdate();
-      scrollToCurrentLine(true);
+      nextTick(() => {
+        setTimeout(() => scrollToCurrentLine(true), 30);
+      });
 
       // 播放状态变化时，控制动画
       player.subscriber.on("YLyricsNew", PlayerEvents.playState, () => {
@@ -502,6 +569,18 @@ watch(currentLineIndex, () => {
   opacity: 0;
 }
 
+.smooth-scroll {
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0,
+    rgba(0, 0, 0, 0.5) 10%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.5) 90%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+}
+
 .main {
   position: relative;
 }
@@ -557,12 +636,30 @@ watch(currentLineIndex, () => {
     padding: 20px;
     text-align: left;
     padding-left: 0;
+    white-space: pre-wrap;
 
     font-size: var(--lyrics-font-size);
     font-family: var(--lyrics-font-family);
     padding-top: var(--lyrics-padding-top);
     padding-bottom: var(--lyrics-padding-bottom);
     font-weight: var(--lyrics-font-weight);
+    font-style: var(--lyrics-font-style);
+  }
+  .lyrics-new-line-tns {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 20px;
+    text-align: left;
+    padding-left: 0;
+    white-space: pre-wrap;
+
+    font-size: var(--tns-lyrics-font-size);
+    font-family: var(--tns-lyrics-font-family);
+    padding-top: var(--tns-lyrics-padding-top);
+    padding-bottom: var(--tns-lyrics-padding-bottom);
+    font-weight: var(--tns-lyrics-font-weight);
+    font-style: var(--tns-lyrics-font-style);
   }
 }
 </style>

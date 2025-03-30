@@ -912,6 +912,20 @@ export namespace Lyrics {
   }
 
   /**
+   * 获取歌词翻译
+   */
+  export async function getLyricsTns(id: number): Promise<string | null> {
+    return await useApi("/lyric/new", { id })
+      .then((res) => {
+        if (res?.ytlrc?.lyric) return res.ytlrc.lyric;
+        return res?.tlyric?.lyric ?? null;
+      })
+      .catch(() => {
+        return null;
+      });
+  }
+
+  /**
    * 获取歌词
    */
   export async function get(

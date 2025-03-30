@@ -33,7 +33,7 @@ const animate = (timestamp: number | null) => {
   const currentScroll =
     startScrollTop + (targetScrollTop - startScrollTop) * easedProgress;
 
-  container.value!.scrollTop = currentScroll;
+  if (container.value) container.value.scrollTop = currentScroll;
 
   if (progress < 1) {
     rafId = requestAnimationFrame(animate);
