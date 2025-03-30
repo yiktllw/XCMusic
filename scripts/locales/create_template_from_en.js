@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * 本脚本用于从en.json生成模板文件 template.json

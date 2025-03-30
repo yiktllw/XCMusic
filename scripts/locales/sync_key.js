@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*---------------------------------------------------------------*
  * YiktLLW .. 2025-03-21 .. Johannes Brahms
  * 本文件用于将 en.json 的键复制到 zh.json 并排序
@@ -39,6 +40,7 @@ function writeJsonFile(fileName, data) {
 // 递归复制键值并排序的函数
 function syncKeysAndSort(source, target) {
   for (const key in source) {
+    // eslint-disable-next-line no-prototype-builtins
     if (source.hasOwnProperty(key)) {
       // 如果目标文件中没有该键，则创建一个新键，值为 ''
       if (!(key in target) && typeof source[key] !== "object") {
