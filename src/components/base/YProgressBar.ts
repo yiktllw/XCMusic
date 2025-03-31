@@ -24,6 +24,7 @@ export default defineComponent({
   data() {
     return {
       mouseProgress: 0,
+      currentLyric: "",
       showInfo: false,
     };
   },
@@ -125,6 +126,8 @@ export default defineComponent({
     handleMousemove(event: MouseEvent) {
       this.mouseProgress =
         event.clientX / (this.big_frame?.getBoundingClientRect().width || 100);
+      this.currentLyric =
+        window.getLyrics?.(this.mouseProgress * this.totalTime * 1000) ?? "";
       this.showInfo = true;
     },
     HideInfo() {

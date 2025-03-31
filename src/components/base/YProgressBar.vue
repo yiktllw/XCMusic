@@ -28,10 +28,13 @@
         class="play-info"
         v-else-if="showInfo"
         :style="{
-          left: 'calc(' + mouseProgress * 100 + '%' + ' - 30px )',
+          transform: `translateX(clamp(0px, calc(${mouseProgress * 100}vw - 30px), calc(100vw - 50px))`,
         }"
       >
         {{ formatDuration(mouseProgress) }}
+        <span class="lyric" v-if="currentLyric.length > 0">
+          &nbsp;{{ currentLyric }}
+        </span>
       </div>
       <div class="progress-track" v-if="showTrack"></div>
     </div>
@@ -111,7 +114,7 @@
       position: absolute;
       top: -38px;
       background-color: var(--panel-background-color);
-      color: var(--font-color-main);
+      color: var(--font-color-high);
       font-size: 14px;
       font-weight: bold;
       padding: 5px 10px;
@@ -119,12 +122,23 @@
       z-index: 2;
       box-shadow: rgba($color: #000, $alpha: 0.4) 0 0 3px 0;
 
+      display: flex;
+      flex-wrap: nowrap;
+
+      .lyric {
+        height: 20px;
+        max-width: 160px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
       &::after {
         content: "";
         position: absolute;
         bottom: -10px;
         /* 控制尖角距离矩形的距离 */
-        left: 50%;
+        left: 30px;
         /* 尖角居中对齐 */
         transform: translateX(-50%);
         border-width: 10px 10px 0 10px;

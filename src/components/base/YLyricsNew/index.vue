@@ -85,12 +85,12 @@ const tlyricsMap = ref<Map<number, IYrcItem>>(new Map());
 /** 歌词偏好设置 */
 const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
 /** 系统字体 */
-const systemFonts = ref<string[]>([]);
-if (window.electron?.isElectron) {
-  window.electron.ipcRenderer.invoke("get-fonts").then((fonts) => {
-    systemFonts.value = fonts;
-  });
-}
+// const systemFonts = ref<string[]>([]);
+// if (window.electron?.isElectron) {
+//   window.electron.ipcRenderer.invoke("get-fonts").then((fonts) => {
+//     systemFonts.value = fonts;
+//   });
+// }
 /** 时间线 */
 const timeline = ref<ITimelineItems>();
 /** 以index为键的时间线的Hash Map */
@@ -471,6 +471,16 @@ onMounted(() => {
       computeLyricsElements();
       processLyricsElements();
       startTimeUpdate();
+      window.getLyrics = (time_ms: number) => {
+        const index = lyrics.value!.findIndex(
+          (item, index) =>
+            time_ms >= item.startTime.ms &&
+            (lyrics.value[index + 1] === undefined ||
+              time_ms < lyrics.value[index + 1].startTime.ms),
+        );
+        if (index === -1) return null;
+        return lyrics.value[index].words.map((item) => item.text).join("");
+      };
       nextTick(() => {
         setTimeout(() => scrollToCurrentLine(true), 30);
       });
@@ -492,6 +502,8 @@ onBeforeUnmount(() => {
 
   smoothScroll.value?.container?.removeEventListener("wheel", handleUserScroll);
   smoothScroll.value?.container?.removeEventListener("scroll", calcClosestLine);
+
+  window.getLyrics = () => null;
 });
 
 // 监听动画位置变化
@@ -570,6 +582,9 @@ watch(currentLineIndex, () => {
 }
 
 .smooth-scroll {
+  &::-webkit-scrollbar {
+    display: none;
+  }
   mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.1) 0,

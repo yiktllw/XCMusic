@@ -105,6 +105,7 @@ declare global {
     savedPositions: savedPositions;
     test: any;
     env: env;
+    getLyrics: (time_ms: number) => string | null;
   }
 
   declare class ScrollTimeline extends AnimationTimeline {
