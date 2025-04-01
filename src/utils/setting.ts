@@ -76,6 +76,8 @@ export interface ISettings {
     spectrum: boolean;
     /** 是否使用新版歌词 */
     showNewLyrics: boolean;
+    /** 是否显示翻译 */
+    showTranslate: boolean;
     /** 歌词偏好 */
     lyricsPreferences: ILyricsPreferences;
   };
@@ -321,8 +323,8 @@ export const settingGroup: SettingGroup = {
       },
     },
     showNewLyrics: {
-      value: getStorage(StorageKey.Setting_PlayUI_ShowNewLyrics) ?? false,
-      default: false,
+      value: getStorage(StorageKey.Setting_PlayUI_ShowNewLyrics) ?? true,
+      default: true,
       validation: (value) => {
         let valid = validBoolean(value);
         if (valid) setStorage(StorageKey.Setting_PlayUI_ShowNewLyrics, value);
@@ -344,6 +346,16 @@ export const settingGroup: SettingGroup = {
           value.paddingTop <= 100;
         if (valid)
           setStorage(StorageKey.Setting_PlayUI_LyricsPreference, value);
+        return valid;
+      },
+    },
+    showTranslate: {
+      value: getStorage(StorageKey.Setting_PlayUI_ShowLyricsTranslate) ?? true,
+      default: true,
+      validation(value: boolean) {
+        let valid = [true, false].includes(value);
+        if (valid)
+          setStorage(StorageKey.Setting_PlayUI_ShowLyricsTranslate, value);
         return valid;
       },
     },

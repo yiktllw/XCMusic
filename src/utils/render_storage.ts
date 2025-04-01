@@ -85,6 +85,8 @@ export enum StorageKey {
   Setting_PlayUI_ShowNewLyrics = "setting.playUI.showNewLyrics",
   /** 设置-播放界面-歌词偏好 */
   Setting_PlayUI_LyricsPreference = "setting.playUI.lyricsPreference",
+  /** 设置-播放界面-显示歌词翻译 */
+  Setting_PlayUI_ShowLyricsTranslate = "setting.playUI.showLyricsTranslate",
 }
 
 export type StorageMap = {
@@ -152,6 +154,7 @@ export type StorageMap = {
   [StorageKey.Setting_Play_AllowConsecutiveAlbums]: boolean;
   [StorageKey.Setting_PlayUI_ShowNewLyrics]: boolean;
   [StorageKey.Setting_PlayUI_LyricsPreference]: ILyricsPreferences;
+  [StorageKey.Setting_PlayUI_ShowLyricsTranslate]: boolean;
 };
 
 interface IData {

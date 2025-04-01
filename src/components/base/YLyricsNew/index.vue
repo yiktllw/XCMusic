@@ -1,5 +1,10 @@
 <template>
-  <div class="main">
+  <div
+    class="main"
+    :style="{
+      '--translate-display': showTranslate ? `block` : `none`,
+    }"
+  >
     <YSmoothScroll
       :duration="500"
       :ease="(t: number) => t * (2 - t)"
@@ -30,8 +35,17 @@
         ></div>
         <div style="height: 50%" />
       </div>
-      <div style="width: 25%; min-width: 25%; height: 100%" />
+      <div style="width: 25%; min-width: 25%; height: 100%"></div>
     </YSmoothScroll>
+    <div class="translate" @click="toggleTranslate">
+      <img
+        class="translate-img"
+        src="@/assets/translate.svg"
+        :style="{
+          opacity: showTranslate ? `1` : `.5`,
+        }"
+      />
+    </div>
     <Transition name="fade">
       <div class="middle-line" v-if="doNotScrollToCurrentLine" ref="middleLine">
         <div class="play-button" @click="seekToLine">
@@ -118,12 +132,21 @@ const doNotScrollToCurrentLineTimeout = ref<NodeJS.Timeout>();
 const userScrollLineElementIndex = ref<number>(0);
 /** 中线元素 */
 const middleLine = ref<HTMLElement>();
+/** 是否显示翻译 */
+const showTranslate = ref<boolean>(true);
 
 /** 主容器 */
 const container = ref<HTMLElement>();
 
 const store = useStore();
 const player = store.state.player;
+const setting = store.state.setting;
+
+showTranslate.value = setting.playui.showTranslate;
+const toggleTranslate = () => {
+  setting.playui.showTranslate = !showTranslate.value;
+  showTranslate.value = setting.playui.showTranslate;
+};
 
 /** 计算歌词dom和动画 */
 const computeLyricsElements = () => {
@@ -208,6 +231,7 @@ const computeLyricsElements = () => {
       _a.textContent = tnsText;
       tlineElement.appendChild(_a);
       tlineElement.className = "lyrics-new-line-tns font-color-standard";
+      tlineElement.style.display = `var(--translate-display)`;
       container.value?.appendChild(tlineElement);
     }
 
@@ -503,7 +527,7 @@ onBeforeUnmount(() => {
   smoothScroll.value?.container?.removeEventListener("wheel", handleUserScroll);
   smoothScroll.value?.container?.removeEventListener("scroll", calcClosestLine);
 
-  window.getLyrics = () => null;
+  window.getLyrics = null;
 });
 
 // 监听动画位置变化
@@ -598,6 +622,24 @@ watch(currentLineIndex, () => {
 
 .main {
   position: relative;
+  &:hover {
+    .translate {
+      opacity: 1;
+    }
+  }
+  .translate {
+    opacity: 0;
+    transition: all 0.3s ease;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    right: 20px;
+    bottom: 10px;
+    cursor: pointer;
+    .translate-img {
+      width: 25px;
+    }
+  }
 }
 .container {
   position: relative;
