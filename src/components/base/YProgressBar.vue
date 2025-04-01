@@ -32,9 +32,9 @@
         }"
       >
         {{ formatDuration(mouseProgress) }}
-        <span class="lyric" v-if="currentLyric.length > 0">
-          &nbsp;{{ currentLyric }}
-        </span>
+        <div class="lyric">
+          <span class="txt"> &nbsp;{{ currentLyric }} </span>
+        </div>
       </div>
       <div class="progress-track" v-if="showTrack"></div>
     </div>
@@ -124,13 +124,21 @@
 
       display: flex;
       flex-wrap: nowrap;
+      align-items: center;
 
       .lyric {
+        display: flex;
+        align-items: center;
+        line-height: 1.2;
         height: 20px;
         max-width: 160px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        .txt {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
 
       &::after {
