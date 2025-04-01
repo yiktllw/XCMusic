@@ -57,7 +57,9 @@ export default defineComponent({
   mounted() {
     this.big_frame?.classList.remove("ani");
     this.$nextTick(() => {
-      this.big_frame?.classList.add("ani");
+      setTimeout(() => {
+        this.big_frame?.classList.add("ani");
+      }, 50);
     });
   },
   beforeUnmount() {
