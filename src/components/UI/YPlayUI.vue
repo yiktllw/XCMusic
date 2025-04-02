@@ -24,7 +24,9 @@
                 <span
                   class="artist-button"
                   @click="openArtist(artist.id)"
-                  :title="artist.name + (artist.tns ? '\n' + artist.tns : '')"
+                  :title="
+                    artist.name + (artist.tns?.[0] ? '\n' + artist.tns : '')
+                  "
                 >
                   {{ artist.name }}
                 </span>
