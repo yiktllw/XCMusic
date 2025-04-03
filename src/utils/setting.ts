@@ -342,8 +342,14 @@ export const settingGroup: SettingGroup = {
           valid &&
           value.fontSize >= 10 &&
           value.fontSize <= 50 &&
-          value.paddingTop >= 10 &&
-          value.paddingTop <= 100;
+          value.tns_fontSize >= 10 &&
+          value.tns_fontSize <= 50 &&
+          ["normal", "bold"].includes(value.fontWeight) &&
+          ["normal", "bold"].includes(value.tns_fontWeight) &&
+          value.distance_l_l >= 10 &&
+          value.distance_l_l <= 100 &&
+          value.distance_l_t >= 10 &&
+          value.distance_l_t <= 100;
         if (valid)
           setStorage(StorageKey.Setting_PlayUI_LyricsPreference, value);
         return valid;

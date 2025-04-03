@@ -16,14 +16,14 @@
         :style="{
           '--lyrics-font-size': `${preferences.fontSize}px`,
           '--lyrics-font-family': `${preferences.fontFamily}`,
-          '--lyrics-padding-top': `${preferences.paddingTop}px`,
-          '--lyrics-padding-bottom': `${preferences.paddingBottom}px`,
+          '--lyrics-margin-top': `${preferences.distance_l_l}px`,
+          '--lyrics-margin-bottom': `${0}px`,
           '--lyrics-font-weight': `${preferences.fontWeight}`,
           '--lyrics-font-style': `${preferences.isItalic ? 'italic' : 'normal'}`,
           '--tns-lyrics-font-size': `${preferences.tns_fontSize}px`,
           '--tns-lyrics-font-family': `${preferences.tns_fontFamily}`,
-          '--tns-lyrics-padding-top': `${preferences.tns_paddingTop}px`,
-          '--tns-lyrics-padding-bottom': `${preferences.tns_paddingBottom}px`,
+          '--tns-lyrics-margin-top': `${preferences.distance_l_t}px`,
+          '--tns-lyrics-margin-bottom': `${0}px`,
           '--tns-lyrics-font-weight': `${preferences.tns_fontWeight}`,
           '--tns-lyrics-font-style': `${preferences.tns_isItalic ? 'italic' : 'normal'}`,
         }"
@@ -495,6 +495,8 @@ onMounted(() => {
       computeLyricsElements();
       processLyricsElements();
       startTimeUpdate();
+      handleAnimationIndexChange();
+      handleCurrentLineIndexChange();
       window.getLyrics = (time_ms: number) => {
         const index = lyrics.value!.findIndex(
           (item, index) =>
@@ -530,8 +532,7 @@ onBeforeUnmount(() => {
   window.getLyrics = null;
 });
 
-// 监听动画位置变化
-watch(animationIndex, () => {
+const handleAnimationIndexChange = () => {
   if (animationIndex.value === -1) return;
 
   currentLineIndex.value = timelineMap.value!.get(
@@ -562,10 +563,12 @@ watch(animationIndex, () => {
       item.pause();
     }
   });
-});
+};
 
-// 监听当前行变化
-watch(currentLineIndex, () => {
+// 监听动画位置变化
+watch(animationIndex, handleAnimationIndexChange);
+
+const handleCurrentLineIndexChange = () => {
   scrollToCurrentLine();
 
   // 播放当前行动画
@@ -591,7 +594,10 @@ watch(currentLineIndex, () => {
 
   _lineAnimations.value.forEach(_clear);
   _lineAnimations.value[currentLineIndex.value].play();
-});
+};
+
+// 监听当前行变化
+watch(currentLineIndex, handleCurrentLineIndexChange);
 </script>
 
 <style lang="scss" scoped>
@@ -690,15 +696,14 @@ watch(currentLineIndex, () => {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    padding: 20px;
     text-align: left;
     padding-left: 0;
     white-space: pre-wrap;
 
     font-size: var(--lyrics-font-size);
     font-family: var(--lyrics-font-family);
-    padding-top: var(--lyrics-padding-top);
-    padding-bottom: var(--lyrics-padding-bottom);
+    margin-top: var(--lyrics-margin-top);
+    margin-bottom: var(--lyrics-margin-bottom);
     font-weight: var(--lyrics-font-weight);
     font-style: var(--lyrics-font-style);
   }
@@ -706,15 +711,14 @@ watch(currentLineIndex, () => {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    padding: 20px;
     text-align: left;
     padding-left: 0;
     white-space: pre-wrap;
 
     font-size: var(--tns-lyrics-font-size);
     font-family: var(--tns-lyrics-font-family);
-    padding-top: var(--tns-lyrics-padding-top);
-    padding-bottom: var(--tns-lyrics-padding-bottom);
+    margin-top: var(--tns-lyrics-margin-top);
+    margin-bottom: var(--tns-lyrics-margin-bottom);
     font-weight: var(--tns-lyrics-font-weight);
     font-style: var(--tns-lyrics-font-style);
   }
