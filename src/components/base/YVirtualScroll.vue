@@ -8,7 +8,7 @@
         :class="{
           'dragging-item': draggingIndex === (item as VirtualItem<T>).index,
         }"
-        @mousedown="startDrag(item as VirtualItem<T>, $event)"
+        @mousedown="handleMouseDown(item as VirtualItem<T>, $event)"
       >
         <slot
           v-if="item.type === 'item'"
@@ -72,6 +72,9 @@ const itemOffsets = ref<
 >([]);
 const dragCloneParent = ref<HTMLElement | null>(null);
 const dragClone = ref<HTMLElement | null>(null);
+const isDragging = ref(false);
+/** 拖动阈值 */
+const DRAG_THRESHOLD = 5;
 
 const generateVirtualItems = computed(() => {
   const items: VirtualItem<T>[] = [];
@@ -92,7 +95,6 @@ const generateVirtualItems = computed(() => {
   });
 
   props.items.forEach((item, index) => {
-    // 处理索引插槽
     props.slots
       ?.filter((s) => s.type === "index" && s.index === index)
       .forEach((slot) => {
@@ -112,7 +114,6 @@ const generateVirtualItems = computed(() => {
         ? props.itemHeight(item)
         : props.itemHeight;
 
-    // 记录item的offset信息
     itemOffsets.value.push({ index, offset, height });
 
     items.push({
@@ -143,55 +144,86 @@ const generateVirtualItems = computed(() => {
   return items;
 });
 
-function startDrag(item: VirtualItem<T>, event: MouseEvent) {
-  if (item.type !== "item" || !container.value) return;
+function handleMouseDown(item: VirtualItem<T>, event: MouseEvent) {
+  // 只响应左键点击
+  if (event.button !== 0 || item.type !== "item" || !container.value) return;
 
-  event.preventDefault();
-  draggingIndex.value = item.index!;
   startY.value = event.clientY;
-  dragItemHeight.value = item.height;
-
-  // 创建克隆元素
   const originalElement = event.currentTarget as HTMLElement;
-  const rect = originalElement.getBoundingClientRect();
-  const clone = originalElement.cloneNode(true) as HTMLElement;
-  clone.className = "drag-clone";
-  clone.style.cssText = `
-    overflow: hidden !important;
-    position: fixed !important;
-    left: ${rect.left}px !important;
-    top: ${rect.top}px !important;
-    width: ${rect.width}px !important;
-    height: ${rect.height}px !important;
-    opacity: 0.8 !important;
-    z-index: 9999 !important;
-    pointer-events: none !important;
-    border: 1px dashed rgba(var(--foreground-color-rgb), 0.9) !important;
-    transition: none !important;
-  `;
-  dragCloneParent.value = originalElement.parentElement;
-  dragCloneParent.value?.appendChild(clone);
-  dragClone.value = clone;
 
-  document.addEventListener("mousemove", handleDrag);
-  document.addEventListener("mouseup", stopDrag);
+  const tempDragState = {
+    item,
+    element: originalElement,
+    rect: originalElement.getBoundingClientRect(),
+    index: item.index!,
+  };
+
+  const onMove = (moveEvent: MouseEvent) => {
+    // 检查是否达到拖动阈值
+    if (
+      !isDragging.value &&
+      Math.abs(moveEvent.clientY - startY.value) < DRAG_THRESHOLD
+    ) {
+      return;
+    }
+
+    // 正式进入拖动状态
+    if (!isDragging.value) {
+      isDragging.value = true;
+      draggingIndex.value = tempDragState.index;
+      dragItemHeight.value = tempDragState.item.height;
+
+      // 创建克隆元素
+      const clone = tempDragState.element.cloneNode(true) as HTMLElement;
+      clone.className = "drag-clone";
+      clone.style.cssText = `
+        overflow: hidden !important;
+        position: fixed !important;
+        left: ${tempDragState.rect.left}px !important;
+        top: ${tempDragState.rect.top}px !important;
+        width: ${tempDragState.rect.width}px !important;
+        height: ${tempDragState.rect.height}px !important;
+        opacity: 0.8 !important;
+        z-index: 9999 !important;
+        pointer-events: none !important;
+        border: 1px dashed rgba(var(--foreground-color-rgb), 0.9) !important;
+        transition: none !important;
+      `;
+      dragCloneParent.value = tempDragState.element.parentElement;
+      dragCloneParent.value?.appendChild(clone);
+      dragClone.value = clone;
+    }
+
+    handleDrag(moveEvent);
+  };
+
+  const onUp = () => {
+    document.removeEventListener("mousemove", onMove);
+    document.removeEventListener("mouseup", onUp);
+
+    if (isDragging.value) {
+      stopDrag();
+    } else {
+      resetDrag();
+    }
+  };
+
+  document.addEventListener("mousemove", onMove);
+  document.addEventListener("mouseup", onUp);
 }
 
 function handleDrag(event: MouseEvent) {
-  if (!container.value || draggingIndex.value === null) return;
+  if (!container.value || !isDragging.value) return;
 
-  // 更新克隆元素位置
   if (dragClone.value) {
     dragClone.value.style.left = `${event.clientX - dragClone.value.offsetWidth / 2}px`;
     dragClone.value.style.top = `${event.clientY - dragClone.value.offsetHeight / 2}px`;
   }
 
-  // 计算相对容器位置
   const containerRect = container.value.getBoundingClientRect();
   const scrollTop = container.value.scrollTop;
   const relativeY = event.clientY - containerRect.top + scrollTop;
 
-  // 查找目标位置
   let newIndex = -1;
   for (let i = 0; i < itemOffsets.value.length; i++) {
     const { index, offset, height } = itemOffsets.value[i];
@@ -211,7 +243,6 @@ function handleDrag(event: MouseEvent) {
 
   currentDragIndex.value = newIndex;
 
-  // 计算占位符位置
   const targetItem = itemOffsets.value.find((item) => item.index === newIndex);
   if (targetItem) {
     placeholderOffset.value = targetItem.offset;
@@ -220,7 +251,6 @@ function handleDrag(event: MouseEvent) {
     placeholderOffset.value = lastItem ? lastItem.offset + lastItem.height : 0;
   }
 
-  // 自动滚动
   const edgeThreshold = 50;
   const scrollSpeed = 20;
   const { top, bottom } = containerRect;
@@ -232,18 +262,14 @@ function handleDrag(event: MouseEvent) {
 }
 
 function stopDrag() {
-  if (draggingIndex.value === null || currentDragIndex.value === null) {
-    resetDrag();
-    return;
+  if (draggingIndex.value !== null && currentDragIndex.value !== null) {
+    if (draggingIndex.value !== currentDragIndex.value) {
+      const newItems = [...props.items];
+      const [movedItem] = newItems.splice(draggingIndex.value, 1);
+      newItems.splice(currentDragIndex.value, 0, movedItem);
+      emit("did-change", newItems);
+    }
   }
-
-  if (draggingIndex.value !== currentDragIndex.value) {
-    const newItems = [...props.items];
-    const [movedItem] = newItems.splice(draggingIndex.value, 1);
-    newItems.splice(currentDragIndex.value, 0, movedItem);
-    emit("did-change", newItems);
-  }
-
   resetDrag();
 }
 
@@ -253,8 +279,7 @@ function resetDrag() {
     dragCloneParent.value = null;
     dragClone.value = null;
   }
-  document.removeEventListener("mousemove", handleDrag);
-  document.removeEventListener("mouseup", stopDrag);
+  isDragging.value = false;
   draggingIndex.value = null;
   currentDragIndex.value = null;
   startY.value = 0;
