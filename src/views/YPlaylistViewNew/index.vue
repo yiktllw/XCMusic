@@ -64,6 +64,7 @@
     v-else
     class="songs-table"
     :options="songsTableProps"
+    @sort="handleSort"
     ref="songsTable"
   >
     <template #slot-prepend>
@@ -483,6 +484,35 @@ export default defineComponent({
     },
     scrollToCurrentTrack() {
       this.songsTable?.scrollToCurrentTrack();
+    },
+    async handleSort(list: ITrack[]) {
+      if (
+        this.type !== "playlist" ||
+        !this.userCreateIds.includes(this.playlistId)
+      )
+        return;
+
+      this.playlistDetail.tracks = list;
+      this.songsTableProps.songs = list;
+      await Playlist.sortPlaylist(
+        this.playlistId,
+        list.map((item) => item.id),
+      );
+      await getPlaylistDetail(this.playlistId, true).then((res) => {
+        if (res.id !== this.playlistId) return;
+        this.playlistDetail = res;
+        this.songsTableProps.reelOptions = undefined;
+        this.songsTableProps.songs = this.playlistDetail.tracks.slice();
+        this.loading = false;
+        if (res.trackCount > 1000)
+          Playlist.getAllTracks(this.playlistId, res.trackCount).then(
+            (res2) => {
+              if (res.id !== this.playlistId) return;
+              this.playlistDetail.tracks = res2;
+              this.songsTableProps.songs = this.playlistDetail.tracks.slice();
+            },
+          );
+      });
     },
   },
 });

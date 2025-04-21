@@ -89,6 +89,7 @@ export namespace IPlaylist {
   /** /playlist/detail的参数 */
   export interface DetailParams {
     id: number;
+    timestamp?: number;
     cookie?: string;
   }
 

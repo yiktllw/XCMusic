@@ -3,6 +3,7 @@
     :items="options.songs"
     :item-height="60"
     :slots="slots"
+    @did-change="handlePlaylistSort"
     class="font-color-main virtual-scroll g-scrollable"
     ref="virtualScroll"
   >
@@ -375,6 +376,7 @@ export default defineComponent({
       alWidth: 200,
     };
   },
+  emits: ["sort"],
   computed: {
     likelist() {
       return this.login.likelist ?? [];
@@ -611,6 +613,10 @@ export default defineComponent({
       };
       document.addEventListener("mouseup", removeListener);
     },
+    handlePlaylistSort(newValue: ITrack[]) {
+      if (!this.options.editable) return;
+      this.$emit("sort", newValue);
+    },
   },
 });
 </script>
@@ -620,7 +626,8 @@ export default defineComponent({
   // width: 100%;
   // height: calc(100vh - 65px - 85px);
 
-  .song-item {
+  .song-item,
+  .drag-clone {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

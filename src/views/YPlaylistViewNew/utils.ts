@@ -37,9 +37,12 @@ export const getDefaultPlaylistDetail = () => ({ ...playlistDetail });
 
 export type IPlaylistDetail = typeof playlistDetail;
 
-export async function getPlaylistDetail(id: number): Promise<IPlaylistDetail> {
+export async function getPlaylistDetail(
+  id: number,
+  latest?: boolean,
+): Promise<IPlaylistDetail> {
   let result = { ...playlistDetail };
-  await Playlist.getDetail(id).then((res) => {
+  await Playlist.getDetail(id, latest).then((res) => {
     if (res.code !== 200) return;
     const { playlist } = res;
     result.id = id;

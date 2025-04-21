@@ -747,4 +747,9 @@ module.exports = [
     route: "/api/v2/artist/songs",
     module: require("@yiktllw/ncm-api/module/api_v2_artist_songs"),
   },
+  {
+    identifier: "song_order_update",
+    route: "/song/order/update",
+    module: require("@yiktllw/ncm-api/module/song_order_update"),
+  },
 ];

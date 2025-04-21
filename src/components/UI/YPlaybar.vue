@@ -471,25 +471,10 @@
                 {{ $t("playbar.playlist_panel.like") }}
               </div>
             </div>
-            <!-- <YSongsTable
-                v-if="showSongs"
-                class="songs-table"
-                v-model="playlist"
-                :showTrackCounter="false"
-                :showTrackAlbum="false"
-                :showTrackDuration="false"
-                :showTrackPopularity="false"
-                :showHeader="false"
-                :resortable="false"
-                :canSendPlaylist="false"
-                :limit="500"
-                :id="'YPlaybar.vue'"
-                :scroll-to-current-track-on-mount="true"
-                ref="songstable"
-              /> -->
             <YSongsTableNew
               v-if="showSongs"
               :options="songs_table_options"
+              @sort="handleSort"
               class="songs-table"
               ref="songstable"
             />

@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted } from "vue";
 import { ref } from "vue";
 
 const props = defineProps({
@@ -86,6 +87,13 @@ const scrollTo = (target: HTMLElement | string, immediate?: boolean) => {
 defineExpose({
   scrollTo,
   container,
+});
+
+onUnmounted(() => {
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 });
 </script>
 

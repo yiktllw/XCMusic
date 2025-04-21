@@ -337,6 +337,16 @@ export default defineComponent({
       // console.log("playlist panel mounted");
       this.showSongs = true;
     },
+    handleSort(list: ITrack[]) {
+      // 此处设置 _playlist 是为了避免在设置 playlist 时触发事件 PlayerEvents.playlist
+      this.player._playlist = list;
+      // 由于上一步没有触发事件，所以此处 songs 并没有被自动更新
+      this.songs_table_options.songs = list;
+      // 同样，需要手动修改 _current
+      this.player._current = list.findIndex(
+        (item) => item.id === this.currentTrack?.id,
+      );
+    },
   },
   async mounted() {
     if (this.login.status) {

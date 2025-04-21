@@ -535,9 +535,8 @@ onBeforeUnmount(() => {
 const handleAnimationIndexChange = () => {
   if (animationIndex.value === -1) return;
 
-  currentLineIndex.value = timelineMap.value!.get(
-    animationIndex.value,
-  )!.elementIndex.line;
+  currentLineIndex.value =
+    timelineMap.value!.get(animationIndex.value)?.elementIndex.line ?? 0;
 
   animations.value.forEach((item, index) => {
     if (index === animationIndex.value) {

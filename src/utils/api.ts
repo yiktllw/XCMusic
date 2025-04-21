@@ -179,9 +179,12 @@ export namespace Playlist {
   export async function getDetail(
     /** 歌单id */
     id: number,
+    /** 是否获取最新的歌单信息 */
+    latest?: boolean,
   ): Promise<IPlaylist.DetailResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     const params: IPlaylist.DetailParams = { id: id };
+    if (latest) params["timestamp"] = new Date().getTime();
     if (cookie && cookie.length > 0) params["cookie"] = cookie;
     let res = await useApi("/playlist/detail", params).catch((error) => {
       console.error("Failed to get playlist detail:", error);
@@ -484,6 +487,17 @@ export namespace Playlist {
       return null;
     });
     return res;
+  }
+
+  export async function sortPlaylist(playlistId: number, ids: number[]) {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    return await useApi(
+      `/song/order/update?ids=[${ids}]&pid=${playlistId}&cookie=${cookie}`,
+    );
   }
 }
 
