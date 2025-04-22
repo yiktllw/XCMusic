@@ -70,8 +70,6 @@ const placeholderOffset = ref<number | null>(null);
 const itemOffsets = ref<
   Array<{ index: number; offset: number; height: number }>
 >([]);
-const dragCloneParent = ref<HTMLElement | null>(null);
-const dragClone = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 /** 拖动阈值 */
 const DRAG_THRESHOLD = 5;
@@ -172,26 +170,6 @@ function handleMouseDown(item: VirtualItem<T>, event: MouseEvent) {
       isDragging.value = true;
       draggingIndex.value = tempDragState.index;
       dragItemHeight.value = tempDragState.item.height;
-
-      // 创建克隆元素
-      const clone = tempDragState.element.cloneNode(true) as HTMLElement;
-      clone.className = "drag-clone";
-      clone.style.cssText = `
-        overflow: hidden !important;
-        position: fixed !important;
-        left: ${tempDragState.rect.left}px !important;
-        top: ${tempDragState.rect.top}px !important;
-        width: ${tempDragState.rect.width}px !important;
-        height: ${tempDragState.rect.height}px !important;
-        opacity: 0.8 !important;
-        z-index: 9999 !important;
-        pointer-events: none !important;
-        border: 1px dashed rgba(var(--foreground-color-rgb), 0.9) !important;
-        transition: none !important;
-      `;
-      dragCloneParent.value = tempDragState.element.parentElement;
-      dragCloneParent.value?.appendChild(clone);
-      dragClone.value = clone;
     }
 
     handleDrag(moveEvent);
@@ -215,11 +193,6 @@ function handleMouseDown(item: VirtualItem<T>, event: MouseEvent) {
 function handleDrag(event: MouseEvent) {
   if (!container.value || !isDragging.value) return;
 
-  if (dragClone.value) {
-    dragClone.value.style.left = `${event.clientX - dragClone.value.offsetWidth / 2}px`;
-    dragClone.value.style.top = `${event.clientY - dragClone.value.offsetHeight / 2}px`;
-  }
-
   const containerRect = container.value.getBoundingClientRect();
   const scrollTop = container.value.scrollTop;
   const relativeY = event.clientY - containerRect.top + scrollTop;
@@ -227,19 +200,13 @@ function handleDrag(event: MouseEvent) {
   let newIndex = -1;
   for (let i = 0; i < itemOffsets.value.length; i++) {
     const { index, offset, height } = itemOffsets.value[i];
-    if (relativeY >= offset && relativeY <= offset + height) {
-      const mid = offset + height / 2;
-      newIndex = relativeY < mid ? index : index + 1;
+    if (relativeY >= offset && relativeY < offset + height) {
+      newIndex = index;
       break;
     }
   }
-  if (newIndex === -1) newIndex = props.items.length;
+  if (newIndex === -1) return;
   newIndex = Math.max(0, Math.min(newIndex, props.items.length));
-
-  if (newIndex === draggingIndex.value) {
-    placeholderOffset.value = null;
-    return;
-  }
 
   currentDragIndex.value = newIndex;
 
@@ -274,11 +241,6 @@ function stopDrag() {
 }
 
 function resetDrag() {
-  if (dragClone.value) {
-    dragCloneParent.value?.removeChild(dragClone.value);
-    dragCloneParent.value = null;
-    dragClone.value = null;
-  }
   isDragging.value = false;
   draggingIndex.value = null;
   currentDragIndex.value = null;
@@ -357,6 +319,7 @@ defineExpose({ scrollToIndex });
   left: 0;
   right: 0;
   border: 1px dashed rgba(var(--foreground-color-rgb), 0.9);
+  background-color: rgba(var(--foreground-color-rgb), 0.4);
   border-radius: 4px;
   opacity: 0.8;
   pointer-events: none;
