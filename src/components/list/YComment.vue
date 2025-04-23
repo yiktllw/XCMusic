@@ -87,6 +87,23 @@
             <div class="comment-text font-color-main">
               {{ comment.content }}
             </div>
+            <blockquote class="replied" v-if="comment.beReplied?.length > 0">
+              <div
+                class="replied-user"
+                @click="openUserPage(comment.beReplied[0].user.userId)"
+              >
+                <img
+                  class="avatar"
+                  :src="comment.beReplied[0].user.avatarUrl + `?param=20y20`"
+                />
+                <span class="nickname">
+                  {{ comment.beReplied[0].user.nickname }}
+                </span>
+              </div>
+              <div>
+                {{ comment.beReplied[0].content }}
+              </div>
+            </blockquote>
             <div class="bottom">
               <div class="comment-time font-size-small font-color-low">
                 {{ _formatDate_yyyymmdd(comment.time) }}
@@ -187,6 +204,30 @@
         width: calc(100% - 80px);
         display: flex;
         flex-direction: column;
+        blockquote.replied {
+          display: flex;
+          flex-direction: column;
+          color: var(--font-color-standard);
+          border-left: 4px solid rgba(var(--foreground-color-rgb), 0.3);
+          margin: 5px 0 5px 0;
+          padding: 3px 1rem;
+          line-height: 1.5rem;
+          font-size: 15px;
+
+          .replied-user {
+            display: flex;
+            align-items: center;
+            color: rgb(106, 110, 213);
+            margin-bottom: 5px;
+            cursor: pointer;
+            .avatar {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              margin-right: 5px;
+            }
+          }
+        }
 
         .comment-user {
           color: rgb(106, 110, 213);

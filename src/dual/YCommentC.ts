@@ -22,13 +22,22 @@ export interface ICommentInfo {
 export interface IComment {
   commentId: number;
   time: number;
-  user: {
-    userId: number;
-    nickname: string;
-    avatarUrl: string;
-  };
+  user: ICommentUser;
   content: string;
   likedCount: number;
+  beReplied: IRepliedComment[];
+}
+
+interface ICommentUser {
+  userId: number;
+  nickname: string;
+  avatarUrl: string;
+}
+
+interface IRepliedComment {
+  beRepliedCommentId: number;
+  content: string;
+  user: ICommentUser;
 }
 
 class YCommentError extends Error {
