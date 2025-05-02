@@ -115,7 +115,7 @@ export default defineComponent({
       () => {
         this.hideInSidebar = this.setting.display.hideInSidebar;
       },
-    );
+    )?.();
   },
   beforeUnmount() {
     this.login.subscriber.offAll("YSidebar");
