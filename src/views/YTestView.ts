@@ -1,12 +1,12 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import YLyricsNew from "@/components/base/YLyricsNew/index.vue";
+import YFontsSelect from "@/components/base/YFontsSelect.vue";
 
 export default defineComponent({
   name: "YTestView",
   components: {
-    YLyricsNew,
+    YFontsSelect,
   },
   setup() {
     const store = useStore();

@@ -12,7 +12,7 @@ import * as path from "path";
 import { type ISaveJSONData } from "@/dual/YSettingView";
 import { setProxy } from "@/utils/userProxy";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
-import { getFonts } from "font-list";
+import { getFonts, type FontList } from "font-list";
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -92,7 +92,7 @@ ipcMain.handle("get-local-tracks", async (_event, dirPath) => {
   }
 });
 
-ipcMain.handle("get-fonts", async () => {
+ipcMain.handle("get-fonts", async (): Promise<FontList> => {
   return await getFonts();
 });
 

@@ -86,6 +86,12 @@
     "title": "Equalizer"
   },
   "fans": "Fans",
+  "font": {
+    "add_font": "Add a Font...",
+    "no_result": "No result",
+    "please_add_fonts": "Please add fonts...",
+    "preview": "Preview"
+  },
   "header": {
     "local_music": {
       "downloaded_songs": "Downloaded Songs",

@@ -10,10 +10,7 @@
     <div class="button font-color-main" @click="clearCache">
       点击清除webFrame缓存
     </div>
-    <!-- <div class="button font-color-main" @click="setEq">
-      点击设置EQ
-    </div> -->
-    <YLyricsNew />
+    <YFontsSelect />
   </div>
 </template>
 

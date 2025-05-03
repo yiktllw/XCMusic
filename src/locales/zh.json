@@ -86,6 +86,12 @@
     "title": "均衡器"
   },
   "fans": "粉丝",
+  "font": {
+    "add_font": "添加字体...",
+    "no_result": "暂无结果...",
+    "please_add_fonts": "请添加字体...",
+    "preview": "预览"
+  },
   "header": {
     "local_music": {
       "downloaded_songs": "下载的音乐",

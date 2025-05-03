@@ -8,12 +8,21 @@ import { useStore } from "vuex";
 import { Doc } from "@/utils/document";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { setProxyUrl } from "@/utils/api";
+import type { FontList } from "font-list";
 
 export default defineComponent({
   name: "App",
   computed: {},
   setup() {
     const store = useStore();
+    /** 系统字体 */
+    if (window.electron?.isElectron) {
+      window.electron.ipcRenderer
+        .invoke("get-fonts")
+        .then((fonts: FontList) => {
+          window.fonts = fonts.reverse();
+        });
+    }
     return {
       setting: store.state.setting,
     };

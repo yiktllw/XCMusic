@@ -98,13 +98,6 @@ const tlyrics = ref<IYrcItem[]>([]);
 const tlyricsMap = ref<Map<number, IYrcItem>>(new Map());
 /** 歌词偏好设置 */
 const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
-/** 系统字体 */
-// const systemFonts = ref<string[]>([]);
-// if (window.electron?.isElectron) {
-//   window.electron.ipcRenderer.invoke("get-fonts").then((fonts) => {
-//     systemFonts.value = fonts;
-//   });
-// }
 /** 时间线 */
 const timeline = ref<ITimelineItems>();
 /** 以index为键的时间线的Hash Map */
@@ -508,7 +501,7 @@ onMounted(() => {
         return lyrics.value[index].words.map((item) => item.text).join("");
       };
       nextTick(() => {
-        setTimeout(() => scrollToCurrentLine(true), 30);
+        setTimeout(() => scrollToCurrentLine(), 30);
       });
 
       // 播放状态变化时，控制动画

@@ -135,7 +135,7 @@ export default defineComponent({
           this.showPanel
         ) {
           this.showPanel = false;
-          // console.log("No trigger, handleClickOutside and close panel");
+          console.log("No trigger, handleClickOutside and close panel");
         }
       }
     },

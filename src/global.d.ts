@@ -16,6 +16,7 @@ import { type shell } from "electron";
 import type * as fs from "fs";
 import type * as path from "path";
 import type * as os from "os";
+import type { FontList } from "font-list";
 
 interface MemoryUsageDetails {
   // Docs: https://electronjs.org/docs/api/structures/memory-usage-details
@@ -105,6 +106,7 @@ declare global {
     savedPositions: savedPositions;
     test: any;
     env: env;
+    fonts?: FontList;
     getLyrics: ((time_ms: number) => string | null) | null;
   }
 
