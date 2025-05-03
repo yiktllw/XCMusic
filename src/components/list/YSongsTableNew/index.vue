@@ -12,10 +12,21 @@
       <div
         class="song-item"
         @contextmenu="openContextMenu($event, item, 'show')"
+        @click="handleItemClick($event, item, item_index)"
         @dblclick="handleDoubleClick(item)"
       >
         <div class="align-left">
-          <div class="index font-color-standard" v-if="options.columns.index">
+          <div class="index" v-if="isMultiSelect">
+            <input
+              type="checkbox"
+              :checked="selected.has(item.id)"
+              @change="handleMultiSelect($event, item.id)"
+            />
+          </div>
+          <div
+            class="index font-color-standard"
+            v-else-if="options.columns.index"
+          >
             <span v-if="nowPlayingId !== item.id">
               {{ item_index + 1 }}
             </span>
@@ -197,7 +208,15 @@
         class="song-item table-header font-color-standard"
       >
         <div class="align-left table-header-left">
-          <div v-if="options.columns.index" class="index">#</div>
+          <template v-if="isMultiSelect">
+            <div class="index">
+              <input
+                type="checkbox"
+                @change="handleMultiSelectHeader($event)"
+              />
+            </div>
+          </template>
+          <div v-else-if="options.columns.index" class="index">#</div>
           <div
             class="song-info title-title title-item"
             v-if="options.columns.title || options.columns.artist"
@@ -320,6 +339,10 @@ export default defineComponent({
       type: Object as () => ISongsTableProps,
       required: true,
     },
+    isMultiSelect: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup() {
     const virtualScroll =
@@ -374,6 +397,8 @@ export default defineComponent({
       unlikes_svg,
       sort: getSort(),
       alWidth: 200,
+      selected: new Set<number>(),
+      lastSelectedIndex: -1,
     };
   },
   emits: ["sort"],
@@ -415,7 +440,7 @@ export default defineComponent({
   },
   methods: {
     _toogleLike(id: number, status: boolean) {
-      if (!id || isLocal(id)) return;
+      if (!id || isLocal(id) || this.isMultiSelect) return;
 
       Like.toggle(id, status).then((res) => {
         if (res?.code === 200) {
@@ -429,32 +454,33 @@ export default defineComponent({
       });
     },
     async downloadSong(track: ITrack) {
-      if (!track.id || isLocal(track.id)) return;
+      if (!track.id || isLocal(track.id) || this.isMultiSelect) return;
 
       const url = await Song.getUrl(track.id, this.setting.download.quality);
 
       this.download.add(url, track, this.setting.download.path);
     },
     openComment(id: number) {
-      if (!id || isLocal(id)) return;
+      if (!id || isLocal(id) || this.isMultiSelect) return;
       this.$router.push({ path: `/comment/song/${id}` });
     },
     openArtist(id: number) {
-      if (!id || isLocal(id)) return;
+      if (!id || isLocal(id) || this.isMultiSelect) return;
       this.$router.push(`/artist/${id}`);
     },
     openAlbum(id: number) {
-      if (!id || isLocal(id)) return;
+      if (!id || isLocal(id) || this.isMultiSelect) return;
       this.$router.push(`/album/${id}`);
     },
     open_addToPlaylist(id: number) {
-      if (!id || isLocal(id)) return;
+      if (!id || isLocal(id) || this.isMultiSelect) return;
       window.postMessage({
         type: "song-open-add-to-playlist",
         data: { ids: [id] },
       });
     },
     openContextMenu(event: MouseEvent, item: ITrack, type: "toogle" | "show") {
+      if (this.isMultiSelect) return;
       event.preventDefault();
       let from = -1;
       if (this.options.editable && this.options.mode === "playlist") {
@@ -474,6 +500,7 @@ export default defineComponent({
       });
     },
     handleDoubleClick(item: ITrack) {
+      if (this.isMultiSelect) return;
       if (this.options.allow_play_all && this.setting.play.dbclick === "all") {
         this.player.playlist = this.options.songs.slice();
       }
@@ -614,8 +641,57 @@ export default defineComponent({
       document.addEventListener("mouseup", removeListener);
     },
     handlePlaylistSort(newValue: ITrack[]) {
-      if (!this.options.editable) return;
+      if (!this.options.editable || this.isMultiSelect) return;
       this.$emit("sort", newValue);
+    },
+    handleItemClick(event: MouseEvent, item: ITrack, index: number) {
+      if (!this.isMultiSelect) return;
+
+      if (event.shiftKey && this.lastSelectedIndex !== -1) {
+        // 处理范围选择
+        const start = Math.min(this.lastSelectedIndex, index);
+        const end = Math.max(this.lastSelectedIndex, index);
+        for (let i = start; i <= end; i++) {
+          this.selected.add(this.options.songs[i].id);
+        }
+      } else {
+        this.toggleSelect(item.id);
+      }
+      this.lastSelectedIndex = index;
+    },
+    toggleSelect(id: number) {
+      if (this.selected.has(id)) {
+        this.selected.delete(id);
+      } else {
+        this.selected.add(id);
+      }
+    },
+    handleMultiSelect(event: Event, id: number) {
+      event.stopPropagation();
+      if (!this.isMultiSelect) return;
+      const target = event.target as HTMLInputElement;
+      if (target.checked) {
+        this.selected.add(id);
+      } else {
+        this.selected.delete(id);
+      }
+    },
+    handleMultiSelectHeader(event: Event) {
+      const target = event.target as HTMLInputElement;
+      if (target.checked) {
+        this.selectAll();
+      } else {
+        this.clearSelect();
+      }
+    },
+    selectAll() {
+      this.selected.clear();
+      this.options.songs.forEach((item) => {
+        this.selected.add(item.id);
+      });
+    },
+    clearSelect() {
+      this.selected.clear();
     },
   },
 });
@@ -721,6 +797,11 @@ export default defineComponent({
         display: flex;
         justify-content: center;
         align-items: center;
+        input {
+          cursor: pointer;
+          height: 15px;
+          width: 15px;
+        }
       }
 
       .song-img {

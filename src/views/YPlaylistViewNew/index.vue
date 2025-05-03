@@ -64,6 +64,7 @@
     v-else
     class="songs-table"
     :options="songsTableProps"
+    :is-multi-select="isMultiSelect"
     @sort="handleSort"
     ref="songsTable"
   >
@@ -239,7 +240,7 @@ import clear_svg from "@/assets/clear2.svg";
 import { useStore } from "vuex";
 import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
-import { Message } from "@/dual/YMessageC";
+// import { Message } from "@/dual/YMessageC";
 import { ContentLoader } from "vue-content-loader";
 import { type ComponentExposed } from "vue-component-type-helpers";
 
@@ -307,6 +308,7 @@ export default defineComponent({
       userSubscribeAlbumIds: [] as number[],
       userCreateIds: [] as number[],
       loading: true,
+      isMultiSelect: false,
     };
   },
   mounted() {
@@ -415,7 +417,7 @@ export default defineComponent({
       // console.log(type, res);
     },
     multiChoice() {
-      Message.post("info", "功能暂未实现");
+      this.isMultiSelect = !this.isMultiSelect;
     },
     openComment() {
       this.$router.push({
