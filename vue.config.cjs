@@ -11,6 +11,10 @@ module.exports = defineConfig({
       builderOptions: {
         win: {
           icon: "src/assets/icons/icon.ico",
+          target: [
+            "nsis",
+            "portable",
+          ]
         },
         mac: {
           icon: "src/assets/icons/icon512.png",
