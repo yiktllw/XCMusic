@@ -1,13 +1,10 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import YFontsSelect from "@/components/base/YFontsSelect.vue";
 
 export default defineComponent({
   name: "YTestView",
-  components: {
-    YFontsSelect,
-  },
+  components: {},
   setup() {
     const store = useStore();
 

@@ -7,6 +7,7 @@
 html {
   font-size: 16px;
   input {
+    font-family: inherit;
     background-color: transparent;
     border-radius: 5px;
     padding: 2px 5px;
@@ -40,6 +41,7 @@ html {
   }
   button {
     color: var(--font-color-high);
+    font-family: inherit;
     background-color: transparent;
     border: none;
     border-radius: 5px;

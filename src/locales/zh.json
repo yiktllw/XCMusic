@@ -80,6 +80,7 @@
     "input_name": "请输入歌单名称",
     "name": "歌单名称"
   },
+  "ensure": "确定",
   "equalizer": {
     "apply": "应用",
     "reset": "重置",
@@ -87,10 +88,20 @@
   },
   "fans": "粉丝",
   "font": {
-    "add_font": "添加字体...",
+    "add_font": "添加字体：",
+    "bold": "加粗",
+    "click_to_select": "点击选择字体",
     "no_result": "暂无结果...",
     "please_add_fonts": "请添加字体...",
-    "preview": "预览"
+    "preview": "预览效果：",
+    "search_font": "搜索字体...",
+    "selected_fonts": "已选字体：",
+    "title": "字体",
+    "titles": {
+      "LyricsFonts": "歌词字体",
+      "LyricsTnsFonts": "翻译字体",
+      "UIFonts": "字体"
+    }
   },
   "header": {
     "local_music": {
@@ -114,6 +125,17 @@
   },
   "login": "登录",
   "logout": "退出",
+  "lyrics": {
+    "font_size": "歌词字号",
+    "fonts": "歌词字体",
+    "is_bold": "粗体",
+    "is_italic": "斜体",
+    "margin_top": "歌词上边距",
+    "title": "歌词",
+    "tns_font_size": "翻译字号",
+    "tns_fonts": "翻译字体",
+    "tns_margin_top": "翻译上边距"
+  },
   "manage_download": "下载管理",
   "message": {
     "getting_playlist_tracks": "获取歌单歌曲中...",

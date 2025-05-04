@@ -10,7 +10,6 @@
     <div class="button font-color-main" @click="clearCache">
       点击清除webFrame缓存
     </div>
-    <YFontsSelect />
   </div>
 </template>
 

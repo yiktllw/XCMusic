@@ -15,16 +15,16 @@
       <div
         :style="{
           '--lyrics-font-size': `${preferences.fontSize}px`,
-          '--lyrics-font-family': `${preferences.fontFamily}`,
+          '--lyrics-font-family': `${preferences.fontFamily.join(',')}`,
           '--lyrics-margin-top': `${preferences.distance_l_l}px`,
           '--lyrics-margin-bottom': `${0}px`,
-          '--lyrics-font-weight': `${preferences.fontWeight}`,
+          '--lyrics-font-weight': `${preferences.is_bold ? 'bold' : 'normal'}`,
           '--lyrics-font-style': `${preferences.isItalic ? 'italic' : 'normal'}`,
           '--tns-lyrics-font-size': `${preferences.tns_fontSize}px`,
-          '--tns-lyrics-font-family': `${preferences.tns_fontFamily}`,
+          '--tns-lyrics-font-family': `${preferences.tns_fontFamily.join(',')}`,
           '--tns-lyrics-margin-top': `${preferences.distance_l_t}px`,
           '--tns-lyrics-margin-bottom': `${0}px`,
-          '--tns-lyrics-font-weight': `${preferences.tns_fontWeight}`,
+          '--tns-lyrics-font-weight': `${preferences.tns_is_bold ? 'bold' : 'normal'}`,
           '--tns-lyrics-font-style': `${preferences.tns_isItalic ? 'italic' : 'normal'}`,
         }"
       >
@@ -75,7 +75,6 @@ import { Lyrics } from "@/utils/api";
 import { PlayerEvents } from "@/dual/player";
 import { isLocal } from "@/utils/localTracks_renderer";
 import YSmoothScroll from "@/components/base/YSmoothScroll/index.vue";
-import { defaultPreferences, type ILyricsPreferences } from "./utils";
 import { nextTick } from "vue";
 
 /** 时间线接口 */
@@ -97,7 +96,8 @@ const lyrics = ref<IYrcItem[]>([]);
 const tlyrics = ref<IYrcItem[]>([]);
 const tlyricsMap = ref<Map<number, IYrcItem>>(new Map());
 /** 歌词偏好设置 */
-const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
+// const preferences = ref<ILyricsPreferences>({ ...defaultPreferences });
+const preferences = useStore().state.setting.playui.lyricsPreferences;
 /** 时间线 */
 const timeline = ref<ITimelineItems>();
 /** 以index为键的时间线的Hash Map */

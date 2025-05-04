@@ -1,6 +1,12 @@
 <template>
   <!--  主界面  -->
-  <div class="mainContainer" id="mainContainer">
+  <div
+    class="mainContainer"
+    id="mainContainer"
+    :style="{
+      fontFamily: fonts.join(', '),
+    }"
+  >
     <div class="align-up">
       <div class="align-left">
         <!-- 侧边栏 -->
@@ -82,6 +88,13 @@
       <YEqualizerWindow
         v-if="showEqualizerWindow"
         @new-window-state="handleNewWindowState_equalizerWindow"
+      />
+      <YFontsSelectWindow
+        :title="fontsSelectWindowTitle"
+        :selected-fonts="defaultSelectedFonts"
+        @ensure="handleFontsSelectWindowEnsure"
+        v-if="showFontsSelectWindow"
+        @new-window-state="handleNewWindowState_fontsSelectWindow"
       />
     </div>
     <div class="message-container">

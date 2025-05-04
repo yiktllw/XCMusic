@@ -1,79 +1,111 @@
 <template>
   <div class="font-stack-container">
-    <div class="selected-fonts" @dragover.prevent @drop.prevent="handleDrop">
-      <span class="font-color-low" v-if="selectedFonts.length === 0">{{
-        $t("font.please_add_fonts")
-      }}</span>
-      <div
-        v-for="(font, index) in selectedFonts"
-        :key="font"
-        class="font-tag"
-        draggable="true"
-        data-drag-item
-        @dragstart="handleDragStart(index)"
-        @dragend="handleDragEnd"
-      >
-        <span>{{ font }}</span>
-        <div class="remove-btn" @click="removeFont(index)">
-          <img class="g-icon" src="@/assets/close.svg" width="10" height="10" />
+    <div class="item">
+      <div class="title">{{ $t("font.add_font") }}</div>
+      <div class="content">
+        <div ref="font_search_container" class="input-wrapper">
+          <input
+            ref="font_search_trigger"
+            v-model="searchQuery"
+            type="text"
+            :placeholder="$t('font.search_font')"
+            @focus="showPanel"
+            @input="showPanel"
+          />
+          <YPanel
+            :animation-time="0.2"
+            :slide-distance="20"
+            :slide-direction="1"
+            :trigger="font_search_trigger"
+            :z-index="100"
+            ref="font_search_panel"
+            class="search-results"
+          >
+            <div class="g-scrollable" id="panel">
+              <span
+                v-if="filteredFonts.length === 0"
+                class="font-color-standard"
+                style="padding: 8px"
+              >
+                {{ $t("font.no_result") }}
+              </span>
+              <div
+                v-for="font in filteredFonts"
+                :key="font"
+                class="font-option"
+                @click="addFont(font)"
+              >
+                <span :style="{ fontFamily: font }">{{ font }}</span>
+              </div>
+            </div>
+          </YPanel>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="title">{{ $t("font.selected_fonts") }}</div>
+      <div class="content">
+        <div
+          class="selected-fonts"
+          @dragover.prevent
+          @drop.prevent="handleDrop"
+        >
+          <span class="font-color-low" v-if="selectedFonts.length === 0">{{
+            $t("font.please_add_fonts")
+          }}</span>
+          <div
+            v-for="(font, index) in selectedFonts"
+            :key="font"
+            class="font-tag"
+            draggable="true"
+            data-drag-item
+            @dragstart="handleDragStart(index)"
+            @dragend="handleDragEnd"
+          >
+            <span>{{ font }}</span>
+            <div class="remove-btn" @click="removeFont(index)">
+              <img
+                class="g-icon"
+                src="@/assets/close.svg"
+                width="10"
+                height="10"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div ref="font_search_container" class="input-wrapper">
-      <input
-        ref="font_search_trigger"
-        v-model="searchQuery"
-        type="text"
-        :placeholder="$t('font.add_font')"
-        @focus="showPanel"
-        @input="showPanel"
-      />
-      <YPanel
-        :animation-time="0.2"
-        :default-show="true"
-        :slide-distance="20"
-        :slide-direction="1"
-        :trigger="font_search_trigger"
-        :z-index="100"
-        ref="font_search_panel"
-        class="search-results"
-      >
-        <div class="g-scrollable" id="panel">
-          <span
-            v-if="filteredFonts.length === 0"
-            class="font-color-standard"
-            style="padding: 8px"
-          >
-            {{ $t("font.no_result") }}
-          </span>
-          <div
-            v-for="font in filteredFonts"
-            :key="font"
-            class="font-option"
-            @click="addFont(font)"
-          >
-            <span :style="{ fontFamily: font }">{{ font }}</span>
-          </div>
+    <div class="item">
+      <div class="title">{{ $t("font.preview") }}</div>
+      <div class="content">
+        <div
+          class="preview-box font-color-main"
+          contenteditable="true"
+          spellcheck="false"
+          :style="previewStyle"
+        >
+          Freude, schöner Götterfunken,<br />
+          天上楽園の乙女よ<br />
+          欢乐女神圣洁美丽<br /><br />
+          Tochter aus Elysium<br />
+          歓喜よ、神々の麗しき霊感よ<br />
+          灿烂光芒照大地<br />
         </div>
-      </YPanel>
-    </div>
-
-    <!-- 预览 -->
-    <div class="preview-box font-color-main" :style="previewStyle">
-      Freude, schöner Götterfunken,<br />
-      天上楽園の乙女よ<br />
-      欢乐女神圣洁美丽<br /><br />
-      Tochter aus Elysium<br />
-      歓喜よ、神々の麗しき霊感よ<br />
-      灿烂光芒照大地<br />
+      </div>
     </div>
   </div>
+  <!-- 预览 -->
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import YPanel from "./YPanel.vue";
+import { type IEscapedFonts } from "@/utils/fonts";
+
+const props = defineProps<{
+  selectedFonts: IEscapedFonts;
+}>();
 
 // 系统字体列表
 const fonts: readonly string[] = window.fonts ?? [];
@@ -84,6 +116,8 @@ interface DragState {
 }
 
 const selectedFonts = ref<string[]>([]);
+if (props.selectedFonts.length > 0)
+  selectedFonts.value = [...props.selectedFonts];
 const searchQuery = ref("");
 const dragState = ref<DragState>({
   isDragging: false,
@@ -164,6 +198,10 @@ onUnmounted(() => {
   font_search_container.value = null;
   font_search_trigger.value = undefined;
 });
+
+defineExpose({
+  selectedFonts,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -171,8 +209,58 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: start;
-  gap: 15px;
+  gap: 17px;
+  .item {
+    display: flex;
+    flex-direction: row;
+    .title {
+      text-align: left;
+      color: var(--font-color-high);
+      font-weight: bold;
+      width: 85px;
+    }
+  }
 }
+
+.input-wrapper {
+  position: relative;
+  width: 321px;
+
+  input {
+    width: 100%;
+    height: 28px;
+    padding: 5px 15px;
+    border: 1px solid rgba(var(--foreground-color-rgb), 0.2);
+  }
+
+  .search-results {
+    position: absolute;
+    top: 40px;
+
+    #panel {
+      background: var(--panel-background-color);
+      padding: 15px 4px 15px 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      text-align: left;
+      width: 250px;
+      color: var(--font-color-main);
+      max-width: 250px;
+      max-height: 321px;
+      overflow-y: auto;
+      z-index: 100;
+      .font-option {
+        padding: 8px;
+        cursor: pointer;
+        &:hover {
+          color: rgb(var(--highlight-color-rgb));
+          background-color: rgba(var(--foreground-color-rgb), 0.1);
+        }
+      }
+    }
+  }
+}
+
 .selected-fonts {
   display: flex;
   flex-wrap: wrap;
@@ -182,7 +270,7 @@ onUnmounted(() => {
   padding: 5px 15px;
   color: var(--font-color-main);
   border: 1px solid rgba(var(--foreground-color-rgb), 0.2);
-  border-radius: 4px;
+  border-radius: 5px;
   min-height: 45px;
 
   .font-tag {
@@ -211,49 +299,14 @@ onUnmounted(() => {
   }
 }
 
-.input-wrapper {
-  position: relative;
-  width: 321px;
-
-  input {
-    width: 100%;
-    height: 28px;
-    padding: 0 15px;
-    border: 1px solid rgba(var(--foreground-color-rgb), 0.2);
-  }
-
-  .search-results {
-    position: absolute;
-    top: 40px;
-
-    #panel {
-      background: var(--panel-background-color);
-      padding: 15px 4px 15px 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      border-radius: 3px;
-      text-align: left;
-      width: 250px;
-      color: var(--font-color-main);
-      max-width: 250px;
-      max-height: 321px;
-      overflow-y: auto;
-      z-index: 100;
-      .font-option {
-        padding: 8px;
-        cursor: pointer;
-        &:hover {
-          color: rgb(var(--highlight-color-rgb));
-          background-color: rgba(var(--foreground-color-rgb), 0.1);
-        }
-      }
-    }
-  }
-}
-
 .preview-box {
   text-align: left;
   width: 321px;
   padding: 15px;
   border: 1px solid rgba(var(--foreground-color-rgb), 0.2);
+  border-radius: 5px;
+  &:focus {
+    outline: none;
+  }
 }
 </style>

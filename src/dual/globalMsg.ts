@@ -21,6 +21,8 @@ export enum GlobalMsgEvents {
   OpenCloseWindow = "OpenCloseWindow",
   /** 打开歌单右键菜单 */
   OpenCtxMenuPlaylist = "OpenCtxMenuPlaylist",
+  /** 打开字体选择窗口 */
+  OpenFontSelectWindow = "OpenFontSelectWindow",
   /** 打开确认窗口 */
   Confirm = "Confirm",
   /** 关闭播放界面 */

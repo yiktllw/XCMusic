@@ -1,12 +1,18 @@
+import {
+  defaultLyricFonts,
+  defaultLyricTnsFonts,
+  type IEscapedFonts,
+} from "@/utils/fonts";
+
 export const defaultPreferences = {
   fontSize: 20,
-  fontFamily: "Avenir, Helvetica, Arial, sans-serif",
-  fontWeight: "bold" as "normal" | "bold",
+  fontFamily: [...defaultLyricFonts] as IEscapedFonts,
+  is_bold: true,
   isItalic: false,
 
   tns_fontSize: 17,
-  tns_fontFamily: `"Georgia", "Times New Roman", Times, serif`,
-  tns_fontWeight: "bold" as "normal" | "bold",
+  tns_fontFamily: [...defaultLyricTnsFonts] as IEscapedFonts,
+  tns_is_bold: true,
   tns_isItalic: true,
 
   /** 歌词到翻译的距离 */

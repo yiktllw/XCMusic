@@ -9,6 +9,7 @@ import { type Theme1, type Theme2 } from "./theme";
 import { type ITrack } from "./tracks";
 import { type IEqualizer } from "@/dual/player";
 import type { ILyricsPreferences } from "@/components/base/YLyricsNew/utils";
+import { type IEscapedFonts } from "./fonts";
 
 export enum StorageKey {
   /** 当前歌曲 */
@@ -87,6 +88,8 @@ export enum StorageKey {
   Setting_PlayUI_LyricsPreference = "setting.playUI.lyricsPreference",
   /** 设置-播放界面-显示歌词翻译 */
   Setting_PlayUI_ShowLyricsTranslate = "setting.playUI.showLyricsTranslate",
+  /** 设置-显示-界面字体 */
+  Setting_Display_UIFonts = "setting.display.UIFonts",
 }
 
 export type StorageMap = {
@@ -155,6 +158,7 @@ export type StorageMap = {
   [StorageKey.Setting_PlayUI_ShowNewLyrics]: boolean;
   [StorageKey.Setting_PlayUI_LyricsPreference]: ILyricsPreferences;
   [StorageKey.Setting_PlayUI_ShowLyricsTranslate]: boolean;
+  [StorageKey.Setting_Display_UIFonts]: IEscapedFonts;
 };
 
 interface IData {

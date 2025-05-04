@@ -16,6 +16,7 @@ import {
   defaultPreferences,
   type ILyricsPreferences,
 } from "@/components/base/YLyricsNew/utils";
+import { type IEscapedFonts, defaultFonts } from "@/utils/fonts";
 
 let fs: any, path: any, os: any;
 if (window.electron?.isElectron) {
@@ -24,7 +25,7 @@ if (window.electron?.isElectron) {
   os = window.api.os;
 }
 
-type SettingCatagory = {
+type SettingCategory = {
   [key: string]: {
     /** 设置项的值 */
     value: any;
@@ -40,7 +41,7 @@ type SettingCatagory = {
 };
 
 export type SettingGroup = {
-  [key: string]: SettingCatagory;
+  [key: string]: SettingCategory;
 };
 
 /**
@@ -113,6 +114,8 @@ export interface ISettings {
     hideInSidebar: TSideBarItems[];
     /** 是否在播放列表中显示封面 */
     showCoverInPlaylist: boolean;
+    /** 界面字体 */
+    UIFonts: IEscapedFonts;
   };
   /** 标题栏设置 */
   titleBar: {
@@ -344,8 +347,6 @@ export const settingGroup: SettingGroup = {
           value.fontSize <= 50 &&
           value.tns_fontSize >= 10 &&
           value.tns_fontSize <= 50 &&
-          ["normal", "bold"].includes(value.fontWeight) &&
-          ["normal", "bold"].includes(value.tns_fontWeight) &&
           value.distance_l_l >= 10 &&
           value.distance_l_l <= 100 &&
           value.distance_l_t >= 10 &&
@@ -513,6 +514,15 @@ export const settingGroup: SettingGroup = {
         if (valid) {
           setStorage(StorageKey.Setting_Display_HideInSidebar, value);
         }
+        return valid;
+      },
+    },
+    UIFonts: {
+      value: getStorage(StorageKey.Setting_Display_UIFonts) ?? defaultFonts,
+      default: defaultFonts,
+      validation: (value: IEscapedFonts) => {
+        let valid = typeof value === typeof defaultFonts;
+        if (valid) setStorage(StorageKey.Setting_Display_UIFonts, value);
         return valid;
       },
     },
@@ -696,7 +706,7 @@ function createProxy(obj: SettingGroup): SettingGroup {
 
   for (const key of Object.keys(obj)) {
     if (typeof obj[key] === "object" && obj[key] !== null) {
-      proxyObj[key] = new Proxy(obj[key] as SettingCatagory, {
+      proxyObj[key] = new Proxy(obj[key] as SettingCategory, {
         get(target, prop) {
           if (
             typeof prop === "string" &&

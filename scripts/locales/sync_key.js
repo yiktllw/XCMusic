@@ -27,7 +27,7 @@ function readJsonFile(fileName) {
 // 写入 JSON 文件
 function writeJsonFile(fileName, data) {
   return new Promise((resolve, reject) => {
-    fs.writeFile(fileName, JSON.stringify(data, null, "\t"), (err) => {
+    fs.writeFile(fileName, JSON.stringify(data, null, "  "), (err) => {
       if (err) {
         reject(`写入文件 ${fileName} 出错: ${err}`);
       } else {

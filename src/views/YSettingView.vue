@@ -193,6 +193,152 @@
                 </div>
               </div>
             </div>
+            <!-- 外观-字体 -->
+            <div class="content-item item-font">
+              <div class="content-item-title">
+                {{ $t("font.title") }}
+              </div>
+              <div
+                class="content-item-content font-str"
+                :title="$t('font.click_to_select')"
+                @click="openFontsSelectWindow('UIFonts')"
+              >
+                {{ fonts.join(", ") }}
+              </div>
+            </div>
+            <!-- 外观-歌词样式 -->
+            <div class="content-item item-lyrics">
+              <div class="content-item-title">
+                {{ $t("lyrics.title") }}
+              </div>
+              <div
+                class="content-item-content"
+                :title="$t('font.click_to_select')"
+              >
+                <div class="lyrics">
+                  <div class="font-family">
+                    <div class="font-title" style="margin-right: 25px">
+                      {{ $t("lyrics.fonts") }}
+                    </div>
+                    <div
+                      class="font-content font-str"
+                      @click="openFontsSelectWindow('LyricsFonts')"
+                    >
+                      {{ lyricsPreferences.fontFamily.join(", ") }}
+                    </div>
+                  </div>
+                  <div class="font-others">
+                    <div class="font-size">
+                      {{ $t("lyrics.font_size") }}
+                      <input
+                        type="number"
+                        v-model="lyricsPreferences.fontSize"
+                        @change="handleLyricsPreferencesChange"
+                        style="width: 50px; margin-left: 20px"
+                        min="10"
+                        max="50"
+                        step="1"
+                      />
+                    </div>
+                    <div class="font-is-italic">
+                      <input
+                        type="checkbox"
+                        id="setting-lyrics-font-italic"
+                        v-model="lyricsPreferences.isItalic"
+                        @change="handleLyricsPreferencesChange"
+                      />
+                      <label for="setting-lyrics-font-italic">
+                        {{ $t("lyrics.is_italic") }}
+                      </label>
+                    </div>
+                    <div class="font-is-bold">
+                      <input
+                        type="checkbox"
+                        id="setting-lyrics-font-bold"
+                        v-model="lyricsPreferences.is_bold"
+                        @change="handleLyricsPreferencesChange"
+                      />
+                      <label for="setting-lyrics-font-bold">
+                        {{ $t("lyrics.is_bold") }}
+                      </label>
+                    </div>
+                  </div>
+                  <div class="font-margin">
+                    {{ $t("lyrics.margin_top") }}
+                    <input
+                      type="number"
+                      v-model="lyricsPreferences.distance_l_l"
+                      @change="handleLyricsPreferencesChange"
+                      style="width: 50px; margin-left: 10px"
+                      min="10"
+                      max="100"
+                      step="5"
+                    />
+                  </div>
+                </div>
+                <div class="lyrics tns">
+                  <div class="font-family">
+                    <div class="font-title" style="margin-right: 25px">
+                      {{ $t("lyrics.tns_fonts") }}
+                    </div>
+                    <div
+                      class="font-content font-str"
+                      @click="openFontsSelectWindow('LyricsTnsFonts')"
+                    >
+                      {{ lyricsPreferences.tns_fontFamily.join(", ") }}
+                    </div>
+                  </div>
+                  <div class="font-others">
+                    <div class="font-size">
+                      {{ $t("lyrics.tns_font_size") }}
+                      <input
+                        type="number"
+                        v-model="lyricsPreferences.tns_fontSize"
+                        @change="handleLyricsPreferencesChange"
+                        style="width: 50px; margin-left: 20px"
+                        min="10"
+                        max="50"
+                        step="1"
+                      />
+                    </div>
+                    <div class="font-is-italic">
+                      <input
+                        type="checkbox"
+                        id="setting-lyrics-tns-font-italic"
+                        v-model="lyricsPreferences.tns_isItalic"
+                        @change="handleLyricsPreferencesChange"
+                      />
+                      <label for="setting-lyrics-tns-font-italic">
+                        {{ $t("lyrics.is_italic") }}
+                      </label>
+                    </div>
+                    <div class="font-is-bold">
+                      <input
+                        type="checkbox"
+                        id="setting-lyrics-tns-font-bold"
+                        v-model="lyricsPreferences.tns_is_bold"
+                        @change="handleLyricsPreferencesChange"
+                      />
+                      <label for="setting-lyrics-tns-font-bold">
+                        {{ $t("lyrics.is_bold") }}
+                      </label>
+                    </div>
+                  </div>
+                  <div class="font-margin">
+                    {{ $t("lyrics.tns_margin_top") }}
+                    <input
+                      type="number"
+                      v-model="lyricsPreferences.distance_l_t"
+                      @change="handleLyricsPreferencesChange"
+                      style="width: 50px; margin-left: 10px"
+                      min="10"
+                      max="100"
+                      step="5"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- 外观-缩放 -->
             <div class="content-item item-zoom">
               <div class="content-item-title item-zoom-title">
@@ -999,6 +1145,44 @@
           .item-theme-title {
             font-weight: bold;
           }
+        }
+
+        .item-lyrics {
+          margin-top: 5px;
+          .tns {
+            margin: 10px 0;
+          }
+          .lyrics {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            .font-family {
+              display: flex;
+              flex-direction: row;
+              margin-right: 10px;
+            }
+            .font-others {
+              display: flex;
+              flex-direction: row;
+              gap: 10px;
+            }
+            .font-margin {
+              display: flex;
+              flex-direction: row;
+            }
+          }
+        }
+
+        .font-str {
+          padding: 5px 10px;
+          max-width: 321px;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          border: 1px solid rgba(var(--foreground-color-rgb), 0.3);
+          border-radius: 5px;
+          cursor: pointer;
         }
 
         .item-zoom {

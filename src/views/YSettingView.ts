@@ -15,6 +15,11 @@ import { type ISaveJSONData } from "@/dual/YSettingView";
 import YScroll from "@/components/base/YScroll.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
+import { defaultFonts, type IEscapedFonts } from "@/utils/fonts";
+import {
+  type ILyricsPreferences,
+  defaultPreferences as defaultLyricsPreferences,
+} from "@/components/base/YLyricsNew/utils";
 
 /** 用于生成设置界面的背景色 */
 const str = "setting_view";
@@ -128,6 +133,10 @@ export default defineComponent({
       allowConsecutiveAlbums: false,
       /** 使用新歌词组件 */
       showNewLyrics: false,
+      /** 字体 */
+      fonts: [...defaultFonts] as IEscapedFonts,
+      /** 歌词样式 */
+      lyricsPreferences: { ...defaultLyricsPreferences } as ILyricsPreferences,
     };
   },
   methods: {
@@ -448,6 +457,59 @@ export default defineComponent({
         this.rectData.push(dom.getBoundingClientRect().top);
       });
     },
+    openFontsSelectWindow(type: "UIFonts" | "LyricsFonts" | "LyricsTnsFonts") {
+      let default_selected_fonts: IEscapedFonts;
+      switch (type) {
+        case "UIFonts":
+          default_selected_fonts = this.setting.display.UIFonts;
+          break;
+        case "LyricsFonts":
+          default_selected_fonts = this.lyricsPreferences.fontFamily;
+          break;
+        case "LyricsTnsFonts":
+          default_selected_fonts = this.lyricsPreferences.tns_fontFamily;
+          break;
+      }
+      const _thisInstance = new WeakRef(this);
+      this.globalMsg.post(
+        GlobalMsgEvents.OpenFontSelectWindow,
+        this.$t(`font.titles.${type}`),
+        default_selected_fonts,
+        (fonts) => {
+          if (fonts.length === 0) return;
+          const thisInstance = _thisInstance.deref();
+          if (!thisInstance) return;
+          switch (type) {
+            case "UIFonts":
+              thisInstance.setting.display.UIFonts = fonts;
+              thisInstance.fonts = thisInstance.setting.display.UIFonts;
+              window.setUIFonts?.(fonts);
+              break;
+            case "LyricsFonts":
+              thisInstance.setting.playui.lyricsPreferences = {
+                ...thisInstance.setting.playui.lyricsPreferences,
+                fontFamily: fonts,
+              };
+              thisInstance.lyricsPreferences =
+                thisInstance.setting.playui.lyricsPreferences;
+              break;
+            case "LyricsTnsFonts":
+              thisInstance.setting.playui.lyricsPreferences = {
+                ...thisInstance.setting.playui.lyricsPreferences,
+                tns_fontFamily: fonts,
+              };
+              thisInstance.lyricsPreferences =
+                thisInstance.setting.playui.lyricsPreferences;
+              break;
+          }
+        },
+      );
+    },
+    handleLyricsPreferencesChange() {
+      // 验证变化并更新设置
+      this.setting.playui.lyricsPreferences = this.lyricsPreferences;
+      this.lyricsPreferences = this.setting.playui.lyricsPreferences;
+    },
     init() {
       YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
       this.theme = this.setting.display.theme;
@@ -489,6 +551,8 @@ export default defineComponent({
           this.proxy_port = "";
         }
       }
+      this.fonts = [...this.setting.display.UIFonts];
+      this.lyricsPreferences = { ...this.setting.playui.lyricsPreferences };
       this.getDevices();
       this.initRectData();
     },

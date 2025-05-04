@@ -80,6 +80,7 @@
     "input_name": "Please enter a name",
     "name": "Playlist Name"
   },
+  "ensure": "Ensure",
   "equalizer": {
     "apply": "Apply",
     "reset": "Reset",
@@ -87,10 +88,20 @@
   },
   "fans": "Fans",
   "font": {
-    "add_font": "Add a Font...",
+    "add_font": "Add a Font:",
+    "bold": "Bold",
+    "click_to_select": "Click to select",
     "no_result": "No result",
     "please_add_fonts": "Please add fonts...",
-    "preview": "Preview"
+    "preview": "Preview:",
+    "search_font": "Search Fonts...",
+    "selected_fonts": "Selected Fonts",
+    "title": "Fonts",
+    "titles": {
+      "LyricsFonts": "Lyrics Fonts",
+      "LyricsTnsFonts": "Lyrics Translation Fonts",
+      "UIFonts": "UI Fonts"
+    }
   },
   "header": {
     "local_music": {
@@ -114,6 +125,17 @@
   },
   "login": "Login",
   "logout": "Logout",
+  "lyrics": {
+    "font_size": "Font Size",
+    "fonts": "Fonts",
+    "is_bold": "Bold",
+    "is_italic": "Italic",
+    "margin_top": "Lyrics Margin Top",
+    "title": "Lyrics",
+    "tns_font_size": "Translation Font Size",
+    "tns_fonts": "Translation Fonts",
+    "tns_margin_top": "Translation Margin Top"
+  },
   "manage_download": "Download",
   "message": {
     "getting_playlist_tracks": "Getting playlist tracks",

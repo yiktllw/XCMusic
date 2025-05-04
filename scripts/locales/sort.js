@@ -23,7 +23,7 @@ function readJsonFile(fileName) {
 // 写入 JSON 文件
 function writeJsonFile(fileName, data) {
   try {
-    fs.writeFileSync(fileName, JSON.stringify(data, null, "\t"));
+    fs.writeFileSync(fileName, JSON.stringify(data, null, "  "));
     console.log(`文件 ${fileName} 已成功更新`);
   } catch (err) {
     console.error(`写入文件 ${fileName} 出错: ${err}`);

@@ -14,6 +14,7 @@ import YCustomWindow from "@/components/YWindows/YCustomWindow.vue";
 import YCloseWindow from "@/components/YWindows/YCloseWindow.vue";
 import YEditPlaylistWindow from "@/components/YWindows/YEditPlaylistWindow.vue";
 import YEqualizerWindow from "@/components/YWindows/YEqualizerWindow.vue";
+import YFontsSelectWindow from "@/components/YWindows/YFontsSelectWindow.vue";
 import { useStore } from "vuex";
 import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
@@ -30,6 +31,11 @@ import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { type ITrack } from "@/utils/tracks";
 import { type IPlaylist } from "@/utils/login";
 import { getStorage, StorageKey } from "@/utils/render_storage";
+import {
+  type IEscapedFonts,
+  defaultFonts,
+  defaultFontsStr,
+} from "@/utils/fonts";
 
 export default defineComponent({
   name: "App",
@@ -37,6 +43,7 @@ export default defineComponent({
     return {
       // 打开的播放列表
       opened_playlist: 0,
+      defaultFontsStr,
       menu: songItems,
       target: null as any,
       posX: "0px",
@@ -55,7 +62,13 @@ export default defineComponent({
       confirm: null as unknown as IConfirm,
       showConfirmWindow: false,
       showEditPlaylistWindow: false,
+      showFontsSelectWindow: false,
       showEqualizerWindow: false,
+      fontsSelectWindowTitle: "选择字体",
+      defaultSelectedFonts: [] as IEscapedFonts,
+      fontsSelectWindowCallback: (() => {}) as (
+        selected_fonts: IEscapedFonts,
+      ) => void,
       playlist_to_edit: null as IPlaylist | null,
       msg: {
         type: "none",
@@ -82,6 +95,7 @@ export default defineComponent({
     YConfirmWindow,
     YEditPlaylistWindow,
     YEqualizerWindow,
+    YFontsSelectWindow,
   },
   computed: {},
   setup() {
@@ -91,6 +105,7 @@ export default defineComponent({
     const YSidebar_ref = ref<typeof YSidebar | null>(null);
     const YDisplayArea_ref = ref<typeof YDisplayArea | null>(null);
     const prevent_container = ref<HTMLElement | null>(null);
+    const fonts = ref<IEscapedFonts>([...defaultFonts]);
 
     return {
       player: store.state.player,
@@ -103,9 +118,16 @@ export default defineComponent({
       YDisplayArea_ref,
       prevent_container,
       globalMsg: store.state.globalMsg,
+      fonts,
     };
   },
   mounted() {
+    this.fonts = getStorage(StorageKey.Setting_Display_UIFonts) ?? [
+      ...defaultFonts,
+    ];
+    window.setUIFonts = (fonts) => {
+      this.fonts = fonts;
+    };
     window.addEventListener("message", this.handleMessage);
     this.player.quality = this.setting.play.quality as
       | "jymaster"
@@ -196,6 +218,17 @@ export default defineComponent({
         this.confirm = args;
         this.showConfirmWindow = true;
         this.showPreventContainer = true;
+      },
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenFontSelectWindow,
+      (title, default_selected_fonts, callbackFn) => {
+        this.defaultSelectedFonts = default_selected_fonts;
+        this.fontsSelectWindowTitle = title;
+        this.showFontsSelectWindow = true;
+        this.showPreventContainer = true;
+        this.fontsSelectWindowCallback = callbackFn;
       },
     );
   },
@@ -564,6 +597,20 @@ export default defineComponent({
         this.showEqualizerWindow = false;
         this.showPreventContainer = false;
       }
+    },
+    handleNewWindowState_fontsSelectWindow(val: boolean) {
+      if (val === false) {
+        this.showFontsSelectWindow = false;
+        this.fontsSelectWindowCallback = (() => {}) as (
+          selected_fonts: IEscapedFonts,
+        ) => void;
+        this.fontsSelectWindowTitle = "选择字体";
+        this.showPreventContainer = false;
+      }
+    },
+    handleFontsSelectWindowEnsure(fonts: IEscapedFonts) {
+      this.fontsSelectWindowCallback(fonts);
+      this.handleNewWindowState_fontsSelectWindow(false);
     },
   },
 });

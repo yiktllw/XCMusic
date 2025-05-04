@@ -9,6 +9,7 @@
 import { type IPlaylistCtxData } from "@/dual/YContextMenuItemC";
 import { Subscriber } from "@/utils/subscribe";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { type IEscapedFonts } from "./fonts";
 
 export interface IConfirm {
   /** 显示在确认窗口的内容 */
@@ -28,6 +29,11 @@ type GlobalMsgFuncs = {
   [GlobalMsgEvents.CloseCustomWindow]: () => void;
   [GlobalMsgEvents.OpenCloseWindow]: () => void;
   [GlobalMsgEvents.OpenCtxMenuPlaylist]: (data: IPlaylistCtxData) => void;
+  [GlobalMsgEvents.OpenFontSelectWindow]: (
+    title: string,
+    default_selected_fonts: IEscapedFonts,
+    callbackFn: (selected_fonts: IEscapedFonts) => void,
+  ) => void;
   [GlobalMsgEvents.Confirm]: (args: IConfirm) => void;
   [GlobalMsgEvents.ClosePlayUI]: () => void;
   [GlobalMsgEvents.RefreshSidebar]: () => void;

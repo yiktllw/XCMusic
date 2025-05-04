@@ -17,6 +17,7 @@ import type * as fs from "fs";
 import type * as path from "path";
 import type * as os from "os";
 import type { FontList } from "font-list";
+import { type IEscapedFonts } from "./utils/fonts";
 
 interface MemoryUsageDetails {
   // Docs: https://electronjs.org/docs/api/structures/memory-usage-details
@@ -107,6 +108,7 @@ declare global {
     test: any;
     env: env;
     fonts?: FontList;
+    setUIFonts?: (fonts: IEscapedFonts) => void;
     getLyrics: ((time_ms: number) => string | null) | null;
   }
 
