@@ -542,7 +542,7 @@
       z-index: 1;
       position: absolute;
       width: 200px;
-      height: 300px;
+      height: fit-content;
       transform: translate3d(-180px, 32.1px, 0px);
       background-color: var(--panel-background-color);
       border-radius: 5px;
