@@ -49,6 +49,7 @@
     .close-icon {
       width: 14px;
       height: 14px;
+      padding: 8px;
       cursor: pointer;
       opacity: 0.7;
 
