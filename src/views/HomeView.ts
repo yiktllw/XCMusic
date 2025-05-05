@@ -231,6 +231,15 @@ export default defineComponent({
         this.fontsSelectWindowCallback = callbackFn;
       },
     );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenAddToPlaylistWindow,
+      (ids) => {
+        this.trackIds = ids.filter((id) => !isLocal(id));
+        this.showAddToPlaylist = true;
+        this.showPreventContainer = true;
+      },
+    );
   },
   beforeUnmount() {
     this.globalMsg.subscriber.offAll("HomeView");
@@ -523,6 +532,7 @@ export default defineComponent({
           //   JSON.stringify(res, null, 4)
           // );
           if (res.status === 200) {
+            Playlist.addNeedRefresh(playlistId as number);
             Message.post("success", this.$t("message.homeview.delete_success"));
             this.globalMsg.post(
               GlobalMsgEvents.RefreshPlaylist,

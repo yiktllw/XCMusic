@@ -63,12 +63,18 @@
   <YSongsTableNew
     v-else
     class="songs-table"
+    :style="{
+      height: isMultiSelect
+        ? 'calc(100vh - 85px - 65px - 75px)'
+        : 'calc(100vh - 85px - 65px)',
+      marginTop: isMultiSelect ? '75px' : '0',
+    }"
     :options="songsTableProps"
     :is-multi-select="isMultiSelect"
     @sort="handleSort"
     ref="songsTable"
   >
-    <template #slot-prepend>
+    <template #slot-prepend v-if="!isMultiSelect">
       <div class="info">
         <div class="left">
           <img
@@ -210,6 +216,45 @@
       </div>
     </template>
   </YSongsTableNew>
+  <!-- 多选功能 -->
+  <div class="multi-select-buttons" v-if="isMultiSelect">
+    <div class="left">
+      <div class="play msb-btn" @click="selectedOperations('play')">
+        <img :src="play_svg" class="g-icon" />
+      </div>
+      <div
+        class="add-to-playlist msb-btn"
+        @click="selectedOperations('add_to_playlist')"
+      >
+        <img :src="addToPlaylist_svg" class="g-icon" />
+        {{ $t("playlist_view.add_to_playlist") }}
+      </div>
+      <div class="download msb-btn" @click="selectedOperations('download')">
+        <img :src="download_svg" class="g-icon" />
+        {{ $t("playlist_view.download") }}
+      </div>
+      <div class="subscribe msb-btn" @click="selectedOperations('subscribe')">
+        <img :src="subscribe_svg" class="g-icon" />
+        {{ $t("playlist_view.subscribe") }}
+      </div>
+      <div
+        class="delete msb-btn"
+        v-if="type === 'playlist' && userCreateIds.includes(playlistId)"
+        @click="selectedOperations('delete')"
+      >
+        <img :src="delete_svg" class="g-icon" />
+        {{ $t("playlist_view.delete") }}
+      </div>
+    </div>
+    <div class="right">
+      <div class="select-all msb-btn" @click="selectAll">
+        {{ $t("playlist_view.select_all") }}
+      </div>
+      <div class="complete msb-btn" @click="isMultiSelect = false">
+        {{ $t("playlist_view.complete") }}
+      </div>
+    </div>
+  </div>
   <div class="scroll-buttons">
     <div class="button" @click="scrollToCurrentTrack">
       <img src="@/assets/position.svg" class="g-icon" />
@@ -237,12 +282,14 @@ import subscribe_svg from "@/assets/subscribe3.svg";
 import multichoice_svg from "@/assets/multichoice.svg";
 import search_svg from "@/assets/search.svg";
 import clear_svg from "@/assets/clear2.svg";
+import delete_svg from "@/assets/delete.svg";
 import { useStore } from "vuex";
 import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
-// import { Message } from "@/dual/YMessageC";
 import { ContentLoader } from "vue-content-loader";
 import { type ComponentExposed } from "vue-component-type-helpers";
+import { GlobalMsgEvents } from "@/dual/globalMsg";
+import { Message } from "@/dual/YMessageC";
 
 export default defineComponent({
   name: "YPlaylistViewNew",
@@ -276,6 +323,15 @@ export default defineComponent({
         this.playlistId,
       );
     },
+    isMultiSelect(val) {
+      const originalSongs = this.songsTableProps.songs;
+      if (val) this.songsTableProps = getSongsTableOptions("YMultiSelectView");
+      else
+        this.songsTableProps = getSongsTableOptions(
+          `YPlaylistView-${this.type}`,
+        );
+      this.songsTableProps.songs = originalSongs;
+    },
   },
   setup() {
     const store = useStore();
@@ -286,6 +342,7 @@ export default defineComponent({
       player: store.state.player,
       download: store.state.download,
       login: store.state.login,
+      globalMsg: store.state.globalMsg,
       songsTable,
     };
   },
@@ -304,6 +361,7 @@ export default defineComponent({
       multichoice_svg,
       search_svg,
       clear_svg,
+      delete_svg,
       userSubscribeIds: [] as number[],
       userSubscribeAlbumIds: [] as number[],
       userCreateIds: [] as number[],
@@ -321,6 +379,7 @@ export default defineComponent({
     async init() {
       this.loading = true;
       this.searchQuery = "";
+      this.isMultiSelect = false;
       this.songsTableProps = getSongsTableOptions(`YPlaylistView-${this.type}`);
       this.userSubscribeIds = this.login.userSubscribeIds.slice();
       this.userSubscribeAlbumIds = this.login.userSubscribeAlbumIds.slice();
@@ -390,6 +449,100 @@ export default defineComponent({
     },
     playAll() {
       this.player.playAll(this.playlistDetail.tracks);
+    },
+    selectAll() {
+      if (!this.songsTable) return;
+      if (this.songsTable.selected.size === this.songsTableProps.songs.length) {
+        this.songsTable.selected.clear();
+      } else {
+        this.songsTable.selected.clear();
+        this.songsTableProps.songs.forEach((item) => {
+          this.songsTable?.selected.add(item.id);
+        });
+      }
+    },
+    selectedOperations(
+      operation:
+        | "play"
+        | "add_to_playlist"
+        | "download"
+        | "subscribe"
+        | "delete",
+    ) {
+      if (
+        !this.isMultiSelect ||
+        !this.songsTable ||
+        this.songsTable.selected.size === 0
+      )
+        return;
+
+      const _thisInstance = new WeakRef(this);
+      function getSelectedTracks() {
+        const thisInstance = _thisInstance.deref();
+        if (!thisInstance) return [];
+        return thisInstance.songsTableProps.songs.filter((item) =>
+          thisInstance.songsTable?.selected.has(item.id),
+        );
+      }
+
+      switch (operation) {
+        case "play":
+          this.player.playAll(getSelectedTracks());
+          break;
+        case "add_to_playlist":
+          this.player.addPlaylist(getSelectedTracks());
+          break;
+        case "download":
+          this.download.addList(getSelectedTracks());
+          break;
+        case "subscribe":
+          this.globalMsg.post(
+            GlobalMsgEvents.OpenAddToPlaylistWindow,
+            Array.from(this.songsTable?.selected),
+          );
+          break;
+        case "delete":
+          if (
+            this.type !== "playlist" ||
+            !this.userCreateIds.includes(this.playlistId)
+          ) {
+            return;
+          }
+          const id = this.playlistId;
+          const confirmCallback = () => {
+            // 用户可能在删除窗口弹出时导航到其他页面
+            // 创建弱引用以避免内存泄漏
+            const thisInstance = _thisInstance.deref();
+            const songsTable = thisInstance?.songsTable;
+
+            if (!thisInstance || !songsTable) return;
+
+            Playlist.deleteTracks(id, Array.from(songsTable.selected)).then(
+              (res) => {
+                if (res.status !== 200) {
+                  Message.post("error", "message.homeview.delete_fail", true);
+                  return;
+                }
+                Message.post(
+                  "success",
+                  "message.homeview.delete_success",
+                  true,
+                );
+                thisInstance.songsTableProps.songs =
+                  thisInstance.songsTableProps.songs.filter(
+                    (item) => !songsTable.selected.has(item.id),
+                  );
+                Playlist.addNeedRefresh(id);
+              },
+            );
+          };
+          this.globalMsg.post(GlobalMsgEvents.Confirm, {
+            content: this.$t("context.delete_from_playlist"),
+            needTranslate: false,
+            callback: confirmCallback,
+          });
+          break;
+      }
     },
     addToPlaylist() {
       this.player.addPlaylist(this.playlistDetail.tracks);
@@ -530,7 +683,6 @@ export default defineComponent({
 }
 .songs-table {
   width: calc(100% - 20px);
-  height: calc(100vh - 85px - 65px);
   text-align: left;
   padding: 0 10px 0 10px;
 
@@ -765,6 +917,63 @@ export default defineComponent({
         opacity: 1;
       }
     }
+  }
+}
+
+.multi-select-buttons {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  width: calc(100% - 50px);
+  top: 0;
+  left: 0;
+  .left,
+  .right {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+  }
+  .msb-btn {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    height: 35px;
+    padding-left: 13px;
+    padding-right: 13px;
+    color: var(--font-color-high);
+    background: rgba(var(--foreground-color-rgb), 0.15);
+    gap: 5px;
+    cursor: pointer;
+    img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+    }
+    &:hover {
+      background: rgba(var(--foreground-color-rgb), 0.25);
+      img {
+        opacity: 1;
+      }
+    }
+  }
+  .delete > img {
+    opacity: 0.8;
+  }
+  .play {
+    background: rgba(var(--highlight-color-rgb), 1);
+    img {
+      opacity: 1;
+    }
+    &:hover {
+      background: rgba(var(--highlight-color-rgb), 0.8);
+    }
+  }
+  .complete,
+  .select-all {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 </style>

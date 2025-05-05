@@ -38,6 +38,7 @@ type GlobalMsgFuncs = {
   [GlobalMsgEvents.ClosePlayUI]: () => void;
   [GlobalMsgEvents.RefreshSidebar]: () => void;
   [GlobalMsgEvents.RefreshPlaylist]: (playlistId: number) => void;
+  [GlobalMsgEvents.OpenAddToPlaylistWindow]: (ids: number[]) => void;
 };
 
 export class GlobalMsg {

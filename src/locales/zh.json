@@ -223,8 +223,10 @@
     "add_to_playlist": "添加到播放列表",
     "author": "作者",
     "comments": "评论",
+    "complete": "完成",
     "created_time": "创建",
     "creator": "创建者",
+    "delete": "删除",
     "download": "下载",
     "download_all": "下载全部",
     "download_current_page": "下载当前页",
@@ -234,6 +236,7 @@
     "play": "播放",
     "published_time": "发布",
     "search": "搜索",
+    "select_all": "全选",
     "songs": "歌曲",
     "subscribe": "收藏",
     "subscribed": "已收藏"

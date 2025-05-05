@@ -53,7 +53,7 @@ const defaultColumns: IColumn = {
 export const getDefaultColumns = () => ({ ...defaultColumns }) as IColumn;
 
 export function getSongsTableOptions(
-  id: "YPlaylistView-playlist" | "YPlaylistView-album",
+  id: "YPlaylistView-playlist" | "YPlaylistView-album" | "YMultiSelectView",
 ): ISongsTableProps {
   let columnsOptions = getDefaultColumns();
   let options: ISongsTableProps = {
@@ -84,6 +84,16 @@ export function getSongsTableOptions(
         showTableHeader: false,
         showPrepend: true,
         prependHeight: 225,
+      };
+      break;
+    case "YMultiSelectView":
+      options.id_for_subscribe = "YMultiSelectView";
+      options.columns.popularity = false;
+      options.showHeader = true;
+      options.slot_prepend = {
+        showTableHeader: false,
+        showPrepend: false,
+        prependHeight: 0,
       };
       break;
     default:

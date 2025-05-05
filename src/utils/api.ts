@@ -174,6 +174,36 @@ export namespace Like {
  */
 export namespace Playlist {
   /**
+   * 是否需要刷新歌单
+   * key: 歌单id
+   * value: 歌单的更新时间戳
+   */
+  const needRefresh = new Map<number, number>();
+
+  export function addNeedRefresh(
+    /** 歌单id */
+    id: number,
+  ) {
+    const timestamp = new Date().getTime();
+    needRefresh.set(id, timestamp);
+  }
+  function needForceRefresh(
+    /** 歌单id */
+    id: number,
+  ) {
+    let need_force_refresh = false;
+    const timestamp = needRefresh.get(id);
+    if (timestamp) {
+      const now = new Date().getTime();
+      // 如果当前时间距离上次更新时间小于2分钟，则强制刷新有效
+      need_force_refresh = now - timestamp < 2 * 60 * 1000;
+      // 过期后删除
+      if (!need_force_refresh) needRefresh.delete(id);
+    }
+    return need_force_refresh;
+  }
+
+  /**
    * 获取某个歌单的信息，这个接口的返回信息量很大，谨慎使用
    */
   export async function getDetail(
@@ -184,8 +214,11 @@ export namespace Playlist {
   ): Promise<IPlaylist.DetailResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     const params: IPlaylist.DetailParams = { id: id };
+
     if (latest) params["timestamp"] = new Date().getTime();
+    else if (needForceRefresh(id)) params["timestamp"] = needRefresh.get(id);
     if (cookie && cookie.length > 0) params["cookie"] = cookie;
+
     let res = await useApi("/playlist/detail", params).catch((error) => {
       console.error("Failed to get playlist detail:", error);
     });
@@ -302,11 +335,30 @@ export namespace Playlist {
   /**
    * 添加歌曲到歌单
    */
-  export async function addTracks(
+  export const addTracks = (
     /** 歌单id */
     playlistId: number,
     /** 需要添加的歌曲id数组 */
     ids: number[],
+  ) => add_or_delete_tracks(playlistId, ids, "add");
+
+  /**
+   * 从歌单中删除歌曲
+   */
+  export const deleteTracks = (
+    /** 歌单id */
+    playlistId: number,
+    /** 需要删除的歌曲id数组 */
+    ids: number[],
+  ) => add_or_delete_tracks(playlistId, ids, "del");
+
+  async function add_or_delete_tracks(
+    /** 歌单id */
+    playlistId: number,
+    /** 需要添加的歌曲id数组 */
+    ids: number[],
+    /** 操作类型 */
+    operation: "add" | "del",
   ): Promise<IPlaylist.AddTracksResponse> {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -314,9 +366,10 @@ export namespace Playlist {
     }
 
     const res = await useApi("/playlist/tracks", {
-      op: "add",
+      op: operation,
       pid: playlistId,
-      tracks: ids.join(","),
+      // 反转后的ids是为了保证歌曲的顺序和原来的顺序一致
+      tracks: ids.reverse().join(","),
       cookie: cookie,
     });
 

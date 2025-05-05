@@ -1,10 +1,11 @@
 <template>
   <div ref="container" class="virtual-scroll-container" @scroll="handleScroll">
     <div class="virtual-scroll-content" :style="{ height: totalHeight + 'px' }">
+      <!-- prettier-ignore -->
       <div
         v-for="item in visibleItems"
         :key="item.key"
-        :style="itemStyle(item as VirtualItem<T>) as any"
+        :style="(itemStyle(item as VirtualItem<T>) as any)"
         :class="{
           'dragging-item': draggingIndex === (item as VirtualItem<T>).index,
         }"
@@ -13,7 +14,7 @@
         <slot
           v-if="item.type === 'item'"
           name="item"
-          :item="item.data! as T"
+          :item="(item.data! as T)"
           :index="item.index!"
         />
         <slot
@@ -74,7 +75,8 @@ const isDragging = ref(false);
 /** 拖动阈值 */
 const DRAG_THRESHOLD = 5;
 
-const generateVirtualItems = computed(() => {
+const generateVirtualItems = computed(_compute_virtual_scroll_items);
+function _compute_virtual_scroll_items() {
   const items: VirtualItem<T>[] = [];
   let offset = 0;
   itemOffsets.value = [];
@@ -140,7 +142,7 @@ const generateVirtualItems = computed(() => {
 
   totalHeight.value = offset;
   return items;
-});
+}
 
 function handleMouseDown(item: VirtualItem<T>, event: MouseEvent) {
   // 只响应左键点击
@@ -297,7 +299,9 @@ watchEffect(() => {
   virtualItems.value = generateVirtualItems.value;
 });
 
-defineExpose({ scrollToIndex });
+function refreshSlots() {}
+
+defineExpose({ scrollToIndex, refreshSlots });
 </script>
 
 <style>

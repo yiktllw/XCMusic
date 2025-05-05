@@ -1,3 +1,6 @@
+<!--
+多选功能仅在 YPlaylistViewNew 中使用。
+-->
 <template>
   <YVirtualScroll
     :items="options.songs"
@@ -300,7 +303,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useTemplateRef } from "vue";
+import { defineComponent, ref, useTemplateRef } from "vue";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import YVirtualScroll from "@/components/base/YVirtualScroll.vue";
 import type { SlotConfig } from "@/components/base/YVirtualScroll.interface";
@@ -348,6 +351,7 @@ export default defineComponent({
     const virtualScroll =
       useTemplateRef<ComponentExposed<typeof YVirtualScroll>>("virtualScroll");
     const store = useStore();
+    const selected = ref<Set<number>>(new Set<number>());
 
     return {
       formatTime: formatTime_mmss_From_ms,
@@ -356,36 +360,14 @@ export default defineComponent({
       login: store.state.login,
       setting: store.state.setting,
       download: store.state.download,
+      selected,
     };
   },
   data() {
-    let prependHeight = 0;
-    const TABLE_HEADER_HEIGHT = 40;
-    if (this.options.showHeader) {
-      if (this.options.slot_prepend) {
-        if (this.options.slot_prepend.showTableHeader)
-          prependHeight += TABLE_HEADER_HEIGHT;
-      }
-      if (this.options.slot_prepend?.showPrepend) {
-        prependHeight += this.options.slot_prepend.prependHeight;
-      }
-    }
-    const defaultSlot: SlotConfig[] = [
-      {
-        type: "prepend",
-        height: prependHeight,
-      },
-      {
-        type: "append",
-        height: 5,
-      },
-    ];
-
     return {
       nowPlayingId: 0,
       downloadedSongIds: [] as number[],
-      defaultSlot: defaultSlot,
-      slots: defaultSlot as SlotConfig[],
+      slots: [] as SlotConfig[],
       first_tracks: [] as number[],
       success_svg,
       smalldownload_svg,
@@ -397,7 +379,6 @@ export default defineComponent({
       unlikes_svg,
       sort: getSort(),
       alWidth: 200,
-      selected: new Set<number>(),
       lastSelectedIndex: -1,
     };
   },
@@ -435,6 +416,10 @@ export default defineComponent({
     },
     "options.reelOptions": {
       handler: "computeReels",
+      immediate: true,
+    },
+    "options.slot_prepend": {
+      handler: "updatePrepend",
       immediate: true,
     },
   },
@@ -526,7 +511,7 @@ export default defineComponent({
         this.options.mode !== "album"
       ) {
         this.first_tracks = [];
-        this.slots = this.defaultSlot.slice();
+        this.slots = this.getDefaultSlot().slice();
         return;
       }
 
@@ -540,7 +525,7 @@ export default defineComponent({
       const first_tracks = songs.filter((item) => item.songInReelIndex === 0);
 
       this.first_tracks = [];
-      this.slots = this.defaultSlot.slice();
+      this.slots = this.getDefaultSlot().slice();
 
       reels?.forEach((reel, index) => {
         const song = first_tracks[index];
@@ -692,6 +677,33 @@ export default defineComponent({
     },
     clearSelect() {
       this.selected.clear();
+    },
+    getDefaultSlot() {
+      let prependHeight = 0;
+      const TABLE_HEADER_HEIGHT = 40;
+      if (this.options.showHeader) {
+        if (this.options.slot_prepend) {
+          if (this.options.slot_prepend.showTableHeader)
+            prependHeight += TABLE_HEADER_HEIGHT;
+        }
+        if (this.options.slot_prepend?.showPrepend) {
+          prependHeight += this.options.slot_prepend.prependHeight;
+        }
+      }
+      const defaultSlot: SlotConfig[] = [
+        {
+          type: "prepend",
+          height: prependHeight,
+        },
+        {
+          type: "append",
+          height: 5,
+        },
+      ];
+      return defaultSlot;
+    },
+    updatePrepend() {
+      this.slots = this.getDefaultSlot().slice();
     },
   },
 });

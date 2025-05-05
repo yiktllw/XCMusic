@@ -43,6 +43,7 @@ export default defineComponent({
           if (res.status !== 200) {
             Message.post("error", this.$t("song_added_failed"));
           } else {
+            Playlist.addNeedRefresh(playlistId as number);
             if (res.body.message) {
               Message.post("warning", res.body.message);
             } else {

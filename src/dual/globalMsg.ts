@@ -31,4 +31,6 @@ export enum GlobalMsgEvents {
   RefreshSidebar = "RefreshSidebar",
   /** 刷新用户创建的、订阅的歌单 */
   RefreshPlaylist = "RefreshPlaylist",
+  /** 打开收藏到歌单窗口 */
+  OpenAddToPlaylistWindow = "OpenAddToPlaylistWindow",
 }

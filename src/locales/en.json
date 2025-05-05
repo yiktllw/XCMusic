@@ -223,8 +223,10 @@
     "add_to_playlist": "Add to playlist",
     "author": "Author",
     "comments": "Comments",
+    "complete": "Complete",
     "created_time": "Created",
     "creator": "Creator",
+    "delete": "Delete",
     "download": "Download",
     "download_all": "Download All",
     "download_current_page": "Download Current Page",
@@ -234,6 +236,7 @@
     "play": "Play",
     "published_time": "Published",
     "search": "Search",
+    "select_all": "Select All",
     "songs": "Songs",
     "subscribe": "Subscribe",
     "subscribed": "Subscribed"
