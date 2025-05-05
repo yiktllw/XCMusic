@@ -109,7 +109,13 @@
       </div>
     </div>
   </div>
-  <div class="play-ui" :class="showPlayUI ? 'top' : 'bottom'">
+  <div
+    class="play-ui"
+    :style="{
+      fontFamily: fonts.join(', '),
+    }"
+    :class="showPlayUI ? 'top' : 'bottom'"
+  >
     <YPlayUI
       ref="playUI"
       @close-panel="showPlayUI = false"
