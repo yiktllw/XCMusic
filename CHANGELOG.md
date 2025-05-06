@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/yiktllw/XCMusic/compare/v0.3.0...v0.3.1) (2025-05-06)
+
+
+### Features
+
+* 播放界面: 新增切换翻译功能 ([43b9145](https://github.com/yiktllw/XCMusic/commit/43b91454f5438d9087a73743b514cdd78127199c))
+* 播放界面：鼠标悬停在进度条上时，显示时间及歌词 ([4df23c3](https://github.com/yiktllw/XCMusic/commit/4df23c31cab939b6bfb0a75dd2e9bcd68c0146b6))
+* 初步完成新歌词组件 ([573d00d](https://github.com/yiktllw/XCMusic/commit/573d00d477e74dc79a9a4903b7185773f3a13faa))
+* 调整子窗口的关闭按钮 ([2dfcb3a](https://github.com/yiktllw/XCMusic/commit/2dfcb3ab9e0248e1588b14abd8295ae2aea47114))
+* 评论: 显示被回复的评论 ([03e9ad7](https://github.com/yiktllw/XCMusic/commit/03e9ad731a5c80ce932835cc51a4e9c1c43ddd9f))
+* 设置界面：可以选择程序字体和歌词字体 ([#15](https://github.com/yiktllw/XCMusic/issues/15)) ([7850e8a](https://github.com/yiktllw/XCMusic/commit/7850e8a1cca38ed032d478f382ad02c17c372dde))
+* 实现多选功能 ([3a1bd1e](https://github.com/yiktllw/XCMusic/commit/3a1bd1e7e589648dba82a63a8d6a594273ce55cc))
+* 实现拖拽歌单内歌曲排序 ([d1169e6](https://github.com/yiktllw/XCMusic/commit/d1169e60b4743c66c1bc16ad4dba55f8e8178df7))
+* 新增： 设置-播放-启用新版歌词组件 ([788a224](https://github.com/yiktllw/XCMusic/commit/788a224a865229b885ee5b43b4ce20800775057d))
+* 新增歌词翻译功能 ([83f928c](https://github.com/yiktllw/XCMusic/commit/83f928c2bbf9112733445b441481db88a3fce4ef))
+* 在滚动歌词时，可以点击按钮来跳转到对应的进度 ([bb54295](https://github.com/yiktllw/XCMusic/commit/bb542958607c73d71e9f72220a624269a0a655b3))
+
+
+### Bug Fixes
+
+* 播放界面: 修复进度条动画异常的问题 ([5f8dc2e](https://github.com/yiktllw/XCMusic/commit/5f8dc2e6fae280531d590c248950afc8511a9ffb))
+* 播放界面: 修复进度条时间与歌词对齐错误 ([ece7e76](https://github.com/yiktllw/XCMusic/commit/ece7e761a4cab613b30524108b72f1b08c0fffae))
+* 播放界面：修复歌手悬停文本异常 ([db5a7ea](https://github.com/yiktllw/XCMusic/commit/db5a7ea7430290b48234c2596d3179fab758f4e4))
+* 播放界面：修复自定义字体不生效的bug ([dcda40b](https://github.com/yiktllw/XCMusic/commit/dcda40ba3d357aa28082644a928106c4b3c20bf2))
+* 侧边栏：修复隐藏功能在重启后失效的。 ([5cc0c6e](https://github.com/yiktllw/XCMusic/commit/5cc0c6e5c7575b70f66ea340a6162a5f11a0e936))
+* 拖拽排序: 修复触发时机异常的bug ([f16baa5](https://github.com/yiktllw/XCMusic/commit/f16baa541f580655474912b693d034093390378c))
+* 新歌词：修复第一行歌词不触发的问题 ([b017818](https://github.com/yiktllw/XCMusic/commit/b01781885c518fb3554221b845de00bffe2c11ad))
+* 修复拖拽排序bug ([9b36854](https://github.com/yiktllw/XCMusic/commit/9b368547c7f0925ae8f20fa04e61cbb5937468a1))
+* 修复用户下拉菜单布局错误 ([5db88dd](https://github.com/yiktllw/XCMusic/commit/5db88dd946140ec91a9e60adeca35ac418188dde))
+* 修复重启应用后播放列表被打乱的bug（列表随机模式） ([be281cd](https://github.com/yiktllw/XCMusic/commit/be281cd465776e49de80e430694fa542094b241a))
+
 ## [0.3.0](https://github.com/yiktllw/XCMusic/compare/v0.2.8...v0.3.0) (2025-03-21)
 
 
