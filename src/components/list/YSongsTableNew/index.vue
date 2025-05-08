@@ -35,12 +35,13 @@
             </span>
             <YPlaying v-else />
           </div>
-          <img
-            class="song-img"
+          <div
+            class="song-img-container"
             :class="options.columns.index ? '' : 'no-index'"
-            :src="item._picUrl ?? undefined"
             v-if="options.columns.cover"
-          />
+          >
+            <img class="song-img" :src="item._picUrl ?? undefined" />
+          </div>
           <div class="song-info">
             <div
               class="song-name"
@@ -816,11 +817,15 @@ export default defineComponent({
         }
       }
 
-      .song-img {
+      .song-img-container {
         width: 40px;
         height: 40px;
-        border-radius: 5px;
         margin-right: 15px;
+        .song-img {
+          width: 40px;
+          height: 40px;
+          border-radius: 5px;
+        }
       }
 
       .no-index {
