@@ -501,7 +501,7 @@ export default defineComponent({
             Array.from(this.songsTable?.selected),
           );
           break;
-        case "delete":
+        case "delete": {
           if (
             this.type !== "playlist" ||
             !this.userCreateIds.includes(this.playlistId)
@@ -542,6 +542,7 @@ export default defineComponent({
             callback: confirmCallback,
           });
           break;
+        }
       }
     },
     addToPlaylist() {

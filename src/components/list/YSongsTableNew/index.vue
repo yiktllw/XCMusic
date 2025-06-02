@@ -404,6 +404,7 @@ export default defineComponent({
         this.downloadedSongIds = this.download.downloadedSongIds.slice();
       },
     )?.();
+    this.computeReels();
   },
   beforeUnmount() {
     this.download.subscriber.offAll(this.options.id_for_subscribe);
