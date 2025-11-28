@@ -239,7 +239,8 @@
     "select_all": "全选",
     "songs": "歌曲",
     "subscribe": "收藏",
-    "subscribed": "已收藏"
+    "subscribed": "已收藏",
+    "total_duration": "总时长"
   },
   "playui": {
     "lyric": "歌词",

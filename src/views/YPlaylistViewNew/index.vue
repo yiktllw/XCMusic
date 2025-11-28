@@ -133,12 +133,19 @@
             </template>
           </div>
           <div class="publish-time font-color-high">
-            {{ playlistDetail.createTime }}
-            {{
-              type === "playlist"
-                ? $t("playlist_view.created_time")
-                : $t("playlist_view.published_time")
-            }}
+            <span>
+              {{ playlistDetail.createTime }}
+              {{
+                type === "playlist"
+                  ? $t("playlist_view.created_time")
+                  : $t("playlist_view.published_time")
+              }}
+            </span>
+            <span class="separator">|</span>
+            <span class="total-duration">
+              {{ $t("playlist_view.total_duration") }}:
+              {{ formatTotalDuration() }}
+            </span>
           </div>
           <div class="buttons">
             <button :tabindex="-1" class="play-btn btn" @click="playAll">
@@ -593,6 +600,26 @@ export default defineComponent({
     handleSearch(input: string) {
       this.searchQuery = input;
     },
+    formatTotalDuration(): string {
+      const totalMs = this.playlistDetail.tracks.reduce(
+        (sum, track) => sum + (track.dt || 0),
+        0,
+      );
+      const totalSeconds = Math.floor(totalMs / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      const pad = (num: number) => (num < 10 ? `0${num}` : num);
+
+      if (hours > 0) {
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      } else if (minutes > 0) {
+        return `${pad(minutes)}:${pad(seconds)}`;
+      } else {
+        return `${pad(seconds)}`;
+      }
+    },
     updateTracks() {
       if (!this.searchQuery) {
         this.songsTableProps.songs = this.playlistDetail.tracks.slice();
@@ -775,6 +802,12 @@ export default defineComponent({
       .publish-time {
         margin-top: 12px;
         font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        .separator {
+          opacity: 0.65;
+        }
       }
       .buttons {
         display: flex;

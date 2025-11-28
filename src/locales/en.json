@@ -239,7 +239,8 @@
     "select_all": "Select All",
     "songs": "Songs",
     "subscribe": "Subscribe",
-    "subscribed": "Subscribed"
+    "subscribed": "Subscribed",
+    "total_duration": "Total Duration"
   },
   "playui": {
     "lyric": "Lyrics",
