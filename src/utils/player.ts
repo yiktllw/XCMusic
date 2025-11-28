@@ -119,6 +119,11 @@ export class Player {
     this.initAudioContext();
     this._audio.crossOrigin = "anonymous";
 
+    // 监听音频设备变化事件
+    navigator.mediaDevices?.addEventListener("devicechange", () => {
+      this.handleDeviceChange();
+    });
+
     // 点歌功能
     if (window.electron?.isElectron) {
       this.songPicker = markRaw(new SongPicker());
@@ -635,6 +640,110 @@ export class Player {
 
       this.setDevice(getStorage(StorageKey.Setting_Play_Device) ?? "default");
     }
+  }
+  /**
+   * 销毁 AudioContext 和相关节点
+   */
+  destroyAudioContext() {
+    if (this._audioContext) {
+      try {
+        // 断开所有节点连接
+        if (this._analyserNode) {
+          this._analyserNode.disconnect();
+        }
+        if (this._gainNode) {
+          this._gainNode.disconnect();
+        }
+        if (this._biquads.length > 0) {
+          this._biquads.forEach((biquad) => {
+            try {
+              biquad.disconnect();
+            } catch (error) {
+              console.error("Error disconnecting biquad filter:", error);
+            }
+          });
+          this._biquads = [];
+        }
+        if (this._sourceNode) {
+          this._sourceNode.disconnect();
+        }
+        if (this._destination) {
+          this._destination.disconnect();
+        }
+        // 停止输出音频
+        if (this._outputAudio) {
+          this._outputAudio.pause();
+          this._outputAudio.srcObject = null;
+        }
+        // 关闭 AudioContext
+        if (this._audioContext.state !== "closed") {
+          this._audioContext.close();
+        }
+      } catch (error) {
+        console.error("Error destroying AudioContext:", error);
+      } finally {
+        // 重置所有引用
+        this._audioContext = null;
+        this._sourceNode = undefined;
+        this._destination = undefined;
+        this._analyserNode = undefined;
+        this._gainNode = null;
+      }
+    }
+  }
+  /**
+   * 重建音频系统 - 创建新的 Audio 元素和 AudioContext
+   */
+  rebuildAudioSystem() {
+    // 保存当前播放状态
+    const wasPlaying = this.playState === "play";
+    const currentTime = this._audio.currentTime;
+    const currentSrc = this._audio.src;
+    const currentVolume = this._audio.volume;
+
+    // 停止时间更新定时器
+    if (this._updateTime) {
+      clearTimeout(this._updateTime);
+      this._updateTime = null;
+    }
+
+    // 销毁旧的 AudioContext
+    this.destroyAudioContext();
+
+    // 创建新的 Audio 元素
+    this._audio = new Audio();
+    this._audio.crossOrigin = "anonymous";
+    this._audio.onerror = () => this.handleAudioError();
+    this._audio.volume = currentVolume;
+
+    // 创建新的输出 Audio 元素
+    this._outputAudio = new Audio();
+
+    // 重新初始化 AudioContext
+    this.initAudioContext();
+
+    // 恢复播放状态
+    if (currentSrc) {
+      this._audio.src = currentSrc;
+      this._audio.currentTime = currentTime;
+      this._audio.onended = () => this.next();
+
+      if (wasPlaying) {
+        this._audio.play().catch((error) => {
+          console.error("Error resuming playback after device change:", error);
+        });
+      }
+
+      // 重新启动时间更新
+      this.updateTime();
+    }
+  }
+  /**
+   * 处理音频设备变化
+   */
+  handleDeviceChange() {
+    // 重建整个音频系统以支持新设备
+    this.rebuildAudioSystem();
   }
   /**
    * 设置均衡器
