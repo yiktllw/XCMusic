@@ -8,9 +8,9 @@
     <p align="center">
         第三方网易云音乐客户端 / GUI of Netease Cloud Music
         <br />
-        <a href="https://xc-music.vercel.app">访问Demo</a>
+        <a href="https://xc-music.vercel.app">访问 Demo</a>
         ·
-        <a href="https://github.com/yiktllw/XCMusic/issues">报告Bug</a>
+        <a href="https://github.com/yiktllw/XCMusic/issues">报告 Bug</a>
         ·
         <a href="https://github.com/yiktllw/XCMusic/issues">提出新特性</a>
         <br/>
@@ -39,9 +39,9 @@
 
 ## 特性
 
-- 使用Vue3+Electron开发
+- 使用 Vue3 + Electron 开发
 - 出于安全考虑，只支持手机扫码登录
-- 与网易云音乐3.0类似的布局
+- 与网易云音乐 3.0 类似的布局
 - 支持下载音乐、播放本地音乐
 - 支持多种主题、自定义主题
 - 支持查看歌词、回忆坐标、音乐百科
@@ -64,7 +64,7 @@
 - [ ] 侧边栏
   - [ ] 首页推荐
 - [ ] 歌单
-  - [x] 多选操作,使用ctrl,shift完成多选,拖拽排序
+  - [x] 多选操作,使用 ctrl, shift 完成多选,拖拽排序
   - [x] 批量下载云盘歌曲
   - [ ] 处理无版权歌曲
   - [x] 收藏歌单，收藏专辑
@@ -79,22 +79,22 @@
   - [ ] 完善系统托盘功能
 - [ ] 工具
   - [x] 设置代理
-  - [ ] 集成unblock
+  - [ ] 集成 unblock
 - [ ] 插件系统
 
 **[⬆ 回到目录](#目录)**
 
 ## 配置开发环境
 
-详情请见[DEVELOPMENT.md](/docs/DEVELOPMENT.md)
+详情请见 [DEVELOPMENT.md](/docs/DEVELOPMENT.md)
 
 **[⬆ 回到目录](#目录)**
 
 ## 部署到vercel
 
-1. fork此项目
+1. fork 此项目
 2. 部署[yiktllw/NeteaseCloudMusicApi](https://github.com/yiktllw/NeteaseCloudMusicApi)
-3. 新建vercel.json文件，写入:
+3. 新建 vercel.json 文件，写入:
 
 ```json
 {
@@ -110,22 +110,23 @@
 }
 ```
 
-4. 导入到vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的api地址。
+4. 导入到 vercel，新增一个环境变量: `VUE_APP_API`，值为第二步部署的 api 地址。
+5. 推荐使用 Nodejs 20
 
 **[⬆ 回到目录](#目录)**
 
 ## 灵感来源
 
-- 网易云音乐API: [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- 网易云音乐 API: [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 - [YesPlayMusic](https://github.com/qier222/YesPlayMusic)
-- [网易云音乐3.0](https://music.163.com)
-- 部分主题配色来源于vscode对应的主题
+- [网易云音乐 3.0](https://music.163.com)
+- 部分主题配色来源于 vscode 对应的主题
 
 **[⬆ 回到目录](#目录)**
 
 ## 关于
 
-4. XC系列01: XCMusic
+4. XC 系列 01: XCMusic
 <div/>
 
 3. Für "Clara Josephine Schumann".
