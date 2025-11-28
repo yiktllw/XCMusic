@@ -4,7 +4,7 @@
  *---------------------------------------------------------------*/
 
 import { ipcMain, BrowserWindow, dialog, app } from "electron";
-import { Download } from "@/utils/download";
+import { Download, DownloadManager } from "@/utils/download";
 import { scanMusicDirectory } from "@/utils/localTracks";
 import { type ITrack } from "@/utils/tracks";
 import * as fs from "fs";
@@ -143,6 +143,7 @@ ipcMain.handle("open-json", async (): Promise<null | string> => {
   }
 });
 
+// 保持旧的 API 以保持向后兼容
 ipcMain.on(
   "download-song",
   async (
@@ -171,6 +172,53 @@ ipcMain.on(
     }
   },
 );
+
+// 新的多线程下载 API
+ipcMain.on(
+  "download-song-v2",
+  async (
+    event,
+    taskId: string,
+    songUrl: string,
+    track: ITrack,
+    downloadDir: string,
+    lrc?: string,
+  ) => {
+    const win = getCurrentWindow();
+    const manager = DownloadManager.getInstance();
+    manager.setWindow(win);
+
+    try {
+      manager.addTask(taskId, track, songUrl, downloadDir, lrc);
+    } catch (err: unknown) {
+      console.error("Error adding download task:", err);
+    }
+  },
+);
+
+// 暂停下载
+ipcMain.on("download-pause", (event, taskId: string) => {
+  const manager = DownloadManager.getInstance();
+  manager.pauseTask(taskId);
+});
+
+// 继续下载
+ipcMain.on("download-resume", (event, taskId: string) => {
+  const manager = DownloadManager.getInstance();
+  manager.resumeTask(taskId);
+});
+
+// 取消下载
+ipcMain.on("download-cancel", (event, taskId: string) => {
+  const manager = DownloadManager.getInstance();
+  manager.cancelTask(taskId);
+});
+
+// 获取所有下载任务
+ipcMain.handle("get-download-tasks", () => {
+  const manager = DownloadManager.getInstance();
+  return manager.getAllTasks();
+});
 
 ipcMain.on("open-at-login", (event, autoLaunch) => {
   app.setLoginItemSettings({

@@ -22,10 +22,21 @@ export interface IDownloadedSong {
   path: string;
 }
 
+export interface IDownloadTaskRenderer {
+  id: string;
+  track: ITrack;
+  status: "pending" | "downloading" | "paused" | "done" | "error" | "cancelled";
+  percent: number;
+  downloadedBytes?: number;
+  totalBytes?: number;
+  error?: string;
+}
+
 type DownloadEventCallbacks = {
   [DownloadEvents.Complete]: (track?: ITrack) => void;
   [DownloadEvents.Doing]: () => void;
   [DownloadEvents.List]: () => void;
+  [DownloadEvents.TaskUpdate]: (task: IDownloadTaskRenderer) => void;
 };
 
 export class Download {
@@ -36,6 +47,10 @@ export class Download {
    * 正在下载的歌曲列表
    */
   downloading: IDownloadProgress[] = [];
+  /**
+   * 所有下载任务（包括完成、失败等）
+   */
+  downloadTasks: Map<string, IDownloadTaskRenderer> = new Map();
   /**
    * 预订了下载任务的歌曲列表
    */
@@ -78,14 +93,47 @@ export class Download {
       );
       window.electron.ipcRenderer.on(
         "download-progress",
-        (data: IDownloadProgress) => {
+        (data: { id: string } & IDownloadProgress) => {
+          const task: IDownloadTaskRenderer = {
+            id: data.id,
+            track: data.track,
+            status: data.status,
+            percent: data.percent,
+            downloadedBytes: data.downloadedBytes,
+            totalBytes: data.totalBytes,
+          };
+
+          this.downloadTasks.set(data.id, task);
+
+          // 发送任务更新事件
+          this.subscriber.exec(DownloadEvents.TaskUpdate, task);
+
+          // 更新 downloading 数组以保持向后兼容
           const index = this.downloading.findIndex(
             (item) => item.track.id === data.track.id,
           );
           if (index !== -1) {
             this.downloading[index] = data;
+          } else if (
+            data.status === "downloading" ||
+            data.status === "pending"
+          ) {
+            this.downloading.push(data);
           }
+
+          // 从 downloading 中移除完成的任务
+          if (
+            data.status === "done" ||
+            data.status === "error" ||
+            data.status === "cancelled"
+          ) {
+            this.downloading = this.downloading.filter(
+              (item) => item.track.id !== data.track.id,
+            );
+          }
+
           this.subscriber.exec(DownloadEvents.Doing);
+          this.subscriber.exec(DownloadEvents.TaskUpdate, task);
         },
       );
       this.subscriber.on(
@@ -115,30 +163,44 @@ export class Download {
   /**
    * 添加单曲下载任务
    */
-  async add(url: string, track: ITrack, downloadDir: string) {
+  async add(url: string, track: ITrack, downloadDir: string): Promise<string> {
     if (!window.electron?.isElectron) {
       console.error("Not in desktop environment");
-      return;
+      return "";
     }
-    if (this.downloading.some((item) => item.track.id === track.id)) {
-      console.error("Song is already downloading: ", { ...track });
-      return;
-    }
+
+    const taskId = `${track.id}_${Date.now()}`;
 
     const lrc = await Lyrics.getLrcStr(track.id);
 
     window.electron.ipcRenderer.send(
-      "download-song",
+      "download-song-v2",
+      toRaw(taskId),
       toRaw(url),
       toRaw(track),
       toRaw(downloadDir),
       toRaw(lrc),
     );
+
+    // 初始化任务状态
+    const task: IDownloadTaskRenderer = {
+      id: taskId,
+      track: track,
+      status: "pending",
+      percent: 0,
+    };
+
+    this.downloadTasks.set(taskId, task);
     this.downloading.push({
       track: track,
       percent: 0,
+      status: "pending",
     });
+
     this.subscriber.exec(DownloadEvents.Doing);
+    this.subscriber.exec(DownloadEvents.TaskUpdate, task);
+
+    return taskId;
   }
 
   /**
@@ -222,6 +284,75 @@ export class Download {
     });
     await Promise.all(pushRequests);
     this.subscriber.exec(DownloadEvents.Complete);
+  }
+
+  /**
+   * 暂停下载任务
+   */
+  pauseTask(taskId: string): boolean {
+    if (!window.electron?.isElectron) return false;
+
+    window.electron.ipcRenderer.send("download-pause", taskId);
+    return true;
+  }
+
+  /**
+   * 继续下载任务
+   */
+  resumeTask(taskId: string): boolean {
+    if (!window.electron?.isElectron) return false;
+
+    window.electron.ipcRenderer.send("download-resume", taskId);
+    return true;
+  }
+
+  /**
+   * 取消下载任务
+   */
+  cancelTask(taskId: string): boolean {
+    if (!window.electron?.isElectron) return false;
+
+    window.electron.ipcRenderer.send("download-cancel", taskId);
+
+    // 立即从本地状态中移除
+    const task = this.downloadTasks.get(taskId);
+    if (task) {
+      task.status = "cancelled";
+      this.downloadTasks.delete(taskId);
+
+      // 从 downloading 数组中移除
+      this.downloading = this.downloading.filter(
+        (item) => item.track.id !== task.track.id,
+      );
+
+      this.subscriber.exec(DownloadEvents.Doing);
+      this.subscriber.exec(DownloadEvents.TaskUpdate, task);
+    }
+
+    return true;
+  }
+
+  /**
+   * 获取下载任务
+   */
+  getTask(taskId: string): IDownloadTaskRenderer | undefined {
+    return this.downloadTasks.get(taskId);
+  }
+
+  /**
+   * 获取所有下载任务
+   */
+  getAllTasks(): IDownloadTaskRenderer[] {
+    return Array.from(this.downloadTasks.values());
+  }
+
+  /**
+   * 获取正在下载的任务
+   */
+  getActiveTasks(): IDownloadTaskRenderer[] {
+    return this.getAllTasks().filter(
+      (task) => task.status === "downloading" || task.status === "pending",
+    );
   }
 
   /**

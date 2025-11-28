@@ -1,6 +1,7 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
+import YDownloadManager from "@/components/UI/YDownloadManager.vue";
 import { type ITrack, TrackIds } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { type ITrackWithProgress } from "@/dual/YLocalSongsView";
@@ -12,6 +13,7 @@ export default defineComponent({
   components: {
     YSongsTable,
     YSongsTableSkeleton,
+    YDownloadManager,
   },
   setup() {
     const store = useStore();
@@ -25,6 +27,7 @@ export default defineComponent({
       tracks: [] as ITrack[],
       downloading: [] as ITrackWithProgress[],
       downloadingKey: 0,
+      showManagerContent: true,
     };
   },
   methods: {
@@ -34,6 +37,9 @@ export default defineComponent({
       await temp.initData();
       this.tracks = temp.tracks;
       this.loading = false;
+    },
+    toggleManager() {
+      this.showManagerContent = !this.showManagerContent;
     },
   },
   mounted() {

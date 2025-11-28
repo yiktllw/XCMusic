@@ -475,5 +475,30 @@
   "window": {
     "close": "Close",
     "title": "Title"
+  },
+  "download": {
+    "manager": {
+      "title": "Download Manager",
+      "active": "Active",
+      "completed": "Completed",
+      "total": "Total",
+      "pause": "Pause",
+      "resume": "Resume",
+      "cancel": "Cancel",
+      "retry": "Retry",
+      "pauseAll": "Pause All",
+      "resumeAll": "Resume All",
+      "cancelAll": "Cancel All",
+      "toggle": "Toggle Display",
+      "empty": "No download tasks"
+    },
+    "status": {
+      "pending": "Pending",
+      "downloading": "Downloading",
+      "paused": "Paused",
+      "done": "Completed",
+      "error": "Failed",
+      "cancelled": "Cancelled"
+    }
   }
 }

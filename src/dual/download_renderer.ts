@@ -11,4 +11,6 @@ export enum DownloadEvents {
   Doing = "Doing",
   /** 下载列表变动 */
   List = "List",
+  /** 任务状态更新 */
+  TaskUpdate = "TaskUpdate",
 }

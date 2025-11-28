@@ -1,25 +1,21 @@
 <template>
   <!-- 下载管理界面 -->
   <div class="main">
-    <div class="title" v-if="downloading.length > 0">
-      {{ $t("localsongs.downloading") }}
-    </div>
-    <div class="downloading font-color-high" v-if="downloading.length > 0">
-      <div v-for="item in downloading" class="downloading-item">
-        <div class="downloading-item-info">
-          <div class="downloading-item-info-title">
-            {{ item.track.name }}
-          </div>
-          <div class="downloading-item-info-progress">{{ item.percent }}%</div>
-        </div>
-        <div class="downloading-item-progress">
-          <div
-            class="downloading-item-progress-bar"
-            :style="{ width: item.percent + '%' }"
-          ></div>
-        </div>
+    <!-- 下载管理器 -->
+    <div class="manager-section">
+      <div class="section-header">
+        <h2 class="title">{{ $t("download.manager.title") }}</h2>
+        <button
+          @click="toggleManager"
+          class="toggle-btn"
+          :title="$t('download.manager.toggle')"
+        >
+          {{ showManagerContent ? "▼" : "▶" }}
+        </button>
       </div>
+      <YDownloadManager v-show="showManagerContent" />
     </div>
+
     <div class="title">
       {{ $t("localsongs.downloaded") }}
     </div>
@@ -44,6 +40,41 @@
   text-align: left;
   padding: 10px 20px 20px 20px;
 
+  .manager-section {
+    margin-bottom: 24px;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .title {
+        width: inherit;
+        color: var(--font-color-main);
+        text-align: left;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 20px 30px;
+      }
+
+      .toggle-btn {
+        background: none;
+        border: 1px solid rgba(var(--foreground-color-rgb), 0.2);
+        color: var(--font-color-main);
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-right: 30px;
+
+        &:hover {
+          background: rgba(var(--foreground-color-rgb), 0.1);
+        }
+      }
+    }
+  }
+
   .title {
     width: inherit;
     color: var(--font-color-main);
@@ -51,47 +82,6 @@
     font-size: 22px;
     font-weight: bold;
     margin: 20px 30px;
-  }
-
-  .downloading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: left;
-    width: calc(100% - 20px);
-    padding: 10px;
-
-    .downloading-item {
-      width: inherit;
-      padding: 5px 0;
-      display: flex;
-      border-radius: 10px;
-
-      &:hover {
-        background-color: rgba(var(--foreground-color-rgb), 0.1);
-      }
-
-      .downloading-item-info {
-        width: calc(100% - 10px);
-        max-width: calc(100% - 30px);
-        padding: 5px 15px;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-
-        .downloading-item-info-title {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: calc(100% - 100px);
-        }
-
-        .downloading-item-info-progress {
-          width: 50px;
-          text-align: center;
-        }
-      }
-    }
   }
 }
 </style>
