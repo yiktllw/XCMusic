@@ -230,15 +230,6 @@ export default defineComponent({
             }
           }
         }
-
-        // 添加底部反射效果
-        canvasCtx.fillStyle = "rgba(160, 220, 200, 0.08)";
-        canvasCtx.fillRect(
-          0,
-          canvas.clientHeight * 0.97,
-          canvas.clientWidth,
-          canvas.clientHeight * 0.03,
-        );
       };
 
       draw();
