@@ -514,7 +514,7 @@
   .spectrum-canvas {
     position: absolute;
     width: 100%;
-    height: 100px;
+    height: 150px;
     bottom: 89px;
     pointer-events: none;
     mask-image: linear-gradient(

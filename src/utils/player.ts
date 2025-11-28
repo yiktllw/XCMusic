@@ -630,7 +630,8 @@ export class Player {
       if (getStorage(StorageKey.Setting_PlayUI_Spectrum)) {
         // 创建 AnalyserNode
         this._analyserNode = this._audioContext.createAnalyser();
-        this._analyserNode.fftSize = 1024; // 设置 FFT 大小
+        this._analyserNode.fftSize = 2048; // 设置 FFT 大小，提高频率分辨率
+        this._analyserNode.smoothingTimeConstant = 0.8; // 添加平滑效果
 
         this._gainNode.connect(this._analyserNode);
       }
