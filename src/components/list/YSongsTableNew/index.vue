@@ -900,7 +900,7 @@ export default defineComponent({
       }
 
       .song-like {
-        width: 70px;
+        width: 50px;
         display: flex;
         align-items: center;
         justify-content: center;

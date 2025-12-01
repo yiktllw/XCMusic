@@ -1000,7 +1000,7 @@
           font-size: 14px;
           flex-direction: row;
           padding: 0px 25px 10px 0px;
-          margin-right: 10px;
+          margin-right: -10px;
           margin-left: 10px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           justify-content: space-between;
