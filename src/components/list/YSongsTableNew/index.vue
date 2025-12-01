@@ -285,10 +285,16 @@
     >
       <div class="reel">
         <div class="reel-title">
-          {{
-            options.reelOptions.reels[first_tracks.indexOf(index)]
-              .showreelName ?? $t("songs_table.unknown_name")
-          }}
+          <span class="reel-name">
+            {{
+              options.reelOptions.reels[first_tracks.indexOf(index)]
+                .showreelName ?? $t("songs_table.unknown_name")
+            }}
+          </span>
+          <span class="reel-duration font-color-standard">
+            {{ $t("playlist_view.total_duration") }}:
+            {{ getReelDuration(first_tracks.indexOf(index)) }}
+          </span>
         </div>
         <div
           class="reel-artists"
@@ -506,6 +512,23 @@ export default defineComponent({
       if (index !== -1) {
         (this.virtualScroll as any)?.scrollToIndex(index, noAnimation);
       }
+    },
+    getReelDuration(reelIndex: number): string {
+      const songs = this.options.songs;
+      const startSongIndex = this.first_tracks[reelIndex];
+      if (startSongIndex === undefined) return "";
+
+      let endSongIndex = this.first_tracks[reelIndex + 1];
+      if (endSongIndex === undefined) {
+        endSongIndex = songs.length;
+      }
+
+      let totalDuration = 0;
+      for (let i = startSongIndex; i < endSongIndex; i++) {
+        totalDuration += songs[i].dt;
+      }
+
+      return this.formatTime(totalDuration);
     },
     computeReels() {
       if (
@@ -989,9 +1012,25 @@ export default defineComponent({
 
   .reel-title {
     height: 29px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-wrap: nowrap;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 30px;
+
+    .reel-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 0px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .reel-duration {
+      font-size: 13px;
+      font-weight: normal;
+      flex-shrink: 0;
+    }
   }
   .reel-artists {
     height: 26px;
