@@ -527,14 +527,15 @@ export default defineComponent({
       const first_tracks = songs.filter((item) => item.songInReelIndex === 0);
 
       this.first_tracks = [];
-      this.slots = this.getDefaultSlot().slice();
+      const defaultSlots = this.getDefaultSlot().slice();
+      const reelSlots: SlotConfig[] = [];
 
       reels?.forEach((reel, index) => {
         const song = first_tracks[index];
         const slotIndexInSongs = songs.indexOf(song);
 
         this.first_tracks.push(slotIndexInSongs);
-        this.slots.push({
+        reelSlots.push({
           type: "index",
           index: slotIndexInSongs,
           height:
@@ -543,6 +544,12 @@ export default defineComponent({
             ARTISTS_HEIGHT * reel.otherArtists.length,
         });
       });
+
+      this.slots = [
+        defaultSlots[0], // prepend
+        ...reelSlots,
+        defaultSlots[1], // append
+      ];
     },
     handleSort(key: "info" | "album" | "duration" | "popularity") {
       const ori_position = this.sort[key].position;
@@ -706,6 +713,7 @@ export default defineComponent({
     },
     updatePrepend() {
       this.slots = this.getDefaultSlot().slice();
+      this.computeReels();
     },
   },
 });

@@ -332,12 +332,21 @@ export default defineComponent({
     },
     isMultiSelect(val) {
       const originalSongs = this.songsTableProps.songs;
-      if (val) this.songsTableProps = getSongsTableOptions("YMultiSelectView");
-      else
-        this.songsTableProps = getSongsTableOptions(
-          `YPlaylistView-${this.type}`,
-        );
-      this.songsTableProps.songs = originalSongs;
+      if (val) {
+        this.songsTableProps = getSongsTableOptions("YMultiSelectView");
+        this.songsTableProps.songs = originalSongs;
+      } else {
+        const newOptions = getSongsTableOptions(`YPlaylistView-${this.type}`);
+        newOptions.songs = originalSongs;
+        // 恢复 album 的 reelOptions
+        if (this.type === "album" && this.playlistDetail.alReels?.length > 0) {
+          newOptions.reelOptions = {
+            showReels: true,
+            reels: this.playlistDetail.alReels,
+          };
+        }
+        this.songsTableProps = newOptions;
+      }
     },
   },
   setup() {
