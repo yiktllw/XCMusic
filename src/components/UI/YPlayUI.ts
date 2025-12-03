@@ -237,7 +237,7 @@ export default defineComponent({
       });
     },
     async getWiki() {
-      if (!this.track.id || isLocal(this.track.id)) return;
+      if (!this.track?.id || isLocal(this.track.id)) return;
       await Song.getWiki(this.track.id as number)
         .then((res) => {
           if (!res) return;
@@ -258,7 +258,7 @@ export default defineComponent({
       }
     },
     async getSheets() {
-      if (!this.track.id || isLocal(this.track.id)) return;
+      if (!this.track?.id || isLocal(this.track.id)) return;
       await Song.getSheets(this.track.id as number)
         .then((res) => {
           if (!res) return;
@@ -296,7 +296,8 @@ export default defineComponent({
       this.track = this.player.currentTrack;
     }
     this.player.subscriber.on("YPlayUI", PlayerEvents.track, async () => {
-      this.track = this.player.currentTrack!;
+      if (!this.player.currentTrack) return;
+      this.track = this.player.currentTrack;
       let requests = [
         this.setBackgroundColor(),
         this.getWiki(),

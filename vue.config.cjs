@@ -5,6 +5,20 @@ const webpack = require("webpack"); // 引入 webpack 以使用 DefinePlugin 插
 module.exports = defineConfig({
   transpileDependencies: true,
   outputDir: "dist_electron",
+  pages: {
+    index: {
+      entry: "src/main.ts",
+      template: "public/index.html",
+      filename: "index.html",
+      title: "XCMusic",
+    },
+    player: {
+      entry: "src/background_player/main.ts",
+      template: "public/index.html",
+      filename: "player.html",
+      title: "XCMusic Player",
+    },
+  },
   pluginOptions: {
     electronBuilder: {
       preload: "preload.js",

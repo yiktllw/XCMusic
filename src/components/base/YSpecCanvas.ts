@@ -12,14 +12,18 @@ export default defineComponent({
       canvas,
     };
   },
-  beforeUnmount() {
-    this.canvas = null;
-  },
   data() {
     return {
       dataArray: null as null | Uint8Array,
       showSpectrum: true,
+      animationFrameId: null as number | null,
     };
+  },
+  beforeUnmount() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    this.canvas = null;
   },
   mounted() {
     this.showSpectrum = this.setting.playui.spectrum;
@@ -77,7 +81,9 @@ export default defineComponent({
       };
 
       const draw = () => {
-        requestAnimationFrame(draw);
+        if (!this.canvas) return; // Stop loop if unmounted
+        this.animationFrameId = requestAnimationFrame(draw);
+
         if (this.dataArray && this.player._analyserNode) {
           this.player._analyserNode.getByteFrequencyData(this.dataArray as any);
         }

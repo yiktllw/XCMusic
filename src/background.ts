@@ -76,6 +76,7 @@ protocol.registerSchemesAsPrivileged([
 // app.commandLine.appendSwitch("--inspect=9229");
 
 let win: BrowserWindow | null = null;
+let playerWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
 // 检查是否已经有实例在运行
@@ -84,6 +85,25 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   // 如果已经有实例在运行，则退出新的实例
   app.quit();
+}
+
+async function createPlayerWindow() {
+  playerWin = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
+      contextIsolation: true,
+      webSecurity: false,
+      backgroundThrottling: false,
+    },
+  });
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    await playerWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + "player.html");
+  } else {
+    playerWin.loadURL("app://./player.html");
+  }
 }
 
 async function createWindow() {
@@ -106,6 +126,7 @@ async function createWindow() {
     frame: false,
     icon: path.join(__dirname, "../src/assets/icons/icon.png"),
   });
+
   win.on("close", () => {
     if (!win) return;
     const bounds = win.getBounds();
@@ -155,9 +176,42 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  let requests = [createWindow(), startNeteaseMusicApi()];
-  await Promise.all(requests).catch((err) => {
-    console.error(err);
+  // IPC Forwarding
+  ipcMain.on("player-command", (event, { command, args }) => {
+    if (playerWin) {
+      playerWin.webContents.send("player-command", command, args);
+    }
+  });
+
+  ipcMain.on("player-event", (event, { event: eventName, data }) => {
+    if (win) {
+      win.webContents.send("player-event", { event: eventName, data });
+    }
+  });
+
+  ipcMain.on("player-spectrum", (event, data) => {
+    if (win) {
+      win.webContents.send("player-spectrum", data);
+    }
+  });
+
+  ipcMain.on("player-error", (event, error) => {
+    if (win) {
+      win.webContents.send("player-error", error);
+    }
+  });
+
+  ipcMain.on("download-delete", (event, id) => {
+    if (win) {
+      win.webContents.send("download-delete", id);
+    }
+  });
+
+  ipcMain.on("player-ready", () => {
+    console.log("Player process ready");
+    if (win) {
+      win.webContents.send("player-ready");
+    }
   });
 
   // 监听缩放比例消息
@@ -165,6 +219,11 @@ app.on("ready", async () => {
     if (win) {
       win.webContents.setZoomFactor(zoomLevel);
     }
+  });
+
+  let requests = [createWindow(), createPlayerWindow(), startNeteaseMusicApi()];
+  await Promise.all(requests).catch((err) => {
+    console.error(err);
   });
 
   if (win) {
