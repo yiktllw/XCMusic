@@ -70,11 +70,12 @@ export default defineComponent({
         selected_fonts: IEscapedFonts,
       ) => void,
       playlist_to_edit: null as IPlaylist | null,
-      msg: {
-        type: "none",
-        message: "",
-      },
-      msgKey: 0,
+      messages: [] as Array<{
+        id: number;
+        type: string;
+        message: string;
+      }>,
+      msgIdCounter: 0,
       showPlayUI: false,
     };
   },
@@ -319,8 +320,10 @@ export default defineComponent({
         this.showAddToPlaylist = true;
         this.showPreventContainer = true;
       } else if (event.data.type === "message-show") {
-        this.msg = event.data.data;
-        this.msgKey++;
+        this.messages.push({
+          id: this.msgIdCounter++,
+          ...event.data.data,
+        });
       } else if (event.data.type === "open-info-panel") {
         if (event.data.data) {
           this.trackOfInfo = JSON.parse(event.data.data);
@@ -621,6 +624,12 @@ export default defineComponent({
     handleFontsSelectWindowEnsure(fonts: IEscapedFonts) {
       this.fontsSelectWindowCallback(fonts);
       this.handleNewWindowState_fontsSelectWindow(false);
+    },
+    removeMessage(id: number) {
+      const index = this.messages.findIndex((m) => m.id === id);
+      if (index !== -1) {
+        this.messages.splice(index, 1);
+      }
     },
   },
 });

@@ -3,6 +3,7 @@
   <div class="msg theme-dark">
     <transition
       name="slide-fade"
+      @after-leave="$emit('close')"
       v-bind:style="{
         '--slide-transform': slideTransform,
         '--animation-time': _animationTime,

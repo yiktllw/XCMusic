@@ -2,6 +2,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "YMessage",
+  emits: ["close"],
   props: {
     type: {
       type: String,

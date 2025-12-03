@@ -98,13 +98,13 @@
       />
     </div>
     <div class="message-container">
-      <div></div>
-      <div class="msg">
+      <div class="msg-list">
         <YMessage
-          :message="msg.message"
-          :key="msgKey"
-          :type="msg.type"
-          v-if="msg.type !== 'none'"
+          v-for="message in messages"
+          :key="message.id"
+          :message="message.message"
+          :type="message.type"
+          @close="removeMessage(message.id)"
         />
       </div>
     </div>
@@ -224,18 +224,20 @@
 
   .message-container {
     top: 80px;
-    width: calc(100vw - 20px);
-    height: 0px;
+    right: 20px;
     position: absolute;
     display: flex;
-    background-color: transparent;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-end;
     z-index: 1000;
+    pointer-events: none;
 
-    .msg {
-      position: relative;
-      align-items: end;
-      justify-content: end;
+    .msg-list {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: auto;
     }
   }
 }
