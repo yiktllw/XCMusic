@@ -77,6 +77,9 @@ if (ipcRenderer) {
         case "setVolumeLeveling":
           player.volumeLeveling = args;
           break;
+        case "toggleSpectrum":
+          player.toggleSpectrum(args);
+          break;
         case "playAll":
           player.playAll(args);
           break;

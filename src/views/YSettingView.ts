@@ -199,9 +199,7 @@ export default defineComponent({
       this.spectrum = bool;
       if (this.setting.playui.spectrum !== bool) {
         this.setting.playui.spectrum = this.spectrum;
-        if (bool) {
-          Message.post("info", "setting_view.work_after_reload_window", true);
-        }
+        this.player.toggleSpectrum(bool);
       }
     },
     setAllowConsecutiveAlbums(bool: boolean) {

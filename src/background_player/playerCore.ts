@@ -636,6 +636,29 @@ export class Player {
     return this._spectrumBuffer;
   }
 
+  toggleSpectrum(enabled: boolean) {
+    if (enabled) {
+      if (this._analyserNode) return;
+      if (!this._audioContext || !this._gainNode) return;
+
+      this._analyserNode = this._audioContext.createAnalyser();
+      this._analyserNode.fftSize = 2048;
+      this._analyserNode.smoothingTimeConstant = 0.8;
+      this._gainNode.connect(this._analyserNode);
+    } else {
+      if (!this._analyserNode) return;
+      if (this._gainNode) {
+        try {
+          this._gainNode.disconnect(this._analyserNode);
+        } catch (e) {
+          console.error("Failed to disconnect analyser node", e);
+        }
+      }
+      this._analyserNode = undefined;
+      this._spectrumBuffer = null;
+    }
+  }
+
   /**
    * 销毁 AudioContext 和相关节点
    */

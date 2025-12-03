@@ -345,6 +345,10 @@ export class Player {
     this.sendCommand("setVolumeLeveling", value);
   }
 
+  toggleSpectrum(enabled: boolean) {
+    this.sendCommand("toggleSpectrum", enabled);
+  }
+
   get device() {
     return this._outputAudio.sinkId;
   } // This might be tricky to sync
