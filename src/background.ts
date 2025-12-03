@@ -214,6 +214,13 @@ app.on("ready", async () => {
     }
   });
 
+  // Redirect player console to main process in dev
+  if (isDevelopment) {
+    ipcMain.on("player-console-log", (event, args) => {
+      console.log("[Player Window]:", ...args);
+    });
+  }
+
   // 监听缩放比例消息
   ipcMain.on("zoom", (event, zoomLevel) => {
     if (win) {

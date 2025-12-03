@@ -6,6 +6,15 @@ console.log("Player process started");
 const player = new Player();
 const ipcRenderer = window.electron?.ipcRenderer;
 
+// Redirect console.log to main process in dev
+if (process.env.NODE_ENV === "development" && ipcRenderer) {
+  const originalLog = console.log;
+  console.log = (...args) => {
+    originalLog(...args);
+    ipcRenderer.send("player-console-log", args);
+  };
+}
+
 if (ipcRenderer) {
   // Report ready
   ipcRenderer.send("player-ready");
