@@ -85,7 +85,7 @@ export class Player {
     | "hires"
     | "jyeffect"
     | "sky"
-    | "jymaster" = "exhigh";
+    | "jymaster" = getStorage(StorageKey.Setting_Play_Quality) ?? "exhigh";
   /** 是否开启音量均衡功能 */
   _volume_leveling: boolean =
     getStorage(StorageKey.Setting_Play_VolumeLeveling) ?? true;

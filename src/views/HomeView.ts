@@ -130,15 +130,6 @@ export default defineComponent({
       this.fonts = fonts;
     };
     window.addEventListener("message", this.handleMessage);
-    this.player.quality = this.setting.play.quality as
-      | "jymaster"
-      | "sky"
-      | "jyeffect"
-      | "hires"
-      | "lossless"
-      | "exhigh"
-      | "standard"
-      | "higher";
     this.globalMsg.subscriber.on(
       "HomeView",
       GlobalMsgEvents.CreatePlaylist,
