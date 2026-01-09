@@ -28,7 +28,9 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.$router.push({ path: "/greeting" });
+    if (!window.location.hash.includes("desktop-lyrics")) {
+      this.$router.push({ path: "/greeting" });
+    }
     // 初始化缩放
     if (window.electron?.isElectron) {
       window.electron.ipcRenderer.send(

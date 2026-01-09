@@ -294,6 +294,9 @@ export default defineComponent({
         type: "open-equalizer",
       });
     },
+    toggleDesktopLyric() {
+      window.electron?.ipcRenderer.send("toggle-desktop-lyric");
+    },
     handleSubscribe() {
       window.postMessage({
         type: "subscribe-now-playing",

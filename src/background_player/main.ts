@@ -21,7 +21,6 @@ if (ipcRenderer) {
 
   // Listen for commands
   ipcRenderer.on("player-command", (command: string, args: any) => {
-    // console.log("Received command:", command);
     try {
       switch (command) {
         case "play":
@@ -114,6 +113,7 @@ if (ipcRenderer) {
             progress: player.progress,
             sampleRate: player.sampleRate,
           });
+          send(PlayerEvents.lyrics, player.lyrics);
           send(PlayerEvents.history, player.history);
           break;
         }
@@ -123,51 +123,97 @@ if (ipcRenderer) {
     }
   });
 
-  // Forward events
-  const events = Object.values(PlayerEvents);
-  events.forEach((event) => {
+  // Forward events (exclude timeSync as it's handled separately)
+  const eventsToForward = [
+    PlayerEvents.playState,
+    PlayerEvents.playlist,
+    PlayerEvents.track,
+    PlayerEvents.trackReady,
+    PlayerEvents.lyrics,
+    PlayerEvents.time,
+    PlayerEvents.quality,
+    PlayerEvents.volume,
+    PlayerEvents.history,
+    PlayerEvents.mode,
+    PlayerEvents.playerReady,
+    PlayerEvents.gain,
+  ];
+
+  eventsToForward.forEach((event) => {
     player.subscriber.on("ipc", event, () => {
-      let data: any = null;
-      switch (event) {
-        case PlayerEvents.time:
-          data = {
-            currentTime: player.currentTime,
-            duration: player.duration,
-            progress: player.progress,
-          };
-          break;
-        case PlayerEvents.playState:
-          data = player.playState;
-          break;
-        case PlayerEvents.track:
-          data = player.currentTrack;
-          break;
-        case PlayerEvents.volume:
-          data = player.volume;
-          break;
-        case PlayerEvents.quality:
-          data = player.quality;
-          break;
-        case PlayerEvents.mode:
-          data = player.mode;
-          break;
-        case PlayerEvents.playlist:
-          data = player.playlist;
-          break;
-        case PlayerEvents.lyrics:
-          data = player.lyrics;
-          break;
-        case PlayerEvents.history:
-          data = player.history;
-          break;
-        case PlayerEvents.gain:
-          break;
+      try {
+        let data: any = null;
+        switch (event) {
+          case PlayerEvents.time:
+            data = {
+              currentTime: player.currentTime,
+              duration: player.duration,
+              progress: player.progress,
+            };
+            break;
+          case PlayerEvents.playState:
+            data = player.playState;
+            break;
+          case PlayerEvents.track:
+            data = player.currentTrack;
+            break;
+          case PlayerEvents.volume:
+            data = player.volume;
+            break;
+          case PlayerEvents.quality:
+            data = player.quality;
+            break;
+          case PlayerEvents.mode:
+            data = player.mode;
+            break;
+          case PlayerEvents.playlist:
+            data = player.playlist;
+            break;
+          case PlayerEvents.lyrics:
+            data = player.lyrics;
+            break;
+          case PlayerEvents.history:
+            data = player.history;
+            break;
+          case PlayerEvents.gain:
+            break;
+        }
+        ipcRenderer.send("player-event", {
+          event,
+          data: data ? JSON.parse(JSON.stringify(data)) : data,
+        });
+      } catch (error) {
+        console.error(`Error forwarding event ${event}:`, error);
       }
-      ipcRenderer.send("player-event", {
-        event,
-        data: data ? JSON.parse(JSON.stringify(data)) : data,
-      });
     });
+  });
+
+  // Time sync event sender
+  const sendTimeSync = () => {
+    ipcRenderer.send("player-event", {
+      event: "timeSync",
+      data: {
+        currentTime: player._audio.currentTime,
+        timestamp: Date.now(),
+        playState: player.playState,
+      },
+    });
+  };
+
+  // Send time sync 3 times per second
+  setInterval(() => {
+    sendTimeSync();
+  }, 333);
+
+  // Send time sync on player state changes
+  player.subscriber.on("ipc-timeSync", PlayerEvents.playState, () => {
+    sendTimeSync();
+  });
+  player.subscriber.on("ipc-timeSync", PlayerEvents.track, () => {
+    sendTimeSync();
+  });
+  player.subscriber.on("ipc-timeSync", "seek" as any, () => {
+    sendTimeSync();
   });
 
   // Spectrum Data Loop

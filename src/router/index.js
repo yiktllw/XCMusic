@@ -3,6 +3,14 @@ import HomeView from "@/views/HomeView.vue";
 
 const routes = [
   {
+    path: "/desktop-lyrics",
+    name: "DesktopLyrics",
+    component: () => import("@/views/DesktopLyricView.vue"),
+    meta: {
+      keepAlive: false,
+    },
+  },
+  {
     path: "/",
     name: "home",
     component: HomeView,

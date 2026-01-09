@@ -43,6 +43,7 @@ type PlayerEventCallbacks = {
   [PlayerEvents.mode]: () => void;
   [PlayerEvents.playerReady]: () => void;
   [PlayerEvents.gain]: () => void;
+  [PlayerEvents.timeSync]: () => void;
 };
 
 export class Player {
@@ -1435,6 +1436,8 @@ export class Player {
       this._currentTime = value;
       this._progress = value / (this._duration as number);
       this.subscriber.exec(PlayerEvents.time);
+      // Trigger immediate time sync for seek
+      this.subscriber.exec("seek" as any);
     }
   }
   /**
@@ -1452,6 +1455,8 @@ export class Player {
       this._progress = value;
       this._currentTime = (this._duration as number) * value;
       this._audio.currentTime = this._currentTime;
+      // Trigger immediate time sync for seek
+      this.subscriber.exec("seek" as any);
     }
   }
   /**

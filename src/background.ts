@@ -44,6 +44,7 @@ interface WindowState {
 
 interface AppStore {
   windowState: WindowState;
+  lyricWindowState: { x: number; y: number; width: number; height: number };
   disableGpu: boolean;
 }
 
@@ -77,6 +78,7 @@ protocol.registerSchemesAsPrivileged([
 
 let win: BrowserWindow | null = null;
 let playerWin: BrowserWindow | null = null;
+let lyricWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
 // 检查是否已经有实例在运行
@@ -85,6 +87,65 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   // 如果已经有实例在运行，则退出新的实例
   app.quit();
+}
+
+async function createLyricWindow() {
+  if (lyricWin) return;
+  const savedBounds = store.get("lyricWindowState");
+
+  lyricWin = new BrowserWindow({
+    width: (savedBounds && savedBounds.width) || 1024,
+    height: (savedBounds && savedBounds.height) || 150,
+    x: savedBounds && savedBounds.x,
+    y: savedBounds && savedBounds.y,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
+      contextIsolation: true,
+      webSecurity: false,
+      backgroundThrottling: false,
+    },
+  });
+
+  // Force set bounds immediately after creation
+  if (savedBounds) {
+    lyricWin.setBounds({
+      x: savedBounds.x,
+      y: savedBounds.y,
+      width: savedBounds.width,
+      height: savedBounds.height,
+    });
+  }
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    await lyricWin.loadURL(
+      process.env.WEBPACK_DEV_SERVER_URL + "#/desktop-lyrics",
+    );
+  } else {
+    lyricWin.loadURL("app://./index.html#/desktop-lyrics");
+  }
+
+  lyricWin.on("moved", () => {
+    if (lyricWin) {
+      const bounds = lyricWin.getBounds();
+      store.set("lyricWindowState", bounds);
+    }
+  });
+
+  lyricWin.on("resized", () => {
+    if (lyricWin) {
+      const bounds = lyricWin.getBounds();
+      store.set("lyricWindowState", bounds);
+    }
+  });
+
+  lyricWin.on("closed", () => {
+    lyricWin = null;
+  });
 }
 
 async function createPlayerWindow() {
@@ -177,15 +238,53 @@ app.on("activate", () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
   // IPC Forwarding
-  ipcMain.on("player-command", (event, { command, args }) => {
-    if (playerWin) {
+  ipcMain.on("player-command", (event, payload) => {
+    const { command, args } = payload || {};
+    if (playerWin && command) {
       playerWin.webContents.send("player-command", command, args);
     }
   });
 
-  ipcMain.on("player-event", (event, { event: eventName, data }) => {
+  ipcMain.on("player-event", (event, payload) => {
     if (win) {
-      win.webContents.send("player-event", { event: eventName, data });
+      win.webContents.send("player-event", payload);
+    }
+    if (lyricWin) {
+      lyricWin.webContents.send("player-event", payload);
+    }
+  });
+
+  ipcMain.on("open-desktop-lyric", () => {
+    createLyricWindow();
+  });
+
+  ipcMain.on("toggle-desktop-lyric", () => {
+    if (lyricWin) {
+      lyricWin.close();
+    } else {
+      createLyricWindow();
+    }
+  });
+
+  ipcMain.on("close-desktop-lyric", () => {
+    if (lyricWin) {
+      lyricWin.close();
+    }
+  });
+
+  ipcMain.on("lock-desktop-lyric", (event, locked) => {
+    if (lyricWin) {
+      lyricWin.setIgnoreMouseEvents(locked, { forward: true });
+      if (locked) {
+        // When locked, we still want to capture mouse events for the control bar if needed,
+        // but setIgnoreMouseEvents(true) makes the whole window transparent to mouse.
+        // To allow interaction with specific parts, we need to use setIgnoreMouseEvents(true, { forward: true })
+        // and handle mouseenter/mouseleave in the renderer to toggle ignore state.
+        // For now, simple lock:
+        lyricWin.setIgnoreMouseEvents(true, { forward: true });
+      } else {
+        lyricWin.setIgnoreMouseEvents(false);
+      }
     }
   });
 
@@ -208,7 +307,6 @@ app.on("ready", async () => {
   });
 
   ipcMain.on("player-ready", () => {
-    console.log("Player process ready");
     if (win) {
       win.webContents.send("player-ready");
     }
@@ -218,6 +316,9 @@ app.on("ready", async () => {
   if (isDevelopment) {
     ipcMain.on("player-console-log", (event, args) => {
       console.log("[Player Window]:", ...args);
+    });
+    ipcMain.on("lyric-console-log", (event, args) => {
+      console.log("[Lyric Window]:", ...args);
     });
   }
 
@@ -291,6 +392,13 @@ app.on("ready", async () => {
         if (win) win.show();
       },
       enabled: win ? !win.show : true,
+    },
+    {
+      label: "打开桌面歌词",
+      id: "open-desktop-lyric",
+      click: () => {
+        createLyricWindow();
+      },
     },
     {
       label: "退出",

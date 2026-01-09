@@ -131,6 +131,15 @@ const showTranslate = ref<boolean>(true);
 /** 主容器 */
 const container = ref<HTMLElement>();
 
+// Local timer for smooth playback
+const localTime = ref(0);
+const lastSyncTime = ref(0);
+const lastSyncTimestamp = ref(0);
+const isPlaying = ref(false);
+
+// Store listener reference for proper cleanup
+let timeSyncListener: ((payload: any) => void) | null = null;
+
 const store = useStore();
 const player = store.state.player;
 const setting = store.state.setting;
@@ -287,12 +296,18 @@ const computeTimeLine = () => {
   );
 };
 
-/** 开始从audio更新时间 */
+/** 开始从本地计时器更新时间 */
 const startTimeUpdate = () => {
   if (animationFrame.value) cancelAnimationFrame(animationFrame.value);
 
   const update = () => {
-    const currentTime = player._audio.currentTime * 1000;
+    // Calculate current time based on last sync timestamp + elapsed time
+    if (isPlaying.value) {
+      const elapsed = (performance.now() - lastSyncTimestamp.value) / 1000;
+      localTime.value = lastSyncTime.value + elapsed;
+    }
+
+    const currentTime = localTime.value * 1000;
     animationIndex.value = timeline.value!.findIndex(
       (item) =>
         currentTime >= item.startTime.ms &&
@@ -429,6 +444,26 @@ const calcClosestLine = () => {
 };
 
 onMounted(() => {
+  // Direct IPC listener for time sync
+  if (window.electron?.ipcRenderer) {
+    timeSyncListener = (payload: any) => {
+      if (payload?.event === "timeSync") {
+        // Update sync reference point for accurate time calculation
+        lastSyncTime.value = payload.data.currentTime;
+        lastSyncTimestamp.value = performance.now();
+        localTime.value = payload.data.currentTime;
+        isPlaying.value = payload.data.playState === "play";
+      }
+    };
+    window.electron.ipcRenderer.on("player-event", timeSyncListener);
+  }
+
+  // Initialize with current player state
+  lastSyncTime.value = player.currentTime;
+  lastSyncTimestamp.value = performance.now();
+  localTime.value = player.currentTime;
+  isPlaying.value = player.playState === "play";
+
   player.subscriber.on("YLyricsNew", PlayerEvents.track, () => {
     // 重置索引
     animationIndex.value = 0;
@@ -519,6 +554,14 @@ onBeforeUnmount(() => {
   player.subscriber.offAll("YLyricsNew");
   animationFrame.value && cancelAnimationFrame(animationFrame.value);
 
+  // Remove IPC listener properly
+  if (window.electron?.ipcRenderer && timeSyncListener) {
+    window.electron.ipcRenderer.removeListener(
+      "player-event",
+      timeSyncListener,
+    );
+  }
+
   smoothScroll.value?.container?.removeEventListener("wheel", handleUserScroll);
   smoothScroll.value?.container?.removeEventListener("scroll", calcClosestLine);
 
@@ -526,7 +569,11 @@ onBeforeUnmount(() => {
 });
 
 const handleAnimationIndexChange = () => {
-  if (animationIndex.value === -1) return;
+  if (animationIndex.value === -1) {
+    // 如果没有匹配的动画索引，设置为第一行（时间在第一句之前）
+    currentLineIndex.value = 0;
+    return;
+  }
 
   currentLineIndex.value =
     timelineMap.value!.get(animationIndex.value)?.elementIndex.line ?? 0;

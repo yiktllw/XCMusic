@@ -360,6 +360,14 @@
             </div>
           </div>
         </YPanel>
+        <!-- 桌面歌词按钮 -->
+        <img
+          :title="$t('playbar.desktop_lyric')"
+          class="img volume-img g-icon"
+          src="@/assets/lyrics.svg"
+          style="width: 23px; height: 23px; margin-right: 18px"
+          @click="toggleDesktopLyric"
+        />
         <!-- 均衡器按钮 -->
         <img
           :title="$t('equalizer.title')"

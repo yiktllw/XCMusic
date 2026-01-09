@@ -29,6 +29,8 @@ export enum PlayerEvents {
   playerReady = "playerReady",
   /** 歌曲音量均衡的增益 */
   gain = "gain",
+  /** 精确时间同步，高频率，用于歌词组件 */
+  timeSync = "timeSync",
 }
 
 /** 音频增益接口 */
