@@ -16,8 +16,13 @@
       <YDownloadManager v-show="showManagerContent" />
     </div>
 
-    <div class="title">
-      {{ $t("localsongs.downloaded") }}
+    <div class="title-section">
+      <div class="title">
+        {{ $t("localsongs.downloaded") }}
+      </div>
+      <button class="clear-button" @click="handle_clear">
+        {{ $t("localsongs.clear_invalid_songs") }}
+      </button>
     </div>
     <YSongsTable
       :resortable="false"
@@ -52,7 +57,6 @@
       .title {
         width: inherit;
         color: var(--font-color-main);
-        text-align: left;
         font-size: 22px;
         font-weight: bold;
         margin: 20px 30px;
@@ -72,6 +76,18 @@
           background: rgba(var(--foreground-color-rgb), 0.1);
         }
       }
+    }
+  }
+  .title-section {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    .clear-button {
+      color: var(--font-color-main);
+      font-size: 16px;
+      margin: 20px 30px;
+      text-wrap: nowrap;
     }
   }
 

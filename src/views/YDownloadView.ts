@@ -41,6 +41,13 @@ export default defineComponent({
     toggleManager() {
       this.showManagerContent = !this.showManagerContent;
     },
+    handle_clear() {
+      this.download.downloadedSongs.forEach((song) => {
+        if (!window.api.existsSync(song.path)) {
+          this.download.delete(song.id);
+        }
+      });
+    },
   },
   mounted() {
     YColor.setBackgroundColorHex2(

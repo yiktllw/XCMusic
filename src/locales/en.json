@@ -74,6 +74,31 @@
     "title": "Create Playlist"
   },
   "default": "Default",
+  "download": {
+    "manager": {
+      "active": "Active",
+      "cancel": "Cancel",
+      "cancelAll": "Cancel All",
+      "completed": "Completed",
+      "empty": "No download tasks",
+      "pause": "Pause",
+      "pauseAll": "Pause All",
+      "resume": "Resume",
+      "resumeAll": "Resume All",
+      "retry": "Retry",
+      "title": "Download Manager",
+      "toggle": "Toggle Display",
+      "total": "Total"
+    },
+    "status": {
+      "cancelled": "Cancelled",
+      "done": "Completed",
+      "downloading": "Downloading",
+      "error": "Failed",
+      "paused": "Paused",
+      "pending": "Pending"
+    }
+  },
   "edit_playlist": {
     "description": "Description",
     "input_desc": "Please enter a description",
@@ -120,6 +145,7 @@
   "local_music": "Local Musics",
   "localsongs": {
     "addpaths": "Added Paths in Settings",
+    "clear_invalid_songs": "Clear Invalid Songs",
     "downloaded": "Downloaded",
     "downloading": "Downloading"
   },
@@ -165,6 +191,7 @@
     "cancel_like": "Unlike",
     "clear_playlist": "Clear Playlist",
     "delete_from_playlist": "Remove from Playlist",
+    "desktop_lyric": "Desktop Lyric",
     "like": "Like",
     "listloop": "List Loop",
     "listrandom": "List Random",
@@ -200,7 +227,6 @@
     "random": "Random",
     "select_sound_quality": "Select Sound Quality",
     "song_info": "Song Information",
-    "desktop_lyric": "Desktop Lyric",
     "sound_quality": "Sound Quality",
     "volume": "Volume"
   },
@@ -477,30 +503,5 @@
   "window": {
     "close": "Close",
     "title": "Title"
-  },
-  "download": {
-    "manager": {
-      "title": "Download Manager",
-      "active": "Active",
-      "completed": "Completed",
-      "total": "Total",
-      "pause": "Pause",
-      "resume": "Resume",
-      "cancel": "Cancel",
-      "retry": "Retry",
-      "pauseAll": "Pause All",
-      "resumeAll": "Resume All",
-      "cancelAll": "Cancel All",
-      "toggle": "Toggle Display",
-      "empty": "No download tasks"
-    },
-    "status": {
-      "pending": "Pending",
-      "downloading": "Downloading",
-      "paused": "Paused",
-      "done": "Completed",
-      "error": "Failed",
-      "cancelled": "Cancelled"
-    }
   }
 }

@@ -74,6 +74,31 @@
     "title": "创建歌单"
   },
   "default": "默认",
+  "download": {
+    "manager": {
+      "active": "进行中",
+      "cancel": "取消",
+      "cancelAll": "全部取消",
+      "completed": "已完成",
+      "empty": "暂无下载任务",
+      "pause": "暂停",
+      "pauseAll": "全部暂停",
+      "resume": "继续",
+      "resumeAll": "全部继续",
+      "retry": "重试",
+      "title": "下载管理器",
+      "toggle": "切换显示",
+      "total": "总计"
+    },
+    "status": {
+      "cancelled": "已取消",
+      "done": "已完成",
+      "downloading": "下载中",
+      "error": "下载失败",
+      "paused": "已暂停",
+      "pending": "等待中"
+    }
+  },
   "edit_playlist": {
     "description": "歌单描述",
     "input_desc": "请输入歌单描述",
@@ -120,6 +145,7 @@
   "local_music": "本地音乐",
   "localsongs": {
     "addpaths": "设置中添加的路径",
+    "clear_invalid_songs": "清除无效歌曲",
     "downloaded": "已下载",
     "downloading": "正在下载"
   },
@@ -165,6 +191,7 @@
     "cancel_like": "取消喜欢",
     "clear_playlist": "清空播放列表",
     "delete_from_playlist": "从播放列表中删除",
+    "desktop_lyric": "桌面歌词",
     "like": "喜欢",
     "listloop": "列表循环",
     "listrandom": "列表随机",
@@ -200,7 +227,6 @@
     "random": "随机播放",
     "select_sound_quality": "选择音质",
     "song_info": "查看歌曲信息",
-    "desktop_lyric": "桌面歌词",
     "sound_quality": "歌曲音质",
     "volume": "音量"
   },
@@ -477,30 +503,5 @@
   "window": {
     "close": "关闭窗口",
     "title": "标题"
-  },
-  "download": {
-    "manager": {
-      "title": "下载管理器",
-      "active": "进行中",
-      "completed": "已完成",
-      "total": "总计",
-      "pause": "暂停",
-      "resume": "继续",
-      "cancel": "取消",
-      "retry": "重试",
-      "pauseAll": "全部暂停",
-      "resumeAll": "全部继续",
-      "cancelAll": "全部取消",
-      "toggle": "切换显示",
-      "empty": "暂无下载任务"
-    },
-    "status": {
-      "pending": "等待中",
-      "downloading": "下载中",
-      "paused": "已暂停",
-      "done": "已完成",
-      "error": "下载失败",
-      "cancelled": "已取消"
-    }
   }
 }
