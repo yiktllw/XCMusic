@@ -186,6 +186,10 @@ export class Player {
       }
     });
 
+    ipcRenderer.on("download-delete", (id: number) => {
+      store.state.download.delete(id);
+    });
+
     // Request initial state
     this.sendCommand("getState");
   }

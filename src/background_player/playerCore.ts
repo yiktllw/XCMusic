@@ -1297,13 +1297,12 @@ export class Player {
         const fileUrl = `file://${song.path.replace(/\\/g, "/")}`;
         return { url: fileUrl };
       } else {
-        // Message.post("error", "player.local_file_not_found", true);
         ipcRenderer?.send("player-error", {
           type: "error",
           key: "player.local_file_not_found",
           translate: true,
         });
-        // if (song) store.state.download.delete(song.id); // Cannot delete from here directly
+        // if (song) store.state.download.delete(song.id);
         ipcRenderer?.send("download-delete", song.id);
       }
     }
