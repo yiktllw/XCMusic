@@ -1,3 +1,5 @@
+# 翻译贡献指导
+
 ## 新增语言
 
 - 运行`scripts/locales/create_template_from_en.js`，这会从en.json创建一个新的模板文件`template.json`。
