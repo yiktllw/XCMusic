@@ -46,12 +46,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { PlayerEvents } from "@/dual/player";
-import {
-  type LrcItem,
-  type LrcItem2,
-  type YrcItem,
-  Lyrics,
-} from "@/utils/lyric";
+import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
 import { useStore } from "vuex";
 import * as Api from "@/utils/api";
 
