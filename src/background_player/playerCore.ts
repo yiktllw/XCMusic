@@ -164,14 +164,6 @@ export class Player {
     });
     this.initMediaSession();
 
-    this.subscriber.on("player-group-playlist", PlayerEvents.playlist, () => {
-      const nowPlaying = this.currentTrack?.id;
-      this.setPlaylistToGrouped();
-      this._current = this._playlist.findIndex(
-        (track) => track.id === nowPlaying,
-      );
-    });
-
     setTimeout(() => {
       this.subscriber.exec(PlayerEvents.playerReady);
     }, 500);
@@ -884,67 +876,49 @@ export class Player {
     this.clearHistory();
     if (this._mode === "listrandom") {
       // 如果播放模式为随机播放
-      this._playlist = list.sort(() => Math.random() - 0.5);
+      if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
+        this._playlist = this.getShufflePlaylistWithAlbumContinuity(list);
+      } else {
+        this._playlist = [...list].sort(() => Math.random() - 0.5);
+      }
     } else if (this._playlist !== list) {
       // 如果播放模式为其它模式
       this._playlist = list;
     }
     this.subscriber.exec(PlayerEvents.playlist);
   }
-  private setPlaylistToGrouped() {
-    if (
-      this._mode === "listrandom" &&
-      getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)
-    ) {
-      this._playlist = this.getGroupedPlaylist(this._playlist);
-    }
-  }
-  private getGroupedPlaylist(list: ITrack[]) {
-    // 统计每个al.id的出现次数
-    const countMap = new Map<number, number>();
-    for (const item of list) {
-      const alId = item.al.id;
-      countMap.set(alId, (countMap.get(alId) || 0) + 1);
-    }
 
-    // 收集重复的al.id的元素数组
-    const groupMap = new Map<number, typeof list>();
-    for (const item of list) {
-      const alId = item.al.id;
-      if (countMap.get(alId)! > 1) {
-        if (!groupMap.has(alId)) {
-          groupMap.set(alId, []);
-        }
-        groupMap.get(alId)!.push(item);
+  /**
+   * 按专辑分组
+   * @param list 歌曲列表
+   * @returns 分组后的歌曲列表，每个组是一个数组
+   */
+  private groupTracksByAlbum(list: ITrack[]): ITrack[][] {
+    const albums = new Map<number, ITrack[]>();
+    list.forEach((track) => {
+      const alId = track.al?.id || -1;
+      if (!albums.has(alId)) {
+        albums.set(alId, []);
       }
-    }
-
-    // 对每个重复的组按id升序排序
-    groupMap.forEach((items) => {
-      items.sort((a, b) => a.id - b.id);
+      albums.get(alId)!.push(track);
     });
+    return Array.from(albums.values());
+  }
 
-    // 构建结果数组，保持稳定性
-    const result: typeof list = [];
-    const processedAlIds = new Set<number>();
+  /**
+   * 获取保持专辑连续性的随机列表
+   * @param list 原始列表
+   * @returns 处理后的列表
+   */
+  private getShufflePlaylistWithAlbumContinuity(list: ITrack[]) {
+    // 1. Group by album, preserving order within group
+    const groups = this.groupTracksByAlbum(list);
 
-    for (const item of list) {
-      const alId = item.al.id;
-      if (countMap.get(alId)! === 1) {
-        // 唯一元素直接添加
-        result.push(item);
-      } else {
-        if (!processedAlIds.has(alId)) {
-          // 处理重复组，添加排序后的元素
-          const group = groupMap.get(alId)!;
-          result.push(...group);
-          processedAlIds.add(alId);
-        }
-        // 已处理的重复元素跳过
-      }
-    }
+    // 2. Shuffle groups
+    groups.sort(() => Math.random() - 0.5);
 
-    return result;
+    // 3. Flatten
+    return groups.flat();
   }
   deleteTrack(id: string | number) {
     let index = this._playlist.findIndex((track) => track.id === id);
@@ -985,14 +959,24 @@ export class Player {
     // 如果有歌曲要添加
     if (tracksToAdd.length > 0) {
       if (this._mode === "listrandom") {
-        // 随机插入的情况
-        tracksToAdd.forEach((track) => {
-          this._playlist.splice(
-            Math.floor(Math.random() * this.playlistCount),
-            0,
-            track,
-          );
-        });
+        if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
+          const groups = this.groupTracksByAlbum(tracksToAdd);
+          groups.forEach((group) => {
+            const randomPos = Math.floor(
+              Math.random() * (this._playlist.length + 1),
+            );
+            this._playlist.splice(randomPos, 0, ...group);
+          });
+        } else {
+          // 随机插入的情况
+          tracksToAdd.forEach((track) => {
+            this._playlist.splice(
+              Math.floor(Math.random() * this.playlistCount),
+              0,
+              track,
+            );
+          });
+        }
       } else {
         // 顺序插入到播放列表
         this._playlist.push(...tracksToAdd);
