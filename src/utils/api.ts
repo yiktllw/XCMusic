@@ -1390,6 +1390,18 @@ export namespace Comment {
  * 登录相关API
  */
 export namespace Login {
+  /** 登录状态 */
+  export async function status() {
+    const res = await useApi("/login/status", {
+      timestamp: new Date().getTime(),
+    }).catch((error) => {
+      console.error("Failed to get login status:", error);
+      return null;
+    });
+
+    return res;
+  }
+
   /** 获取二维码key */
   export async function getQrKey(): Promise<string | null> {
     const res = await useApi("/login/qr/key", {

@@ -77,6 +77,15 @@ export class Login {
   }
   /** 更新信息 */
   async updateInfo() {
+    await LoginApi.status().then((res) => {
+      console.log("Login status:", res);
+      if (res.data?.code === 200) {
+        this.status = true;
+      } else {
+        this.status = false;
+        this.clear();
+      }
+    });
     await User.account()
       .then((res) => {
         if (!res) return;
