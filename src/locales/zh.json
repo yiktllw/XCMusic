@@ -434,6 +434,10 @@
   },
   "song_added_failed": "添加歌曲失败",
   "song_added_successfully": "添加歌曲成功",
+  "playlist_batch_result_prefix": "收藏到歌单结果：",
+  "playlist_batch_result_success": "成功",
+  "playlist_batch_result_duplicate": "重复",
+  "playlist_batch_result_failed": "失败",
   "song_info": {
     "album_tns": "专辑译名",
     "artist": "歌手",

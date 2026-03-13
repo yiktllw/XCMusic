@@ -434,6 +434,10 @@
   },
   "song_added_failed": "Song Added Failed",
   "song_added_successfully": "Song Added Successfully",
+  "playlist_batch_result_prefix": "Add to playlists: ",
+  "playlist_batch_result_success": "Success",
+  "playlist_batch_result_duplicate": "Duplicate",
+  "playlist_batch_result_failed": "Failed",
   "song_info": {
     "album_tns": "Album Translation",
     "artist": "Artists",
