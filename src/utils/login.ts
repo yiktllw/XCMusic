@@ -243,7 +243,6 @@ export class Login {
       });
     if (this.userPlaylists.length > 0) {
       this._userFavoriteId = this.userPlaylists[0].id;
-      this.userPlaylists.splice(0, 1);
     }
     this.subscriber.exec(LoginEvents.userPlaylists);
   }
