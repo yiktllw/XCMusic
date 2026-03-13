@@ -502,6 +502,27 @@
                 </label>
               </div>
             </div>
+            <!-- 播放-无缝播放歌曲 -->
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.gapless_playback.title") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_gapless_playback"
+                  name="gapless_playback"
+                  v-model="gaplessPlayback"
+                  @change="setGaplessPlayback(gaplessPlayback)"
+                />
+                <label
+                  for="setting_gapless_playback"
+                  :title="$t('setting_view.play.gapless_playback.tooltip')"
+                >
+                  {{ $t("setting_view.play.gapless_playback.label") }}
+                </label>
+              </div>
+            </div>
             <!-- 播放-音量均衡 -->
             <div class="content-item item-play-volume_leveling">
               <div class="content-item-title">

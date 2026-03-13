@@ -131,6 +131,7 @@ export default defineComponent({
       /** 代理服务器端口 */
       proxy_port: "",
       allowConsecutiveAlbums: false,
+      gaplessPlayback: false,
       /** 使用新歌词组件 */
       showNewLyrics: false,
       /** 字体 */
@@ -205,6 +206,11 @@ export default defineComponent({
     setAllowConsecutiveAlbums(bool: boolean) {
       this.setting.play.allowConsecutiveAlbums = bool;
       this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
+    },
+    setGaplessPlayback(bool: boolean) {
+      this.setting.play.gaplessPlayback = bool;
+      this.gaplessPlayback = this.setting.play.gaplessPlayback;
+      this.player.setGaplessPlayback(this.gaplessPlayback);
     },
     setShowNewLyrics(bool: boolean) {
       this.setting.playui.showNewLyrics = bool;
@@ -532,6 +538,8 @@ export default defineComponent({
       this.autoPlay = this.setting.play.autoPlay;
       this.rememberProgress = this.setting.play.rememberTrackProgress;
       this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
+      this.gaplessPlayback = this.setting.play.gaplessPlayback;
+      this.player.setGaplessPlayback(this.gaplessPlayback);
       this.showNewLyrics = this.setting.playui.showNewLyrics;
       this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
         this[`hideInSidebar_${item}`] = true;

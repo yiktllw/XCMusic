@@ -82,6 +82,8 @@ export enum StorageKey {
   Setting_Play_Equalizer = "setting.play.equalizer",
   /** 设置-播放-（列表随机）连续播放同一专辑的歌曲 */
   Setting_Play_AllowConsecutiveAlbums = "setting.play.allowConsecutiveAlbums",
+  /** 设置-播放-无缝播放歌曲 */
+  Setting_Play_GaplessPlayback = "setting.play.gaplessPlayback",
   /** 设置-播放界面-显示新版歌词 */
   Setting_PlayUI_ShowNewLyrics = "setting.playUI.showNewLyrics",
   /** 设置-播放界面-歌词偏好 */
@@ -155,6 +157,7 @@ export type StorageMap = {
   };
   [StorageKey.Setting_Play_Equalizer]: IEqualizer;
   [StorageKey.Setting_Play_AllowConsecutiveAlbums]: boolean;
+  [StorageKey.Setting_Play_GaplessPlayback]: boolean;
   [StorageKey.Setting_PlayUI_ShowNewLyrics]: boolean;
   [StorageKey.Setting_PlayUI_LyricsPreference]: ILyricsPreferences;
   [StorageKey.Setting_PlayUI_ShowLyricsTranslate]: boolean;

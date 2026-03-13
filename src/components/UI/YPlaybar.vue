@@ -403,6 +403,7 @@
                 position: absolute;
                 bottom: 30px;
               "
+              @update:model-value="setPlayerVolume"
               @set-progress-end="updateVolumeInSetting"
             />
             <div class="volume-text">

@@ -163,11 +163,6 @@ export default defineComponent({
       showSongs: false,
     };
   },
-  watch: {
-    volume() {
-      this.player.volume = this.volume;
-    },
-  },
   computed: {
     likelist() {
       return this.login.likelist ?? [];
@@ -183,6 +178,9 @@ export default defineComponent({
     },
   },
   methods: {
+    setPlayerVolume(value: number) {
+      this.player.volume = value;
+    },
     setAudioProgress(progress: number) {
       this.player.progress = progress;
     },

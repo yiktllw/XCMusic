@@ -349,6 +349,10 @@ export class Player {
     this.sendCommand("setVolumeLeveling", value);
   }
 
+  setGaplessPlayback(value: boolean) {
+    this.sendCommand("setGaplessPlayback", value);
+  }
+
   toggleSpectrum(enabled: boolean) {
     this.sendCommand("toggleSpectrum", enabled);
   }

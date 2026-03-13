@@ -1,7 +1,6 @@
 import { YColor } from "@/utils/color";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import { Login } from "@/utils/login";
 
 export default defineComponent({
   name: "YTestView",

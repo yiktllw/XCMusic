@@ -377,6 +377,11 @@
         "label": "记住当前歌曲播放进度",
         "title": "播放进度"
       },
+      "gapless_playback": {
+        "title": "无缝播放",
+        "label": "尽量减少曲目衔接卡顿",
+        "tooltip": "在古典乐等专辑中，一些连贯乐章会被拆分成两首曲目。传统 CD 播放几乎无感衔接，而流媒体切换时可能出现短暂卡顿。开启后，会尽量减少曲目衔接时的停顿。"
+      },
       "show_spectrum": "显示频谱图",
       "volume_leveling": "音量",
       "volume_leveling_content": "平衡不同作品的音量"

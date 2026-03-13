@@ -70,6 +70,8 @@ export interface ISettings {
     equalizer: IEqualizer;
     /** 列表随机时，连续播放同一专辑的歌曲 */
     allowConsecutiveAlbums: boolean;
+    /** 无缝播放歌曲 */
+    gaplessPlayback: boolean;
   };
   /** 播放界面设置 */
   playui: {
@@ -302,6 +304,18 @@ export const settingGroup: SettingGroup = {
         if (valid) {
           value = strToBool(value);
           setStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums, value);
+        }
+        return valid;
+      },
+    },
+    gaplessPlayback: {
+      value: getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false,
+      default: false,
+      validation: (value: boolean) => {
+        let valid = validBoolean(value);
+        if (valid) {
+          value = strToBool(value);
+          setStorage(StorageKey.Setting_Play_GaplessPlayback, value);
         }
         return valid;
       },

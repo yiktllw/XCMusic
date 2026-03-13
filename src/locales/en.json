@@ -377,6 +377,11 @@
         "label": "Remember track progress",
         "title": "Progress"
       },
+      "gapless_playback": {
+        "title": "Gapless Playback",
+        "label": "Reduce hiccups between tracks",
+        "tooltip": "Some classical albums split a continuous musical passage into separate tracks. On CDs this transition is usually seamless, but streaming playback can introduce short hiccups between tracks. Enable this option to reduce interruptions at track boundaries."
+      },
       "show_spectrum": "Show Spectrum",
       "volume_leveling": "Volume",
       "volume_leveling_content": "Balance the volume of different tracks."
