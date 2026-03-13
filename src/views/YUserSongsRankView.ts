@@ -28,9 +28,14 @@ export default defineComponent({
   },
   computed: {
     displayTracks() {
-      return this.position === "recent"
-        ? this.recentTracks
-        : this.alltimeTracks;
+      const isRecent = this.position === "recent";
+      if (this.source === "local") {
+        return isRecent ? this.localRecentTracks : this.localAlltimeTracks;
+      }
+      if (this.source === "mixed") {
+        return isRecent ? this.mixedRecentTracks : this.mixedAlltimeTracks;
+      }
+      return isRecent ? this.recentTracks : this.alltimeTracks;
     },
   },
   data() {
@@ -51,33 +56,46 @@ export default defineComponent({
         },
       ],
       position: "recent",
+      source: "netease",
       recentTracks: [] as ITrack[],
       alltimeTracks: [] as ITrack[],
+      localRecentTracks: [] as ITrack[],
+      localAlltimeTracks: [] as ITrack[],
+      mixedRecentTracks: [] as ITrack[],
+      mixedAlltimeTracks: [] as ITrack[],
     };
   },
   methods: {
     handleNewPosition(position: string) {
       this.position = position;
     },
+    handleNewSource(source: string) {
+      this.source = source;
+    },
     async fetchUserSongsRank() {
-      let _loading = {
-        recent: true,
-        alltime: true,
-      };
-      User.songsRank(this.userId, "week").then((res) => {
-        this.recentTracks = res;
-        _loading.recent = false;
-        if (_loading.alltime === false) {
-          this.loading = false;
-        }
-      });
-      User.songsRank(this.userId, "alltime").then((res) => {
-        this.alltimeTracks = res;
-        _loading.alltime = false;
-        if (_loading.recent === false) {
-          this.loading = false;
-        }
-      });
+      this.loading = true;
+      const [
+        recent,
+        alltime,
+        localRecent,
+        localAlltime,
+        mixedRecent,
+        mixedAlltime,
+      ] = await Promise.all([
+        User.songsRank(this.userId, "week"),
+        User.songsRank(this.userId, "alltime"),
+        User.localSongsRank("week"),
+        User.localSongsRank("alltime"),
+        User.combinedSongsRank(this.userId, "week"),
+        User.combinedSongsRank(this.userId, "alltime"),
+      ]);
+      this.recentTracks = recent;
+      this.alltimeTracks = alltime;
+      this.localRecentTracks = localRecent;
+      this.localAlltimeTracks = localAlltime;
+      this.mixedRecentTracks = mixedRecent;
+      this.mixedAlltimeTracks = mixedAlltime;
+      this.loading = false;
     },
   },
   mounted() {

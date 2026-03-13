@@ -495,7 +495,12 @@
   },
   "user_songs_rank_view": {
     "alltime": "所有时间",
-    "last_week": "最近一周"
+    "last_week": "最近一周",
+    "source_title": "数据源",
+    "source_tip": "受网易云音乐 API 策略限制，第三方客户端无法将本地听歌记录回传并同步到网易云账号。",
+    "source_netease": "网易云",
+    "source_local": "本地",
+    "source_mixed": "综合"
   },
   "user_view": {
     "albums": "专辑",

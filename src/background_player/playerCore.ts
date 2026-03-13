@@ -30,6 +30,18 @@ type QualityInfo = {
   peak: number;
 };
 
+type LocalPlayHistoryRecord = {
+  id: number | string;
+  track: ITrack;
+  firstPlayStartAt: number;
+  lastPlayStartAt: number;
+  lastPlayEndAt: number;
+  accumulatedPlayMs: number;
+  playCount: number;
+  playEventTimestamps: number[];
+  updatedAt: number;
+};
+
 type PlayerEventCallbacks = {
   [PlayerEvents.playState]: () => void;
   [PlayerEvents.playlist]: () => void;
@@ -99,6 +111,7 @@ export class Player {
     new Subscriber<PlayerEventCallbacks>(PlayerEvents);
   /** IndexDB, 用于存储播放列表 */
   db: indexDB = new indexDB("ncm", "playlist");
+  localHistoryDB: indexDB = new indexDB("ncm_play_history", "history");
   reloadInterval: null | NodeJS.Timeout = null;
   _mediaSessionInit: boolean = false;
   /** 是否初始化设备 */
@@ -115,6 +128,13 @@ export class Player {
   _reservedNextTrackIndex: number | null = null;
   _reservedNextUrl: string = "";
   _reservingTrackId: number | string | null = null;
+  _sessionTrackId: number | string | null = null;
+  _sessionTrackSnapshot: ITrack | null = null;
+  _sessionStartAt: number = 0;
+  _sessionAccumulatedMs: number = 0;
+  _sessionLastTickAt: number = 0;
+  _sessionCounted: boolean = false;
+  _sessionDurationMs: number = 0;
   constructor() {
     this._audio.onerror = () => this.handleAudioError();
     // 初始化音量均衡控件
@@ -156,6 +176,10 @@ export class Player {
       } catch (error) {
         console.error(error);
       }
+    });
+
+    this.localHistoryDB.openDatabase().catch((error) => {
+      console.error("Failed to open local play history DB:", error);
     });
 
     this.subscriber.on("currentTrackStorage", PlayerEvents.track, () => {
@@ -257,6 +281,7 @@ export class Player {
   }
 
   private async handleTrackEnded() {
+    await this.flushPlaybackSession();
     if (
       !this._gaplessPlayback ||
       this._reservedNextTrackIndex === null ||
@@ -288,6 +313,7 @@ export class Player {
     this._duration = 0;
     this.subscriber.exec(PlayerEvents.track);
     this.subscriber.exec(PlayerEvents.time);
+    this.startPlaybackSession(nextTrack);
 
     const nextUrl = this._reservedNextUrl;
     this.clearReservedNextTrack();
@@ -312,6 +338,107 @@ export class Player {
     this.subscriber.exec(PlayerEvents.trackReady);
     void this.gainTrack(nextTrack.id);
     void this.reserveNextTrackUrl();
+  }
+
+  private startPlaybackSession(track: ITrack) {
+    this._sessionTrackId = track.id;
+    this._sessionTrackSnapshot = { ...track };
+    this._sessionStartAt = Date.now();
+    this._sessionAccumulatedMs = 0;
+    this._sessionLastTickAt = 0;
+    this._sessionCounted = false;
+    const durationMs = Math.floor((track.dt ?? 0) as number);
+    this._sessionDurationMs = Number.isFinite(durationMs) ? durationMs : 0;
+  }
+
+  private tickPlaybackSession() {
+    if (!this._sessionTrackId) return;
+    if (!this.currentTrack || this.currentTrack.id !== this._sessionTrackId)
+      return;
+    if (this.playState !== "play") return;
+
+    const now = Date.now();
+    if (this._sessionLastTickAt > 0) {
+      const delta = now - this._sessionLastTickAt;
+      if (delta > 0 && delta < 3000) {
+        this._sessionAccumulatedMs += delta;
+      }
+    }
+    this._sessionLastTickAt = now;
+
+    const audioDurationMs = Number.isFinite(this._audio.duration)
+      ? Math.floor(this._audio.duration * 1000)
+      : 0;
+    if (audioDurationMs > 0) {
+      this._sessionDurationMs = audioDurationMs;
+    }
+
+    if (!this._sessionCounted) {
+      const eightyPercentMs =
+        Math.floor((this._sessionDurationMs / 1000) * 0.8) * 1000;
+      if (
+        this._sessionAccumulatedMs >= 60 * 1000 ||
+        (eightyPercentMs > 0 && this._sessionAccumulatedMs >= eightyPercentMs)
+      ) {
+        this._sessionCounted = true;
+      }
+    }
+  }
+
+  private async flushPlaybackSession() {
+    if (!this._sessionTrackId || !this._sessionTrackSnapshot) return;
+
+    this.tickPlaybackSession();
+    const trackId = this._sessionTrackId;
+    const trackSnapshot = this._sessionTrackSnapshot;
+    const sessionStartAt = this._sessionStartAt;
+    const sessionAccumulatedMs = Math.max(
+      0,
+      Math.floor(this._sessionAccumulatedMs),
+    );
+    const shouldCount = this._sessionCounted;
+
+    if (sessionAccumulatedMs <= 0 && !shouldCount) {
+      this.resetPlaybackSession();
+      return;
+    }
+
+    try {
+      const oldRecord =
+        await this.localHistoryDB.getItem<LocalPlayHistoryRecord>(trackId);
+      const now = Date.now();
+      const nextRecord: LocalPlayHistoryRecord = {
+        id: trackId,
+        track: trackSnapshot,
+        firstPlayStartAt: oldRecord?.firstPlayStartAt ?? sessionStartAt,
+        lastPlayStartAt: sessionStartAt,
+        lastPlayEndAt: now,
+        accumulatedPlayMs:
+          (oldRecord?.accumulatedPlayMs ?? 0) + sessionAccumulatedMs,
+        playCount: (oldRecord?.playCount ?? 0) + (shouldCount ? 1 : 0),
+        playEventTimestamps: shouldCount
+          ? [...(oldRecord?.playEventTimestamps ?? []), sessionStartAt].slice(
+              -500,
+            )
+          : [...(oldRecord?.playEventTimestamps ?? [])],
+        updatedAt: now,
+      };
+      await this.localHistoryDB.putItem(nextRecord);
+    } catch (error) {
+      console.error("Failed to flush playback session:", error);
+    }
+
+    this.resetPlaybackSession();
+  }
+
+  private resetPlaybackSession() {
+    this._sessionTrackId = null;
+    this._sessionTrackSnapshot = null;
+    this._sessionStartAt = 0;
+    this._sessionAccumulatedMs = 0;
+    this._sessionLastTickAt = 0;
+    this._sessionCounted = false;
+    this._sessionDurationMs = 0;
   }
 
   /**
@@ -402,6 +529,7 @@ export class Player {
     }
 
     const update = () => {
+      this.tickPlaybackSession();
       // 确保音频已经加载
       if (this._audio.readyState === 0) return;
 
@@ -481,6 +609,7 @@ export class Player {
       normalizedProgress: number;
     },
   ) {
+    await this.flushPlaybackSession();
     // 查询指定的歌曲是否在播放列表中
     let trackIndex = this._playlist.findIndex(
       (_track) => _track.id === track.id,
@@ -500,6 +629,7 @@ export class Player {
       // 触发 track 的回调函数
       this.subscriber.exec(PlayerEvents.track);
       this.subscriber.exec(PlayerEvents.time);
+      this.startPlaybackSession(track);
       this.clearReservedNextTrack();
 
       // 获取歌曲播放信息
@@ -1156,6 +1286,7 @@ export class Player {
    * 清空播放列表
    */
   clearPlaylist() {
+    void this.flushPlaybackSession();
     this._playlist = [];
     this._current = 0;
     this._audio.pause();

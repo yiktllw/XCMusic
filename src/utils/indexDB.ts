@@ -168,6 +168,70 @@ class IndexedDB {
   }
 
   /**
+   * 根据主键读取单条记录
+   */
+  getItem<T = any>(id: number | string): Promise<T | null> {
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject("Database not open");
+
+      const transaction = this.db.transaction([this.storeName], "readonly");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.get(id);
+
+      request.onsuccess = (event) => {
+        const result = (event.target as IDBRequest<T>).result;
+        resolve(result ?? null);
+      };
+
+      request.onerror = (event) => {
+        reject("Get item error: " + (event.target as IDBRequest).error);
+      };
+    });
+  }
+
+  /**
+   * 写入或覆盖单条记录
+   */
+  putItem<T = any>(item: T): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject("Database not open");
+
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.put(item as any);
+
+      request.onsuccess = () => {
+        resolve();
+      };
+
+      request.onerror = (event) => {
+        reject("Put item error: " + (event.target as IDBRequest).error);
+      };
+    });
+  }
+
+  /**
+   * 获取对象仓库全部记录
+   */
+  getAllItems<T = any>(): Promise<T[]> {
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject("Database not open");
+
+      const transaction = this.db.transaction([this.storeName], "readonly");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.getAll();
+
+      request.onsuccess = (event) => {
+        resolve(((event.target as IDBRequest).result ?? []) as T[]);
+      };
+
+      request.onerror = (event) => {
+        reject("Get all items error: " + (event.target as IDBRequest).error);
+      };
+    });
+  }
+
+  /**
    * 添加歌曲信息到数据库
    */
   addDownloadedSong(song: IDownloadedSong): Promise<void> {

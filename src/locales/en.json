@@ -495,7 +495,12 @@
   },
   "user_songs_rank_view": {
     "alltime": "All Time",
-    "last_week": "Last Week"
+    "last_week": "Last Week",
+    "source_title": "Data Source",
+    "source_tip": "Due to Netease Cloud Music API restrictions, third-party clients cannot sync local listening records back to your Netease account.",
+    "source_netease": "Netease",
+    "source_local": "Local",
+    "source_mixed": "Combined"
   },
   "user_view": {
     "albums": "Albums",

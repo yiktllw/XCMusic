@@ -8,6 +8,7 @@
 
 import axios from "axios";
 import { type ITrack, Tracks } from "@/utils/tracks";
+import indexDB from "@/utils/indexDB";
 import { type IHotSearch, type ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import type {
@@ -1056,6 +1057,28 @@ export namespace Lyrics {
 /**
  * 用户相关API
  */
+type ILocalPlayHistoryRecord = {
+  id: number | string;
+  track: ITrack;
+  firstPlayStartAt: number;
+  lastPlayStartAt: number;
+  lastPlayEndAt: number;
+  accumulatedPlayMs: number;
+  playCount: number;
+  playEventTimestamps: number[];
+  updatedAt: number;
+};
+
+const localHistoryDB = new indexDB("ncm_play_history", "history");
+let localHistoryReady: Promise<IDBDatabase> | null = null;
+
+const ensureLocalHistoryDB = async () => {
+  if (!localHistoryReady) {
+    localHistoryReady = localHistoryDB.openDatabase();
+  }
+  return localHistoryReady;
+};
+
 export namespace User {
   /**
    * 音乐云盘信息
@@ -1277,6 +1300,75 @@ export namespace User {
       url: "/user/record",
       tracks: type === "week" ? res.weekData : res.allData,
     }).tracks;
+  }
+
+  /**
+   * 获取本地听歌排行
+   */
+  export async function localSongsRank(
+    type: "week" | "alltime" = "week",
+  ): Promise<ITrack[]> {
+    try {
+      await ensureLocalHistoryDB();
+      const records =
+        await localHistoryDB.getAllItems<ILocalPlayHistoryRecord>();
+      const now = Date.now();
+      const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+      const tracks = records
+        .map((record) => {
+          const weekCount = (record.playEventTimestamps ?? []).filter(
+            (ts) => ts >= sevenDaysAgo,
+          ).length;
+          const listenCount = type === "week" ? weekCount : record.playCount;
+          if (listenCount <= 0) return null;
+          return {
+            ...record.track,
+            playCount: listenCount,
+          } as ITrack;
+        })
+        .filter((item): item is ITrack => item !== null)
+        .sort((a, b) => b.playCount - a.playCount);
+
+      return tracks;
+    } catch (error) {
+      console.error("Failed to get local songs rank:", error);
+      return [];
+    }
+  }
+
+  /**
+   * 获取综合听歌排行（网易云+本地）
+   */
+  export async function combinedSongsRank(
+    uid: number,
+    type: "week" | "alltime" = "week",
+  ): Promise<ITrack[]> {
+    const [cloudTracks, localTracks] = await Promise.all([
+      songsRank(uid, type),
+      localSongsRank(type),
+    ]);
+
+    const merged = new Map<number | string, ITrack>();
+    cloudTracks.forEach((track) => {
+      merged.set(track.id, { ...track });
+    });
+
+    localTracks.forEach((track) => {
+      const old = merged.get(track.id);
+      if (!old) {
+        merged.set(track.id, { ...track });
+        return;
+      }
+      merged.set(track.id, {
+        ...old,
+        playCount: (old.playCount ?? 0) + (track.playCount ?? 0),
+      });
+    });
+
+    return Array.from(merged.values()).sort(
+      (a, b) => b.playCount - a.playCount,
+    );
   }
 
   /**
