@@ -370,7 +370,7 @@ export namespace Playlist {
       op: operation,
       pid: playlistId,
       // 反转后的ids是为了保证歌曲的顺序和原来的顺序一致
-      tracks: ids.reverse().join(","),
+      tracks: [...ids].reverse().join(","),
       cookie: cookie,
     });
 
