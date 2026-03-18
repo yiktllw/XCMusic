@@ -122,12 +122,6 @@ export class Player {
   _biquads: BiquadFilterNode[] = [];
   noUrlCount: number = 0;
   _downloadedSongs: any[] = []; // Cache for downloaded songs
-  _gaplessPlayback: boolean =
-    getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false;
-  _reservedNextTrackId: number | string | null = null;
-  _reservedNextTrackIndex: number | null = null;
-  _reservedNextUrl: string = "";
-  _reservingTrackId: number | string | null = null;
   _sessionTrackId: number | string | null = null;
   _sessionTrackSnapshot: ITrack | null = null;
   _sessionStartAt: number = 0;
@@ -199,145 +193,9 @@ export class Player {
     }, 500);
   }
 
-  setGaplessPlayback(value: boolean) {
-    this._gaplessPlayback = !!value;
-    if (!this._gaplessPlayback) {
-      this.clearReservedNextTrack();
-      return;
-    }
-    void this.reserveNextTrackUrl();
-  }
-
-  private clearReservedNextTrack() {
-    this._reservedNextTrackId = null;
-    this._reservedNextTrackIndex = null;
-    this._reservedNextUrl = "";
-    this._reservingTrackId = null;
-  }
-
-  private getNextTrackIndexForGapless(): number | null {
-    if (this.playlistCount === 0) return null;
-    if (this._mode === "random") return null;
-    if (this._mode === "loop") return this._current;
-    return (this._current + 1) % this.playlistCount;
-  }
-
-  private async reserveNextTrackUrl() {
-    if (!this._gaplessPlayback || this.playlistCount === 0) {
-      this.clearReservedNextTrack();
-      return;
-    }
-
-    const nextIndex = this.getNextTrackIndexForGapless();
-    if (nextIndex === null) {
-      this.clearReservedNextTrack();
-      return;
-    }
-
-    const nextTrack = this._playlist[nextIndex];
-    if (!nextTrack) {
-      this.clearReservedNextTrack();
-      return;
-    }
-
-    if (
-      this._reservedNextTrackId === nextTrack.id &&
-      this._reservedNextTrackIndex === nextIndex &&
-      this._reservedNextUrl
-    ) {
-      return;
-    }
-
-    if (this._reservingTrackId === nextTrack.id) {
-      return;
-    }
-
-    this._reservingTrackId = nextTrack.id;
-    let url = "";
-    if (isLocal(nextTrack.id)) {
-      url = `file://${nextTrack.localPath.replace(/\\/g, "/")}`;
-    } else {
-      try {
-        const result = await this.getUrl(nextTrack.id);
-        url = result?.url ?? "";
-      } catch (error) {
-        console.error("Failed to reserve next track url:", error);
-      }
-    }
-
-    if (this._reservingTrackId !== nextTrack.id) {
-      return;
-    }
-
-    if (!url) {
-      this.clearReservedNextTrack();
-      return;
-    }
-
-    this._reservedNextTrackId = nextTrack.id;
-    this._reservedNextTrackIndex = nextIndex;
-    this._reservedNextUrl = url;
-    this._reservingTrackId = null;
-  }
-
   private async handleTrackEnded() {
     await this.flushPlaybackSession();
-    if (
-      !this._gaplessPlayback ||
-      this._reservedNextTrackIndex === null ||
-      this._reservedNextTrackId === null ||
-      !this._reservedNextUrl
-    ) {
-      await this.next();
-      return;
-    }
-
-    const expectedNextIndex = this.getNextTrackIndexForGapless();
-    if (
-      expectedNextIndex === null ||
-      expectedNextIndex !== this._reservedNextTrackIndex
-    ) {
-      await this.next();
-      return;
-    }
-
-    const nextTrack = this._playlist[this._reservedNextTrackIndex];
-    if (!nextTrack || nextTrack.id !== this._reservedNextTrackId) {
-      await this.next();
-      return;
-    }
-
-    this._current = this._reservedNextTrackIndex;
-    this._currentTime = 0;
-    this._progress = 0;
-    this._duration = 0;
-    this.subscriber.exec(PlayerEvents.track);
-    this.subscriber.exec(PlayerEvents.time);
-    this.startPlaybackSession(nextTrack);
-
-    const nextUrl = this._reservedNextUrl;
-    this.clearReservedNextTrack();
-
-    this._audio.src = nextUrl;
-    this._audio.currentTime = 0;
-    this._audio.onended = () => {
-      void this.handleTrackEnded();
-    };
-
-    try {
-      await this._audio.play();
-      this._outputAudio.play();
-      this.playState = "play";
-    } catch (error) {
-      console.error("Failed to start reserved next track:", error);
-      await this.next();
-      return;
-    }
-
-    this.updateTime();
-    this.subscriber.exec(PlayerEvents.trackReady);
-    void this.gainTrack(nextTrack.id);
-    void this.reserveNextTrackUrl();
+    await this.next();
   }
 
   private startPlaybackSession(track: ITrack) {
@@ -623,14 +481,9 @@ export class Player {
 
       // 更新当前播放的歌曲位置
       this._current = trackIndex;
-      this._currentTime = 0;
-      this._progress = 0;
-      this._duration = 0;
       // 触发 track 的回调函数
       this.subscriber.exec(PlayerEvents.track);
-      this.subscriber.exec(PlayerEvents.time);
       this.startPlaybackSession(track);
-      this.clearReservedNextTrack();
 
       // 获取歌曲播放信息
       let nourl = false;
@@ -709,7 +562,6 @@ export class Player {
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
       this.subscriber.exec(PlayerEvents.trackReady);
-      void this.reserveNextTrackUrl();
     }
   }
   async gainTrack(id: number | string): Promise<string> {
@@ -1034,7 +886,6 @@ export class Player {
 
       // 重新启动时间更新
       this.updateTime();
-      void this.reserveNextTrackUrl();
     }
   }
   /**
@@ -1174,7 +1025,6 @@ export class Player {
       this._playlist = list;
     }
     this.subscriber.exec(PlayerEvents.playlist);
-    void this.reserveNextTrackUrl();
   }
 
   /**
@@ -1292,7 +1142,6 @@ export class Player {
     this._audio.pause();
     this.playState = "play";
     this._audio.src = "";
-    this.clearReservedNextTrack();
     this.clearHistory();
     this.subscriber.exec(PlayerEvents.playlist);
   }
@@ -1495,7 +1344,6 @@ export class Player {
 
       this.subscriber.exec(PlayerEvents.playlist);
     }
-    void this.reserveNextTrackUrl();
   }
   /**
    * 获取播放历史
@@ -1706,18 +1554,10 @@ export class Player {
    * @param {Number} value 当前播放时间
    */
   set currentTime(value: number) {
-    const duration =
-      Number.isFinite(this._audio.duration) && this._audio.duration > 0
-        ? this._audio.duration
-        : (this._duration as number);
-    if (value > 0 && (!duration || this._audio.readyState < 1)) {
-      return;
-    }
-    if (value >= 0 && value <= duration) {
+    if (value >= 0 && value <= (this._duration as number)) {
       this._audio.currentTime = value;
       this._currentTime = value;
-      this._duration = duration;
-      this._progress = duration > 0 ? value / duration : 0;
+      this._progress = value / (this._duration as number);
       this.subscriber.exec(PlayerEvents.time);
       // Trigger immediate time sync for seek
       this.subscriber.exec("seek" as any);
@@ -1735,9 +1575,6 @@ export class Player {
    */
   set progress(value: number) {
     if (value >= 0 && value <= 1) {
-      if (value > 0 && (this._duration as number) <= 0) {
-        return;
-      }
       this._progress = value;
       this._currentTime = (this._duration as number) * value;
       this._audio.currentTime = this._currentTime;
