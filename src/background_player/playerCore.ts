@@ -58,15 +58,62 @@ type PlayerEventCallbacks = {
   [PlayerEvents.timeSync]: () => void;
 };
 
+const WORKLET_PROCESSOR_NAME = "xc-audio-engine-processor";
+const equalizerKeys = Object.keys(equalizerFreqs) as Array<keyof IEqualizer>;
+
+const createDefaultEqualizer = (): IEqualizer => ({
+  _32Hz: 0,
+  _64Hz: 0,
+  _125Hz: 0,
+  _250Hz: 0,
+  _500Hz: 0,
+  _1kHz: 0,
+  _2kHz: 0,
+  _4kHz: 0,
+  _8kHz: 0,
+  _16kHz: 0,
+});
+
+const normalizeEqualizer = (value: unknown): IEqualizer => {
+  const normalized = createDefaultEqualizer();
+  if (!value || typeof value !== "object") {
+    return normalized;
+  }
+
+  const source = value as Partial<Record<keyof IEqualizer, unknown>>;
+  equalizerKeys.forEach((key) => {
+    const level = source[key];
+    if (typeof level === "number" && Number.isFinite(level)) {
+      normalized[key] = level;
+    }
+  });
+  return normalized;
+};
+const WORKLET_MODULE_PATH = "audio/xcAudioEngineProcessor.worklet.js";
+
+const getWorkletModuleURL = () =>
+  new URL(WORKLET_MODULE_PATH, window.location.href).toString();
+
 export class Player {
   /** 音频对象 */
   _audio: HTMLAudioElement = new Audio();
+  /** 预缓冲音频对象，用于无缝切换下一首 */
+  _preloadAudio: HTMLAudioElement = new Audio();
   /** 因为_audio连接到了_audioContext，无法直接设置_audio的输出设备，所以需要一个新的音频对象来设置输出设备 */
   _outputAudio: HTMLAudioElement = new Audio();
-  /** 音频上下文，用于设置增益 */
+  /** 音频上下文 */
   _audioContext: AudioContext | null = null;
-  /** 增益节点，用于设置音量均衡 */
-  _gainNode: GainNode | null = null;
+  /** 音频处理节点（AudioWorklet） */
+  _workletNode: AudioWorkletNode | null = null;
+  _workletSetupPromise: Promise<void> | null = null;
+  _workletReady: boolean = false;
+  _workletErrorNotified: boolean = false;
+  _workletPostGain: number = 1;
+  _equalizer: IEqualizer = normalizeEqualizer(
+    getStorage(StorageKey.Setting_Play_Equalizer),
+  );
+  _spectrumEnabled: boolean =
+    getStorage(StorageKey.Setting_PlayUI_Spectrum) ?? false;
   /** 播放列表 */
   _playlist: ITrack[] = [];
   /** 歌单ID */
@@ -87,6 +134,8 @@ export class Player {
   _currentTime: number = 0;
   /** 播放进度 */
   _progress: number = 0;
+  /** 已缓冲进度 */
+  _bufferedProgress: number = 0;
   /** 歌曲总时长 */
   _duration: number = 0;
   /** 音质 */
@@ -117,9 +166,16 @@ export class Player {
   /** 是否初始化设备 */
   deviceInit: boolean = false;
   _sourceNode: MediaElementAudioSourceNode | undefined;
+  _preloadSourceNode: MediaElementAudioSourceNode | undefined;
   _destination: MediaStreamAudioDestinationNode | undefined;
   _analyserNode: AnalyserNode | undefined;
-  _biquads: BiquadFilterNode[] = [];
+  _gaplessPlayback: boolean =
+    getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false;
+  _gaplessPreloadLeadSeconds: number = 8;
+  _gaplessPreloadedTrackIndex: number | null = null;
+  _gaplessPreloadedTrackId: number | string | null = null;
+  _gaplessPreloadPromise: Promise<void> | null = null;
+  _gaplessPreloadToken: number = 0;
   noUrlCount: number = 0;
   _downloadedSongs: any[] = []; // Cache for downloaded songs
   _sessionTrackId: number | string | null = null;
@@ -129,11 +185,296 @@ export class Player {
   _sessionLastTickAt: number = 0;
   _sessionCounted: boolean = false;
   _sessionDurationMs: number = 0;
-  constructor() {
+
+  private configureAudioElement(audioElement: HTMLAudioElement) {
+    audioElement.crossOrigin = "anonymous";
+    audioElement.preload = "auto";
+    audioElement.autoplay = false;
+    audioElement.volume = this._volume;
+  }
+
+  private bindActiveAudioCallbacks() {
     this._audio.onerror = () => this.handleAudioError();
+    this._audio.onended = () => {
+      void this.handleTrackEnded();
+    };
+  }
+
+  private isGaplessEnabled() {
+    return this._gaplessPlayback;
+  }
+
+  private resetPreloadAudioState(resetAudioSource: boolean = true) {
+    this._gaplessPreloadToken += 1;
+    this._gaplessPreloadPromise = null;
+    this._gaplessPreloadedTrackIndex = null;
+    this._gaplessPreloadedTrackId = null;
+
+    if (!resetAudioSource) {
+      return;
+    }
+
+    this._preloadAudio.pause();
+    this._preloadAudio.onended = null;
+    this._preloadAudio.onerror = null;
+    this._preloadAudio.removeAttribute("src");
+    this._preloadAudio.load();
+  }
+
+  private resolveGaplessNextTrackIndex(): number | null {
+    if (this.playlistCount === 0) {
+      return null;
+    }
+
+    if (this._mode === "loop") {
+      return this._current;
+    }
+
+    if (this._mode === "random") {
+      const nextFromHistory = this._history[this._historyIndex + 1];
+      if (nextFromHistory) {
+        const idx = this._playlist.findIndex(
+          (track) => track.id === nextFromHistory.id,
+        );
+        return idx >= 0 ? idx : null;
+      }
+      return Math.floor(Math.random() * this.playlistCount);
+    }
+
+    return (this._current + 1) % this.playlistCount;
+  }
+
+  private async resolveTrackUrlForPlayback(
+    track: ITrack,
+  ): Promise<string | null> {
+    if (isLocal(track.id)) {
+      return `file://${track.localPath.replace(/\\/g, "/")}`;
+    }
+    try {
+      const result = await this.getUrl(track.id);
+      return result?.url ?? null;
+    } catch (error) {
+      console.error("Failed to resolve track url for gapless preload", error);
+      return null;
+    }
+  }
+
+  private async waitAudioPreloaded(
+    audioElement: HTMLAudioElement,
+    timeoutMs: number = 8000,
+  ): Promise<boolean> {
+    if (audioElement.readyState >= 3) {
+      return true;
+    }
+
+    return await new Promise<boolean>((resolve) => {
+      let settled = false;
+
+      const cleanup = () => {
+        audioElement.removeEventListener("canplaythrough", handleReady);
+        audioElement.removeEventListener("loadeddata", handleReady);
+        audioElement.removeEventListener("error", handleError);
+      };
+
+      const finish = (result: boolean) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        cleanup();
+        resolve(result);
+      };
+
+      const handleReady = () => finish(true);
+      const handleError = () => finish(false);
+
+      audioElement.addEventListener("canplaythrough", handleReady);
+      audioElement.addEventListener("loadeddata", handleReady);
+      audioElement.addEventListener("error", handleError);
+
+      setTimeout(() => finish(audioElement.readyState >= 2), timeoutMs);
+    });
+  }
+
+  private swapActiveAndPreloadSlots() {
+    const previousAudio = this._audio;
+    this._audio = this._preloadAudio;
+    this._preloadAudio = previousAudio;
+
+    const previousSourceNode = this._sourceNode;
+    this._sourceNode = this._preloadSourceNode;
+    this._preloadSourceNode = previousSourceNode;
+
+    this.configureAudioElement(this._audio);
+    this.configureAudioElement(this._preloadAudio);
+    this.bindActiveAudioCallbacks();
+    this.resetPreloadAudioState(true);
+  }
+
+  private async tryUseGaplessBufferedTrack(
+    track: ITrack,
+    trackIndex: number,
+    autoPlay: boolean,
+    delay: number,
+    progress?: {
+      id: number;
+      normalizedProgress: number;
+    },
+  ): Promise<boolean> {
+    if (!this.isGaplessEnabled()) {
+      return false;
+    }
+
+    if (
+      this._gaplessPreloadedTrackIndex !== trackIndex ||
+      this._gaplessPreloadedTrackId !== track.id ||
+      !this._preloadAudio.src ||
+      this._preloadAudio.readyState < 2
+    ) {
+      return false;
+    }
+
+    this.swapActiveAndPreloadSlots();
+    this._current = trackIndex;
+    this.subscriber.exec(PlayerEvents.track);
+    this.startPlaybackSession(track);
+
+    if (autoPlay) {
+      try {
+        if (delay > 0) {
+          setTimeout(() => {
+            void this.resumeAudioContext();
+            this._audio.play().then(() => {
+              if (
+                progress &&
+                progress.normalizedProgress > 0 &&
+                progress.normalizedProgress <= 1 &&
+                progress.id === track.id &&
+                getStorage(StorageKey.Setting_Play_RememberTrackProgress) ===
+                  true
+              ) {
+                this._audio.currentTime =
+                  this._audio.duration * progress.normalizedProgress;
+              }
+            });
+            void this._outputAudio.play().catch(() => undefined);
+            this.playState = "play";
+          }, delay);
+        } else {
+          await this.resumeAudioContext();
+          await this._audio.play();
+          await this._outputAudio.play().catch(() => undefined);
+          this.playState = "play";
+        }
+      } catch (error) {
+        console.error("Failed to start buffered gapless track", error);
+      }
+    }
+
+    void this.gainTrack(track.id).catch((error) => {
+      console.error("Failed to update gain for buffered track", error);
+    });
+
+    this.noUrlCount = 0;
+    this.updateTime();
+    this.subscriber.exec(PlayerEvents.trackReady);
+    void this.prepareGaplessPreload(true);
+    return true;
+  }
+
+  private async prepareGaplessPreload(force: boolean = false) {
+    if (!this.isGaplessEnabled()) {
+      this.resetPreloadAudioState(true);
+      return;
+    }
+
+    if (!this.currentTrack || this.playlistCount === 0) {
+      return;
+    }
+
+    if (!force) {
+      const duration = this._audio.duration;
+      if (!Number.isFinite(duration) || duration <= 0) {
+        return;
+      }
+      const remain = duration - this._audio.currentTime;
+      if (remain > this._gaplessPreloadLeadSeconds) {
+        return;
+      }
+    }
+
+    const nextTrackIndex = this.resolveGaplessNextTrackIndex();
+    if (nextTrackIndex === null) {
+      return;
+    }
+
+    const nextTrack = this._playlist[nextTrackIndex];
+    if (!nextTrack) {
+      return;
+    }
+
+    if (
+      this._gaplessPreloadedTrackIndex === nextTrackIndex &&
+      this._gaplessPreloadedTrackId === nextTrack.id &&
+      this._preloadAudio.readyState >= 2
+    ) {
+      return;
+    }
+
+    if (this._gaplessPreloadPromise) {
+      return;
+    }
+
+    const token = this._gaplessPreloadToken + 1;
+    this._gaplessPreloadToken = token;
+
+    this._gaplessPreloadPromise = (async () => {
+      const trackUrl = await this.resolveTrackUrlForPlayback(nextTrack);
+      if (!trackUrl || token !== this._gaplessPreloadToken) {
+        return;
+      }
+
+      this._preloadAudio.pause();
+      this._preloadAudio.src = trackUrl;
+      this._preloadAudio.currentTime = 0;
+      this._preloadAudio.load();
+
+      const ready = await this.waitAudioPreloaded(this._preloadAudio);
+      if (!ready || token !== this._gaplessPreloadToken) {
+        return;
+      }
+
+      this._gaplessPreloadedTrackIndex = nextTrackIndex;
+      this._gaplessPreloadedTrackId = nextTrack.id;
+    })()
+      .catch((error) => {
+        console.error("Gapless preload failed", error);
+      })
+      .finally(() => {
+        if (token === this._gaplessPreloadToken) {
+          this._gaplessPreloadPromise = null;
+        }
+      });
+  }
+
+  setGaplessPlayback(enabled: boolean) {
+    this._gaplessPlayback = enabled;
+    setStorage(StorageKey.Setting_Play_GaplessPlayback, enabled);
+    if (!enabled) {
+      this.resetPreloadAudioState(true);
+      return;
+    }
+    void this.prepareGaplessPreload(true);
+  }
+
+  constructor() {
+    this.configureAudioElement(this._audio);
+    this.configureAudioElement(this._preloadAudio);
+    this.bindActiveAudioCallbacks();
+    this.resetPreloadAudioState();
+
     // 初始化音量均衡控件
     this.initAudioContext();
-    this._audio.crossOrigin = "anonymous";
 
     // 监听音频设备变化事件
     navigator.mediaDevices?.addEventListener("devicechange", () => {
@@ -195,6 +536,34 @@ export class Player {
 
   private async handleTrackEnded() {
     await this.flushPlaybackSession();
+
+    if (this.isGaplessEnabled()) {
+      const nextTrackIndex = this.resolveGaplessNextTrackIndex();
+      const nextTrack =
+        nextTrackIndex !== null ? this._playlist[nextTrackIndex] : null;
+
+      if (nextTrack && nextTrackIndex !== null) {
+        const switched = await this.tryUseGaplessBufferedTrack(
+          nextTrack,
+          nextTrackIndex,
+          true,
+          0,
+        );
+
+        if (switched) {
+          if (this._mode === "random") {
+            if (this._history[this._historyIndex + 1]) {
+              this._historyIndex += 1;
+              this.subscriber.exec(PlayerEvents.history);
+            } else {
+              this.appendToHistory(nextTrack);
+            }
+          }
+          return;
+        }
+      }
+    }
+
     await this.next();
   }
 
@@ -378,6 +747,48 @@ export class Player {
       await this.reloadUrl();
     }
   }
+
+  private updateBufferedProgressFromAudio() {
+    const safeProgress = Number.isFinite(this._progress)
+      ? Math.max(0, Math.min(1, this._progress))
+      : 0;
+    const duration = this._audio.duration;
+    if (!Number.isFinite(duration) || duration <= 0) {
+      this._bufferedProgress = safeProgress;
+      return;
+    }
+
+    const buffered = this._audio.buffered;
+    if (!buffered || buffered.length === 0) {
+      this._bufferedProgress = safeProgress;
+      return;
+    }
+
+    const currentTime = Number.isFinite(this._audio.currentTime)
+      ? this._audio.currentTime
+      : 0;
+    let bufferedEnd = 0;
+
+    for (let i = 0; i < buffered.length; i++) {
+      const rangeStart = buffered.start(i);
+      const rangeEnd = buffered.end(i);
+
+      if (currentTime >= rangeStart && currentTime <= rangeEnd + 0.1) {
+        bufferedEnd = rangeEnd;
+        break;
+      }
+
+      if (rangeEnd > bufferedEnd) {
+        bufferedEnd = rangeEnd;
+      }
+    }
+
+    const normalizedBuffered = Math.max(
+      0,
+      Math.min(1, parseFloat((bufferedEnd / duration).toFixed(3))),
+    );
+    this._bufferedProgress = Math.max(safeProgress, normalizedBuffered);
+  }
   /**
    * 更新歌曲总时长、当前播放时间、播放进度
    */
@@ -388,15 +799,26 @@ export class Player {
 
     const update = () => {
       this.tickPlaybackSession();
+
+      if (this.playState === "play") {
+        void this.prepareGaplessPreload(false);
+      }
+
       // 确保音频已经加载
       if (this._audio.readyState === 0) return;
 
-      // 确保触发time订阅事件时，时间发生了变化
-      if (
+      const previousBufferedProgress = this._bufferedProgress;
+      this.updateBufferedProgressFromAudio();
+      const bufferedProgressChanged =
+        Math.abs(this._bufferedProgress - previousBufferedProgress) >= 0.005;
+
+      const secondChanged =
         this.playState === "play" &&
         Math.floor(this._currentTime as number) !==
-          Math.floor(this._audio.currentTime)
-      ) {
+          Math.floor(this._audio.currentTime);
+
+      // 确保触发time订阅事件时，时间发生了变化
+      if (secondChanged) {
         // 如果秒数发生了变化
         this._currentTime = Math.floor(this._audio.currentTime);
         this._duration = this._audio.duration;
@@ -419,6 +841,8 @@ export class Player {
             normalizedProgress: this._progress,
           });
         }
+      } else if (bufferedProgressChanged) {
+        this.subscriber.exec(PlayerEvents.time);
       }
 
       this._updateTime = setTimeout(update, 300); // 递归调用 setTimeout
@@ -431,6 +855,12 @@ export class Player {
    */
   async reloadUrl() {
     if (!this.currentTrack || isLocal(this.currentTrack.id)) return;
+    try {
+      await this.ensureAudioGraphReady();
+    } catch (error) {
+      console.error("Audio graph is not ready", error);
+      return;
+    }
     let result = await this.getUrl(this.currentTrack.id);
     if (!result) return;
     let url = result.url;
@@ -438,6 +868,8 @@ export class Player {
     this._audio.currentTime = this._currentTime as number;
     try {
       if (this.playState === "play") {
+        await this.resumeAudioContext();
+        await this._outputAudio.play().catch(() => undefined);
         await this._audio.play();
       }
       this.updateTime();
@@ -484,6 +916,24 @@ export class Player {
       // 触发 track 的回调函数
       this.subscriber.exec(PlayerEvents.track);
       this.startPlaybackSession(track);
+      try {
+        await this.ensureAudioGraphReady();
+      } catch (error) {
+        console.error("Audio graph is not ready", error);
+        return;
+      }
+
+      if (
+        await this.tryUseGaplessBufferedTrack(
+          track,
+          trackIndex,
+          autoPlay,
+          delay,
+          progress,
+        )
+      ) {
+        return;
+      }
 
       // 获取歌曲播放信息
       let nourl = false;
@@ -503,6 +953,7 @@ export class Player {
 
       if (nourl || !result) return;
       let url = result.url;
+      this._bufferedProgress = 0;
       this._audio.src = url;
       this._audio.currentTime = 0;
       this._audio.onended = () => {
@@ -517,6 +968,7 @@ export class Player {
           // 更新播放状态，当且仅当程序启动时，delay>0
           if (delay > 0) {
             setTimeout(() => {
+              void this.resumeAudioContext();
               this._audio.play().then(() => {
                 // 只需要在程序启动时调用此方法，也就是delay>0时
                 // 从记忆的进度开始播放
@@ -532,12 +984,13 @@ export class Player {
                     this._audio.duration * progress.normalizedProgress;
                 }
               });
-              this._outputAudio.play();
+              void this._outputAudio.play().catch(() => undefined);
               this.playState = "play";
             }, delay);
           } else {
+            await this.resumeAudioContext();
             await this._audio.play();
-            this._outputAudio.play();
+            await this._outputAudio.play().catch(() => undefined);
             this.playState = "play";
           }
           // autoPlayMsg = "Autoplay";
@@ -562,6 +1015,7 @@ export class Player {
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
       this.subscriber.exec(PlayerEvents.trackReady);
+      void this.prepareGaplessPreload(true);
     }
   }
   async gainTrack(id: number | string): Promise<string> {
@@ -671,85 +1125,179 @@ export class Player {
     return result;
   }
   /**
-   * 初始化音频增益
+   * 初始化音频处理图
    */
   initAudioContext() {
-    if (!this._audioContext) {
-      // 创建一个新的 AudioContext
-      this._audioContext = new window.AudioContext();
+    if (this._audioContext) {
+      return;
+    }
 
-      // 创建一个新的音频源
-      this._sourceNode = this._audioContext.createMediaElementSource(
-        this._audio,
+    this._audioContext = new window.AudioContext();
+    this._sourceNode = this._audioContext.createMediaElementSource(this._audio);
+    this._preloadSourceNode = this._audioContext.createMediaElementSource(
+      this._preloadAudio,
+    );
+    this._destination = this._audioContext.createMediaStreamDestination();
+
+    this._outputAudio.srcObject = this._destination.stream;
+    void this._outputAudio.play().catch(() => undefined);
+
+    this._workletSetupPromise = this.setupAudioWorklet();
+    this._workletSetupPromise.catch((error) => {
+      console.error("Failed to setup audio worklet", error);
+    });
+  }
+
+  private async setupAudioWorklet() {
+    if (
+      !this._audioContext ||
+      !this._sourceNode ||
+      !this._preloadSourceNode ||
+      !this._destination
+    ) {
+      return;
+    }
+
+    const audioContext = this._audioContext;
+    const sourceNode = this._sourceNode;
+    const preloadSourceNode = this._preloadSourceNode;
+    const destinationNode = this._destination;
+
+    try {
+      await audioContext.audioWorklet.addModule(getWorkletModuleURL());
+
+      // 防止 addModule 期间音频系统已被重建
+      if (
+        this._audioContext !== audioContext ||
+        this._sourceNode !== sourceNode ||
+        this._preloadSourceNode !== preloadSourceNode ||
+        this._destination !== destinationNode
+      ) {
+        return;
+      }
+
+      const workletNode = new AudioWorkletNode(
+        audioContext,
+        WORKLET_PROCESSOR_NAME,
       );
-
-      // 均衡器
-      const equalizerSettings = getStorage(
-        StorageKey.Setting_Play_Equalizer,
-      ) ?? {
-        _32Hz: 0,
-        _64Hz: 0,
-        _125Hz: 0,
-        _250Hz: 0,
-        _500Hz: 0,
-        _1kHz: 0,
-        _2kHz: 0,
-        _4kHz: 0,
-        _8kHz: 0,
-        _16kHz: 0,
+      workletNode.onprocessorerror = (event: Event) => {
+        console.error("AudioWorklet processor error", event);
       };
 
-      // 创建滤波器
-      (
-        Object.keys(equalizerFreqs) as Array<keyof typeof equalizerFreqs>
-      ).forEach((key, index) => {
-        this._biquads.push(this._audioContext!.createBiquadFilter());
-        this._biquads[index].type = "peaking";
-        this._biquads[index].frequency.value = equalizerFreqs[key];
-        this._biquads[index].Q.value = 1.4;
-        this._biquads[index].gain.value = equalizerSettings[key];
-      });
+      sourceNode.connect(workletNode);
+      preloadSourceNode.connect(workletNode);
+      workletNode.connect(destinationNode);
+      this._workletNode = workletNode;
+      this._workletReady = true;
+      this._workletErrorNotified = false;
 
-      // 创建一个增益节点
-      this._gainNode = this._audioContext.createGain();
+      this.applyEqualizerToWorklet();
+      this.applyPostGainToWorklet();
 
-      // 创建一个新的音频目标，用来输出音频
-      this._destination = this._audioContext.createMediaStreamDestination();
+      if (this._analyserNode) {
+        try {
+          sourceNode.disconnect(this._analyserNode);
+        } catch (disconnectError) {
+          console.error("Failed to reconnect analyser node", disconnectError);
+        }
+        this.connectSpectrumNode();
+      } else if (this._spectrumEnabled) {
+        this.toggleSpectrum(true);
+      }
+    } catch (error) {
+      console.error("AudioWorklet initialization failed", error);
 
-      // 连接节点
-      const sourceNode = this._sourceNode;
-      const gainNode = this._gainNode;
+      this._workletNode = null;
+      this._workletReady = false;
 
-      if (equalizerSettings && this._biquads.length > 0) {
-        sourceNode.connect(this._biquads[0]);
-        this._biquads.forEach((biquad, index) => {
-          if (index < this._biquads.length - 1) {
-            this._biquads[index].connect(this._biquads[index + 1]);
-          } else if (index === this._biquads.length - 1) {
-            biquad.connect(gainNode);
-          }
+      try {
+        sourceNode.disconnect();
+      } catch (disconnectError) {
+        console.error(
+          "Failed to disconnect source node after worklet error",
+          disconnectError,
+        );
+      }
+      try {
+        preloadSourceNode.disconnect();
+      } catch (disconnectError) {
+        console.error(
+          "Failed to disconnect preload source node after worklet error",
+          disconnectError,
+        );
+      }
+
+      throw error;
+    }
+
+    await this.applyOutputDevice(
+      getStorage(StorageKey.Setting_Play_Device) ?? "default",
+    );
+  }
+
+  private async ensureAudioGraphReady() {
+    if (
+      !this._audioContext ||
+      !this._sourceNode ||
+      !this._preloadSourceNode ||
+      !this._destination
+    ) {
+      this.initAudioContext();
+    }
+    if (this._workletSetupPromise) {
+      await this._workletSetupPromise;
+      this._workletSetupPromise = null;
+    }
+
+    if (!this._workletNode || !this._workletReady) {
+      if (!this._workletErrorNotified) {
+        ipcRenderer?.send("player-error", {
+          type: "error",
+          message: "AudioWorklet 初始化失败，播放器已停止。",
         });
-      } else {
-        sourceNode.connect(gainNode);
+        this._workletErrorNotified = true;
       }
-
-      gainNode.connect(this._destination);
-
-      if (getStorage(StorageKey.Setting_PlayUI_Spectrum)) {
-        // 创建 AnalyserNode
-        this._analyserNode = this._audioContext.createAnalyser();
-        this._analyserNode.fftSize = 2048; // 设置 FFT 大小，提高频率分辨率
-        this._analyserNode.smoothingTimeConstant = 0.8; // 添加平滑效果
-
-        this._gainNode.connect(this._analyserNode);
-      }
-
-      this._outputAudio.srcObject = this._destination.stream;
-      this._outputAudio.play();
-
-      this.setDevice(getStorage(StorageKey.Setting_Play_Device) ?? "default");
+      throw new Error("AudioWorklet is required but unavailable");
     }
   }
+
+  private async resumeAudioContext() {
+    if (!this._audioContext) {
+      return;
+    }
+    if (this._audioContext.state === "suspended") {
+      await this._audioContext.resume().catch((error) => {
+        console.error("Failed to resume AudioContext", error);
+      });
+    }
+  }
+
+  private postWorkletMessage(message: unknown) {
+    if (!this._workletNode) {
+      return;
+    }
+    this._workletNode.port.postMessage(message);
+  }
+
+  private applyEqualizerToWorklet() {
+    const gains = equalizerKeys.map((key) => this._equalizer[key]);
+    this.postWorkletMessage({ type: "setEqualizer", gains });
+  }
+
+  private applyPostGainToWorklet() {
+    this.postWorkletMessage({
+      type: "setPostGain",
+      value: this._workletPostGain,
+    });
+  }
+
+  private connectSpectrumNode() {
+    if (!this._analyserNode || !this._workletNode) {
+      return;
+    }
+    this._workletNode.connect(this._analyserNode);
+  }
+
   _spectrumBuffer: Uint8Array | null = null;
 
   getSpectrumData(): Uint8Array | null {
@@ -767,23 +1315,25 @@ export class Player {
   }
 
   toggleSpectrum(enabled: boolean) {
+    this._spectrumEnabled = enabled;
+
     if (enabled) {
       if (this._analyserNode) return;
-      if (!this._audioContext || !this._gainNode) return;
+      if (!this._audioContext || !this._workletNode) return;
 
       this._analyserNode = this._audioContext.createAnalyser();
       this._analyserNode.fftSize = 2048;
       this._analyserNode.smoothingTimeConstant = 0.8;
-      this._gainNode.connect(this._analyserNode);
+      this.connectSpectrumNode();
     } else {
       if (!this._analyserNode) return;
-      if (this._gainNode) {
-        try {
-          this._gainNode.disconnect(this._analyserNode);
-        } catch (e) {
-          console.error("Failed to disconnect analyser node", e);
-        }
+
+      try {
+        this._workletNode?.disconnect(this._analyserNode);
+      } catch (error) {
+        console.error("Failed to disconnect analyser node", error);
       }
+
       this._analyserNode = undefined;
       this._spectrumBuffer = null;
     }
@@ -797,23 +1347,21 @@ export class Player {
       try {
         // 断开所有节点连接
         if (this._analyserNode) {
+          try {
+            this._workletNode?.disconnect(this._analyserNode);
+          } catch (error) {
+            console.error("Error disconnecting analyser source:", error);
+          }
           this._analyserNode.disconnect();
         }
-        if (this._gainNode) {
-          this._gainNode.disconnect();
-        }
-        if (this._biquads.length > 0) {
-          this._biquads.forEach((biquad) => {
-            try {
-              biquad.disconnect();
-            } catch (error) {
-              console.error("Error disconnecting biquad filter:", error);
-            }
-          });
-          this._biquads = [];
+        if (this._workletNode) {
+          this._workletNode.disconnect();
         }
         if (this._sourceNode) {
           this._sourceNode.disconnect();
+        }
+        if (this._preloadSourceNode) {
+          this._preloadSourceNode.disconnect();
         }
         if (this._destination) {
           this._destination.disconnect();
@@ -825,7 +1373,7 @@ export class Player {
         }
         // 关闭 AudioContext
         if (this._audioContext.state !== "closed") {
-          this._audioContext.close();
+          void this._audioContext.close();
         }
       } catch (error) {
         console.error("Error destroying AudioContext:", error);
@@ -833,16 +1381,20 @@ export class Player {
         // 重置所有引用
         this._audioContext = null;
         this._sourceNode = undefined;
+        this._preloadSourceNode = undefined;
         this._destination = undefined;
         this._analyserNode = undefined;
-        this._gainNode = null;
+        this._workletNode = null;
+        this._workletSetupPromise = null;
+        this._workletReady = false;
+        this._workletErrorNotified = false;
       }
     }
   }
   /**
    * 重建音频系统 - 创建新的 Audio 元素和 AudioContext
    */
-  rebuildAudioSystem() {
+  async rebuildAudioSystem() {
     // 保存当前播放状态
     const wasPlaying = this.playState === "play";
     const currentTime = this._audio.currentTime;
@@ -860,15 +1412,25 @@ export class Player {
 
     // 创建新的 Audio 元素
     this._audio = new Audio();
-    this._audio.crossOrigin = "anonymous";
-    this._audio.onerror = () => this.handleAudioError();
+    this.configureAudioElement(this._audio);
+    this.bindActiveAudioCallbacks();
     this._audio.volume = currentVolume;
+
+    this._preloadAudio = new Audio();
+    this.configureAudioElement(this._preloadAudio);
+    this.resetPreloadAudioState(true);
 
     // 创建新的输出 Audio 元素
     this._outputAudio = new Audio();
 
     // 重新初始化 AudioContext
     this.initAudioContext();
+    try {
+      await this.ensureAudioGraphReady();
+    } catch (error) {
+      console.error("Failed to rebuild audio system", error);
+      return;
+    }
 
     // 恢复播放状态
     if (currentSrc) {
@@ -879,6 +1441,8 @@ export class Player {
       };
 
       if (wasPlaying) {
+        await this.resumeAudioContext();
+        await this._outputAudio.play().catch(() => undefined);
         this._audio.play().catch((error) => {
           console.error("Error resuming playback after device change:", error);
         });
@@ -893,45 +1457,20 @@ export class Player {
    */
   handleDeviceChange() {
     // 重建整个音频系统以支持新设备
-    this.rebuildAudioSystem();
+    void this.rebuildAudioSystem();
   }
   /**
    * 设置均衡器
    */
   setEqualizer(equalizer: IEqualizer) {
-    if (!this._audioContext) return;
-    if (!this._biquads.length) return;
-    (Object.keys(equalizer) as Array<keyof IEqualizer>).forEach(
-      (key, index) => {
-        this._biquads[index].gain.value = equalizer[key];
-      },
-    );
+    this._equalizer = normalizeEqualizer(equalizer);
+    this.applyEqualizerToWorklet();
   }
   /**
    * 获取当前均衡器参数
    */
   getEqualizer(): IEqualizer {
-    let equalizer: IEqualizer = {
-      _32Hz: 0,
-      _64Hz: 0,
-      _125Hz: 0,
-      _250Hz: 0,
-      _500Hz: 0,
-      _1kHz: 0,
-      _2kHz: 0,
-      _4kHz: 0,
-      _8kHz: 0,
-      _16kHz: 0,
-    };
-
-    if (!this._audioContext || !this._biquads.length) return equalizer;
-
-    (Object.keys(equalizerFreqs) as Array<keyof typeof equalizerFreqs>).forEach(
-      (key, index) => {
-        equalizer[key] = this._biquads[index].gain.value;
-      },
-    );
-    return equalizer;
+    return { ...this._equalizer };
   }
   /**
    * 随机播放
@@ -1013,6 +1552,7 @@ export class Player {
   set playlist(list) {
     // 清空播放历史
     this.clearHistory();
+    this.resetPreloadAudioState(true);
     if (this._mode === "listrandom") {
       // 如果播放模式为随机播放
       if (getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums)) {
@@ -1137,6 +1677,7 @@ export class Player {
    */
   clearPlaylist() {
     void this.flushPlaybackSession();
+    this.resetPreloadAudioState(true);
     this._playlist = [];
     this._current = 0;
     this._audio.pause();
@@ -1307,6 +1848,7 @@ export class Player {
 
     // 清空播放历史
     this.clearHistory();
+    this.resetPreloadAudioState(true);
     // 设置播放模式
     this._mode = value;
     this.subscriber.exec(PlayerEvents.mode);
@@ -1383,34 +1925,59 @@ export class Player {
   get playState() {
     return this._playState;
   }
+
+  private async applyPlayState(value: "play" | "pause") {
+    if (!this._audio || !this._audio.readyState) {
+      return;
+    }
+
+    this._playState = value;
+    if (this._playState === "play") {
+      try {
+        await this.ensureAudioGraphReady();
+        await this.resumeAudioContext();
+        await this._outputAudio.play().catch(() => undefined);
+        await this._audio.play().catch((error) => {
+          console.error("Failed to resume audio element", error);
+        });
+        void this.prepareGaplessPreload(true);
+      } catch (error) {
+        this._playState = "pause";
+        this._audio.pause();
+        this._outputAudio.pause();
+        console.error("Failed to apply play state", error);
+      }
+    } else {
+      this._audio.pause();
+      this._outputAudio.pause();
+    }
+
+    if (this._playState === "pause") {
+      if (this.reloadInterval) {
+        clearInterval(this.reloadInterval);
+      }
+      this.reloadInterval = setInterval(
+        () => {
+          this.reloadUrl();
+        },
+        1000 * 60 * 20,
+      );
+    } else {
+      if (this.reloadInterval) {
+        clearInterval(this.reloadInterval);
+      }
+    }
+
+    this.subscriber.exec(PlayerEvents.playState);
+  }
+
   /**
    * 设置播放状态
    * @param {'play'|'pause'} value 播放状态
    */
   set playState(value: "play" | "pause") {
     if (value === "play" || value === "pause") {
-      if (this._audio && this._audio.readyState) {
-        this._playState = value;
-        this._playState === "play" ? this._audio?.play() : this._audio?.pause();
-        if (this._playState === "pause") {
-          if (this.reloadInterval) {
-            clearInterval(this.reloadInterval);
-          }
-          this.reloadInterval = setInterval(
-            () => {
-              this.reloadUrl();
-            },
-            1000 * 60 * 20,
-          );
-        } else {
-          if (this.reloadInterval) {
-            clearInterval(this.reloadInterval);
-          }
-        }
-        this.subscriber.exec(PlayerEvents.playState);
-      } else {
-        // console.log("Audio not ready");
-      }
+      void this.applyPlayState(value);
     } else {
       console.error("PlayState not supported: ", value);
     }
@@ -1480,6 +2047,7 @@ export class Player {
     if (value >= 0 && value <= 1) {
       this._volume = value;
       this._audio.volume = value;
+      this._preloadAudio.volume = value;
       this.subscriber.exec(PlayerEvents.volume);
     }
   }
@@ -1517,13 +2085,14 @@ export class Player {
       gain_linear = 4;
     }
     // 设置增益
-    let setGainNodeMsg = "gainNode not found";
+    let setGainNodeMsg = "worklet post gain queued";
     try {
-      if (this._gainNode) {
-        this._gainNode.gain.value = gain_linear;
-        this.subscriber.exec(PlayerEvents.gain);
-        setGainNodeMsg = " gainNode set to " + gain_linear;
-      }
+      this._workletPostGain = gain_linear;
+      this.applyPostGainToWorklet();
+      this.subscriber.exec(PlayerEvents.gain);
+      setGainNodeMsg = this._workletReady
+        ? " worklet post gain set to " + gain_linear
+        : " worklet post gain queued to " + gain_linear;
     } catch (error) {
       console.error(error);
     }
@@ -1558,9 +2127,11 @@ export class Player {
       this._audio.currentTime = value;
       this._currentTime = value;
       this._progress = value / (this._duration as number);
+      this.updateBufferedProgressFromAudio();
       this.subscriber.exec(PlayerEvents.time);
       // Trigger immediate time sync for seek
       this.subscriber.exec("seek" as any);
+      void this.prepareGaplessPreload(true);
     }
   }
   /**
@@ -1568,6 +2139,10 @@ export class Player {
    */
   get progress() {
     return this._progress as number;
+  }
+
+  get bufferedProgress() {
+    return this._bufferedProgress;
   }
   /**
    * 设置播放进度
@@ -1580,6 +2155,7 @@ export class Player {
       this._audio.currentTime = this._currentTime;
       // Trigger immediate time sync for seek
       this.subscriber.exec("seek" as any);
+      void this.prepareGaplessPreload(true);
     }
   }
   /**
@@ -1768,14 +2344,34 @@ export class Player {
     return this._audioContext?.sampleRate ?? 44100;
   }
 
+  private async applyOutputDevice(value: string) {
+    const outputAudio = this._outputAudio as HTMLAudioElement & {
+      setSinkId?: (sinkId: string) => Promise<void>;
+    };
+
+    if (typeof outputAudio.setSinkId !== "function") {
+      return;
+    }
+
+    await outputAudio.setSinkId(value).catch((error) => {
+      console.error(error);
+    });
+  }
+
   /**
    * 设置输出设备
    */
   async setDevice(value: string) {
-    await this._outputAudio.setSinkId(value).catch((error) => {
-      console.error(error);
-    });
+    try {
+      await this.ensureAudioGraphReady();
+    } catch (error) {
+      console.error("Audio graph is not ready", error);
+      return;
+    }
+    await this.applyOutputDevice(value);
     if (this.playState === "play") {
+      await this.resumeAudioContext();
+      await this._outputAudio.play().catch(() => undefined);
       await this._audio.play();
     }
   }

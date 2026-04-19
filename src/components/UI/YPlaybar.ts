@@ -155,6 +155,7 @@ export default defineComponent({
       duration: 0 as number,
       currentTime: 0,
       progress: 0,
+      bufferedProgress: 0,
       progressInterval: null,
       volume: 0,
       qualityDisplay: "quality.standard",
@@ -410,6 +411,7 @@ export default defineComponent({
         this.duration = this.player.duration as number;
         this.currentTime = this.player.currentTime;
         this.progress = this.player.progress;
+        this.bufferedProgress = this.player.bufferedProgress;
       },
     )?.();
     this.player.subscriber.on(

@@ -10,6 +10,13 @@ export default defineComponent({
         return value >= 0 && value <= 1;
       },
     },
+    buffered: {
+      type: Number,
+      default: 0,
+      validator: (value: number) => {
+        return value >= 0 && value <= 1;
+      },
+    },
     /** 是否显示轨道 */
     showTrack: {
       type: Boolean,
@@ -81,6 +88,15 @@ export default defineComponent({
           }, 500);
         });
       }
+    },
+  },
+  computed: {
+    displayedBufferedProgress() {
+      const buffered = Number(this.buffered);
+      const normalizedBuffered = Number.isFinite(buffered)
+        ? Math.max(0, Math.min(1, buffered))
+        : 0;
+      return Math.max(this.progress, normalizedBuffered);
     },
   },
   methods: {

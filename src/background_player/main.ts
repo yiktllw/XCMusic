@@ -76,6 +76,9 @@ if (ipcRenderer) {
         case "setVolumeLeveling":
           player.volumeLeveling = args;
           break;
+        case "setGaplessPlayback":
+          player.setGaplessPlayback(args);
+          break;
         case "toggleSpectrum":
           player.toggleSpectrum(args);
           break;
@@ -111,6 +114,7 @@ if (ipcRenderer) {
             currentTime: player.currentTime,
             duration: player.duration,
             progress: player.progress,
+            bufferedProgress: player.bufferedProgress,
             sampleRate: player.sampleRate,
           });
           send(PlayerEvents.lyrics, player.lyrics);
@@ -149,6 +153,7 @@ if (ipcRenderer) {
               currentTime: player.currentTime,
               duration: player.duration,
               progress: player.progress,
+              bufferedProgress: player.bufferedProgress,
             };
             break;
           case PlayerEvents.playState:

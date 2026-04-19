@@ -3,6 +3,7 @@
   <div class="big-progress" v-if="type === 'play-ui'">
     <YProgressBar
       v-model="progress"
+      :buffered="bufferedProgress"
       style="height: 30px; width: 100%"
       @update:model-value="setAudioProgress"
       :show-track="false"
@@ -297,6 +298,7 @@
         </div>
         <YProgressBar
           v-model="progress"
+          :buffered="bufferedProgress"
           style="height: 20px; width: 321px"
           @update:model-value="setAudioProgress"
         />

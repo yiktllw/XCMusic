@@ -9,6 +9,16 @@
   >
     <div class="progress-bar" ref="progress_bar">
       <div
+        :class="
+          showTrack
+            ? 'progress-buffered'
+            : 'progress-buffered progress-buffered-no-track'
+        "
+        :style="{
+          clipPath: `inset( 0 ${100 - displayedBufferedProgress * 100}% 0 0 round 20px)`,
+        }"
+      ></div>
+      <div
         :class="showTrack ? 'progress-fill' : 'progress-no-track'"
         :style="{
           clipPath: `inset( 0 ${100 - progress * 100}% 0 0 round 20px)`,
@@ -62,6 +72,11 @@
         height: 115%;
         transform: translateY(-40%);
       }
+
+      .progress-buffered-no-track {
+        height: 115%;
+        transform: translateY(-40%);
+      }
     }
   }
 
@@ -76,6 +91,26 @@
       height: 100%;
       background-color: rgb(var(--highlight-color-rgb));
       border-radius: 10px;
+    }
+
+    .progress-buffered {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(var(--foreground-color-rgb), 0.35);
+      border-radius: 10px;
+      pointer-events: none;
+      transition: clip-path var(--transition-track-time) linear;
+    }
+
+    .progress-buffered-no-track {
+      height: 75%;
+      transition:
+        clip-path var(--transition-track-time) linear,
+        height 0.3s ease,
+        transform 0.3s ease;
     }
 
     .progress-no-track {

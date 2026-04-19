@@ -14,6 +14,7 @@ import store from "@/store";
 import i18n from "@/i18n";
 import { type ITrack } from "@/utils/tracks";
 import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 
 const ipcRenderer = window.electron?.ipcRenderer;
 
@@ -43,6 +44,7 @@ export class Player {
   _volume: number = 1;
   _currentTime: number = 0;
   _progress: number = 0;
+  _bufferedProgress: number = 0;
   _duration: number = 0;
   _quality: string = "exhigh";
   _volume_leveling: boolean = true;
@@ -119,6 +121,10 @@ export class Player {
 
     ipcRenderer.on("player-ready", () => {
       this.sendCommand("getState");
+      this.sendCommand(
+        "setGaplessPlayback",
+        getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false,
+      );
     });
 
     ipcRenderer.on("player-event", ({ event: eventName, data }) => {
@@ -127,6 +133,10 @@ export class Player {
           this._currentTime = data.currentTime;
           this._duration = data.duration;
           this._progress = data.progress;
+          this._bufferedProgress =
+            typeof data.bufferedProgress === "number"
+              ? Math.max(0, Math.min(1, data.bufferedProgress))
+              : this._progress;
           if (data.sampleRate && this._analyserNode) {
             this._analyserNode.context.sampleRate = data.sampleRate;
           }
@@ -326,6 +336,11 @@ export class Player {
   get progress() {
     return this._progress;
   }
+
+  get bufferedProgress() {
+    return this._bufferedProgress;
+  }
+
   set progress(value) {
     this._progress = value;
     this.sendCommand("seek", this._duration * value);
@@ -347,6 +362,10 @@ export class Player {
   }
   set volumeLeveling(value) {
     this.sendCommand("setVolumeLeveling", value);
+  }
+
+  setGaplessPlayback(enabled: boolean) {
+    this.sendCommand("setGaplessPlayback", enabled);
   }
 
   toggleSpectrum(enabled: boolean) {
