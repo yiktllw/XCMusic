@@ -94,6 +94,22 @@ const WORKLET_MODULE_PATH = "audio/xcAudioEngineProcessor.worklet.js";
 const getWorkletModuleURL = () =>
   new URL(WORKLET_MODULE_PATH, window.location.href).toString();
 
+type PlayMode = "order" | "listloop" | "random" | "loop" | "listrandom";
+
+const resolveInitialPlayMode = (): PlayMode => {
+  const storedMode = getStorage(StorageKey.Setting_Play_Mode);
+  if (
+    storedMode === "order" ||
+    storedMode === "listloop" ||
+    storedMode === "random" ||
+    storedMode === "loop" ||
+    storedMode === "listrandom"
+  ) {
+    return storedMode;
+  }
+  return "order";
+};
+
 export class Player {
   /** 音频对象 */
   _audio: HTMLAudioElement = new Audio();
@@ -121,7 +137,7 @@ export class Player {
   /** 当前播放的歌曲索引 */
   _current: number = 0;
   /** 播放模式 */
-  _mode: "order" | "listloop" | "random" | "loop" | "listrandom" = "order";
+  _mode: PlayMode = resolveInitialPlayMode();
   /** 播放历史 */
   _history: ITrack[] = [];
   /** 播放历史索引 */
@@ -1831,7 +1847,7 @@ export class Player {
    * 设置播放模式
    * @param {'order'|'listloop'|'random'|'loop'|'listrandom'} value 播放模式
    */
-  set mode(value: "order" | "listloop" | "random" | "loop" | "listrandom") {
+  set mode(value: PlayMode) {
     if (value === this._mode) return;
     if (
       value !== "order" &&
