@@ -152,6 +152,8 @@
   "login": "登录",
   "logout": "退出",
   "lyrics": {
+    "desktop_font_size": "桌面歌词字号",
+    "desktop_tns_font_size": "桌面翻译字号",
     "font_size": "歌词字号",
     "fonts": "歌词字体",
     "is_bold": "粗体",
@@ -165,11 +167,6 @@
   "manage_download": "下载管理",
   "message": {
     "getting_playlist_tracks": "获取歌单歌曲中...",
-    "toast": {
-      "expand": "展开",
-      "collapse": "收起",
-      "close": "关闭"
-    },
     "homeview": {
       "add_to_playlist_success": "已添加到下一首播放",
       "delete_fail": "删除失败",
@@ -180,15 +177,23 @@
     },
     "playlist_view": {
       "added_to_playlist": "已添加到播放列表",
+      "loaded_more_tracks": "后续歌曲加载完成",
+      "loading_more_tracks": "正在加载后续歌曲...",
       "scrolled_to_current_track": "已滚动到当前歌曲"
     },
     "setting_view": {
+      "desktop_lyric_need_restart": "需要重启桌面歌词窗口才能生效。",
       "download": {
         "only_desktop": "下载功能仅在桌面端有效"
       },
       "only_desktop": "缩放功能仅在桌面端有效",
       "zoom_applied": "缩放已应用",
       "zoom_range_50_200": "请输入50到200之间的数字"
+    },
+    "toast": {
+      "close": "关闭",
+      "collapse": "收起",
+      "expand": "展开"
     }
   },
   "need_login": "请先登录",
@@ -197,14 +202,17 @@
     "clear_playlist": "清空播放列表",
     "delete_from_playlist": "从播放列表中删除",
     "desktop_lyric": "桌面歌词",
+    "hide_translation": "隐藏翻译",
     "like": "喜欢",
     "listloop": "列表循环",
     "listrandom": "列表随机",
+    "lock": "锁定",
     "loop": "单曲循环",
     "next": "下一首",
     "order": "顺序播放",
     "pause": "暂停",
     "play": "播放",
+    "playPause": "播放 / 暂停",
     "playlist": "播放列表",
     "playlist_panel": {
       "like": "喜欢",
@@ -230,15 +238,22 @@
       "standard": "标准"
     },
     "random": "随机播放",
+    "refresh_lyrics": "刷新歌词",
     "select_sound_quality": "选择音质",
+    "show_translation": "显示翻译",
     "song_info": "查看歌曲信息",
     "sound_quality": "歌曲音质",
+    "unlock": "解锁",
     "volume": "音量"
   },
   "player": {
     "local_file_not_found": "无法找到歌曲文件",
     "noUrlError": "获取歌曲链接失败，自动播放下一首"
   },
+  "playlist_batch_result_duplicate": "重复",
+  "playlist_batch_result_failed": "失败",
+  "playlist_batch_result_prefix": "收藏到歌单结果：",
+  "playlist_batch_result_success": "成功",
   "playlist_biglist": {
     "song_count": "首"
   },
@@ -342,6 +357,7 @@
     },
     "apply": "应用",
     "click_to_reload": "点击重新加载窗口",
+    "click_to_restart_player": "点击重启播放器",
     "close": "关闭",
     "close_always_ask": "关闭前总是询问",
     "close_to_minimize": "点击关闭按钮时，最小化到托盘",
@@ -376,22 +392,23 @@
       "dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",
       "dbclick_playsingle": "双击歌单时，仅将当前歌曲添加到播放列表",
       "device": "输出设备",
+      "gapless_playback": {
+        "label": "尽量减少曲目衔接卡顿",
+        "title": "无缝播放",
+        "tooltip": "在古典乐等专辑中，一些连贯乐章会被拆分成两首曲目。传统 CD 播放几乎无感衔接，而流媒体切换时可能出现短暂卡顿。开启后，会尽量减少曲目衔接时的停顿。"
+      },
       "launch": "启动",
       "playui": "播放界面",
       "remember_progress": {
         "label": "记住当前歌曲播放进度",
         "title": "播放进度"
       },
-      "gapless_playback": {
-        "title": "无缝播放",
-        "label": "尽量减少曲目衔接卡顿",
-        "tooltip": "在古典乐等专辑中，一些连贯乐章会被拆分成两首曲目。传统 CD 播放几乎无感衔接，而流媒体切换时可能出现短暂卡顿。开启后，会尽量减少曲目衔接时的停顿。"
-      },
       "show_spectrum": "显示频谱图",
       "volume_leveling": "音量",
       "volume_leveling_content": "平衡不同作品的音量"
     },
     "reload": "重载窗口",
+    "restart_player": "重启播放器",
     "theme": "主题",
     "theme_name": {
       "dark": "暗色",
@@ -439,10 +456,6 @@
   },
   "song_added_failed": "添加歌曲失败",
   "song_added_successfully": "添加歌曲成功",
-  "playlist_batch_result_prefix": "收藏到歌单结果：",
-  "playlist_batch_result_success": "成功",
-  "playlist_batch_result_duplicate": "重复",
-  "playlist_batch_result_failed": "失败",
   "song_info": {
     "album_tns": "专辑译名",
     "artist": "歌手",
@@ -505,11 +518,11 @@
   "user_songs_rank_view": {
     "alltime": "所有时间",
     "last_week": "最近一周",
-    "source_title": "数据源",
-    "source_tip": "受网易云音乐 API 策略限制，第三方客户端无法将本地听歌记录回传并同步到网易云账号。",
-    "source_netease": "网易云",
     "source_local": "本地",
-    "source_mixed": "综合"
+    "source_mixed": "综合",
+    "source_netease": "网易云",
+    "source_tip": "受网易云音乐 API 策略限制，第三方客户端无法将本地听歌记录回传并同步到网易云账号。",
+    "source_title": "数据源"
   },
   "user_view": {
     "albums": "专辑",

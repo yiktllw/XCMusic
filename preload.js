@@ -24,17 +24,15 @@
  * 20. env.isDevelopment 是否为开发环境
  *---------------------------------------------------------------*/
 
-import { contextBridge, ipcRenderer, shell, webFrame } from "electron";
+const { contextBridge, ipcRenderer, shell, webFrame } = require("electron");
 
-import fs, {
-  readFileSync,
-  writeFileSync,
-  existsSync as _existsSync,
-  mkdirSync,
-} from "fs";
-import path, { join } from "path";
-import os, { homedir } from "os";
-import { createHash } from "crypto";
+const fs = require("fs");
+const { readFileSync, writeFileSync, existsSync: _existsSync, mkdirSync } = fs;
+const path = require("path");
+const { join } = path;
+const os = require("os");
+const { homedir } = os;
+const { createHash } = require("crypto");
 
 contextBridge.exposeInMainWorld("api", {
   pathJoin: (...args) => join(...args), // 暴露 path.join

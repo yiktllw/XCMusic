@@ -150,6 +150,17 @@
                 </div>
               </div>
             </div>
+            <!-- 常规-重启播放器 -->
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.restart_player") }}
+              </div>
+              <div class="content-item-content">
+                <div class="reload-item" @click="restartPlayer">
+                  {{ $t("setting_view.click_to_restart_player") }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- 外观 -->
@@ -240,6 +251,18 @@
                         step="1"
                       />
                     </div>
+                    <div class="font-size">
+                      {{ $t("lyrics.desktop_font_size") }}
+                      <input
+                        type="number"
+                        v-model="lyricsPreferences.desktop_fontSize"
+                        @change="handleLyricsPreferencesChange"
+                        style="width: 50px; margin-left: 20px"
+                        min="10"
+                        max="120"
+                        step="1"
+                      />
+                    </div>
                     <div class="font-is-italic">
                       <input
                         type="checkbox"
@@ -298,6 +321,18 @@
                         style="width: 50px; margin-left: 20px"
                         min="10"
                         max="50"
+                        step="1"
+                      />
+                    </div>
+                    <div class="font-size">
+                      {{ $t("lyrics.desktop_tns_font_size") }}
+                      <input
+                        type="number"
+                        v-model="lyricsPreferences.desktop_tns_fontSize"
+                        @change="handleLyricsPreferencesChange"
+                        style="width: 50px; margin-left: 20px"
+                        min="10"
+                        max="120"
                         step="1"
                       />
                     </div>

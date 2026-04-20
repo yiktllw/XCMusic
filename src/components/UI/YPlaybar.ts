@@ -162,6 +162,8 @@ export default defineComponent({
       downloadedSongIds: [] as number[],
       /** 用来等待面板加载完成后再加载歌曲 */
       showSongs: false,
+      desktopLyricOpened: false,
+      desktopLyricLocked: false,
     };
   },
   computed: {
@@ -293,8 +295,47 @@ export default defineComponent({
         type: "open-equalizer",
       });
     },
+    setDesktopLyricState(payload: any) {
+      const opened =
+        payload && typeof payload === "object" && payload.opened === true;
+      const locked =
+        payload && typeof payload === "object" && payload.locked === true;
+      this.desktopLyricOpened = opened;
+      this.desktopLyricLocked = opened && locked;
+    },
+    requestDesktopLyricState() {
+      if (!window.electron?.isElectron) return;
+      window.electron.ipcRenderer
+        .invoke("get-desktop-lyric-state")
+        .then((payload) => {
+          this.setDesktopLyricState(payload);
+        })
+        .catch((error) => {
+          console.warn("Failed to get desktop lyric state", error);
+        });
+    },
     toggleDesktopLyric() {
-      window.electron?.ipcRenderer.send("toggle-desktop-lyric");
+      if (!window.electron?.isElectron) return;
+
+      if (!this.desktopLyricOpened) {
+        window.electron.ipcRenderer.send("open-desktop-lyric", {
+          locked: false,
+        });
+        this.setDesktopLyricState({ opened: true, locked: false });
+        return;
+      }
+
+      if (this.desktopLyricLocked) {
+        window.electron.ipcRenderer.send("lock-desktop-lyric", {
+          locked: false,
+          ignoreMouse: false,
+        });
+        this.setDesktopLyricState({ opened: true, locked: false });
+        return;
+      }
+
+      window.electron.ipcRenderer.send("close-desktop-lyric");
+      this.setDesktopLyricState({ opened: false, locked: false });
     },
     handleSubscribe() {
       window.postMessage({
@@ -351,6 +392,14 @@ export default defineComponent({
     },
   },
   async mounted() {
+    if (window.electron?.isElectron) {
+      window.electron.ipcRenderer.removeAllListeners("desktop-lyric-state");
+      window.electron.ipcRenderer.on("desktop-lyric-state", (payload) => {
+        this.setDesktopLyricState(payload);
+      });
+      this.requestDesktopLyricState();
+    }
+
     if (this.login.status) {
       this.login.likelist.length === 0 ? this.login.reloadLikelist() : null;
     }
@@ -444,6 +493,9 @@ export default defineComponent({
     )?.();
   },
   beforeUnmount() {
+    if (window.electron?.isElectron) {
+      window.electron.ipcRenderer.removeAllListeners("desktop-lyric-state");
+    }
     this.player.subscriber.offAll("YPlaybar" + `${this.type}`);
     this.download.subscriber.offAll("YPlaybar" + `${this.type}`);
     this.quality_panel = null;

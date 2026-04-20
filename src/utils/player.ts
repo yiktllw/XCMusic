@@ -368,6 +368,10 @@ export class Player {
     this.sendCommand("setGaplessPlayback", enabled);
   }
 
+  restartPlayer() {
+    this.sendCommand("restartPlayer");
+  }
+
   toggleSpectrum(enabled: boolean) {
     this.sendCommand("toggleSpectrum", enabled);
   }

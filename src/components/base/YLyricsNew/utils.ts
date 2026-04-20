@@ -10,10 +10,14 @@ export const defaultPreferences = {
   is_bold: true,
   isItalic: false,
 
+  desktop_fontSize: 40,
+
   tns_fontSize: 17,
   tns_fontFamily: [...defaultLyricTnsFonts] as IEscapedFonts,
   tns_is_bold: true,
   tns_isItalic: true,
+
+  desktop_tns_fontSize: 34,
 
   /** 歌词到翻译的距离 */
   distance_l_t: 10,

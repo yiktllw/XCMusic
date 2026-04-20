@@ -79,6 +79,9 @@ if (ipcRenderer) {
         case "setGaplessPlayback":
           player.setGaplessPlayback(args);
           break;
+        case "restartPlayer":
+          void player.rebuildAudioSystem();
+          break;
         case "toggleSpectrum":
           player.toggleSpectrum(args);
           break;

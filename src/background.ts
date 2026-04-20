@@ -30,6 +30,7 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
 import { startNeteaseMusicApi } from "@/electron/services";
 import * as path from "path";
+import * as fs from "fs";
 import Store from "electron-store";
 
 // 设置磁盘缓存的最大大小
@@ -42,13 +43,44 @@ interface WindowState {
   height: number;
 }
 
+interface DesktopLyricState {
+  opened: boolean;
+  locked: boolean;
+}
+
 interface AppStore {
   windowState: WindowState;
-  lyricWindowState: { x: number; y: number; width: number; height: number };
+  lyricWindowState: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    displayId?: number;
+    scaleFactor?: number;
+  };
+  desktopLyricState: DesktopLyricState;
   disableGpu: boolean;
 }
 
 const store = new Store<AppStore>();
+const defaultDesktopLyricState: DesktopLyricState = {
+  opened: false,
+  locked: false,
+};
+const storedDesktopLyricState = store.get(
+  "desktopLyricState",
+  defaultDesktopLyricState,
+) as DesktopLyricState;
+let desktopLyricState: DesktopLyricState = {
+  opened:
+    storedDesktopLyricState && storedDesktopLyricState.opened === true
+      ? true
+      : false,
+  locked:
+    storedDesktopLyricState && storedDesktopLyricState.locked === true
+      ? true
+      : false,
+};
 // 从 store 中获取窗口的大小和位置
 const windowState = store.get("windowState", {
   width: 1177,
@@ -80,6 +112,205 @@ let win: BrowserWindow | null = null;
 let playerWin: BrowserWindow | null = null;
 let lyricWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
+let isAppQuitting = false;
+let hasRestoredDesktopLyric = false;
+
+const DEFAULT_LYRIC_WIDTH = 1024;
+const DEFAULT_LYRIC_HEIGHT = 200;
+const MIN_LYRIC_WIDTH = 320;
+const MIN_LYRIC_HEIGHT = 120;
+
+const clamp = (value: number, min: number, max: number) => {
+  if (max < min) return min;
+  return Math.min(Math.max(value, min), max);
+};
+
+const centerRectInArea = (
+  area: { x: number; y: number; width: number; height: number },
+  width: number,
+  height: number,
+) => {
+  return {
+    x: Math.round(area.x + (area.width - width) / 2),
+    y: Math.round(area.y + (area.height - height) / 2),
+    width,
+    height,
+  };
+};
+
+const rectsIntersect = (
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+) => {
+  return (
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y
+  );
+};
+
+const resolveLyricWindowBounds = (
+  savedBounds?: AppStore["lyricWindowState"],
+) => {
+  const displays = screen.getAllDisplays();
+  const primaryArea = screen.getPrimaryDisplay().workArea;
+  const savedWidth =
+    savedBounds && typeof savedBounds.width === "number"
+      ? savedBounds.width
+      : DEFAULT_LYRIC_WIDTH;
+  const savedHeight =
+    savedBounds && typeof savedBounds.height === "number"
+      ? savedBounds.height
+      : DEFAULT_LYRIC_HEIGHT;
+
+  if (!savedBounds) {
+    const width = clamp(savedWidth, MIN_LYRIC_WIDTH, primaryArea.width);
+    const height = clamp(savedHeight, MIN_LYRIC_HEIGHT, primaryArea.height);
+    return centerRectInArea(primaryArea, width, height);
+  }
+
+  const requestedRect = {
+    x: savedBounds.x,
+    y: savedBounds.y,
+    width: Math.max(savedWidth, MIN_LYRIC_WIDTH),
+    height: Math.max(savedHeight, MIN_LYRIC_HEIGHT),
+  };
+
+  const allAreas = displays.map((display) => display.workArea);
+  const onAnyDisplay = allAreas.some((area) =>
+    rectsIntersect(requestedRect, area),
+  );
+
+  if (onAnyDisplay) {
+    return requestedRect;
+  }
+
+  const matchDisplayById =
+    savedBounds && typeof savedBounds.displayId === "number"
+      ? displays.find((display) => display.id === savedBounds.displayId)
+      : undefined;
+  const rectCenter = {
+    x: Math.round(requestedRect.x + requestedRect.width / 2),
+    y: Math.round(requestedRect.y + requestedRect.height / 2),
+  };
+  const nearestArea = screen.getDisplayNearestPoint(rectCenter).workArea;
+
+  const targetArea = matchDisplayById
+    ? matchDisplayById.workArea
+    : nearestArea || primaryArea;
+  const visibleWidth = Math.min(requestedRect.width, targetArea.width);
+  const visibleHeight = Math.min(requestedRect.height, targetArea.height);
+  const x = clamp(
+    requestedRect.x,
+    targetArea.x,
+    targetArea.x + targetArea.width - visibleWidth,
+  );
+  const y = clamp(
+    requestedRect.y,
+    targetArea.y,
+    targetArea.y + targetArea.height - visibleHeight,
+  );
+
+  return {
+    x,
+    y,
+    width: requestedRect.width,
+    height: requestedRect.height,
+  };
+};
+
+const getDesktopLyricStateSnapshot = (): DesktopLyricState => {
+  return {
+    opened: desktopLyricState.opened,
+    locked: desktopLyricState.locked,
+  };
+};
+
+const persistDesktopLyricState = () => {
+  store.set("desktopLyricState", getDesktopLyricStateSnapshot());
+};
+
+const broadcastDesktopLyricState = () => {
+  const snapshot = getDesktopLyricStateSnapshot();
+  if (win) {
+    win.webContents.send("desktop-lyric-state", snapshot);
+  }
+  if (lyricWin) {
+    lyricWin.webContents.send("desktop-lyric-state", snapshot);
+  }
+};
+
+const setDesktopLyricState = (opened: boolean, locked: boolean) => {
+  desktopLyricState.opened = opened;
+  desktopLyricState.locked = opened ? locked : false;
+  persistDesktopLyricState();
+  broadcastDesktopLyricState();
+};
+
+const applyLyricWindowLockState = (locked: boolean, ignoreMouse: boolean) => {
+  if (!lyricWin) return;
+  lyricWin.setResizable(!locked);
+  if (ignoreMouse) {
+    lyricWin.setIgnoreMouseEvents(true, { forward: true });
+  } else {
+    lyricWin.setIgnoreMouseEvents(false);
+  }
+};
+
+const resolvePreloadScriptPath = () => {
+  const candidates = [
+    path.join(__dirname, "preload.js"),
+    path.join(app.getAppPath(), "preload.js"),
+    path.join(process.cwd(), "preload.js"),
+    path.join(process.cwd(), "dist_electron", "preload.js"),
+  ];
+
+  const found = candidates.find((candidate) => fs.existsSync(candidate));
+  if (found) {
+    return found;
+  }
+
+  return path.join(__dirname, "preload.js");
+};
+
+const persistLyricWindowBounds = () => {
+  if (!lyricWin || lyricWin.isDestroyed()) {
+    return;
+  }
+  const bounds = lyricWin.getBounds();
+  const displayId = screen.getDisplayNearestPoint({
+    x: Math.round(bounds.x + bounds.width / 2),
+    y: Math.round(bounds.y + bounds.height / 2),
+  }).id;
+  store.set("lyricWindowState", {
+    ...bounds,
+    displayId,
+  });
+};
+
+const applyLyricWindowBounds = (target: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}) => {
+  if (!lyricWin || lyricWin.isDestroyed()) {
+    return;
+  }
+  lyricWin.setBounds(target, false);
+};
+
+const syncMainWindowRuntimeState = () => {
+  if (win && !win.isDestroyed()) {
+    win.webContents.send("player-ready");
+    broadcastDesktopLyricState();
+  }
+
+  if (playerWin && !playerWin.isDestroyed()) {
+    playerWin.webContents.send("player-command", "getState");
+  }
+};
 
 // 检查是否已经有实例在运行
 const gotTheLock = app.requestSingleInstanceLock();
@@ -89,21 +320,33 @@ if (!gotTheLock) {
   app.quit();
 }
 
-async function createLyricWindow() {
-  if (lyricWin) return;
-  const savedBounds = store.get("lyricWindowState");
+async function createLyricWindow(options?: { locked?: boolean }) {
+  const nextLocked =
+    options && typeof options.locked === "boolean"
+      ? options.locked
+      : desktopLyricState.locked;
+
+  if (lyricWin) {
+    setDesktopLyricState(true, nextLocked);
+    applyLyricWindowLockState(nextLocked, nextLocked);
+    return;
+  }
+  const savedBounds = store.get("lyricWindowState") as
+    | AppStore["lyricWindowState"]
+    | undefined;
+  const lyricBounds = resolveLyricWindowBounds(savedBounds);
 
   lyricWin = new BrowserWindow({
-    width: (savedBounds && savedBounds.width) || 1024,
-    height: (savedBounds && savedBounds.height) || 150,
-    x: savedBounds && savedBounds.x,
-    y: savedBounds && savedBounds.y,
+    width: lyricBounds.width,
+    height: lyricBounds.height,
+    x: lyricBounds.x,
+    y: lyricBounds.y,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
     skipTaskbar: true,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: resolvePreloadScriptPath(),
       nodeIntegration: true,
       contextIsolation: true,
       webSecurity: false,
@@ -111,15 +354,20 @@ async function createLyricWindow() {
     },
   });
 
-  // Force set bounds immediately after creation
-  if (savedBounds) {
-    lyricWin.setBounds({
-      x: savedBounds.x,
-      y: savedBounds.y,
-      width: savedBounds.width,
-      height: savedBounds.height,
-    });
+  applyLyricWindowBounds(lyricBounds);
+
+  // Migrate old lyric window state that has no displayId.
+  if (!savedBounds || typeof savedBounds.displayId !== "number") {
+    persistLyricWindowBounds();
   }
+
+  setDesktopLyricState(true, nextLocked);
+  applyLyricWindowLockState(nextLocked, nextLocked);
+
+  lyricWin.webContents.on("did-finish-load", () => {
+    applyLyricWindowBounds(lyricBounds);
+    broadcastDesktopLyricState();
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     await lyricWin.loadURL(
@@ -129,22 +377,23 @@ async function createLyricWindow() {
     lyricWin.loadURL("app://./index.html#/desktop-lyrics");
   }
 
-  lyricWin.on("moved", () => {
-    if (lyricWin) {
-      const bounds = lyricWin.getBounds();
-      store.set("lyricWindowState", bounds);
-    }
+  lyricWin.on("move", () => {
+    persistLyricWindowBounds();
   });
 
-  lyricWin.on("resized", () => {
-    if (lyricWin) {
-      const bounds = lyricWin.getBounds();
-      store.set("lyricWindowState", bounds);
-    }
+  lyricWin.on("resize", () => {
+    persistLyricWindowBounds();
+  });
+
+  lyricWin.on("close", () => {
+    persistLyricWindowBounds();
   });
 
   lyricWin.on("closed", () => {
     lyricWin = null;
+    if (!isAppQuitting) {
+      setDesktopLyricState(false, false);
+    }
   });
 }
 
@@ -152,7 +401,7 @@ async function createPlayerWindow() {
   playerWin = new BrowserWindow({
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: resolvePreloadScriptPath(),
       nodeIntegration: true,
       contextIsolation: true,
       webSecurity: false,
@@ -177,7 +426,7 @@ async function createWindow() {
     minWidth: 1000,
     minHeight: 700,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: resolvePreloadScriptPath(),
       nodeIntegration: true,
       // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       // webviewTag: true,
@@ -199,6 +448,10 @@ async function createWindow() {
     store.set("windowState", bounds);
   });
   win.menuBarVisible = false;
+
+  win.webContents.on("did-finish-load", () => {
+    syncMainWindowRuntimeState();
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -233,6 +486,10 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
+app.on("before-quit", () => {
+  isAppQuitting = true;
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -254,15 +511,19 @@ app.on("ready", async () => {
     }
   });
 
-  ipcMain.on("open-desktop-lyric", () => {
-    createLyricWindow();
+  ipcMain.on("open-desktop-lyric", (event, payload) => {
+    let locked = false;
+    if (typeof payload === "object" && payload !== null) {
+      locked = Boolean((payload as { locked?: boolean }).locked);
+    }
+    createLyricWindow({ locked });
   });
 
   ipcMain.on("toggle-desktop-lyric", () => {
     if (lyricWin) {
       lyricWin.close();
     } else {
-      createLyricWindow();
+      createLyricWindow({ locked: false });
     }
   });
 
@@ -272,20 +533,40 @@ app.on("ready", async () => {
     }
   });
 
-  ipcMain.on("lock-desktop-lyric", (event, locked) => {
-    if (lyricWin) {
-      lyricWin.setIgnoreMouseEvents(locked, { forward: true });
-      if (locked) {
-        // When locked, we still want to capture mouse events for the control bar if needed,
-        // but setIgnoreMouseEvents(true) makes the whole window transparent to mouse.
-        // To allow interaction with specific parts, we need to use setIgnoreMouseEvents(true, { forward: true })
-        // and handle mouseenter/mouseleave in the renderer to toggle ignore state.
-        // For now, simple lock:
-        lyricWin.setIgnoreMouseEvents(true, { forward: true });
-      } else {
-        lyricWin.setIgnoreMouseEvents(false);
-      }
+  ipcMain.on("reload-main-window", () => {
+    if (!win || win.isDestroyed()) return;
+    win.webContents.reloadIgnoringCache();
+  });
+
+  ipcMain.on("lock-desktop-lyric", (event, payload) => {
+    if (!lyricWin) {
+      setDesktopLyricState(false, false);
+      return;
     }
+
+    let locked = false;
+    let ignoreMouse = false;
+
+    if (typeof payload === "object" && payload !== null) {
+      locked = Boolean((payload as { locked?: boolean }).locked);
+      ignoreMouse = Boolean((payload as { ignoreMouse?: boolean }).ignoreMouse);
+    } else {
+      // Backward compatibility: boolean payload means locked + ignore mouse.
+      locked = Boolean(payload);
+      ignoreMouse = Boolean(payload);
+    }
+
+    setDesktopLyricState(true, locked);
+    applyLyricWindowLockState(locked, ignoreMouse);
+  });
+
+  ipcMain.handle("get-desktop-lyric-state", () => {
+    if (hasRestoredDesktopLyric && !lyricWin && desktopLyricState.opened) {
+      desktopLyricState.opened = false;
+      desktopLyricState.locked = false;
+      persistDesktopLyricState();
+    }
+    return getDesktopLyricStateSnapshot();
   });
 
   ipcMain.on("player-spectrum", (event, data) => {
@@ -333,6 +614,18 @@ app.on("ready", async () => {
   await Promise.all(requests).catch((err) => {
     console.error(err);
   });
+
+  syncMainWindowRuntimeState();
+
+  if (desktopLyricState.opened) {
+    try {
+      await createLyricWindow({ locked: desktopLyricState.locked });
+    } catch (error) {
+      console.error("Failed to restore desktop lyric window:", error);
+      setDesktopLyricState(false, false);
+    }
+  }
+  hasRestoredDesktopLyric = true;
 
   if (win) {
     // 监听全屏
@@ -397,7 +690,7 @@ app.on("ready", async () => {
       label: "打开桌面歌词",
       id: "open-desktop-lyric",
       click: () => {
-        createLyricWindow();
+        createLyricWindow({ locked: false });
       },
     },
     {

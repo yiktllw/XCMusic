@@ -363,13 +363,32 @@
           </div>
         </YPanel>
         <!-- 桌面歌词按钮 -->
-        <img
+        <div
+          class="desktop-lyric-button"
           :title="$t('playbar.desktop_lyric')"
-          class="img volume-img g-icon"
-          src="@/assets/lyrics.svg"
-          style="width: 23px; height: 23px; margin-right: 18px"
           @click="toggleDesktopLyric"
-        />
+        >
+          <img
+            class="img volume-img g-icon desktop-lyric-icon"
+            :class="{
+              'is-open': desktopLyricOpened,
+              'is-locked': desktopLyricLocked,
+            }"
+            src="@/assets/lyrics.svg"
+            style="width: 23px; height: 23px"
+          />
+          <span
+            v-if="desktopLyricOpened"
+            class="desktop-lyric-open-dot"
+            :class="{ 'is-locked': desktopLyricLocked }"
+          />
+          <span v-if="desktopLyricLocked" class="desktop-lyric-lock-badge">
+            <img
+              class="desktop-lyric-lock-icon"
+              src="@/assets/code-type/lock.svg"
+            />
+          </span>
+        </div>
         <!-- 均衡器按钮 -->
         <img
           :title="$t('equalizer.title')"
@@ -532,6 +551,74 @@
       opacity: 1;
     }
   }
+
+  .desktop-lyric-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 23px;
+    height: 23px;
+    margin-right: 18px;
+    cursor: pointer;
+
+    .desktop-lyric-icon {
+      margin-right: 0;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        filter 0.2s ease;
+
+      &.is-open {
+        opacity: 1;
+        transform: scale(1.04);
+      }
+
+      &.is-locked {
+        filter: brightness(0.88);
+      }
+    }
+
+    .desktop-lyric-open-dot {
+      position: absolute;
+      right: -2px;
+      top: -2px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgb(66, 185, 131);
+      box-shadow: 0 0 4px rgba(66, 185, 131, 0.7);
+
+      &.is-locked {
+        background: rgb(230, 164, 50);
+        box-shadow: 0 0 4px rgba(230, 164, 50, 0.7);
+      }
+    }
+
+    .desktop-lyric-lock-badge {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--panel-background-color);
+      border: 1px solid rgba(var(--foreground-color-rgb), 0.25);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+
+      .desktop-lyric-lock-icon {
+        width: 12px;
+        height: 12px;
+        display: block;
+        transform: translateX(0.8px);
+      }
+    }
+  }
+
   .playlist-img-container {
     display: flex;
     position: relative;

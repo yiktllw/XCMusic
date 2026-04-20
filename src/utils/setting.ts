@@ -354,19 +354,30 @@ export const settingGroup: SettingGroup = {
         defaultPreferences,
       default: defaultPreferences,
       validation: (value: ILyricsPreferences) => {
-        let valid = typeof value === typeof defaultPreferences;
-        valid =
-          valid &&
-          value.fontSize >= 10 &&
-          value.fontSize <= 50 &&
-          value.tns_fontSize >= 10 &&
-          value.tns_fontSize <= 50 &&
-          value.distance_l_l >= 10 &&
-          value.distance_l_l <= 100 &&
-          value.distance_l_t >= 10 &&
-          value.distance_l_t <= 100;
+        if (!value || typeof value !== "object") {
+          return false;
+        }
+
+        const normalized = {
+          ...defaultPreferences,
+          ...value,
+        } as ILyricsPreferences;
+
+        const valid =
+          normalized.fontSize >= 10 &&
+          normalized.fontSize <= 50 &&
+          normalized.tns_fontSize >= 10 &&
+          normalized.tns_fontSize <= 50 &&
+          normalized.desktop_fontSize >= 10 &&
+          normalized.desktop_fontSize <= 120 &&
+          normalized.desktop_tns_fontSize >= 10 &&
+          normalized.desktop_tns_fontSize <= 120 &&
+          normalized.distance_l_l >= 10 &&
+          normalized.distance_l_l <= 100 &&
+          normalized.distance_l_t >= 10 &&
+          normalized.distance_l_t <= 100;
         if (valid)
-          setStorage(StorageKey.Setting_PlayUI_LyricsPreference, value);
+          setStorage(StorageKey.Setting_PlayUI_LyricsPreference, normalized);
         return valid;
       },
     },

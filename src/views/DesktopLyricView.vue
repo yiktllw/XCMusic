@@ -2,89 +2,151 @@
   <div
     class="desktop-lyric-container"
     :class="{ 'is-locked': isLocked, 'is-hover': isHover }"
-    @mouseenter="isHover = true"
-    @mouseleave="isHover = false"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
   >
-    <div class="lyric-content" ref="lyricContainer" v-show="!showCountdown">
-      <!-- Dynamic content will be generated here -->
+    <div class="control-bar-slot" :class="{ 'is-locked': isLocked }">
+      <div class="control-bar" :class="{ 'is-visible': isHover && !isLocked }">
+        <button @click="control('prev')" :title="$t('playbar.previous')">
+          <img class="control-icon g-icon" src="@/assets/previous.svg" />
+        </button>
+        <button
+          @click="control('togglePlay')"
+          :title="
+            playState === 'pause' ? $t('playbar.play') : $t('playbar.pause')
+          "
+        >
+          <img
+            v-if="playState === 'pause'"
+            class="control-icon"
+            src="@/assets/play.svg"
+          />
+          <img v-else class="control-icon" src="@/assets/pause.svg" />
+        </button>
+        <button @click="control('next')" :title="$t('playbar.next')">
+          <img class="control-icon g-icon" src="@/assets/next.svg" />
+        </button>
+        <button
+          class="refresh-icon"
+          @click="refreshLyrics"
+          :title="$t('playbar.refresh_lyrics')"
+        >
+          ↻
+        </button>
+        <button
+          @click="toggleTranslate"
+          :title="
+            showTranslate
+              ? $t('playbar.hide_translation')
+              : $t('playbar.show_translation')
+          "
+        >
+          <img
+            class="control-icon-translate g-icon"
+            src="@/assets/translate.svg"
+            :style="{ opacity: showTranslate ? 1 : 0.5 }"
+          />
+        </button>
+        <button @click="toggleLock" :title="$t('playbar.lock')">
+          <img
+            class="control-icon-lock g-icon"
+            src="@/assets/code-type/lock.svg"
+          />
+        </button>
+        <button @click="closeWindow" :title="$t('titlebar.close')">✕</button>
+      </div>
     </div>
 
-    <!-- Countdown circles (KTV-style) -->
-    <div class="countdown-container" v-if="showCountdown">
+    <div class="lyric-area">
       <div
-        v-for="n in countdownCircles"
-        :key="n"
-        class="countdown-circle"
+        class="lyric-content"
+        ref="lyricContainer"
+        v-show="!showCountdown"
       ></div>
-    </div>
 
-    <!-- Control Bar (Visible on Hover) -->
-    <div class="control-bar" v-show="isHover">
-      <div class="drag-handle" title="Drag to move">✥</div>
-      <button @click="control('prev')" title="Previous">⏮</button>
-      <button @click="control('togglePlay')" title="Play/Pause">
-        <span v-if="playState === 'pause'">▶</span>
-        <span v-else>⏸</span>
-      </button>
-      <button @click="control('next')" title="Next">⏭</button>
-      <button @click="refreshLyrics" title="Refresh Lyrics">↻</button>
-      <button
-        @click="toggleTranslate"
-        :title="showTranslate ? 'Hide Translation' : 'Show Translation'"
+      <div
+        class="countdown-container"
+        v-if="showCountdown"
+        :style="countdownContainerStyle"
       >
-        <span :style="{ opacity: showTranslate ? 1 : 0.5 }">译</span>
-      </button>
-      <button @click="toggleLock" title="Lock">
-        <span v-if="isLocked">🔒</span>
-        <span v-else>🔓</span>
-      </button>
-      <button @click="closeWindow" title="Close">✕</button>
+        <div
+          v-for="n in countdownCircles"
+          :key="n"
+          class="countdown-circle"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount, watch } from "vue";
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  computed,
+} from "vue";
 import { PlayerEvents } from "@/dual/player";
 import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
 import { useStore } from "vuex";
 import * as Api from "@/utils/api";
+import {
+  defaultPreferences as defaultLyricsPreferences,
+  type ILyricsPreferences,
+} from "@/components/base/YLyricsNew/utils";
+import { getStorage, StorageKey } from "@/utils/render_storage";
 
 export default defineComponent({
   name: "DesktopLyricView",
   setup() {
-    const preferences = useStore().state.setting.playui.lyricsPreferences;
+    const store = useStore();
+    const preferences = ref<ILyricsPreferences>({
+      ...defaultLyricsPreferences,
+      ...store.state.setting.playui.lyricsPreferences,
+    });
 
     const lyrics = ref<Array<LrcItem | LrcItem2 | YrcItem>>([]);
     const tlyrics = ref<YrcItem[]>([]);
     const tlyricsMap = ref<Map<number, YrcItem>>(new Map());
-    const showTranslate = ref(useStore().state.setting.playui.showTranslate);
+    const showTranslate = ref(store.state.setting.playui.showTranslate);
     const currentTime = ref(0);
     const playState = ref("pause");
     const isHover = ref(false);
+    const HOVER_HIDE_DELAY_MS = 3000;
+    const RESIZE_HOVER_GUARD_MS = 400;
+    let hoverLeaveTimer: ReturnType<typeof setTimeout> | null = null;
+    let resizeGuardTimer: ReturnType<typeof setTimeout> | null = null;
+    let pointerInContainer = false;
     const isLocked = ref(false);
     const defaultMessage = ref("XCMusic Desktop Lyrics");
     const ipcRenderer = window.electron?.ipcRenderer;
     const lyricContainer = ref<HTMLElement | null>(null);
 
-    // Animation state
     const wordAnimations = ref<Animation[]>([]);
     const backgroundElements = ref<HTMLElement[]>([]);
     const currentLineIndex = ref(-1);
     let animationFrameId: number | null = null;
 
-    // Countdown circles state
     const showCountdown = ref(false);
-    const countdownCircles = ref<number>(0); // 0, 1, 2, or 3 circles
+    const countdownCircles = ref<number>(0);
+    const countdownLineBoxHeightPx = ref(40);
+    const countdownContainerStyle = computed(() => {
+      const lineBoxHeight = countdownLineBoxHeightPx.value;
+      const countdownTop = 10 + lineBoxHeight / 2;
+      return {
+        "--countdown-top": `${countdownTop}px`,
+      };
+    });
 
-    // Time sync
     const localTime = ref(0);
     const lastSyncTime = ref(0);
     const lastSyncTimestamp = ref(0);
     const isPlaying = ref(false);
     let timeSyncListener: ((payload: any) => void) | null = null;
+    let desktopLyricStateListener: ((payload: any) => void) | null = null;
 
-    // Redirect console logs to main process in development
     if (window.env?.isDevelopment && ipcRenderer) {
       const originalLog = console.log;
       const originalError = console.error;
@@ -104,85 +166,139 @@ export default defineComponent({
       };
     }
 
-    /** Generate lyric elements with word-by-word animation */
+    const loadLatestLyricsPreferences = () => {
+      const stored = getStorage(StorageKey.Setting_PlayUI_LyricsPreference);
+      const merged = {
+        ...defaultLyricsPreferences,
+        ...(stored || store.state.setting.playui.lyricsPreferences),
+      } as ILyricsPreferences;
+      preferences.value = merged;
+      try {
+        store.state.setting.playui.lyricsPreferences = merged;
+      } catch (error) {
+        console.warn(
+          "Failed to sync lyric preferences into setting proxy",
+          error,
+        );
+      }
+    };
+
     const generateLyricElements = () => {
       if (!lyricContainer.value) return;
 
-      // Clear previous content
+      const currentPreferences = preferences.value;
+
       lyricContainer.value.innerHTML = "";
       wordAnimations.value.forEach((anim) => anim.cancel());
       wordAnimations.value = [];
       backgroundElements.value = [];
 
-      // Font settings from preferences (desktop lyrics use 2x size)
-      const fontSize = preferences.fontSize * 2;
-      const fontFamily = preferences.fontFamily.join(",");
-      const fontWeight = preferences.is_bold ? "bold" : "900";
-      const fontStyle = preferences.isItalic ? "italic" : "normal";
+      const fontSize =
+        currentPreferences.desktop_fontSize ?? currentPreferences.fontSize * 2;
+      const tnsFontSize =
+        currentPreferences.desktop_tns_fontSize ??
+        currentPreferences.tns_fontSize * 2;
+      const mainLineHeightPx = Math.ceil(fontSize * 1.2);
+      const mainShadowSafePx = Math.max(14, Math.round(fontSize * 0.36));
+      const mainLineBoxHeightPx = mainLineHeightPx + mainShadowSafePx * 2;
+      countdownLineBoxHeightPx.value = mainLineBoxHeightPx;
+      const tnsLineHeightPx = Math.ceil(tnsFontSize * 1.2);
+      const tnsShadowSafePx = Math.max(12, Math.round(tnsFontSize * 0.36));
+      const tnsLineBoxHeightPx = tnsLineHeightPx + tnsShadowSafePx * 2;
+      const clipPathStart = "inset(-1em 100% -1em -1em)";
+      const clipPathEnd = "inset(-1em 0 -1em -1em)";
+      const translateGapPx = Math.max(
+        8,
+        Number(currentPreferences.distance_l_t) || 0,
+      );
+      // const translateTopPx = mainLineBoxHeightPx + translateGapPx;
+      const translateTopPx = mainLineBoxHeightPx;
 
-      // If no lyrics or invalid line index, show default message
-      if (
-        !lyrics.value ||
-        lyrics.value.length === 0 ||
-        currentLineIndex.value === -1 ||
-        currentLineIndex.value >= lyrics.value.length
-      ) {
+      const fontFamily = currentPreferences.fontFamily.join(",");
+      const tnsFontFamily = currentPreferences.tns_fontFamily.join(",");
+      const fontWeight = currentPreferences.is_bold ? "bold" : "900";
+      const fontStyle = currentPreferences.isItalic ? "italic" : "normal";
+
+      if (!lyrics.value || lyrics.value.length === 0) {
         const lineElement = document.createElement("div");
         lineElement.innerText = defaultMessage.value;
-        // Apply styles
         Object.assign(lineElement.style, {
           fontFamily,
           fontWeight,
           fontSize: `${fontSize}px`,
           fontStyle,
-          color: "#fff",
+          color: "#eee",
           whiteSpace: "nowrap",
-          // webkitTextStroke: "1.5px #000",
+          display: "block",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          lineHeight: `${mainLineHeightPx}px`,
+          height: `${mainLineBoxHeightPx}px`,
+          paddingTop: `${mainShadowSafePx}px`,
+          paddingBottom: `${mainShadowSafePx}px`,
+          boxSizing: "border-box",
+          width: "100%",
           textShadow:
-            "2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8)",
+            "4px 4px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8)",
         });
         lyricContainer.value.appendChild(lineElement);
         return;
       }
 
-      // 前台歌词元素
+      const safeLineIndex = Math.min(
+        Math.max(currentLineIndex.value, 0),
+        lyrics.value.length - 1,
+      );
+
       const lineElement = document.createElement("div");
       Object.assign(lineElement.style, {
         fontFamily,
         fontWeight,
         fontSize: `${fontSize}px`,
         fontStyle,
-        color: "#fff",
+        color: "#eee",
         whiteSpace: "nowrap",
-        // webkitTextStroke: "1.5px #000",
         textShadow:
-          "2px 2px 4px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.4)",
-        lineHeight: "1.2",
+          "4px 4px 4px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.4)",
+        lineHeight: `${mainLineHeightPx}px`,
         position: "absolute",
-        top: "-1.2em",
+        top: "0",
+        left: "0",
+        right: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        height: `${mainLineBoxHeightPx}px`,
+        paddingTop: `${mainShadowSafePx}px`,
+        paddingBottom: `${mainShadowSafePx}px`,
+        boxSizing: "border-box",
+        display: "block",
       });
 
-      // 背景歌词元素
       const backgroundLine = document.createElement("div");
       Object.assign(backgroundLine.style, {
         fontFamily,
         fontWeight,
         fontSize: `${fontSize}px`,
         fontStyle,
-        // color: "rgba(255, 255, 255, 1)",
         whiteSpace: "nowrap",
-        // webkitTextStroke: "1.5px #000",
         textShadow:
-          "2px 2px 4px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.4)",
-        lineHeight: "1.2",
-        // webkitTextFillColor: "#fff",
+          "4px 4px 4px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.4)",
+        lineHeight: `${mainLineHeightPx}px`,
         position: "absolute",
         top: "0.0em",
+        left: "0",
+        right: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        height: `${mainLineBoxHeightPx}px`,
+        paddingTop: `${mainShadowSafePx}px`,
+        paddingBottom: `${mainShadowSafePx}px`,
+        boxSizing: "border-box",
+        display: "block",
       });
 
-      const currentLyric = lyrics.value[currentLineIndex.value];
+      const currentLyric = lyrics.value[safeLineIndex];
 
-      // Check if it's YRC with valid animation data (has duration)
       const hasAnimation =
         currentLyric.type === "yrc" &&
         Array.isArray(currentLyric.words) &&
@@ -190,34 +306,30 @@ export default defineComponent({
         currentLyric.words.some((w: any) => w.duration && w.duration > 0);
 
       if (hasAnimation) {
-        // Generate word-by-word elements
         currentLyric.words.forEach((word: any) => {
-          // Foreground word element
           const wordSpan = document.createElement("span");
           wordSpan.innerText = word.text;
           Object.assign(wordSpan.style, {
             display: "inline-block",
-            color: "#fff",
-            webkitTextFillColor: "#fff",
-            clipPath: "inset(0 100% 0 0)",
-            whiteSpace: "pre-wrap",
+            color: "#eee",
+            webkitTextFillColor: "#eee",
+            clipPath: clipPathStart,
+            whiteSpace: "pre",
           });
           lineElement.appendChild(wordSpan);
 
-          // Background word element
           const bgWordSpan = document.createElement("span");
           bgWordSpan.innerText = word.text;
           Object.assign(bgWordSpan.style, {
             display: "inline-block",
-            color: "rgba(255, 255, 255, 0.4)",
-            webkitTextFillColor: "rgba(255, 255, 255, 0.4)",
-            whiteSpace: "pre-wrap",
+            color: "rgba(255, 255, 255, 0.5)",
+            webkitTextFillColor: "rgba(255, 255, 255, 0.5)",
+            whiteSpace: "pre",
           });
           backgroundLine.appendChild(bgWordSpan);
 
-          // Create clip-path animation (duration is already in ms)
           const animation = wordSpan.animate(
-            [{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0 0 0)" }],
+            [{ clipPath: clipPathStart }, { clipPath: clipPathEnd }],
             {
               duration: word.duration || 1000,
               easing: "linear",
@@ -228,7 +340,6 @@ export default defineComponent({
           wordAnimations.value.push(animation);
         });
       } else {
-        // Plain text lyrics
         const text = getLrcContent(currentLyric);
         lineElement.innerText = text;
         backgroundLine.innerText = text;
@@ -238,19 +349,17 @@ export default defineComponent({
       lyricContainer.value.appendChild(lineElement);
       backgroundElements.value.push(backgroundLine);
 
-      // Generate translation line element if exists
       if (showTranslate.value && tlyrics.value.length > 0) {
         let tnsText = tlyricsMap.value.get(currentLyric.startTime)?.words[0]
           .text;
 
-        // If no direct match, search in interval
         if (!tnsText) {
           const tnsLyricsKeys = Array.from(tlyricsMap.value.keys()).sort(
             (a, b) => a - b,
           );
           const _key = tnsLyricsKeys.find((key) => {
             if (key >= currentLyric.startTime) {
-              const nextLyric = lyrics.value[currentLineIndex.value + 1];
+              const nextLyric = lyrics.value[safeLineIndex + 1];
               if (nextLyric && key < nextLyric.startTime) {
                 return true;
               } else if (!nextLyric) {
@@ -268,29 +377,29 @@ export default defineComponent({
           const tlineElement = document.createElement("div");
           tlineElement.innerText = tnsText;
           Object.assign(tlineElement.style, {
-            fontFamily,
-            fontWeight: preferences.tns_is_bold ? "bold" : "normal",
-            fontSize: `${preferences.tns_fontSize * 2}px`,
-            fontStyle: preferences.tns_isItalic ? "italic" : "normal",
+            fontFamily: tnsFontFamily,
+            fontWeight: currentPreferences.tns_is_bold ? "bold" : "normal",
+            fontSize: `${tnsFontSize}px`,
+            fontStyle: currentPreferences.tns_isItalic ? "italic" : "normal",
             color: "rgba(255, 255, 255, 1)",
-            whiteSpace: "prewrap",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
             textShadow:
-              "2px 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.6)",
-            lineHeight: "1.2",
+              "4px 4px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.6)",
+            lineHeight: `${tnsLineHeightPx}px`,
             position: "absolute",
-            top: "0.0em",
-            marginTop: `${preferences.distance_l_t}px`,
+            top: `${translateTopPx}px`,
+            left: "0",
+            right: "0",
+            height: `${tnsLineBoxHeightPx}px`,
+            paddingTop: `${tnsShadowSafePx}px`,
+            paddingBottom: `${tnsShadowSafePx}px`,
+            boxSizing: "border-box",
           });
           lyricContainer.value.appendChild(tlineElement);
         }
       }
-
-      // Position background line to overlap with foreground
-      requestAnimationFrame(() => {
-        if (backgroundLine && lineElement) {
-          backgroundLine.style.marginTop = `-${lineElement.offsetHeight}px`;
-        }
-      });
     };
 
     const getLrcContent = (item: any) => {
@@ -304,7 +413,6 @@ export default defineComponent({
       return "";
     };
 
-    /** Update time and control animations */
     const startTimeUpdate = () => {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
@@ -316,7 +424,6 @@ export default defineComponent({
 
         currentTime.value = localTime.value;
 
-        // Find current line
         const timeMs = localTime.value * 1000;
         const newLineIndex = lyrics.value.findIndex((item, index) => {
           const nextItem = lyrics.value[index + 1];
@@ -330,20 +437,16 @@ export default defineComponent({
           currentLineIndex.value = newLineIndex;
         }
 
-        // Check for countdown display (KTV-style countdown)
         if (
           lyrics.value &&
           lyrics.value.length > 0 &&
           (newLineIndex === -1 || timeMs < lyrics.value[0].startTime)
         ) {
-          // Before first lyric or no current lyric
           const nextLyric = lyrics.value[0];
           const timeUntilNext = nextLyric.startTime - timeMs;
 
           if (timeUntilNext > 10000) {
-            // More than 10 seconds until next lyric
             if (timeUntilNext <= 3000) {
-              // Show countdown in last 3 seconds
               showCountdown.value = true;
               countdownCircles.value = Math.ceil(timeUntilNext / 1000);
             } else {
@@ -356,41 +459,34 @@ export default defineComponent({
           newLineIndex !== -1 &&
           newLineIndex < lyrics.value.length - 1
         ) {
-          // Between lyrics
           const nextLyric = lyrics.value[newLineIndex + 1];
           const currentLyric = lyrics.value[newLineIndex];
           const gap = nextLyric.startTime - currentLyric.startTime;
           const timeUntilNext = nextLyric.startTime - timeMs;
 
-          // Calculate current lyric end time
           let currentLyricEndTime = currentLyric.startTime;
           if (
             currentLyric.type === "yrc" &&
             Array.isArray(currentLyric.words) &&
             currentLyric.words.length > 0
           ) {
-            // Check if it has animation (duration > 0)
             const hasAnimation = currentLyric.words.some(
               (w: any) => w.duration && w.duration > 0,
             );
             if (hasAnimation) {
-              // For animated lyrics, calculate end time from last word
               const lastWord =
                 currentLyric.words[currentLyric.words.length - 1];
               if (lastWord && lastWord.duration) {
                 currentLyricEndTime = lastWord.startTime + lastWord.duration;
               }
             } else {
-              // For non-animated lyrics (like composer info), consider it ends immediately
               currentLyricEndTime = currentLyric.startTime;
             }
           } else {
-            // For plain text lyrics, consider it ends immediately
             currentLyricEndTime = currentLyric.startTime;
           }
 
           if (gap > 10000 && timeMs > currentLyricEndTime) {
-            // Gap longer than 10 seconds and current lyric animation finished
             if (timeUntilNext <= 3000 && timeUntilNext > 0) {
               showCountdown.value = true;
               countdownCircles.value = Math.ceil(timeUntilNext / 1000);
@@ -404,7 +500,6 @@ export default defineComponent({
           showCountdown.value = false;
         }
 
-        // Control word animations - only if current line has animation data
         if (wordAnimations.value.length > 0 && currentLineIndex.value !== -1) {
           const currentLyric = lyrics.value[currentLineIndex.value];
           const hasAnimation =
@@ -421,18 +516,14 @@ export default defineComponent({
               if (!animation) return;
 
               if (!isPlaying.value) {
-                // 暂停时：暂停所有动画
                 if (animation.playState === "running") {
                   animation.pause();
                 }
               } else if (timeMs < word.startTime) {
-                // 时间轴之前：进度0
                 animation.cancel();
               } else if (timeMs >= word.startTime + (word.duration || 0)) {
-                // 时间轴之后：保持完成
                 animation.finish();
               } else {
-                // 当前词：播放动画
                 if (animation.playState !== "running") {
                   animation.play();
                 }
@@ -447,17 +538,14 @@ export default defineComponent({
       animationFrameId = requestAnimationFrame(update);
     };
 
-    // Watch for line changes
     watch(currentLineIndex, () => {
       if (!lyricContainer.value) return;
 
-      // Fade out
       lyricContainer.value.style.transition = "opacity 0.2s ease-out";
       lyricContainer.value.style.opacity = "0";
 
       setTimeout(() => {
         generateLyricElements();
-        // Fade in
         if (lyricContainer.value) {
           lyricContainer.value.style.opacity = "1";
         }
@@ -474,21 +562,24 @@ export default defineComponent({
           break;
         case PlayerEvents.lyrics:
           lyrics.value = payload.data || [];
-          currentLineIndex.value = -1;
+          if (lyrics.value.length === 0) {
+            currentLineIndex.value = -1;
+          } else if (
+            currentLineIndex.value < 0 ||
+            currentLineIndex.value >= lyrics.value.length
+          ) {
+            currentLineIndex.value = 0;
+          }
           generateLyricElements();
           break;
         case PlayerEvents.track:
           if (payload.data) {
-            defaultMessage.value = `${payload.data.name} - ${payload.data.ar.map((a: any) => a.name).join("/")}`;
-
-            // Fetch translation lyrics
             tlyrics.value = [];
             tlyricsMap.value.clear();
             if (payload.data.id) {
               Api.Lyrics.getLyricsTns(payload.data.id).then(
                 (res: string | null) => {
                   if (!res) return;
-                  // Parse translation lyrics
                   const lines = res.split("\n");
                   lines.forEach((line: string) => {
                     const match = line.match(/\[(\d+):(\d+)\.(\d+)\](.*)/);
@@ -516,7 +607,6 @@ export default defineComponent({
                       tlyricsMap.value.set(startTimeMs, tlyricItem);
                     }
                   });
-                  // Regenerate lyrics elements to show translation
                   generateLyricElements();
                 },
               );
@@ -535,9 +625,29 @@ export default defineComponent({
       ipcRenderer?.send("close-desktop-lyric");
     };
 
+    const applyLockMouseState = () => {
+      if (!isLocked.value) {
+        ipcRenderer?.send("lock-desktop-lyric", {
+          locked: false,
+          ignoreMouse: false,
+        });
+        return;
+      }
+      ipcRenderer?.send("lock-desktop-lyric", {
+        locked: true,
+        ignoreMouse: true,
+      });
+    };
+
     const toggleLock = () => {
       isLocked.value = !isLocked.value;
-      ipcRenderer?.send("lock-desktop-lyric", isLocked.value);
+      if (isLocked.value) {
+        clearHoverLeaveTimer();
+        isHover.value = false;
+      } else {
+        isHover.value = true;
+      }
+      applyLockMouseState();
     };
 
     const control = (command: string) => {
@@ -545,6 +655,8 @@ export default defineComponent({
     };
 
     const refreshLyrics = () => {
+      loadLatestLyricsPreferences();
+      generateLyricElements();
       ipcRenderer?.send("player-command", { command: "getState" });
     };
 
@@ -553,13 +665,80 @@ export default defineComponent({
       generateLyricElements();
     };
 
+    const clearHoverLeaveTimer = () => {
+      if (hoverLeaveTimer) {
+        clearTimeout(hoverLeaveTimer);
+        hoverLeaveTimer = null;
+      }
+    };
+
+    const clearResizeGuardTimer = () => {
+      if (resizeGuardTimer) {
+        clearTimeout(resizeGuardTimer);
+        resizeGuardTimer = null;
+      }
+    };
+
+    const scheduleHoverHide = () => {
+      clearHoverLeaveTimer();
+      hoverLeaveTimer = setTimeout(() => {
+        isHover.value = false;
+        applyLockMouseState();
+        hoverLeaveTimer = null;
+      }, HOVER_HIDE_DELAY_MS);
+    };
+
+    const syncLockStateFromMain = (payload: any) => {
+      if (!payload || typeof payload !== "object") {
+        return;
+      }
+      const locked = (payload as { locked?: boolean }).locked === true;
+      isLocked.value = locked;
+      if (locked) {
+        clearHoverLeaveTimer();
+        isHover.value = false;
+      }
+    };
+
+    const handleMouseEnter = () => {
+      if (isLocked.value) return;
+      pointerInContainer = true;
+      clearHoverLeaveTimer();
+      isHover.value = true;
+      applyLockMouseState();
+    };
+
+    const handleMouseLeave = () => {
+      if (isLocked.value) return;
+      pointerInContainer = false;
+      if (resizeGuardTimer) {
+        return;
+      }
+      scheduleHoverHide();
+    };
+
+    const handleWindowResize = () => {
+      if (isLocked.value) return;
+      clearResizeGuardTimer();
+      clearHoverLeaveTimer();
+
+      isHover.value = true;
+      applyLockMouseState();
+
+      resizeGuardTimer = setTimeout(() => {
+        resizeGuardTimer = null;
+        if (!pointerInContainer) {
+          scheduleHoverHide();
+        }
+      }, RESIZE_HOVER_GUARD_MS);
+    };
+
     onMounted(() => {
       document.body.style.backgroundColor = "transparent";
+      window.addEventListener("resize", handleWindowResize);
 
-      // Initialize display with default message
       generateLyricElements();
 
-      // Setup time sync listener
       if (ipcRenderer) {
         timeSyncListener = (payload: any) => {
           if (payload?.event === "timeSync") {
@@ -569,11 +748,17 @@ export default defineComponent({
             isPlaying.value = payload.data.playState === "play";
           }
         };
+        desktopLyricStateListener = (payload: any) => {
+          syncLockStateFromMain(payload);
+        };
+        ipcRenderer.on("desktop-lyric-state", desktopLyricStateListener);
+        ipcRenderer.invoke("get-desktop-lyric-state").then((payload: any) => {
+          syncLockStateFromMain(payload);
+        });
         ipcRenderer.on("player-event", timeSyncListener);
         ipcRenderer.on("player-event", handlePlayerEvent);
       }
 
-      // Initialize
       lastSyncTime.value = 0;
       lastSyncTimestamp.value = performance.now();
       localTime.value = 0;
@@ -583,9 +768,18 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      clearHoverLeaveTimer();
+      clearResizeGuardTimer();
+      window.removeEventListener("resize", handleWindowResize);
       if (ipcRenderer && timeSyncListener) {
         ipcRenderer.removeListener("player-event", timeSyncListener);
         ipcRenderer.removeListener("player-event", handlePlayerEvent);
+      }
+      if (ipcRenderer && desktopLyricStateListener) {
+        ipcRenderer.removeListener(
+          "desktop-lyric-state",
+          desktopLyricStateListener,
+        );
       }
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       wordAnimations.value.forEach((anim) => anim.cancel());
@@ -600,8 +794,11 @@ export default defineComponent({
       playState,
       showCountdown,
       countdownCircles,
+      countdownContainerStyle,
       closeWindow,
       toggleLock,
+      handleMouseEnter,
+      handleMouseLeave,
       control,
       refreshLyrics,
       toggleTranslate,
@@ -616,8 +813,6 @@ body,
 html {
   margin: 0;
   padding: 0;
-  /* overflow: hidden !important; */
-  /* background: transparent !important; */
 }
 </style>
 
@@ -626,48 +821,92 @@ html {
   width: 100vw;
   height: 100vh;
   display: flex;
-  flex-direction: row;
-  // justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   user-select: none;
   transition: background-color 0.3s;
   overflow: hidden;
   position: relative;
   cursor: pointer;
 
-  &:hover {
+  &.is-hover {
     background-color: rgba(0, 0, 0, 0.2);
   }
 
   &.is-locked {
     background-color: transparent !important;
-    pointer-events: none; /* Let clicks pass through */
     -webkit-app-region: no-drag;
+    cursor: default;
+
+    .control-bar,
+    .control-bar button,
+    .control-bar-slot {
+      cursor: default !important;
+    }
+  }
+
+  .control-bar-slot {
+    height: 58px;
+    flex-shrink: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 8px;
+    box-sizing: border-box;
+    -webkit-app-region: drag;
+    cursor: move;
+
+    &.is-locked {
+      -webkit-app-region: no-drag;
+      cursor: default;
+    }
+  }
+
+  .lyric-area {
+    flex: 1;
+    position: relative;
+    display: flex;
+    padding-top: 0;
+    padding-left: 10px;
+    box-sizing: border-box;
+    // align-items: center;
   }
 
   .lyric-content {
-    text-align: center;
+    text-align: left;
     width: 100%;
-    padding: 0 40px;
+    padding: 10px 40px 56px;
     position: relative;
+    overflow: visible;
+    box-sizing: border-box;
   }
 
   .control-bar {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
     display: flex;
     background: rgba(0, 0, 0, 0.65);
     border-radius: 24px;
     padding: 6px 18px;
     gap: 12px;
-    z-index: 100;
     -webkit-app-region: no-drag;
     backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    cursor: default;
 
-    .drag-handle {
-      display: none;
+    &.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .refresh-icon {
+      font-size: 26px !important;
+      margin-bottom: 4px !important;
     }
 
     button {
@@ -682,20 +921,33 @@ html {
       border-radius: 8px;
 
       &:hover {
-        color: #409eff;
+        // color: #409eff;
         background: rgba(64, 158, 255, 0.15);
-        transform: scale(1.1);
       }
 
-      &:active {
-        transform: scale(0.95);
+      .control-icon {
+        width: 19px;
+        height: 19px;
+        display: block;
+      }
+
+      .control-icon-translate {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .control-icon-lock {
+        width: 30px;
+        display: block;
+        margin-bottom: 4px;
       }
     }
   }
 
   .countdown-container {
     position: absolute;
-    top: calc(50% + 5px);
+    top: var(--countdown-top, 30px);
     left: 0;
     transform: translateY(-50%);
     display: flex;

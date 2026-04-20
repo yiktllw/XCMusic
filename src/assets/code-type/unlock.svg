@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 24" width="28" height="24">
+  <!-- 打开锁：以右侧边（x=18）为轴镜像倒U型，得到倒J型，尾巴朝向外侧（左侧） -->
+  <path d="M 15 11 L 15 9 A 3 3 0 0 1 21 9 L 21 11" 
+        fill="none" stroke="#FFFFFF" stroke-width="2" 
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 锁体（位置不变，与闭合锁完全一致） -->
+  <rect x="6" y="11" width="12" height="12" rx="2" 
+        fill="none" stroke="#FFFFFF" stroke-width="2"/>
+  <!-- 钥匙孔 -->
+  <circle cx="12" cy="17" r="1.5" fill="#FFFFFF"/>
+</svg>

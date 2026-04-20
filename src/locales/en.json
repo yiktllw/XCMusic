@@ -152,6 +152,8 @@
   "login": "Login",
   "logout": "Logout",
   "lyrics": {
+    "desktop_font_size": "Desktop Lyrics Font Size",
+    "desktop_tns_font_size": "Desktop Translation Font Size",
     "font_size": "Font Size",
     "fonts": "Fonts",
     "is_bold": "Bold",
@@ -165,11 +167,6 @@
   "manage_download": "Download",
   "message": {
     "getting_playlist_tracks": "Getting playlist tracks",
-    "toast": {
-      "expand": "Expand",
-      "collapse": "Collapse",
-      "close": "Close"
-    },
     "homeview": {
       "add_to_playlist_success": "Added to playlist",
       "delete_fail": "Failed to delete",
@@ -180,15 +177,23 @@
     },
     "playlist_view": {
       "added_to_playlist": "Added to playlist",
+      "loaded_more_tracks": "Additional tracks loaded.",
+      "loading_more_tracks": "Loading additional tracks...",
       "scrolled_to_current_track": "Scrolled to current track"
     },
     "setting_view": {
+      "desktop_lyric_need_restart": "Restart the desktop lyric window to apply this change.",
       "download": {
         "only_desktop": "The download feature is only effective on desktop"
       },
       "only_desktop": "The zoom feature is only effective on desktop",
       "zoom_applied": "Zoom applied",
       "zoom_range_50_200": "Please enter a number between 50 and 200"
+    },
+    "toast": {
+      "close": "Close",
+      "collapse": "Collapse",
+      "expand": "Expand"
     }
   },
   "need_login": "Please login first",
@@ -197,14 +202,17 @@
     "clear_playlist": "Clear Playlist",
     "delete_from_playlist": "Remove from Playlist",
     "desktop_lyric": "Desktop Lyric",
+    "hide_translation": "Hide Translation",
     "like": "Like",
     "listloop": "List Loop",
     "listrandom": "List Random",
+    "lock": "Lock",
     "loop": "Loop",
     "next": "Next",
     "order": "Order",
     "pause": "Pause",
     "play": "Play",
+    "playPause": "Play / Pause",
     "playlist": "Playlist",
     "playlist_panel": {
       "like": "Like",
@@ -230,15 +238,22 @@
       "standard": "Standard"
     },
     "random": "Random",
+    "refresh_lyrics": "Refresh Lyrics",
     "select_sound_quality": "Select Sound Quality",
+    "show_translation": "Show Translation",
     "song_info": "Song Information",
     "sound_quality": "Sound Quality",
+    "unlock": "Unlock",
     "volume": "Volume"
   },
   "player": {
     "local_file_not_found": "Local File Not Found",
     "noUrlError": "Failed to get the song link, automatically playing the next track."
   },
+  "playlist_batch_result_duplicate": "Duplicate",
+  "playlist_batch_result_failed": "Failed",
+  "playlist_batch_result_prefix": "Add to playlists: ",
+  "playlist_batch_result_success": "Success",
   "playlist_biglist": {
     "song_count": ""
   },
@@ -342,6 +357,7 @@
     },
     "apply": "Apply",
     "click_to_reload": "Click to reload window.",
+    "click_to_restart_player": "Click to restart player.",
     "close": "Close",
     "close_always_ask": "Always ask before closing",
     "close_to_minimize": "Close to Hide.",
@@ -376,22 +392,23 @@
       "dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
       "dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
       "device": "Device",
+      "gapless_playback": {
+        "label": "Reduce hiccups between tracks",
+        "title": "Gapless Playback",
+        "tooltip": "Some classical albums split a continuous musical passage into separate tracks. On CDs this transition is usually seamless, but streaming playback can introduce short hiccups between tracks. Enable this option to reduce interruptions at track boundaries."
+      },
       "launch": "Launch",
       "playui": "Play UI",
       "remember_progress": {
         "label": "Remember track progress",
         "title": "Progress"
       },
-      "gapless_playback": {
-        "title": "Gapless Playback",
-        "label": "Reduce hiccups between tracks",
-        "tooltip": "Some classical albums split a continuous musical passage into separate tracks. On CDs this transition is usually seamless, but streaming playback can introduce short hiccups between tracks. Enable this option to reduce interruptions at track boundaries."
-      },
       "show_spectrum": "Show Spectrum",
       "volume_leveling": "Volume",
       "volume_leveling_content": "Balance the volume of different tracks."
     },
     "reload": "Reload",
+    "restart_player": "Restart Player",
     "theme": "Theme",
     "theme_name": {
       "dark": "Dark",
@@ -439,10 +456,6 @@
   },
   "song_added_failed": "Song Added Failed",
   "song_added_successfully": "Song Added Successfully",
-  "playlist_batch_result_prefix": "Add to playlists: ",
-  "playlist_batch_result_success": "Success",
-  "playlist_batch_result_duplicate": "Duplicate",
-  "playlist_batch_result_failed": "Failed",
   "song_info": {
     "album_tns": "Album Translation",
     "artist": "Artists",
@@ -505,11 +518,11 @@
   "user_songs_rank_view": {
     "alltime": "All Time",
     "last_week": "Last Week",
-    "source_title": "Data Source",
-    "source_tip": "Due to Netease Cloud Music API restrictions, third-party clients cannot sync local listening records back to your Netease account.",
-    "source_netease": "Netease",
     "source_local": "Local",
-    "source_mixed": "Combined"
+    "source_mixed": "Combined",
+    "source_netease": "Netease",
+    "source_tip": "Due to Netease Cloud Music API restrictions, third-party clients cannot sync local listening records back to your Netease account.",
+    "source_title": "Data Source"
   },
   "user_view": {
     "albums": "Albums",

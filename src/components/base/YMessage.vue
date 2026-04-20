@@ -17,6 +17,7 @@
         :role="ariaRole"
         aria-live="polite"
         v-bind:style="{ '--duration': _durationCss }"
+        @contextmenu.prevent="close"
       >
         <div class="accent" aria-hidden="true"></div>
         <div class="icon-wrap" aria-hidden="true">

@@ -339,7 +339,14 @@ export default defineComponent({
       }
     },
     reloadWindow() {
+      if (window.electron?.isElectron) {
+        window.electron.ipcRenderer.send("reload-main-window");
+        return;
+      }
       window.location.reload();
+    },
+    restartPlayer() {
+      this.player.restartPlayer();
     },
     openCustomWindow() {
       this.globalMsg.post(GlobalMsgEvents.OpenCustomWindow);
@@ -496,6 +503,7 @@ export default defineComponent({
               };
               thisInstance.lyricsPreferences =
                 thisInstance.setting.playui.lyricsPreferences;
+              thisInstance.handleLyricsPreferencesChange();
               break;
             case "LyricsTnsFonts":
               thisInstance.setting.playui.lyricsPreferences = {
@@ -504,6 +512,7 @@ export default defineComponent({
               };
               thisInstance.lyricsPreferences =
                 thisInstance.setting.playui.lyricsPreferences;
+              thisInstance.handleLyricsPreferencesChange();
               break;
           }
         },
@@ -511,8 +520,19 @@ export default defineComponent({
     },
     handleLyricsPreferencesChange() {
       // 验证变化并更新设置
-      this.setting.playui.lyricsPreferences = this.lyricsPreferences;
-      this.lyricsPreferences = this.setting.playui.lyricsPreferences;
+      const normalized = {
+        ...defaultLyricsPreferences,
+        ...this.lyricsPreferences,
+      };
+      this.setting.playui.lyricsPreferences = normalized;
+      this.lyricsPreferences = {
+        ...defaultLyricsPreferences,
+        ...this.setting.playui.lyricsPreferences,
+      };
+      Message.post(
+        "info",
+        this.$t("message.setting_view.desktop_lyric_need_restart"),
+      );
     },
     init() {
       YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
@@ -558,7 +578,10 @@ export default defineComponent({
         }
       }
       this.fonts = [...this.setting.display.UIFonts];
-      this.lyricsPreferences = { ...this.setting.playui.lyricsPreferences };
+      this.lyricsPreferences = {
+        ...defaultLyricsPreferences,
+        ...this.setting.playui.lyricsPreferences,
+      };
       this.getDevices();
       this.initRectData();
     },

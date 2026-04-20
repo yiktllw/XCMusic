@@ -420,14 +420,25 @@ export default defineComponent({
           this.songsTableProps.reelOptions = undefined;
           this.songsTableProps.songs = this.playlistDetail.tracks.slice();
           this.loading = false;
-          if (res.trackCount > 1000)
+          if (res.trackCount > 1000) {
+            Message.post(
+              "info",
+              "message.playlist_view.loading_more_tracks",
+              true,
+            );
             Playlist.getAllTracks(this.playlistId, res.trackCount).then(
               (res2) => {
                 if (res.id !== this.playlistId) return;
                 this.playlistDetail.tracks = res2;
                 this.songsTableProps.songs = this.playlistDetail.tracks.slice();
+                Message.post(
+                  "info",
+                  "message.playlist_view.loaded_more_tracks",
+                  true,
+                );
               },
             );
+          }
         });
       } else {
         this.songsTableProps.playlistId = -1;
@@ -696,14 +707,25 @@ export default defineComponent({
         this.songsTableProps.reelOptions = undefined;
         this.songsTableProps.songs = this.playlistDetail.tracks.slice();
         this.loading = false;
-        if (res.trackCount > 1000)
+        if (res.trackCount > 1000) {
+          Message.post(
+            "info",
+            "message.playlist_view.loading_more_tracks",
+            true,
+          );
           Playlist.getAllTracks(this.playlistId, res.trackCount).then(
             (res2) => {
               if (res.id !== this.playlistId) return;
               this.playlistDetail.tracks = res2;
               this.songsTableProps.songs = this.playlistDetail.tracks.slice();
+              Message.post(
+                "info",
+                "message.playlist_view.loaded_more_tracks",
+                true,
+              );
             },
           );
+        }
       });
     },
   },
