@@ -98,7 +98,7 @@
       />
     </div>
     <div class="message-container">
-      <div class="msg-list">
+      <transition-group name="msg-list-transition" tag="div" class="msg-list">
         <YMessage
           v-for="message in messages"
           :key="message.id"
@@ -106,7 +106,7 @@
           :type="message.type"
           @close="removeMessage(message.id)"
         />
-      </div>
+      </transition-group>
     </div>
   </div>
   <div
@@ -223,21 +223,43 @@
   }
 
   .message-container {
-    top: 80px;
-    right: 20px;
+    top: 76px;
+    right: 14px;
     position: absolute;
+    width: min(370px, calc(100vw - 16px));
+    max-height: calc(100vh - 96px);
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     z-index: 1000;
     pointer-events: none;
+    overflow: hidden;
 
     .msg-list {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 10px;
+      gap: 8px;
       pointer-events: auto;
+      max-height: inherit;
+      overflow: hidden;
+      padding: 2px 4px 4px 6px;
+      scrollbar-gutter: stable;
+    }
+
+    .msg-list-transition-move {
+      transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .msg-list-transition-enter-active,
+    .msg-list-transition-leave-active {
+      transition: all 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .msg-list-transition-enter-from,
+    .msg-list-transition-leave-to {
+      opacity: 0;
+      transform: translate3d(8px, -4px, 0);
     }
   }
 }

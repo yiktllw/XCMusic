@@ -1,4 +1,5 @@
 import { YColor } from "@/utils/color";
+import { Message } from "@/dual/YMessageC";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 
@@ -19,6 +20,48 @@ export default defineComponent({
     return {};
   },
   methods: {
+    notifyByType(type: "info" | "success" | "warning" | "error") {
+      const contentMap = {
+        info: "Info 通知：用于检查默认信息样式与动画。",
+        success: "Success 通知：用于检查成功状态色与图标。",
+        warning: "Warning 通知：用于检查警告状态色与可读性。",
+        error: "Error 通知：用于检查错误状态色与警示强度。",
+      };
+      Message.post(type, contentMap[type]);
+    },
+    notifyLongMessage() {
+      Message.post(
+        "info",
+        "长文本通知测试：用于确认通知在两行文本截断后会出现“展开”按钮；展开后可以完整查看内容，收起后恢复紧凑展示。这里故意追加更多文本用于触发换行与溢出检测，包含一些额外说明来保证在 321px 的宽度下稳定超过两行。",
+      );
+    },
+    notifyDuplicate() {
+      Message.post("warning", "重复去重测试：这条消息只应该出现一次。");
+      setTimeout(() => {
+        Message.post("warning", "重复去重测试：这条消息只应该出现一次。");
+      }, 60);
+    },
+    notifyBurst() {
+      const sequence: Array<"info" | "success" | "warning" | "error"> = [
+        "info",
+        "success",
+        "warning",
+        "error",
+      ];
+      for (let i = 0; i < 8; i++) {
+        const type = sequence[i % sequence.length];
+        setTimeout(() => {
+          Message.post(type, `连续通知测试 #${i + 1}`);
+        }, i * 120);
+      }
+    },
+    notifyStressDisappear() {
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          Message.post("info", `消失动画与堆叠压力测试 #${i + 1}`);
+        }, i * 90);
+      }
+    },
     clearCache() {
       window.electron.clearCache();
       console.log("clearCache");

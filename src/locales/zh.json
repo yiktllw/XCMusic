@@ -165,6 +165,11 @@
   "manage_download": "下载管理",
   "message": {
     "getting_playlist_tracks": "获取歌单歌曲中...",
+    "toast": {
+      "expand": "展开",
+      "collapse": "收起",
+      "close": "关闭"
+    },
     "homeview": {
       "add_to_playlist_success": "已添加到下一首播放",
       "delete_fail": "删除失败",

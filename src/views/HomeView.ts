@@ -72,10 +72,11 @@ export default defineComponent({
       playlist_to_edit: null as IPlaylist | null,
       messages: [] as Array<{
         id: number;
-        type: string;
+        type: "info" | "success" | "warning" | "error";
         message: string;
       }>,
       msgIdCounter: 0,
+      maxVisibleMessages: 5,
       showPlayUI: false,
     };
   },
@@ -311,10 +312,36 @@ export default defineComponent({
         this.showAddToPlaylist = true;
         this.showPreventContainer = true;
       } else if (event.data.type === "message-show") {
+        const payload = event.data.data;
+        if (
+          !payload ||
+          typeof payload.message !== "string" ||
+          !["info", "success", "warning", "error"].includes(payload.type)
+        ) {
+          return;
+        }
+
+        const lastMessage = this.messages[this.messages.length - 1];
+        if (
+          lastMessage &&
+          lastMessage.message === payload.message &&
+          lastMessage.type === payload.type
+        ) {
+          return;
+        }
+
         this.messages.push({
           id: this.msgIdCounter++,
-          ...event.data.data,
+          message: payload.message,
+          type: payload.type,
         });
+
+        if (this.messages.length > this.maxVisibleMessages) {
+          this.messages.splice(
+            0,
+            this.messages.length - this.maxVisibleMessages,
+          );
+        }
       } else if (event.data.type === "open-info-panel") {
         if (event.data.data) {
           this.trackOfInfo = JSON.parse(event.data.data);

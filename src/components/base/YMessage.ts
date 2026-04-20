@@ -17,11 +17,11 @@ export default defineComponent({
     },
     duration: {
       type: Number,
-      default: 1500,
+      default: 4200,
     },
     aniDuration: {
       type: Number,
-      default: 400,
+      default: 260,
     },
     slideDirection: {
       type: Number,
@@ -32,36 +32,28 @@ export default defineComponent({
     },
   },
   computed: {
-    _color(): string {
-      const colors: {
-        [key in "info" | "success" | "warning" | "error"]: string;
-      } = {
-        info: "rgba(64, 66, 66, .8)",
-        success: "rgba(60, 118, 61, .8)",
-        warning: "rgba(100, 86, 70, .8)",
-        error: "rgba(138, 88, 82, .8)",
-      };
-      return colors[this.type as "info" | "success" | "warning" | "error"];
-    },
     _animationTime() {
       return this.aniDuration / 1000 + "s";
     },
+    _durationCss() {
+      return `${Math.max(1000, this.duration)}ms`;
+    },
     slideDistance() {
-      return 100;
+      return 20;
     },
     slideDistanceXY() {
-      return 100;
+      return 16;
     },
     slideTransform() {
       const directions = [
-        `translateY(-${this.slideDistance}%)`,
-        `translate(${this.slideDistanceXY}%, -${this.slideDistanceXY}%)`,
-        `translateX(${this.slideDistance}%)`,
-        `translate(${this.slideDistanceXY}%, ${this.slideDistanceXY}%)`,
-        `translateY(${this.slideDistance}%)`,
-        `translate(-${this.slideDistanceXY}%, ${this.slideDistanceXY}%)`,
-        `translateX(-${this.slideDistance}%)`,
-        `translate(-${this.slideDistanceXY}%, -${this.slideDistanceXY}%)`,
+        `translateY(-${this.slideDistance}px)`,
+        `translate(${this.slideDistanceXY}px, -${this.slideDistanceXY}px)`,
+        `translateX(${this.slideDistance}px)`,
+        `translate(${this.slideDistanceXY}px, ${this.slideDistanceXY}px)`,
+        `translateY(${this.slideDistance}px)`,
+        `translate(-${this.slideDistanceXY}px, ${this.slideDistanceXY}px)`,
+        `translateX(-${this.slideDistance}px)`,
+        `translate(-${this.slideDistanceXY}px, -${this.slideDistanceXY}px)`,
         "",
         "",
       ];
@@ -70,15 +62,67 @@ export default defineComponent({
     zIndex() {
       return 200;
     },
+    ariaRole() {
+      return this.type === "error" || this.type === "warning"
+        ? "alert"
+        : "status";
+    },
   },
   data() {
     return {
       showMsg: true,
+      timer: null as number | null,
+      timeoutStartAt: 0,
+      remainingDuration: this.duration,
+      isExpanded: false,
     };
   },
+  beforeUnmount() {
+    this.clearAutoCloseTimer();
+  },
   mounted() {
-    setTimeout(() => {
+    this.startAutoCloseTimer();
+  },
+  methods: {
+    startAutoCloseTimer() {
+      this.clearAutoCloseTimer();
+      this.timeoutStartAt = Date.now();
+      this.timer = window.setTimeout(() => {
+        this.close();
+      }, this.remainingDuration);
+    },
+    clearAutoCloseTimer() {
+      if (this.timer !== null) {
+        window.clearTimeout(this.timer);
+        this.timer = null;
+      }
+    },
+    pauseAutoClose() {
+      if (!this.showMsg || this.timer === null) {
+        return;
+      }
+      const elapsed = Date.now() - this.timeoutStartAt;
+      this.remainingDuration = Math.max(300, this.remainingDuration - elapsed);
+      this.clearAutoCloseTimer();
+    },
+    resumeAutoClose() {
+      if (!this.showMsg || this.timer !== null) {
+        return;
+      }
+      this.startAutoCloseTimer();
+    },
+    close() {
+      this.clearAutoCloseTimer();
       this.showMsg = false;
-    }, this.duration);
+    },
+    toggleExpanded() {
+      this.isExpanded = !this.isExpanded;
+      if (this.isExpanded) {
+        this.pauseAutoClose();
+        return;
+      }
+      this.remainingDuration = Math.max(1500, this.remainingDuration);
+      this.resumeAutoClose();
+    },
   },
 });

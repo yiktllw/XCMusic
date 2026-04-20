@@ -165,6 +165,11 @@
   "manage_download": "Download",
   "message": {
     "getting_playlist_tracks": "Getting playlist tracks",
+    "toast": {
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "close": "Close"
+    },
     "homeview": {
       "add_to_playlist_success": "Added to playlist",
       "delete_fail": "Failed to delete",
