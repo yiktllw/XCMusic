@@ -152,6 +152,10 @@
   "login": "Login",
   "logout": "Logout",
   "lyrics": {
+    "align_center": "Center Align",
+    "align_left": "Left Align",
+    "align_right": "Right Align",
+    "desktop_align": "Desktop Lyric Alignment",
     "desktop_font_size": "Desktop Lyrics Font Size",
     "desktop_tns_font_size": "Desktop Translation Font Size",
     "font_size": "Font Size",
@@ -182,7 +186,7 @@
       "scrolled_to_current_track": "Scrolled to current track"
     },
     "setting_view": {
-      "desktop_lyric_need_restart": "Restart the desktop lyric window to apply this change.",
+      "desktop_lyric_need_restart": "Reload the desktop lyric window to apply this change.",
       "download": {
         "only_desktop": "The download feature is only effective on desktop"
       },
@@ -395,7 +399,8 @@
       "gapless_playback": {
         "label": "Reduce hiccups between tracks",
         "title": "Gapless Playback",
-        "tooltip": "Some classical albums split a continuous musical passage into separate tracks. On CDs this transition is usually seamless, but streaming playback can introduce short hiccups between tracks. Enable this option to reduce interruptions at track boundaries."
+        "tooltip": "Some classical albums split a continuous musical passage into separate tracks. On CDs this transition is usually seamless, but streaming playback can introduce short hiccups between tracks. Enable this option to reduce interruptions at track boundaries.",
+        "volume_leveling_notice": "Warning: If volume leveling is enabled at the same time, it can weaken gapless transitions. It is recommended to disable volume leveling."
       },
       "launch": "Launch",
       "playui": "Play UI",

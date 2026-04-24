@@ -152,6 +152,10 @@
   "login": "登录",
   "logout": "退出",
   "lyrics": {
+    "align_center": "居中对齐",
+    "align_left": "左对齐",
+    "align_right": "右对齐",
+    "desktop_align": "桌面歌词对齐方式",
     "desktop_font_size": "桌面歌词字号",
     "desktop_tns_font_size": "桌面翻译字号",
     "font_size": "歌词字号",
@@ -182,7 +186,7 @@
       "scrolled_to_current_track": "已滚动到当前歌曲"
     },
     "setting_view": {
-      "desktop_lyric_need_restart": "需要重启桌面歌词窗口才能生效。",
+      "desktop_lyric_need_restart": "需要重新加载桌面歌词窗口才能生效。",
       "download": {
         "only_desktop": "下载功能仅在桌面端有效"
       },
@@ -395,7 +399,8 @@
       "gapless_playback": {
         "label": "尽量减少曲目衔接卡顿",
         "title": "无缝播放",
-        "tooltip": "在古典乐等专辑中，一些连贯乐章会被拆分成两首曲目。传统 CD 播放几乎无感衔接，而流媒体切换时可能出现短暂卡顿。开启后，会尽量减少曲目衔接时的停顿。"
+        "tooltip": "在古典乐等专辑中，一些连贯乐章会被拆分成两首曲目。传统 CD 播放几乎无感衔接，而流媒体切换时可能出现短暂卡顿。开启后，会尽量减少曲目衔接时的停顿。",
+        "volume_leveling_notice": "警告：若同时开启音量均衡，会削弱无缝播放的衔接效果，建议关闭音量均衡。"
       },
       "launch": "启动",
       "playui": "播放界面",

@@ -207,17 +207,17 @@ export default defineComponent({
       const tnsLineBoxHeightPx = tnsLineHeightPx + tnsShadowSafePx * 2;
       const clipPathStart = "inset(-1em 100% -1em -1em)";
       const clipPathEnd = "inset(-1em 0 -1em -1em)";
-      const translateGapPx = Math.max(
-        8,
-        Number(currentPreferences.distance_l_t) || 0,
-      );
-      // const translateTopPx = mainLineBoxHeightPx + translateGapPx;
       const translateTopPx = mainLineBoxHeightPx;
 
       const fontFamily = currentPreferences.fontFamily.join(",");
       const tnsFontFamily = currentPreferences.tns_fontFamily.join(",");
       const fontWeight = currentPreferences.is_bold ? "bold" : "900";
       const fontStyle = currentPreferences.isItalic ? "italic" : "normal";
+      const desktopAlign = ["left", "center", "right"].includes(
+        currentPreferences.desktop_align,
+      )
+        ? currentPreferences.desktop_align
+        : "left";
 
       if (!lyrics.value || lyrics.value.length === 0) {
         const lineElement = document.createElement("div");
@@ -238,6 +238,7 @@ export default defineComponent({
           paddingBottom: `${mainShadowSafePx}px`,
           boxSizing: "border-box",
           width: "100%",
+          textAlign: desktopAlign,
           textShadow:
             "4px 4px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8)",
         });
@@ -272,6 +273,7 @@ export default defineComponent({
         paddingBottom: `${mainShadowSafePx}px`,
         boxSizing: "border-box",
         display: "block",
+        textAlign: desktopAlign,
       });
 
       const backgroundLine = document.createElement("div");
@@ -295,6 +297,7 @@ export default defineComponent({
         paddingBottom: `${mainShadowSafePx}px`,
         boxSizing: "border-box",
         display: "block",
+        textAlign: desktopAlign,
       });
 
       const currentLyric = lyrics.value[safeLineIndex];
@@ -396,6 +399,7 @@ export default defineComponent({
             paddingTop: `${tnsShadowSafePx}px`,
             paddingBottom: `${tnsShadowSafePx}px`,
             boxSizing: "border-box",
+            textAlign: desktopAlign,
           });
           lyricContainer.value.appendChild(tlineElement);
         }

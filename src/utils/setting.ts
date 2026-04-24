@@ -370,6 +370,7 @@ export const settingGroup: SettingGroup = {
           normalized.tns_fontSize <= 50 &&
           normalized.desktop_fontSize >= 10 &&
           normalized.desktop_fontSize <= 120 &&
+          ["left", "center", "right"].includes(normalized.desktop_align) &&
           normalized.desktop_tns_fontSize >= 10 &&
           normalized.desktop_tns_fontSize <= 120 &&
           normalized.distance_l_l >= 10 &&

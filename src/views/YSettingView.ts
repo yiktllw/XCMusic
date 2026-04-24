@@ -211,6 +211,12 @@ export default defineComponent({
       this.setting.play.gaplessPlayback = bool;
       this.gaplessPlayback = this.setting.play.gaplessPlayback;
       this.player.setGaplessPlayback(this.gaplessPlayback);
+      if (bool) {
+        Message.post(
+          "warning",
+          this.$t("setting_view.play.gapless_playback.volume_leveling_notice"),
+        );
+      }
     },
     setShowNewLyrics(bool: boolean) {
       this.setting.playui.showNewLyrics = bool;

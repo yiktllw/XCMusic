@@ -11,6 +11,7 @@ export const defaultPreferences = {
   isItalic: false,
 
   desktop_fontSize: 40,
+  desktop_align: "left" as "left" | "center" | "right",
 
   tns_fontSize: 17,
   tns_fontFamily: [...defaultLyricTnsFonts] as IEscapedFonts,

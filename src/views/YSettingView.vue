@@ -371,6 +371,24 @@
                       step="5"
                     />
                   </div>
+                  <div class="desktop-align">
+                    {{ $t("lyrics.desktop_align") }}
+                    <select
+                      v-model="lyricsPreferences.desktop_align"
+                      @change="handleLyricsPreferencesChange"
+                      style="margin-left: 20px"
+                    >
+                      <option value="left">
+                        {{ $t("lyrics.align_left") }}
+                      </option>
+                      <option value="center">
+                        {{ $t("lyrics.align_center") }}
+                      </option>
+                      <option value="right">
+                        {{ $t("lyrics.align_right") }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1225,6 +1243,10 @@
               gap: 10px;
             }
             .font-margin {
+              display: flex;
+              flex-direction: row;
+            }
+            .desktop-align {
               display: flex;
               flex-direction: row;
             }
