@@ -371,7 +371,7 @@
     "display": {
       "fullscreen": "Fullscreen",
       "fullscreen_auto_zoom": "Auto Zoom When Fullscreen",
-      "hideInSidebar": "Hide In Sidebar",
+      "hideInSidebar": "Show In Sidebar",
       "press_f11_to_fullscreen": "Press F11 to Fullscreen",
       "sidebar": "Sidebar"
     },

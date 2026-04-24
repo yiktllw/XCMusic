@@ -111,11 +111,11 @@ export default defineComponent({
       openAtLogin: false,
       autoPlay: false,
       rememberProgress: false,
-      hideInSidebar_favorite: false as boolean,
-      hideInSidebar_album: false as boolean,
-      hideInSidebar_local: false as boolean,
-      hideInSidebar_download: false as boolean,
-      hideInSidebar_cloud: false as boolean,
+      showInSidebar_favorite: true as boolean,
+      showInSidebar_album: true as boolean,
+      showInSidebar_local: true as boolean,
+      showInSidebar_download: true as boolean,
+      showInSidebar_cloud: true as boolean,
       rectData: [] as number[],
       /** 禁用硬件加速 */
       disableGpu: false,
@@ -394,7 +394,7 @@ export default defineComponent({
       (
         ["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]
       ).forEach((item: TSideBarItems) => {
-        if (this[`hideInSidebar_${item}`]) hideInSidebar.push(item);
+        if (!this[`showInSidebar_${item}`]) hideInSidebar.push(item);
       });
       this.setting.display.hideInSidebar = hideInSidebar;
       this.globalMsg.post(GlobalMsgEvents.RefreshSidebar);
@@ -567,8 +567,13 @@ export default defineComponent({
       this.gaplessPlayback = this.setting.play.gaplessPlayback;
       this.player.setGaplessPlayback(this.gaplessPlayback);
       this.showNewLyrics = this.setting.playui.showNewLyrics;
+      (
+        ["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]
+      ).forEach((item: TSideBarItems) => {
+        this[`showInSidebar_${item}`] = true;
+      });
       this.setting.display.hideInSidebar.forEach((item: TSideBarItems) => {
-        this[`hideInSidebar_${item}`] = true;
+        this[`showInSidebar_${item}`] = false;
       });
       this.disableGpu = this.setting.system.disableGpuAcceleration;
       this.proxy = this.setting.tools.proxy;

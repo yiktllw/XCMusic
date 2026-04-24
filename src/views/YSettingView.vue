@@ -451,7 +451,7 @@
                       type="checkbox"
                       id="setting_sidebar_favorite"
                       name="setting_sidebar_favorite"
-                      v-model="hideInSidebar_favorite"
+                      v-model="showInSidebar_favorite"
                       @change="setHideInSidebar"
                     />
                     <label for="setting_sidebar_favorite">
@@ -463,7 +463,7 @@
                       type="checkbox"
                       id="setting_sidebar_album"
                       name="setting_sidebar_album"
-                      v-model="hideInSidebar_album"
+                      v-model="showInSidebar_album"
                       @change="setHideInSidebar"
                     />
                     <label for="setting_sidebar_album">
@@ -475,7 +475,7 @@
                       type="checkbox"
                       id="setting_sidebar_local"
                       name="setting_sidebar_local"
-                      v-model="hideInSidebar_local"
+                      v-model="showInSidebar_local"
                       @change="setHideInSidebar"
                     />
                     <label for="setting_sidebar_local">
@@ -487,7 +487,7 @@
                       type="checkbox"
                       id="setting_sidebar_download"
                       name="setting_sidebar_download"
-                      v-model="hideInSidebar_download"
+                      v-model="showInSidebar_download"
                       @change="setHideInSidebar"
                     />
                     <label for="setting_sidebar_download">
@@ -499,7 +499,7 @@
                       type="checkbox"
                       id="setting_sidebar_cloud"
                       name="setting_sidebar_cloud"
-                      v-model="hideInSidebar_cloud"
+                      v-model="showInSidebar_cloud"
                       @change="setHideInSidebar"
                     />
                     <label for="setting_sidebar_cloud">
