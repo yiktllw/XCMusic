@@ -135,8 +135,42 @@ export default defineComponent({
     const countdownContainerStyle = computed(() => {
       const lineBoxHeight = countdownLineBoxHeightPx.value;
       const countdownTop = 10 + lineBoxHeight / 2;
+
+      const align = ["left", "center", "right"].includes(
+        preferences.value.desktop_align,
+      )
+        ? preferences.value.desktop_align
+        : "left";
+
+      if (align === "center") {
+        return {
+          top: `${countdownTop}px`,
+          left: "50%",
+          right: "auto",
+          transform: "translate(-50%, -50%)",
+          paddingLeft: "0",
+          paddingRight: "0",
+        };
+      }
+
+      if (align === "right") {
+        return {
+          top: `${countdownTop}px`,
+          left: "auto",
+          right: "0",
+          transform: "translateY(-50%)",
+          paddingLeft: "0",
+          paddingRight: "40px",
+        };
+      }
+
       return {
-        "--countdown-top": `${countdownTop}px`,
+        top: `${countdownTop}px`,
+        left: "0",
+        right: "auto",
+        transform: "translateY(-50%)",
+        paddingLeft: "40px",
+        paddingRight: "0",
       };
     });
 
@@ -951,13 +985,15 @@ html {
 
   .countdown-container {
     position: absolute;
-    top: var(--countdown-top, 30px);
+    top: 30px;
     left: 0;
+    right: auto;
     transform: translateY(-50%);
     display: flex;
     gap: 20px;
     align-items: center;
     padding-left: 40px;
+    padding-right: 0;
     z-index: 50;
 
     .countdown-circle {
