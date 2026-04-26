@@ -99,7 +99,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      background-color: rgba(var(--foreground-color-rgb), 0.35);
+      background-color: rgba(var(--foreground-color-rgb), 0.2);
       border-radius: 10px;
       pointer-events: none;
       transition: clip-path var(--transition-track-time) linear;
