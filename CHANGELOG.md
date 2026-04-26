@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file. See [standa
 * 修复用户下拉菜单布局错误 ([5db88dd](https://github.com/yiktllw/XCMusic/commit/5db88dd946140ec91a9e60adeca35ac418188dde))
 * 修复重启应用后播放列表被打乱的bug（列表随机模式） ([be281cd](https://github.com/yiktllw/XCMusic/commit/be281cd465776e49de80e430694fa542094b241a))
 
-## [0.3.0](https://github.com/yiktllw/XCMusic/compare/v0.2.8...v0.3.0) (2025-03-21)
+## [0.3.0](https://github.com/yiktllw/XCMusic/compare/v0.2.9...v0.3.0) (2025-03-21)
 
 
 ### Features
@@ -87,7 +87,7 @@ All notable changes to this project will be documented in this file. See [standa
 * 修正文本错误（编辑歌单信息窗口） ([f391ca6](https://github.com/yiktllw/XCMusic/commit/f391ca6c0776de0dc2b585dc5785fe952c020c4f))
 * fix proxy settings ([80f3948](https://github.com/yiktllw/XCMusic/commit/80f39480cfa9018f82592aa0702baf92f2623101))
 
-### 0.2.9 (2025-01-18)
+### [0.2.9](https://github.com/yiktllw/XCMusic/compare/v0.2.8...v0.2.9) (2025-01-18)
 
 
 ### Features
