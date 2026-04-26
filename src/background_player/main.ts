@@ -119,6 +119,7 @@ if (ipcRenderer) {
             progress: player.progress,
             bufferedProgress: player.bufferedProgress,
             sampleRate: player.sampleRate,
+            gaplessDebug: player.gaplessBufferDebugSnapshot,
           });
           send(PlayerEvents.lyrics, player.lyrics);
           send(PlayerEvents.history, player.history);
@@ -157,6 +158,7 @@ if (ipcRenderer) {
               duration: player.duration,
               progress: player.progress,
               bufferedProgress: player.bufferedProgress,
+              gaplessDebug: player.gaplessBufferDebugSnapshot,
             };
             break;
           case PlayerEvents.playState:

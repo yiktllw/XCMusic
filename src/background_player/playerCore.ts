@@ -42,6 +42,39 @@ type LocalPlayHistoryRecord = {
   updatedAt: number;
 };
 
+type AudioBufferSnapshot = {
+  readyState: number;
+  duration: number | null;
+  currentTime: number;
+  bufferedSeconds: number;
+  bufferedProgress: number;
+  bufferedRanges: Array<{
+    start: number;
+    end: number;
+  }>;
+};
+
+type GaplessBufferDebugSnapshot = {
+  gaplessEnabled: boolean;
+  preloadPending: boolean;
+  preloadedTrackId: number | string | null;
+  preloadedTrackIndex: number | null;
+  preloadMatchesNextTrack: boolean;
+  currentTrack: {
+    id: number | string;
+    name: string;
+    index: number;
+  } | null;
+  nextTrack: {
+    id: number | string;
+    name: string;
+    index: number;
+  } | null;
+  currentBufferedProgress: number;
+  currentAudio: AudioBufferSnapshot;
+  preloadAudio: AudioBufferSnapshot;
+};
+
 type PlayerEventCallbacks = {
   [PlayerEvents.playState]: () => void;
   [PlayerEvents.playlist]: () => void;
@@ -804,6 +837,52 @@ export class Player {
       Math.min(1, parseFloat((bufferedEnd / duration).toFixed(3))),
     );
     this._bufferedProgress = Math.max(safeProgress, normalizedBuffered);
+  }
+
+  private getAudioBufferSnapshot(
+    audioElement: HTMLAudioElement,
+  ): AudioBufferSnapshot {
+    const duration =
+      Number.isFinite(audioElement.duration) && audioElement.duration > 0
+        ? parseFloat(audioElement.duration.toFixed(3))
+        : null;
+    const currentTime = Number.isFinite(audioElement.currentTime)
+      ? parseFloat(audioElement.currentTime.toFixed(3))
+      : 0;
+
+    let bufferedSeconds = 0;
+    const bufferedRanges: Array<{ start: number; end: number }> = [];
+    const buffered = audioElement.buffered;
+
+    if (buffered && buffered.length > 0) {
+      for (let i = 0; i < buffered.length; i++) {
+        const start = buffered.start(i);
+        const end = buffered.end(i);
+        bufferedRanges.push({
+          start: parseFloat(start.toFixed(3)),
+          end: parseFloat(end.toFixed(3)),
+        });
+        if (end > bufferedSeconds) {
+          bufferedSeconds = end;
+        }
+      }
+    }
+
+    const bufferedProgress = duration
+      ? Math.max(
+          0,
+          Math.min(1, parseFloat((bufferedSeconds / duration).toFixed(3))),
+        )
+      : 0;
+
+    return {
+      readyState: audioElement.readyState,
+      duration,
+      currentTime,
+      bufferedSeconds: parseFloat(bufferedSeconds.toFixed(3)),
+      bufferedProgress,
+      bufferedRanges,
+    };
   }
   /**
    * 更新歌曲总时长、当前播放时间、播放进度
@@ -2358,6 +2437,45 @@ export class Player {
 
   get sampleRate() {
     return this._audioContext?.sampleRate ?? 44100;
+  }
+
+  get gaplessBufferDebugSnapshot(): GaplessBufferDebugSnapshot {
+    const nextTrackIndex = this.resolveGaplessNextTrackIndex();
+    const nextTrack =
+      nextTrackIndex !== null ? (this._playlist[nextTrackIndex] ?? null) : null;
+    const currentTrack = this.currentTrack;
+
+    const currentAudio = this.getAudioBufferSnapshot(this._audio);
+    const preloadAudio = this.getAudioBufferSnapshot(this._preloadAudio);
+
+    return {
+      gaplessEnabled: this._gaplessPlayback,
+      preloadPending: this._gaplessPreloadPromise !== null,
+      preloadedTrackId: this._gaplessPreloadedTrackId,
+      preloadedTrackIndex: this._gaplessPreloadedTrackIndex,
+      preloadMatchesNextTrack:
+        !!nextTrack &&
+        nextTrackIndex !== null &&
+        this._gaplessPreloadedTrackId === nextTrack.id &&
+        this._gaplessPreloadedTrackIndex === nextTrackIndex,
+      currentTrack: currentTrack
+        ? {
+            id: currentTrack.id,
+            name: currentTrack.name,
+            index: this._current,
+          }
+        : null,
+      nextTrack: nextTrack
+        ? {
+            id: nextTrack.id,
+            name: nextTrack.name,
+            index: nextTrackIndex as number,
+          }
+        : null,
+      currentBufferedProgress: this._bufferedProgress,
+      currentAudio,
+      preloadAudio,
+    };
   }
 
   private async applyOutputDevice(value: string) {

@@ -12,6 +12,9 @@
       <button class="button font-color-main" @click="clearCache">
         点击清除webFrame缓存
       </button>
+      <button class="button font-color-main" @click="outputGaplessBufferState">
+        输出当前/下一首缓冲状态
+      </button>
     </div>
 
     <div class="test-panel">

@@ -82,6 +82,26 @@ export default defineComponent({
         _16kHz: -12,
       });
     },
+    outputGaplessBufferState() {
+      this.player.refreshBufferDebugSnapshot();
+      setTimeout(() => {
+        const snapshot = this.player.getBufferDebugSnapshot();
+        const currentProgress =
+          typeof snapshot.currentBufferedProgress === "number"
+            ? `${Math.round(snapshot.currentBufferedProgress * 100)}%`
+            : "N/A";
+        const nextProgress =
+          typeof snapshot.nextBufferedProgress === "number"
+            ? `${Math.round(snapshot.nextBufferedProgress * 100)}%`
+            : "N/A";
+
+        console.log("[YTestView][GaplessBufferState]", snapshot);
+        Message.post(
+          "info",
+          `缓冲状态已输出到控制台。当前缓冲：${currentProgress}，下一首缓冲：${nextProgress}`,
+        );
+      }, 150);
+    },
   },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));

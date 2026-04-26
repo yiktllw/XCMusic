@@ -45,6 +45,7 @@ export class Player {
   _currentTime: number = 0;
   _progress: number = 0;
   _bufferedProgress: number = 0;
+  _gaplessBufferDebug: any = null;
   _duration: number = 0;
   _quality: string = "exhigh";
   _volume_leveling: boolean = true;
@@ -137,6 +138,9 @@ export class Player {
             typeof data.bufferedProgress === "number"
               ? Math.max(0, Math.min(1, data.bufferedProgress))
               : this._progress;
+          if (data.gaplessDebug) {
+            this._gaplessBufferDebug = data.gaplessDebug;
+          }
           if (data.sampleRate && this._analyserNode) {
             this._analyserNode.context.sampleRate = data.sampleRate;
           }
@@ -339,6 +343,30 @@ export class Player {
 
   get bufferedProgress() {
     return this._bufferedProgress;
+  }
+
+  get gaplessBufferDebug() {
+    return this._gaplessBufferDebug;
+  }
+
+  refreshBufferDebugSnapshot() {
+    this.sendCommand("getState");
+  }
+
+  getBufferDebugSnapshot() {
+    return {
+      currentTrack: this.currentTrack
+        ? {
+            id: this.currentTrack.id,
+            name: this.currentTrack.name,
+            index: this.current,
+          }
+        : null,
+      currentBufferedProgress: this._bufferedProgress,
+      nextBufferedProgress:
+        this._gaplessBufferDebug?.preloadAudio?.bufferedProgress ?? null,
+      gapless: this._gaplessBufferDebug,
+    };
   }
 
   set progress(value) {
