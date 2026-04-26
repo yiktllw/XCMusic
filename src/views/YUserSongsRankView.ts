@@ -6,6 +6,17 @@ import { User } from "@/utils/api";
 import { useStore } from "vuex";
 import { YColor } from "@/utils/color";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
+import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
+
+const songsRankSources = ["netease", "local", "mixed"] as const;
+type SongsRankSource = (typeof songsRankSources)[number];
+
+function normalizeSongsRankSource(source: unknown): SongsRankSource {
+  if (songsRankSources.includes(source as SongsRankSource)) {
+    return source as SongsRankSource;
+  }
+  return "netease";
+}
 
 export default defineComponent({
   name: "YUserSongsRank",
@@ -39,6 +50,9 @@ export default defineComponent({
     },
   },
   data() {
+    const source = normalizeSongsRankSource(
+      getStorage(StorageKey.User_SongsRank_Source),
+    );
     return {
       loading: true,
       switcher: [
@@ -56,7 +70,7 @@ export default defineComponent({
         },
       ],
       position: "recent",
-      source: "netease",
+      source,
       recentTracks: [] as ITrack[],
       alltimeTracks: [] as ITrack[],
       localRecentTracks: [] as ITrack[],
@@ -69,8 +83,9 @@ export default defineComponent({
     handleNewPosition(position: string) {
       this.position = position;
     },
-    handleNewSource(source: string) {
+    handleNewSource(source: SongsRankSource) {
       this.source = source;
+      setStorage(StorageKey.User_SongsRank_Source, source);
     },
     async fetchUserSongsRank() {
       this.loading = true;

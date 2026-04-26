@@ -24,6 +24,8 @@ export enum StorageKey {
   LoginUserId = "login_user_id",
   /** 用户名 */
   LoginUserName = "login_user_name",
+  /** 用户-听歌排行-数据源 */
+  User_SongsRank_Source = "user.songsRank.source",
   /** 设置-显示-专辑宽度 */
   Setting_Display_AlbumWidth = "setting.display.albumWidth",
   /** 设置-显示-全屏自动缩放 */
@@ -101,6 +103,7 @@ export type StorageMap = {
   [StorageKey.LoginStatus]: boolean;
   [StorageKey.LoginUserId]: number | null;
   [StorageKey.LoginUserName]: string | null;
+  [StorageKey.User_SongsRank_Source]: "netease" | "local" | "mixed";
   [StorageKey.Setting_Display_AlbumWidth]: number;
   [StorageKey.Setting_Display_FullscreenAutoZoom]: boolean;
   [StorageKey.Setting_Display_HideInSidebar]: string[];
