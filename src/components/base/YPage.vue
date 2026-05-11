@@ -5,14 +5,19 @@
       class="page-main font-color-main"
       v-if="page.total > 1 || page._unknown_page"
     >
-      <div class="previous" @click="page.previous">
+      <div
+        class="previous"
+        :class="{ disabled: !canPrevious }"
+        @click="previousPage"
+      >
         <img src="@/assets/backarrow.svg" class="arrow-img g-icon" />
       </div>
       <div class="all" v-if="page.total < 8">
         <div
           class="pages"
           v-for="i in page.total"
-          @click="page.current = i"
+          :key="`all-${i}`"
+          @click="selectPage(i)"
           :class="page.current === i ? 'currentPage' : ''"
         >
           {{ i }}
@@ -22,7 +27,8 @@
         <div
           class="pages"
           v-for="i in page.leftPage"
-          @click="page.current = i"
+          :key="`left-${i}`"
+          @click="selectPage(i)"
           :class="page.current === i ? 'currentPage' : ''"
         >
           {{ i }}
@@ -31,7 +37,8 @@
         <div
           class="pages"
           v-for="i in page.middlePage"
-          @click="page.current = i"
+          :key="`middle-${i}`"
+          @click="selectPage(i)"
           :class="page.current === i ? 'currentPage' : ''"
         >
           {{ i }}
@@ -45,13 +52,14 @@
         <div
           class="pages"
           v-for="i in page.rightPage"
-          @click="page.current = i"
+          :key="`right-${i}`"
+          @click="selectPage(i)"
           :class="page.current === i ? 'currentPage' : ''"
         >
           {{ i }}
         </div>
       </div>
-      <div class="next" @click="page.next">
+      <div class="next" :class="{ disabled: !canNext }" @click="nextPage">
         <img src="@/assets/forwardarrow.svg" class="arrow-img g-icon" />
       </div>
     </div>
@@ -60,7 +68,7 @@
         type="number"
         :min="1"
         :max="page.total"
-        v-model="tempPage"
+        v-model.number="tempPage"
         placeholder="1"
         @keydown.enter="goto()"
       />
@@ -93,6 +101,12 @@
     border-radius: 10px;
     align-items: center;
     justify-content: center;
+
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 
   .all {

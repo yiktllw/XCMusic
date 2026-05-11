@@ -26,29 +26,51 @@ export default defineComponent({
       page: new YPageC(1),
       loading: true,
       albums: [] as IBigPlaylist[],
+      albumRequestId: 0,
     };
   },
   mounted() {
     YColor.setBackgroundColorHex2(YColor.stringToHexColor("收藏的专辑     "));
-    this.getUserSubscribedAlbums(true);
-  },
-  watch: {
-    "page.current"() {
-      this.loading = true;
-      this.getUserSubscribedAlbums();
-    },
+    this.bindPageChange();
+    void this.getUserSubscribedAlbums(true);
   },
   methods: {
+    resolveTotalPages(totalCount: number | undefined, limit: number) {
+      return Math.max(1, Math.ceil((totalCount ?? 0) / limit));
+    },
+    bindPageChange() {
+      this.page.onPageChange = () => {
+        this.loading = true;
+        void this.getUserSubscribedAlbums();
+      };
+    },
+    nextAlbumRequestId() {
+      this.albumRequestId += 1;
+      return this.albumRequestId;
+    },
+    isLatestAlbumRequest(requestId: number) {
+      return requestId === this.albumRequestId;
+    },
     async getUserSubscribedAlbums(newPage = false) {
+      const requestId = this.nextAlbumRequestId();
       const LIMIT = 24;
+      this.loading = true;
+
       await User.getSubAlbums(this.page.current, LIMIT)
         .then((res) => {
+          if (!this.isLatestAlbumRequest(requestId)) return;
           if (!res) {
             return;
           }
+
+          const totalPages = this.resolveTotalPages(res.count, LIMIT);
           if (newPage) {
-            this.page = new YPageC(Math.ceil(res.count / LIMIT));
+            this.page = new YPageC(totalPages);
+            this.bindPageChange();
+          } else {
+            this.page.total = totalPages;
           }
+
           this.albums = res.albums.map((album) => {
             return {
               id: album.id,
@@ -61,6 +83,7 @@ export default defineComponent({
           this.loading = false;
         })
         .catch((err) => {
+          if (!this.isLatestAlbumRequest(requestId)) return;
           console.error("getUserSubscribedAlbums", err);
           this.loading = false;
         });

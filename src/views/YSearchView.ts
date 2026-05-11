@@ -14,6 +14,14 @@ import { markRaw, defineComponent } from "vue";
 import { type IPlaylist } from "@/dual/YPlaylistList";
 import { type IArtist } from "@/dual/YArtistList";
 
+type SearchPagerKey =
+  | "songs"
+  | "albums"
+  | "playlists"
+  | "artists"
+  | "lyrics"
+  | "users";
+
 export default defineComponent({
   name: "YSearchView",
   props: {
@@ -108,6 +116,15 @@ export default defineComponent({
       artistsPage: new YPageC(1),
       lyricsPage: new YPageC(1),
       usersPage: new YPageC(1),
+      searchPageSize: 100,
+      searchRequestId: {
+        songs: 0,
+        albums: 0,
+        playlists: 0,
+        artists: 0,
+        lyrics: 0,
+        users: 0,
+      } as Record<SearchPagerKey, number>,
     };
   },
   methods: {
@@ -116,30 +133,58 @@ export default defineComponent({
       // console.log("switch position", position);
       this.$router.push({ path: `/search/${this.search}/${position}` });
     },
+    resolveSearchTotalPages(totalCount: number | undefined) {
+      return Math.max(1, Math.ceil((totalCount ?? 0) / this.searchPageSize));
+    },
+    nextSearchRequestId(key: SearchPagerKey) {
+      this.searchRequestId[key] += 1;
+      return this.searchRequestId[key];
+    },
+    isLatestSearchRequest(key: SearchPagerKey, requestId: number) {
+      return this.searchRequestId[key] === requestId;
+    },
+    bindSearchPager(page: YPageC, fetcher: () => Promise<void>) {
+      page.onPageChange = () => {
+        void fetcher();
+      };
+    },
     // 搜索歌曲
     async fetchTracks(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("songs");
       this.Loading.songs = true;
-      await Search.songs(this.search, this.songsPage.current)
+      const currentPage = newPageInstance ? 1 : this.songsPage.current;
+      await Search.songs(this.search, currentPage, this.searchPageSize)
         .then((result) => {
+          if (!this.isLatestSearchRequest("songs", requestId)) return;
+
           this.switcher[0].tracks = markRaw(result.songs);
           this.switcher[0].total = result.songCount;
+          const totalPages = this.resolveSearchTotalPages(result.songCount);
+
           if (newPageInstance) {
-            this.songsPage = new YPageC(Math.ceil(result.songCount / 100));
+            this.songsPage = new YPageC(totalPages);
+          } else {
+            this.songsPage.total = totalPages;
           }
-          this.songsPage.onPageChange = () => {
-            this.fetchTracks(false);
-          };
+
+          this.bindSearchPager(this.songsPage, () => this.fetchTracks(false));
         })
         .catch(() => {
           // console.log("fetchTracks", err);
         });
-      this.Loading.songs = false;
+      if (this.isLatestSearchRequest("songs", requestId)) {
+        this.Loading.songs = false;
+      }
     },
     // 搜索歌单
     async fetchPlaylists(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("playlists");
       this.Loading.playlists = true;
-      await Search.playlists(this.search, this.playlistsPage.current)
+      const currentPage = newPageInstance ? 1 : this.playlistsPage.current;
+      await Search.playlists(this.search, currentPage, this.searchPageSize)
         .then((result) => {
+          if (!this.isLatestSearchRequest("playlists", requestId)) return;
+
           this.switcher[2].playlists = result.playlists?.map((playlist) => {
             return {
               ...playlist,
@@ -147,25 +192,34 @@ export default defineComponent({
             };
           });
           this.switcher[2].total = result.playlistCount;
+          const totalPages = this.resolveSearchTotalPages(result.playlistCount);
+
           if (newPageInstance) {
-            this.playlistsPage = new YPageC(
-              Math.ceil(result.playlistCount / 100),
-            );
+            this.playlistsPage = new YPageC(totalPages);
+          } else {
+            this.playlistsPage.total = totalPages;
           }
-          this.playlistsPage.onPageChange = () => {
-            this.fetchPlaylists(false);
-          };
+
+          this.bindSearchPager(this.playlistsPage, () =>
+            this.fetchPlaylists(false),
+          );
         })
         .catch(() => {
           // console.log("fetchPlaylists", err);
         });
-      this.Loading.playlists = false;
+      if (this.isLatestSearchRequest("playlists", requestId)) {
+        this.Loading.playlists = false;
+      }
     },
     // 搜索专辑
     async fetchAlbums(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("albums");
       this.Loading.albums = true;
-      await Search.albums(this.search, this.albumsPage.current)
+      const currentPage = newPageInstance ? 1 : this.albumsPage.current;
+      await Search.albums(this.search, currentPage, this.searchPageSize)
         .then((result) => {
+          if (!this.isLatestSearchRequest("albums", requestId)) return;
+
           this.switcher[1].playlists = result.albums?.map((album) => {
             return {
               ...album,
@@ -173,23 +227,32 @@ export default defineComponent({
             };
           });
           this.switcher[1].total = result.albumCount;
+          const totalPages = this.resolveSearchTotalPages(result.albumCount);
+
           if (newPageInstance) {
-            this.albumsPage = new YPageC(Math.ceil(result.albumCount / 100));
+            this.albumsPage = new YPageC(totalPages);
+          } else {
+            this.albumsPage.total = totalPages;
           }
-          this.albumsPage.onPageChange = () => {
-            this.fetchAlbums(false);
-          };
+
+          this.bindSearchPager(this.albumsPage, () => this.fetchAlbums(false));
         })
         .catch(() => {
           // console.log("fetchAlbums", err);
         });
-      this.Loading.albums = false;
+      if (this.isLatestSearchRequest("albums", requestId)) {
+        this.Loading.albums = false;
+      }
     },
     // 搜索歌手
     async fetchArtists(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("artists");
       this.Loading.artists = true;
-      await Search.artists(this.search, this.artistsPage.current)
+      const currentPage = newPageInstance ? 1 : this.artistsPage.current;
+      await Search.artists(this.search, currentPage, this.searchPageSize)
         .then((result) => {
+          if (!this.isLatestSearchRequest("artists", requestId)) return;
+
           this.switcher[3].artists = result.artists?.map((artist) => {
             return {
               ...artist,
@@ -197,42 +260,66 @@ export default defineComponent({
             };
           });
           this.switcher[3].total = result.artistCount;
+          const totalPages = this.resolveSearchTotalPages(result.artistCount);
+
           if (newPageInstance) {
-            this.artistsPage = new YPageC(Math.ceil(result.artistCount / 100));
+            this.artistsPage = new YPageC(totalPages);
+          } else {
+            this.artistsPage.total = totalPages;
           }
-          this.artistsPage.onPageChange = () => {
-            this.fetchArtists(false);
-          };
+
+          this.bindSearchPager(this.artistsPage, () =>
+            this.fetchArtists(false),
+          );
         })
         .catch(() => {
           // console.log("fetchArtists", err);
         });
-      this.Loading.artists = false;
+      if (this.isLatestSearchRequest("artists", requestId)) {
+        this.Loading.artists = false;
+      }
     },
     // 搜索歌词
     async fetchLyrics(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("lyrics");
       this.Loading.lyrics = true;
-      await Search.songsWithLyrics(this.search, this.lyricsPage.current)
+      const currentPage = newPageInstance ? 1 : this.lyricsPage.current;
+      await Search.songsWithLyrics(
+        this.search,
+        currentPage,
+        this.searchPageSize,
+      )
         .then((result) => {
+          if (!this.isLatestSearchRequest("lyrics", requestId)) return;
+
           this.switcher[4].lyricsList = markRaw(result.songs);
           this.switcher[4].total = result.songCount;
+          const totalPages = this.resolveSearchTotalPages(result.songCount);
+
           if (newPageInstance) {
-            this.lyricsPage = new YPageC(Math.ceil(result.songCount / 100));
+            this.lyricsPage = new YPageC(totalPages);
+          } else {
+            this.lyricsPage.total = totalPages;
           }
-          this.lyricsPage.onPageChange = () => {
-            this.fetchLyrics(false);
-          };
+
+          this.bindSearchPager(this.lyricsPage, () => this.fetchLyrics(false));
         })
         .catch(() => {
           // console.log("fetchLyrics", err);
         });
-      this.Loading.lyrics = false;
+      if (this.isLatestSearchRequest("lyrics", requestId)) {
+        this.Loading.lyrics = false;
+      }
     },
     // 搜索用户
     async fetchUsers(newPageInstance = true) {
+      const requestId = this.nextSearchRequestId("users");
       this.Loading.users = true;
-      await Search.users(this.search, this.usersPage.current)
+      const currentPage = newPageInstance ? 1 : this.usersPage.current;
+      await Search.users(this.search, currentPage, this.searchPageSize)
         .then((result) => {
+          if (!this.isLatestSearchRequest("users", requestId)) return;
+
           this.switcher[5].users = result.userprofiles?.map((user) => {
             return {
               ...user,
@@ -240,19 +327,24 @@ export default defineComponent({
             };
           });
           this.switcher[5].total = result.userprofileCount;
+          const totalPages = this.resolveSearchTotalPages(
+            result.userprofileCount,
+          );
+
           if (newPageInstance) {
-            this.usersPage = new YPageC(
-              Math.ceil(result.userprofileCount / 100),
-            );
+            this.usersPage = new YPageC(totalPages);
+          } else {
+            this.usersPage.total = totalPages;
           }
-          this.usersPage.onPageChange = () => {
-            this.fetchUsers(false);
-          };
+
+          this.bindSearchPager(this.usersPage, () => this.fetchUsers(false));
         })
         .catch(() => {
           // console.log("fetchUsers", err);
         });
-      this.Loading.users = false;
+      if (this.isLatestSearchRequest("users", requestId)) {
+        this.Loading.users = false;
+      }
     },
     fetchData(position: string) {
       switch (position) {

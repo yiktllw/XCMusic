@@ -34,7 +34,14 @@ export default defineComponent({
     sheetId() {
       this.getSheet();
     },
-    "page.current"() {
+  },
+  methods: {
+    bindPageChange() {
+      this.page.onPageChange = () => {
+        this.scrollToTop();
+      };
+    },
+    scrollToTop() {
       this.$nextTick(() => {
         const scrollDom = document.getElementById("yscroll-display-area");
         scrollDom?.scrollTo({
@@ -43,14 +50,13 @@ export default defineComponent({
         });
       });
     },
-  },
-  methods: {
     async getSheet() {
       Song.getSheetDetail(this.sheetId).then((res) => {
         if (!res?.data) return;
         this.sheet = res.data;
         this.sheet = this.sheet.sort((a, b) => a.id - b.id);
         this.page = new YPageC(this.sheet.length > 0 ? this.sheet.length : 1);
+        this.bindPageChange();
       });
     },
     handleKeydown(e: KeyboardEvent) {
@@ -113,6 +119,7 @@ export default defineComponent({
   },
   mounted() {
     this.getSheet();
+    this.bindPageChange();
     window.addEventListener("keydown", this.handleKeydown);
     window.addEventListener("keyup", this.handleKeyup);
     YColor.setBackgroundColorTheme();

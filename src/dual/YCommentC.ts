@@ -56,6 +56,8 @@ export class YCommentC {
   page: YPageC;
   _count: number;
   _onCommentUpdate: Function;
+  _pageSize: number;
+  _requestId: number;
   /**
    *
    * @param {'song'|'playlist'|'album'} type 评论资源的类型
@@ -77,6 +79,10 @@ export class YCommentC {
     this.page = new YPageC(1);
     // 评论总数
     this._count = 0;
+    // 分页大小
+    this._pageSize = 100;
+    // 请求序号，防止旧请求覆盖新结果
+    this._requestId = 0;
     // 初始化数据
     this.initData(true);
     // 回调函数
@@ -88,10 +94,11 @@ export class YCommentC {
    */
   async initData(newPageInstance: boolean = false) {
     if (isLocal(this._id)) return;
+    const requestId = this.nextRequestId();
     await useApi("/comment/new", {
       id: this._id,
       type: this.typeId,
-      pageSize: 100,
+      pageSize: this._pageSize,
       pageNo: this.page.current,
       sortType: this.sortTypeId,
       cursor:
@@ -102,24 +109,42 @@ export class YCommentC {
           : null,
     })
       .then((res) => {
+        if (!this.isLatestRequest(requestId)) {
+          return;
+        }
         this.handleApiResponse(res, newPageInstance);
       })
       .catch((err) => {
         console.error(err);
       });
   }
+
+  private nextRequestId() {
+    this._requestId += 1;
+    return this._requestId;
+  }
+
+  private isLatestRequest(requestId: number) {
+    return requestId === this._requestId;
+  }
+
+  private resolveTotalPages(totalCount: number | undefined) {
+    return Math.max(1, Math.ceil((totalCount ?? 0) / this._pageSize));
+  }
+
   handleApiResponse(res: any, newPageInstance: boolean) {
     this.comments = res.data?.comments;
     this.title = res.data?.commentsTitle;
     this._count = res.data?.totalCount;
+    const totalPages = this.resolveTotalPages(res.data?.totalCount);
     if (newPageInstance) {
-      this.page = new YPageC(Math.ceil(res.data?.totalCount / 100) || 1);
+      this.page = new YPageC(totalPages);
       // console.log('new page instance: ', this.page);
     } else {
-      this.page.total = Math.ceil(res.data?.totalCount / 100);
+      this.page.total = totalPages;
     }
     this.page.onPageChange = () => {
-      this.initData(false);
+      void this.initData(false);
     };
   }
   get type() {

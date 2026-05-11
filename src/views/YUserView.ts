@@ -50,6 +50,7 @@ export default defineComponent({
       // 用户/歌手信息
       user: null as IUser | IArtist | null,
       page: new YPageC(1),
+      artistWorkRequestId: 0,
     };
   },
   setup() {
@@ -69,6 +70,21 @@ export default defineComponent({
     },
   },
   methods: {
+    bindArtistPageChange() {
+      this.page.onPageChange = () => {
+        void this.fetchArtistWorks(this.page.current - 1, false);
+      };
+    },
+    nextArtistWorkRequestId() {
+      this.artistWorkRequestId += 1;
+      return this.artistWorkRequestId;
+    },
+    isLatestArtistWorkRequest(requestId: number) {
+      return requestId === this.artistWorkRequestId;
+    },
+    resolveArtistTotalPages(totalSongs: number, pageSize: number) {
+      return Math.max(1, Math.ceil((totalSongs ?? 0) / pageSize));
+    },
     // 切换导航位置，并获取对应的数据
     handleSwitcher(
       position:
@@ -176,6 +192,8 @@ export default defineComponent({
             },
           ],
         };
+        this.page = new YPageC(1);
+        this.bindArtistPageChange();
         // 获取歌手的作品，第一页
         await this.fetchArtistWorks(0, true);
       }
@@ -241,20 +259,29 @@ export default defineComponent({
     },
     // 按页获取歌手的作品
     async fetchArtistWorks(page: number, newPage = false) {
+      const requestId = this.nextArtistWorkRequestId();
       const SONGS_PER_PAGE = 100;
       //  如果不是歌手界面，返回
       if (this.type !== "artist") {
         return;
       }
+      const requestPage = newPage ? 1 : page + 1;
       // 获取歌手的歌曲
-      await User.getArtistSongs(this.userId, page + 1, SONGS_PER_PAGE)
+      await User.getArtistSongs(this.userId, requestPage, SONGS_PER_PAGE)
         .then(async (response) => {
+          if (!this.isLatestArtistWorkRequest(requestId)) return;
+          const totalPages = this.resolveArtistTotalPages(
+            response.total,
+            SONGS_PER_PAGE,
+          );
+
           if (newPage) {
-            this.page.total = Math.ceil(response.total / SONGS_PER_PAGE);
-            this.page.onPageChange = () => {
-              this.fetchArtistWorks(this.page.current - 1, false);
-            };
+            this.page = new YPageC(totalPages);
+            this.bindArtistPageChange();
+          } else {
+            this.page.total = totalPages;
           }
+
           (this.user as IArtist).tracks = markRaw(response.songs);
         })
         .catch(() => {

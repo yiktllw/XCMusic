@@ -25,18 +25,12 @@ export default defineComponent({
   },
   watch: {
     uid() {
-      this.page = new YPageC(0);
-      this.page.onPageChange = () => {
-        this.fetchData(this.page.current);
-      };
-      this.fetchData();
+      this.resetPager();
+      void this.fetchData();
     },
     type() {
-      this.page = new YPageC(0);
-      this.page.onPageChange = () => {
-        this.fetchData(this.page.current);
-      };
-      this.fetchData();
+      this.resetPager();
+      void this.fetchData();
     },
   },
   setup() {
@@ -50,11 +44,26 @@ export default defineComponent({
     return {
       users: [] as IArtist[],
       page: new YPageC(0),
+      followRequestId: 0,
     };
   },
   methods: {
+    resetPager() {
+      this.page = new YPageC(0);
+      this.page.onPageChange = () => {
+        void this.fetchData(this.page.current);
+      };
+    },
+    nextFollowRequestId() {
+      this.followRequestId += 1;
+      return this.followRequestId;
+    },
+    isLatestFollowRequest(requestId: number) {
+      return requestId === this.followRequestId;
+    },
     async fetchData(page: number = 1) {
       if (!this.uid) return;
+      const requestId = this.nextFollowRequestId();
       const path =
         "/user/" + (this.type === "follows" ? "follows" : "followeds");
       const LIMIT = 30;
@@ -66,8 +75,9 @@ export default defineComponent({
         offset: offset,
       })
         .then((res) => {
+          if (!this.isLatestFollowRequest(requestId)) return;
           if (!res) return;
-          if (!res.more) this.page._allow_page_increase = false;
+          this.page.setHasMore(Boolean(res.more));
           if (this.type === "follows") {
             this.users =
               res.follow?.map((item: { avatarUrl: string }) => {
@@ -93,9 +103,7 @@ export default defineComponent({
   },
   mounted() {
     YColor.setBackgroundColorTheme();
-    this.page.onPageChange = () => {
-      this.fetchData(this.page.current);
-    };
-    this.fetchData();
+    this.resetPager();
+    void this.fetchData();
   },
 });

@@ -257,10 +257,14 @@ export default defineComponent({
   watch: {
     tracks(newVal) {
       this.alWidth = this.setting.display.albumWidth;
-      this.page = new YPageC(Math.ceil(newVal.length / this.limit) || 1);
+      this.page = this.createLocalPager(newVal.length);
     },
   },
   methods: {
+    createLocalPager(trackCount: number) {
+      const totalPages = Math.max(1, Math.ceil(trackCount / this.limit));
+      return new YPageC(totalPages);
+    },
     isLocal(id: number | string) {
       return isLocal(id);
     },
