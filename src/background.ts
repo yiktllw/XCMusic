@@ -62,6 +62,13 @@ interface AppStore {
   disableGpu: boolean;
 }
 
+interface ApiRuntime {
+  host: string;
+  port: number;
+  baseURL: string;
+  source: "started" | "reused" | "fallback";
+}
+
 const store = new Store<AppStore>();
 const defaultDesktopLyricState: DesktopLyricState = {
   opened: false,
@@ -114,6 +121,13 @@ let lyricWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let isAppQuitting = false;
 let hasRestoredDesktopLyric = false;
+const defaultApiRuntime: ApiRuntime = {
+  host: "127.0.0.1",
+  port: 43210,
+  baseURL: "http://127.0.0.1:43210",
+  source: "fallback",
+};
+let apiRuntime: ApiRuntime = { ...defaultApiRuntime };
 
 const DEFAULT_LYRIC_WIDTH = 1024;
 const DEFAULT_LYRIC_HEIGHT = 200;
@@ -569,6 +583,10 @@ app.on("ready", async () => {
     return getDesktopLyricStateSnapshot();
   });
 
+  ipcMain.handle("get-api-runtime", () => {
+    return { ...apiRuntime };
+  });
+
   ipcMain.on("player-spectrum", (event, data) => {
     if (win) {
       win.webContents.send("player-spectrum", data);
@@ -610,7 +628,29 @@ app.on("ready", async () => {
     }
   });
 
-  let requests = [createWindow(), createPlayerWindow(), startNeteaseMusicApi()];
+  try {
+    const runtime = await startNeteaseMusicApi();
+    if (
+      runtime &&
+      typeof runtime.baseURL === "string" &&
+      typeof runtime.port === "number"
+    ) {
+      apiRuntime = {
+        host:
+          typeof runtime.host === "string" && runtime.host.length > 0
+            ? runtime.host
+            : defaultApiRuntime.host,
+        port: runtime.port,
+        baseURL: runtime.baseURL,
+        source: runtime.source === "reused" ? "reused" : "started",
+      };
+    }
+  } catch (err) {
+    apiRuntime = { ...defaultApiRuntime, source: "fallback" };
+    console.error("Failed to start NCM API, fallback to default endpoint", err);
+  }
+
+  let requests = [createWindow(), createPlayerWindow()];
   await Promise.all(requests).catch((err) => {
     console.error(err);
   });

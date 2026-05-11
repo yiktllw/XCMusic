@@ -33,6 +33,46 @@ import { type IPlaylist as IPlaylist_ } from "@/dual/YPlaylistList";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
 
 let proxy: string | undefined = undefined;
+const ELECTRON_FALLBACK_API =
+  process.env.VUE_APP_API || "http://localhost:43210";
+let electronApiBaseURLCache: string | null = null;
+let electronApiBaseURLRequest: Promise<string> | null = null;
+
+async function resolveElectronApiBaseURL(forceRefresh = false) {
+  if (!window.electron?.isElectron) {
+    return ELECTRON_FALLBACK_API;
+  }
+
+  if (!forceRefresh && electronApiBaseURLCache) {
+    return electronApiBaseURLCache;
+  }
+
+  if (!forceRefresh && electronApiBaseURLRequest) {
+    return electronApiBaseURLRequest;
+  }
+
+  electronApiBaseURLRequest = window.electron.ipcRenderer
+    .invoke("get-api-runtime")
+    .then((runtime: any) => {
+      const baseURL =
+        runtime &&
+        typeof runtime.baseURL === "string" &&
+        runtime.baseURL.length > 0
+          ? runtime.baseURL
+          : ELECTRON_FALLBACK_API;
+      electronApiBaseURLCache = baseURL;
+      return baseURL;
+    })
+    .catch(() => {
+      electronApiBaseURLCache = ELECTRON_FALLBACK_API;
+      return ELECTRON_FALLBACK_API;
+    })
+    .finally(() => {
+      electronApiBaseURLRequest = null;
+    });
+
+  return electronApiBaseURLRequest;
+}
 
 export function setProxyUrl(proxyConfig: ProxyConfig) {
   // `none` 表示不使用代理
@@ -57,17 +97,16 @@ export function setProxyUrl(proxyConfig: ProxyConfig) {
 // 创建 Axios 实例
 const apiClient = axios.create({
   // 设置基本请求地址
-  baseURL: process.env.VUE_APP_API || "http://localhost:43210",
+  baseURL: ELECTRON_FALLBACK_API,
   // 设置请求超时时间
   timeout: 10000,
 });
 
 // 添加请求拦截器
 apiClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (window.electron?.isElectron) {
-      // 在 Electron 中直接使用 localhost 地址
-      config.baseURL = "http://localhost:43210";
+      config.baseURL = await resolveElectronApiBaseURL();
     } else {
       // 在非 Electron 环境中，使用 /api 作为前缀
       if (process.env.VUE_APP_API) {
@@ -80,6 +119,31 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  },
+);
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalConfig = error?.config as any;
+    const hasResponse = Boolean(error?.response);
+    const networkError =
+      error?.code === "ECONNREFUSED" ||
+      error?.code === "ERR_NETWORK" ||
+      (!hasResponse && String(error?.message || "").includes("Network Error"));
+
+    if (
+      window.electron?.isElectron &&
+      originalConfig &&
+      !originalConfig.__xcmRetriedWithRuntimePort &&
+      networkError
+    ) {
+      originalConfig.__xcmRetriedWithRuntimePort = true;
+      originalConfig.baseURL = await resolveElectronApiBaseURL(true);
+      return apiClient.request(originalConfig);
+    }
+
     return Promise.reject(error);
   },
 );
