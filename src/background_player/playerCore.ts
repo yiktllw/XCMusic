@@ -220,9 +220,7 @@ export class Player {
   _analyserNode: AnalyserNode | undefined;
   _gaplessPlayback: boolean =
     getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false;
-  _gaplessPreloadLeadSeconds: number = 12;
-  _gaplessPreloadEmergencyRemainSeconds: number = 4;
-  _gaplessCurrentTrackSafeBufferSeconds: number = 12;
+  _gaplessPreloadLeadSeconds: number = 10;
   _gaplessPreloadMinBufferedSeconds: number = 5;
   _gaplessPreloadedTrackIndex: number | null = null;
   _gaplessPreloadedTrackId: number | string | null = null;
@@ -245,11 +243,46 @@ export class Player {
     audioElement.volume = this._volume;
   }
 
+  private syncTimeFromAudio(emitTrackReady: boolean = false) {
+    const audioDuration = this._audio.duration;
+    if (Number.isFinite(audioDuration) && audioDuration > 0) {
+      this._duration = audioDuration;
+    }
+
+    const audioCurrentTime = Number.isFinite(this._audio.currentTime)
+      ? Math.max(0, this._audio.currentTime)
+      : 0;
+    this._currentTime = Math.floor(audioCurrentTime);
+
+    if (this._duration > 0) {
+      this._progress = Math.max(
+        0,
+        Math.min(
+          1,
+          parseFloat((this._currentTime / this._duration).toFixed(3)),
+        ),
+      );
+    } else {
+      this._progress = 0;
+    }
+
+    this.updateBufferedProgressFromAudio();
+    this.subscriber.exec(PlayerEvents.time);
+    if (emitTrackReady) {
+      this.subscriber.exec(PlayerEvents.trackReady);
+    }
+  }
+
   private bindActiveAudioCallbacks() {
     this._audio.onerror = () => this.handleAudioError();
     this._audio.onended = () => {
       void this.handleTrackEnded();
     };
+    const handleMetadata = () => {
+      this.syncTimeFromAudio(true);
+    };
+    this._audio.onloadedmetadata = handleMetadata;
+    this._audio.ondurationchange = handleMetadata;
   }
 
   private isGaplessEnabled() {
@@ -311,30 +344,63 @@ export class Player {
     }
   }
 
-  private getBufferedAheadSeconds(audioElement: HTMLAudioElement): number {
+  private getContiguousBufferedEndAtCurrentTime(
+    audioElement: HTMLAudioElement,
+  ): number | null {
     const buffered = audioElement.buffered;
     if (!buffered || buffered.length === 0) {
+      return null;
+    }
+
+    const currentTime = Number.isFinite(audioElement.currentTime)
+      ? audioElement.currentTime
+      : 0;
+    const currentTolerance = 0.2;
+    const joinGapTolerance = 0.15;
+
+    let currentRangeIndex = -1;
+    for (let i = 0; i < buffered.length; i++) {
+      const start = buffered.start(i);
+      const end = buffered.end(i);
+
+      if (
+        currentTime >= start - currentTolerance &&
+        currentTime <= end + currentTolerance
+      ) {
+        currentRangeIndex = i;
+        break;
+      }
+    }
+
+    if (currentRangeIndex === -1) {
+      return null;
+    }
+
+    let contiguousEnd = buffered.end(currentRangeIndex);
+    for (let i = currentRangeIndex + 1; i < buffered.length; i++) {
+      const nextStart = buffered.start(i);
+      const nextEnd = buffered.end(i);
+      if (nextStart <= contiguousEnd + joinGapTolerance) {
+        contiguousEnd = Math.max(contiguousEnd, nextEnd);
+        continue;
+      }
+      break;
+    }
+
+    return contiguousEnd;
+  }
+
+  private getBufferedAheadSeconds(audioElement: HTMLAudioElement): number {
+    const contiguousBufferedEnd =
+      this.getContiguousBufferedEndAtCurrentTime(audioElement);
+    if (contiguousBufferedEnd === null) {
       return 0;
     }
 
     const currentTime = Number.isFinite(audioElement.currentTime)
       ? audioElement.currentTime
       : 0;
-    let bufferedAhead = 0;
-
-    for (let i = 0; i < buffered.length; i++) {
-      const start = buffered.start(i);
-      const end = buffered.end(i);
-
-      if (currentTime >= start && currentTime <= end + 0.1) {
-        bufferedAhead = Math.max(bufferedAhead, end - currentTime);
-        break;
-      }
-
-      if (start <= currentTime + 0.1) {
-        bufferedAhead = Math.max(bufferedAhead, end - currentTime);
-      }
-    }
+    const bufferedAhead = contiguousBufferedEnd - currentTime;
 
     return Math.max(0, parseFloat(bufferedAhead.toFixed(3)));
   }
@@ -474,11 +540,11 @@ export class Player {
     this.noUrlCount = 0;
     this.updateTime();
     this.subscriber.exec(PlayerEvents.trackReady);
-    void this.prepareGaplessPreload(true);
+    void this.prepareGaplessPreload(false);
     return true;
   }
 
-  private async prepareGaplessPreload(force: boolean = false) {
+  private async prepareGaplessPreload(forceRefresh: boolean = false) {
     if (!this.isGaplessEnabled()) {
       this.resetPreloadAudioState(true);
       return;
@@ -494,17 +560,7 @@ export class Player {
         ? Math.max(0, duration - this._audio.currentTime)
         : Number.POSITIVE_INFINITY;
 
-    if (!force) {
-      if (remainSeconds > this._gaplessPreloadLeadSeconds) {
-        return;
-      }
-    }
-
-    const currentBufferedAhead = this.getBufferedAheadSeconds(this._audio);
-    if (
-      currentBufferedAhead < this._gaplessCurrentTrackSafeBufferSeconds &&
-      remainSeconds > this._gaplessPreloadEmergencyRemainSeconds
-    ) {
+    if (remainSeconds > this._gaplessPreloadLeadSeconds) {
       return;
     }
 
@@ -519,11 +575,16 @@ export class Player {
     }
 
     if (
+      !forceRefresh &&
       this._gaplessPreloadedTrackIndex === nextTrackIndex &&
       this._gaplessPreloadedTrackId === nextTrack.id &&
       this._preloadAudio.readyState >= 2
     ) {
       return;
+    }
+
+    if (forceRefresh) {
+      this.resetPreloadAudioState(true);
     }
 
     if (this._gaplessPreloadPromise) {
@@ -569,7 +630,7 @@ export class Player {
       this.resetPreloadAudioState(true);
       return;
     }
-    void this.prepareGaplessPreload(true);
+    void this.prepareGaplessPreload(false);
   }
 
   constructor() {
@@ -681,6 +742,14 @@ export class Player {
     this._sessionCounted = false;
     const durationMs = Math.floor((track.dt ?? 0) as number);
     this._sessionDurationMs = Number.isFinite(durationMs) ? durationMs : 0;
+    this._currentTime = 0;
+    this._progress = 0;
+    this._bufferedProgress = 0;
+    this._duration =
+      this._sessionDurationMs > 0
+        ? parseFloat((this._sessionDurationMs / 1000).toFixed(3))
+        : 0;
+    this.subscriber.exec(PlayerEvents.time);
   }
 
   private tickPlaybackSession() {
@@ -869,23 +938,10 @@ export class Player {
       return;
     }
 
-    const currentTime = Number.isFinite(this._audio.currentTime)
-      ? this._audio.currentTime
-      : 0;
-    let bufferedEnd = 0;
-
-    for (let i = 0; i < buffered.length; i++) {
-      const rangeStart = buffered.start(i);
-      const rangeEnd = buffered.end(i);
-
-      if (currentTime >= rangeStart && currentTime <= rangeEnd + 0.1) {
-        bufferedEnd = rangeEnd;
-        break;
-      }
-
-      if (rangeEnd > bufferedEnd) {
-        bufferedEnd = rangeEnd;
-      }
+    const bufferedEnd = this.getContiguousBufferedEndAtCurrentTime(this._audio);
+    if (bufferedEnd === null) {
+      this._bufferedProgress = safeProgress;
+      return;
     }
 
     const normalizedBuffered = Math.max(
@@ -905,8 +961,13 @@ export class Player {
     const currentTime = Number.isFinite(audioElement.currentTime)
       ? parseFloat(audioElement.currentTime.toFixed(3))
       : 0;
+    const contiguousBufferedEnd =
+      this.getContiguousBufferedEndAtCurrentTime(audioElement);
 
-    let bufferedSeconds = 0;
+    const bufferedSeconds =
+      contiguousBufferedEnd !== null
+        ? parseFloat(contiguousBufferedEnd.toFixed(3))
+        : currentTime;
     const bufferedRanges: Array<{ start: number; end: number }> = [];
     const buffered = audioElement.buffered;
 
@@ -918,9 +979,6 @@ export class Player {
           start: parseFloat(start.toFixed(3)),
           end: parseFloat(end.toFixed(3)),
         });
-        if (end > bufferedSeconds) {
-          bufferedSeconds = end;
-        }
       }
     }
 
@@ -952,14 +1010,14 @@ export class Player {
       this.tickPlaybackSession();
 
       if (this.playState === "play") {
-        const bufferedAhead = this.getBufferedAheadSeconds(this._audio);
-        const allowAggressivePreload =
-          bufferedAhead >= this._gaplessCurrentTrackSafeBufferSeconds * 1.5;
-        void this.prepareGaplessPreload(allowAggressivePreload);
+        void this.prepareGaplessPreload(false);
       }
 
       // 确保音频已经加载
-      if (this._audio.readyState === 0) return;
+      if (this._audio.readyState === 0) {
+        this._updateTime = setTimeout(update, 300);
+        return;
+      }
 
       const previousBufferedProgress = this._bufferedProgress;
       this.updateBufferedProgressFromAudio();
@@ -1169,7 +1227,7 @@ export class Player {
       // 此时，歌曲已经准备就绪，触发 trackReady 的回调函数
       this.noUrlCount = 0;
       this.subscriber.exec(PlayerEvents.trackReady);
-      void this.prepareGaplessPreload(true);
+      void this.prepareGaplessPreload(false);
     }
   }
   async gainTrack(id: number | string): Promise<string> {
@@ -2085,6 +2143,7 @@ export class Player {
       return;
     }
 
+    const previousPlayState = this._playState;
     this._playState = value;
     if (this._playState === "play") {
       try {
@@ -2094,7 +2153,15 @@ export class Player {
         await this._audio.play().catch((error) => {
           console.error("Failed to resume audio element", error);
         });
-        void this.prepareGaplessPreload(true);
+        const duration = this._audio.duration;
+        const remainSeconds =
+          Number.isFinite(duration) && duration > 0
+            ? Math.max(0, duration - this._audio.currentTime)
+            : Number.POSITIVE_INFINITY;
+        const shouldForceRefreshPreload =
+          previousPlayState === "pause" &&
+          remainSeconds <= this._gaplessPreloadLeadSeconds;
+        void this.prepareGaplessPreload(shouldForceRefreshPreload);
       } catch (error) {
         this._playState = "pause";
         this._audio.pause();
