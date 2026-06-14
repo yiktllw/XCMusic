@@ -19,6 +19,7 @@ pnpm-debug.log*
 # Editor directories and files
 .idea
 .vscode
+.codewhale/
 *.suo
 *.ntvs*
 *.njsproj
@@ -32,3 +33,5 @@ pnpm-debug.log*
 
 # reference repos:
 /ref
+/test
+*.ppm
