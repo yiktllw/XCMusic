@@ -8,9 +8,14 @@
 
 import axios from "axios";
 import { type ITrack, Tracks } from "@/utils/tracks";
-import indexDB from "@/utils/indexDB";
 import { type IHotSearch, type ISearchSuggestion } from "@/dual/YTitlebar";
 import { getStorage, StorageKey } from "@/utils/render_storage";
+import {
+  getAllPlayEvents,
+  getAllCachedTrackInfos,
+  cacheTrackInfo,
+  type TrackCache,
+} from "@/utils/playEvent";
 import type {
   IComment,
   ILike,
@@ -1118,31 +1123,6 @@ export namespace Lyrics {
   }
 }
 
-/**
- * 用户相关API
- */
-type ILocalPlayHistoryRecord = {
-  id: number | string;
-  track: ITrack;
-  firstPlayStartAt: number;
-  lastPlayStartAt: number;
-  lastPlayEndAt: number;
-  accumulatedPlayMs: number;
-  playCount: number;
-  playEventTimestamps: number[];
-  updatedAt: number;
-};
-
-const localHistoryDB = new indexDB("ncm_play_history", "history");
-let localHistoryReady: Promise<IDBDatabase> | null = null;
-
-const ensureLocalHistoryDB = async () => {
-  if (!localHistoryReady) {
-    localHistoryReady = localHistoryDB.openDatabase();
-  }
-  return localHistoryReady;
-};
-
 export namespace User {
   /**
    * 音乐云盘信息
@@ -1367,34 +1347,101 @@ export namespace User {
   }
 
   /**
-   * 获取本地听歌排行
+   * 获取本地听歌排行（新格式，从 ncm_play_events.events 读取）
    */
   export async function localSongsRank(
     type: "week" | "alltime" = "week",
   ): Promise<ITrack[]> {
     try {
-      await ensureLocalHistoryDB();
-      const records =
-        await localHistoryDB.getAllItems<ILocalPlayHistoryRecord>();
+      const events = await getAllPlayEvents();
+      if (events.length === 0) return [];
+
       const now = Date.now();
       const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+      const groupMap = new Map<
+        number | string,
+        { playCount: number; totalMs: number }
+      >();
 
-      const tracks = records
-        .map((record) => {
-          const weekCount = (record.playEventTimestamps ?? []).filter(
-            (ts) => ts >= sevenDaysAgo,
-          ).length;
-          const listenCount = type === "week" ? weekCount : record.playCount;
-          if (listenCount <= 0) return null;
-          return {
-            ...record.track,
-            playCount: listenCount,
-          } as ITrack;
-        })
-        .filter((item): item is ITrack => item !== null)
-        .sort((a, b) => b.playCount - a.playCount);
+      for (const ev of events) {
+        // 丢弃无效的 trackId（空/非数字/无用数据）
+        if (!ev.trackId || typeof ev.trackId !== "number") continue;
 
-      return tracks;
+        const isWeek = ev.startedAt >= sevenDaysAgo;
+        if (type === "week" && !isWeek) continue;
+
+        const g = groupMap.get(ev.trackId) ?? { playCount: 0, totalMs: 0 };
+        g.playCount++;
+        g.totalMs += ev.durationMs;
+        groupMap.set(ev.trackId, g);
+      }
+
+      // 读取歌曲信息缓存 + 从 API 获取缺失的
+      const cache = await getAllCachedTrackInfos();
+      const cacheMap = new Map<number, TrackCache>();
+      cache.forEach((c) => cacheMap.set(c.id, c));
+
+      // 只对数字 trackId（在线歌曲）从 API 补数据
+      const missingNumericIds = Array.from(groupMap.keys()).filter(
+        (id): id is number => typeof id === "number" && !cacheMap.has(id),
+      );
+      if (missingNumericIds.length > 0) {
+        // 批量从 API 获取，每批 200 个 ID
+        for (let i = 0; i < missingNumericIds.length; i += 200) {
+          const batch = missingNumericIds.slice(i, i + 200);
+          const tracks = await Song.detail(batch);
+          for (const t of tracks) {
+            const tc: TrackCache = {
+              id: t.id,
+              name: t.name,
+              ar: (t.ar ?? []).map((a: any) => ({ id: a.id, name: a.name })),
+              al: t.al
+                ? { id: t.al.id, name: t.al.name, picUrl: t.al.picUrl }
+                : { id: 0, name: "", picUrl: "" },
+              dt: t.dt ?? 0,
+            };
+            cacheMap.set(t.id, tc);
+            cacheTrackInfo(tc);
+          }
+        }
+      }
+
+      const tracks: ITrack[] = [];
+      for (const [trackId, stat] of groupMap) {
+        const info = typeof trackId === "number" ? cacheMap.get(trackId) : null;
+        if (!info || !info.name) continue;
+        tracks.push({
+          id: trackId,
+          name: info.name,
+          tns: "",
+          al: info.al,
+          ar: info.ar,
+          _picUrl: info.al?.picUrl ?? null,
+          cd: 0,
+          no: 0,
+          reelName: null,
+          reelIndex: 0,
+          songInReelIndex: 0,
+          dt: info.dt,
+          pop: 0,
+          playCount: stat.playCount,
+          li_start_at: 0,
+          li_duration_ms: stat.totalMs,
+          lyrics: [],
+          h: null,
+          l: null,
+          sq: null,
+          hr: null,
+          jyeffect: null,
+          sky: null,
+          jymaster: null,
+          originalIndex: 0,
+          local: false,
+          localPath: "",
+        } as unknown as ITrack);
+      }
+
+      return tracks.sort((a, b) => b.playCount - a.playCount);
     } catch (error) {
       console.error("Failed to get local songs rank:", error);
       return [];

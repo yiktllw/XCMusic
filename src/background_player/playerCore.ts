@@ -13,6 +13,12 @@ import { qualities } from "@/utils/setting";
 import { type ITrack } from "@/utils/tracks";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
+import {
+  writePlayEvent,
+  cacheTrackInfo,
+  getHostname,
+  type PlayEvent,
+} from "@/utils/playEvent";
 
 // Mock window.electron if needed, but we are in electron renderer
 const ipcRenderer = window.electron?.ipcRenderer;
@@ -28,18 +34,6 @@ type QualityInfo = {
   size: number;
   gain: number;
   peak: number;
-};
-
-type LocalPlayHistoryRecord = {
-  id: number | string;
-  track: ITrack;
-  firstPlayStartAt: number;
-  lastPlayStartAt: number;
-  lastPlayEndAt: number;
-  accumulatedPlayMs: number;
-  playCount: number;
-  playEventTimestamps: number[];
-  updatedAt: number;
 };
 
 type AudioBufferSnapshot = {
@@ -805,26 +799,39 @@ export class Player {
     }
 
     try {
-      const oldRecord =
-        await this.localHistoryDB.getItem<LocalPlayHistoryRecord>(trackId);
       const now = Date.now();
-      const nextRecord: LocalPlayHistoryRecord = {
-        id: trackId,
-        track: trackSnapshot,
-        firstPlayStartAt: oldRecord?.firstPlayStartAt ?? sessionStartAt,
-        lastPlayStartAt: sessionStartAt,
-        lastPlayEndAt: now,
-        accumulatedPlayMs:
-          (oldRecord?.accumulatedPlayMs ?? 0) + sessionAccumulatedMs,
-        playCount: (oldRecord?.playCount ?? 0) + (shouldCount ? 1 : 0),
-        playEventTimestamps: shouldCount
-          ? [...(oldRecord?.playEventTimestamps ?? []), sessionStartAt].slice(
-              -500,
-            )
-          : [...(oldRecord?.playEventTimestamps ?? [])],
-        updatedAt: now,
-      };
-      await this.localHistoryDB.putItem(nextRecord);
+      if (shouldCount) {
+        const hostname = getHostname();
+        const event: PlayEvent = {
+          id: `${hostname}-${sessionStartAt}`,
+          trackId: trackId as number,
+          startedAt: sessionStartAt,
+          endedAt: now,
+          durationMs: sessionAccumulatedMs,
+        };
+        await writePlayEvent(event);
+
+        if (trackSnapshot) {
+          const ar = (trackSnapshot.ar ?? []).map((a: any) => ({
+            id: a.id,
+            name: a.name,
+          }));
+          const al = trackSnapshot.al
+            ? {
+                id: trackSnapshot.al.id,
+                name: trackSnapshot.al.name,
+                picUrl: trackSnapshot.al.picUrl,
+              }
+            : { id: 0, name: "", picUrl: "" };
+          await cacheTrackInfo({
+            id: trackId as number,
+            name: trackSnapshot.name ?? "未知歌曲",
+            ar,
+            al,
+            dt: trackSnapshot.dt ?? 0,
+          });
+        }
+      }
     } catch (error) {
       console.error("Failed to flush playback session:", error);
     }
@@ -1815,7 +1822,9 @@ export class Player {
     let index = this._playlist.findIndex((track) => track.id === id);
     if (index === -1) return;
     this._playlist.splice(index, 1);
-    if (index === this._current) {
+    if (index < this._current) {
+      this._current--;
+    } else if (index === this._current) {
       this.playTrack(this.currentTrack!);
     }
     this.subscriber.exec(PlayerEvents.playlist);
