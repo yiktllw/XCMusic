@@ -717,15 +717,58 @@ app.on("ready", async () => {
   if (!img.isEmpty()) tray = new Tray(img);
 
   // 菜单模板
-  let _menu = [
+  let _menu: Electron.MenuItemConstructorOptions[] = [
     {
-      label: "显示主窗口",
-      id: "show-window",
+      label: "设置",
+      id: "open-setting",
       click: () => {
-        if (win) win.show();
+        if (!win) return;
+        if (win.isMinimized()) win.restore();
+        if (!win.isVisible()) win.show();
+        win.focus();
+        win.webContents.send("navigate-to-setting");
       },
-      enabled: win ? !win.show : true,
     },
+    {
+      label: "重新加载窗口",
+      click: () => {
+        if (win) win.reload();
+      },
+    },
+    {
+      label: "重启播放器",
+      click: () => {
+        if (playerWin && !playerWin.isDestroyed()) {
+          playerWin.webContents.send("player-command", "reload");
+        }
+      },
+    },
+    { type: "separator" },
+    {
+      label: "上一首",
+      click: () => {
+        if (playerWin && !playerWin.isDestroyed()) {
+          playerWin.webContents.send("player-command", "previous");
+        }
+      },
+    },
+    {
+      label: "播放/暂停",
+      click: () => {
+        if (playerWin && !playerWin.isDestroyed()) {
+          playerWin.webContents.send("player-command", "togglePlay");
+        }
+      },
+    },
+    {
+      label: "下一首",
+      click: () => {
+        if (playerWin && !playerWin.isDestroyed()) {
+          playerWin.webContents.send("player-command", "next");
+        }
+      },
+    },
+    { type: "separator" },
     {
       label: "打开桌面歌词",
       id: "open-desktop-lyric",
@@ -750,21 +793,11 @@ app.on("ready", async () => {
     // 处理窗口隐藏
     win.on("hide", () => {
       if (!menu) return;
-      const showWindowMenuItem = menu.getMenuItemById("show-window");
-      if (showWindowMenuItem) {
-        showWindowMenuItem.enabled = true;
-      }
       if (tray) tray.setContextMenu(menu);
     });
 
     // 处理窗口显示
     win.on("show", () => {
-      if (menu && menu.getMenuItemById("show-window")) {
-        const showWindowMenuItem = menu.getMenuItemById("show-window");
-        if (showWindowMenuItem) {
-          showWindowMenuItem.enabled = false;
-        }
-      }
       if (tray) tray.setContextMenu(menu);
     });
   }
@@ -773,11 +806,9 @@ app.on("ready", async () => {
   if (tray)
     tray.on("double-click", () => {
       if (!win) return;
-      if (win.isVisible()) {
-        win.hide();
-      } else {
-        win.show();
-      }
+      if (win.isVisible() && !win.isMinimized() && win.isFocused()) return;
+      win.show();
+      win.focus();
     });
 });
 

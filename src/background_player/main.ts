@@ -36,6 +36,7 @@ if (ipcRenderer) {
           player.next();
           break;
         case "prev":
+        case "previous":
           player.previous();
           break;
         case "playTrack":
@@ -80,6 +81,7 @@ if (ipcRenderer) {
           player.setGaplessPlayback(args);
           break;
         case "restartPlayer":
+        case "reload":
           void player.rebuildAudioSystem();
           break;
         case "toggleSpectrum":

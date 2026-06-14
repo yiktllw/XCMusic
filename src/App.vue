@@ -45,6 +45,10 @@ export default defineComponent({
         "leave-fullscreen",
         this.handleLeaveFullScreen,
       );
+      window.electron.ipcRenderer.on(
+        "navigate-to-setting",
+        this.handleNavigateToSetting,
+      );
     }
     // 初始化用户自定义主题
     Doc.updateDocumentClassBySetting(this.setting.display.userCustomThemes);
@@ -72,6 +76,10 @@ export default defineComponent({
         "leave-fullscreen",
         this.handleLeaveFullScreen,
       );
+      window.electron.ipcRenderer.removeListener(
+        "navigate-to-setting",
+        this.handleNavigateToSetting,
+      );
     }
   },
   methods: {
@@ -92,6 +100,10 @@ export default defineComponent({
         "zoom",
         parseFloat(this.setting.display.zoom.toString()),
       );
+    },
+    handleNavigateToSetting() {
+      if (this.$route.path === "/setting") return;
+      this.$router.push({ path: "/setting" }).catch(() => {});
     },
   },
 });
