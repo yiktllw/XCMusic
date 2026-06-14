@@ -113,9 +113,17 @@
       </div>
       <!-- 4 听歌次数-表头 -->
       <div class="listen-count" v-if="showListenCount">
-        <button :tabindex="-1" class="header-button">
-          <span>
-            {{ $t("songs_table.listen_count") }}
+        <button
+          :tabindex="-1"
+          class="header-button"
+          style="display: flex; justify-content: center"
+        >
+          <span style="text-align: center">
+            {{
+              listenCountMode === "duration"
+                ? $t("songs_table.listen_duration")
+                : $t("songs_table.listen_count")
+            }}
           </span>
         </button>
       </div>
@@ -371,7 +379,10 @@
                 style="color: #bbb"
                 v-if="showListenCount"
               >
-                {{ track.playCount ?? 0 }}次
+                <template v-if="listenCountMode === 'duration'">
+                  {{ formatDurationLong((track as any).li_duration_ms) }}
+                </template>
+                <template v-else> {{ track.playCount ?? 0 }}次 </template>
               </div>
             </div>
           </div>

@@ -37,6 +37,14 @@ export default defineComponent({
       login: store.state.login,
     };
   },
+  watch: {
+    sortMode(val: "count" | "duration") {
+      setStorage(StorageKey.User_SongsRank_SortMode, val);
+    },
+    mergeAlbum(val: boolean) {
+      setStorage(StorageKey.User_SongsRank_MergeAlbum, val);
+    },
+  },
   computed: {
     displayTracks() {
       const isRecent = this.position === "recent";
@@ -47,6 +55,54 @@ export default defineComponent({
         return isRecent ? this.mixedRecentTracks : this.mixedAlltimeTracks;
       }
       return isRecent ? this.recentTracks : this.alltimeTracks;
+    },
+    processedTracks() {
+      let tracks = this.displayTracks;
+      if (this.source !== "local") return tracks;
+
+      // 按专辑合并
+      if (this.mergeAlbum) {
+        const albumMap = new Map<
+          number,
+          { track: ITrack; maxCount: number; listenMs: number; songMs: number }
+        >();
+        for (const t of tracks) {
+          const albumId = t.al?.id ?? 0;
+          const existing = albumMap.get(albumId);
+          if (existing) {
+            existing.maxCount = Math.max(existing.maxCount, t.playCount ?? 0);
+            existing.listenMs += (t as any).li_duration_ms ?? 0;
+            existing.songMs += t.dt ?? 0;
+          } else {
+            albumMap.set(albumId, {
+              track: { ...t },
+              maxCount: t.playCount ?? 0,
+              listenMs: (t as any).li_duration_ms ?? 0,
+              songMs: t.dt ?? 0,
+            });
+          }
+        }
+        tracks = Array.from(albumMap.values()).map((item) => {
+          const t = { ...item.track };
+          t.playCount = item.maxCount;
+          (t as any).li_duration_ms = item.listenMs;
+          t.dt = item.songMs;
+          t.name = t.al?.name || t.name;
+          return t;
+        });
+      }
+
+      // 排序
+      const sorted = [...tracks];
+      if (this.sortMode === "duration") {
+        sorted.sort(
+          (a, b) =>
+            ((b as any).li_duration_ms ?? 0) - ((a as any).li_duration_ms ?? 0),
+        );
+      } else {
+        sorted.sort((a, b) => (b.playCount ?? 0) - (a.playCount ?? 0));
+      }
+      return sorted;
     },
   },
   data() {
@@ -71,6 +127,10 @@ export default defineComponent({
       ],
       position: "recent",
       source,
+      sortMode:
+        getStorage(StorageKey.User_SongsRank_SortMode) ??
+        ("count" as "count" | "duration"),
+      mergeAlbum: getStorage(StorageKey.User_SongsRank_MergeAlbum) ?? false,
       recentTracks: [] as ITrack[],
       alltimeTracks: [] as ITrack[],
       localRecentTracks: [] as ITrack[],

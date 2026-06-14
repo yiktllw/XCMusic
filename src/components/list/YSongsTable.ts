@@ -1,4 +1,4 @@
-import { formatDuration_mmss } from "@/utils/time";
+import { formatDuration_mmss, formatDurationLong } from "@/utils/time";
 import { useStore } from "vuex";
 import YPlaying from "@/components/base/YPlaying.vue";
 import YPage from "@/components/base/YPage.vue";
@@ -65,6 +65,10 @@ export default defineComponent({
     showListenCount: {
       type: Boolean,
       default: false,
+    },
+    listenCountMode: {
+      type: String,
+      default: "count",
     },
     resortable: {
       type: Boolean,
@@ -279,6 +283,9 @@ export default defineComponent({
     },
     formatDuration(duration: number) {
       return formatDuration_mmss(duration);
+    },
+    formatDurationLong(duration: number) {
+      return formatDurationLong(duration);
     },
     // 开始resize
     startResize(event: MouseEvent) {

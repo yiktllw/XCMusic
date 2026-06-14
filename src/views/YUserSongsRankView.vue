@@ -38,14 +38,42 @@
       </div>
     </div>
   </div>
+  <div class="local-options" v-if="source === 'local'">
+    <button
+      :tabindex="-1"
+      class="option-item"
+      :class="{ active: sortMode === 'count' }"
+      @click="sortMode = 'count'"
+    >
+      {{ $t("user_songs_rank_view.sort_by_count") }}
+    </button>
+    <button
+      :tabindex="-1"
+      class="option-item"
+      :class="{ active: sortMode === 'duration' }"
+      @click="sortMode = 'duration'"
+    >
+      {{ $t("user_songs_rank_view.sort_by_duration") }}
+    </button>
+    <span class="option-divider">|</span>
+    <button
+      :tabindex="-1"
+      class="option-item"
+      :class="{ active: mergeAlbum }"
+      @click="mergeAlbum = !mergeAlbum"
+    >
+      {{ $t("user_songs_rank_view.merge_album") }}
+    </button>
+  </div>
   <YSongsTable
     :show-track-album="false"
     :show-track-popularity="false"
-    :show-header="false"
+    :show-header="true"
     :show-listen-count="true"
+    :listen-count-mode="source === 'local' ? sortMode : 'count'"
     :local-play="true"
     :resortable="false"
-    v-model="displayTracks"
+    v-model="processedTracks"
     style="margin: 0px 20px 0px 10px"
     :id="'YUserSongRankView.vue'"
     v-if="!loading"
@@ -56,6 +84,41 @@
 <script src="./YUserSongsRankView.ts" lang="ts"></script>
 
 <style lang="scss" scoped>
+.local-options {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px 25px;
+  font-size: 13px;
+  color: var(--font-color-standard);
+  user-select: none;
+
+  .option-item {
+    border: none;
+    background: transparent;
+    color: var(--font-color-standard);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+
+    &:hover {
+      color: var(--font-color-main);
+    }
+
+    &.active {
+      color: var(--font-color-main);
+      font-weight: 700;
+      background-color: rgba(var(--foreground-color-rgb), 0.08);
+    }
+  }
+
+  .option-divider {
+    color: rgba(var(--foreground-color-rgb), 0.2);
+    margin: 0 2px;
+  }
+}
+
 .source-row {
   display: flex;
   align-items: center;
