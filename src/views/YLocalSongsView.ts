@@ -2,7 +2,7 @@ import { defineComponent, toRaw } from "vue";
 import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import { type ITrack, Tracks } from "@/utils/tracks";
-import { YColor } from "@/utils/color";
+
 import { type musicFile } from "@/utils/localTracks";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
@@ -42,7 +42,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Local Music     "));
     this.init();
     this.localPaths = toRaw(this.setting.download.localPaths);
   },

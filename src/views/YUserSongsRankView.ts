@@ -4,7 +4,7 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import { type ITrack } from "@/utils/tracks";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
-import { YColor } from "@/utils/color";
+
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 import { getStorage, setStorage, StorageKey } from "@/utils/render_storage";
 
@@ -175,6 +175,5 @@ export default defineComponent({
   },
   mounted() {
     this.fetchUserSongsRank();
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("songs rank"));
   },
 });

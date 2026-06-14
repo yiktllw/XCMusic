@@ -25,6 +25,7 @@ import {
   Menu,
   ipcMain,
   screen,
+  type MenuItemConstructorOptions,
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -717,7 +718,7 @@ app.on("ready", async () => {
   if (!img.isEmpty()) tray = new Tray(img);
 
   // 菜单模板
-  let _menu: Electron.MenuItemConstructorOptions[] = [
+  let _menu: MenuItemConstructorOptions[] = [
     {
       label: "设置",
       id: "open-setting",

@@ -2,6 +2,10 @@
   <!-- 播放界面 -->
   <transition name="playui-slide">
     <div class="container theme-dark" v-if="show" ref="playuiContainer">
+      <div class="bg-layer" aria-hidden="true">
+        <div class="bg-fluid bg-fluid-prev"></div>
+        <div class="bg-fluid bg-fluid-curr"></div>
+      </div>
       <!-- 标题栏 -->
       <div class="title-bar">
         <YTitlebar :type="'play-ui'" @close-panel="show = false" />
@@ -198,6 +202,15 @@
 
 <style lang="scss" scoped>
 .container {
+  --playui-rgb: 19, 19, 25;
+  --playui-rgb-dark: 9, 10, 14;
+  --playui-rgb-light: 58, 62, 84;
+  --playui-fluid-prev-image: none;
+  --playui-fluid-image: none;
+  --playui-fluid-opacity: 1;
+
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -205,6 +218,41 @@
   height: 100%;
   background-color: #131319;
   user-select: none;
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    .bg-fluid {
+      position: absolute;
+      inset: 0;
+      background-size: 100% 100%;
+      background-position: 0 0;
+      background-repeat: no-repeat;
+      mix-blend-mode: normal;
+      filter: none;
+    }
+
+    .bg-fluid-prev {
+      background-image: var(--playui-fluid-prev-image);
+      opacity: calc(1 - var(--playui-fluid-opacity));
+    }
+
+    .bg-fluid-curr {
+      background-image: var(--playui-fluid-image);
+      opacity: var(--playui-fluid-opacity);
+    }
+  }
+
+  .title-bar,
+  .main-content,
+  .play-bar,
+  .spectrum-canvas {
+    position: relative;
+    z-index: 1;
+  }
 
   .title-bar {
     width: 100%;

@@ -4,7 +4,7 @@ import { YPageC } from "@/dual/YPageC";
 import YPage from "@/components/base/YPage.vue";
 import { useStore } from "vuex";
 import YPlaylistBiglist from "@/components/list/YPlaylistBiglist.vue";
-import { YColor } from "@/utils/color";
+
 import { type IBigPlaylist } from "@/dual/YPlaylistList";
 import YLoading from "@/components/base/YLoading.vue";
 
@@ -30,7 +30,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("收藏的专辑     "));
     this.bindPageChange();
     void this.getUserSubscribedAlbums(true);
   },

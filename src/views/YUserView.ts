@@ -7,12 +7,10 @@ import YPage from "@/components/base/YPage.vue";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 import { ContentLoader } from "vue-content-loader";
 import { User } from "@/utils/api";
-import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
 import { YPageC } from "@/dual/YPageC";
 import { markRaw, defineComponent } from "vue";
 import songsRank from "@/assets/songsrank.svg";
-import { type Theme1, type Theme2 } from "@/utils/theme";
 import { type IArtist, type IUser } from "@/dual/YUserView";
 
 export default defineComponent({
@@ -317,21 +315,5 @@ export default defineComponent({
   async mounted() {
     // 获取用户信息
     await this.fetchUser();
-    try {
-      const theme = YColor.findTheme(this.setting.display.theme);
-      if (this.user?.picUrl) {
-        YColor.setBkColorFromImg(
-          this.user.picUrl,
-          document,
-          (theme as Theme1).type,
-          (theme as Theme2).background,
-          () => {
-            YColor.setBackgroundColorHex2(YColor.stringToHexColor("userview"));
-          },
-        );
-      }
-    } catch (error) {
-      console.error("YUserView", error);
-    }
   },
 });

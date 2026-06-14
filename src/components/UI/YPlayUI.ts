@@ -4,7 +4,7 @@ import YScroll from "@/components/base/YScroll.vue";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import { Song } from "@/utils/api";
-import { getColorFromImg, YColor } from "@/utils/color";
+import { applyFluidBackground } from "@/utils/fluidBackground";
 import YSpecCanvas from "@/components/base/YSpecCanvas.vue";
 import { isLocal } from "@/utils/localTracks_renderer";
 import {
@@ -214,27 +214,25 @@ export default defineComponent({
       if (!this.track?.al?.picUrl) {
         return;
       }
-      await getColorFromImg(
-        this.track.al.picUrl + "?param=50y50",
-        document,
-      ).then((_color) => {
-        // 确保颜色存在
-        let color;
-        if (!_color) color = YColor.hexToRgb(YColor.stringToHexColor("TXC"));
-        else color = _color;
+      const palette = this.player.fluidPalette;
+      if (!palette) return;
 
-        // 设置背景颜色
-        if (this.playuiContainer) {
-          this.playuiContainer.style.background = `linear-gradient(180deg, rgb(${color.r}, ${color.g}, ${color.b}) 0%, rgb(${color.r * 0.321}, ${color.g * 0.321}, ${color.b * 0.321}) 100%)`;
-        }
+      // 应用流体背景到播放界面容器
+      if (this.playuiContainer) {
+        applyFluidBackground(
+          this.playuiContainer,
+          palette.primary,
+          palette.secondary,
+          true,
+        );
+      }
 
-        // 设置进度条颜色
-        let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
-        if (progressDOM) {
-          progressDOM.style.background = `linear-gradient(to right, rgba(${color.r}, ${color.g}, ${color.b}, .4321), rgb(${color.r}, ${color.g}, ${color.b} ))`;
-        }
-        progressDOM = null;
-      });
+      // 设置进度条颜色
+      let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
+      if (progressDOM) {
+        progressDOM.style.background = `linear-gradient(to right, rgba(${palette.primary.r}, ${palette.primary.g}, ${palette.primary.b}, .4321), rgb(${palette.primary.r}, ${palette.primary.g}, ${palette.primary.b} ))`;
+      }
+      progressDOM = null;
     },
     async getWiki() {
       if (!this.track?.id || isLocal(this.track.id)) return;

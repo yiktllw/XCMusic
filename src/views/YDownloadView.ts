@@ -3,7 +3,7 @@ import { useStore } from "vuex";
 import YSongsTable from "@/components/list/YSongsTable.vue";
 import YDownloadManager from "@/components/UI/YDownloadManager.vue";
 import { type ITrack, TrackIds } from "@/utils/tracks";
-import { YColor } from "@/utils/color";
+
 import { type ITrackWithProgress } from "@/dual/YLocalSongsView";
 import { DownloadEvents } from "@/dual/download_renderer";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
@@ -50,9 +50,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorHex2(
-      YColor.stringToHexColor("Downloaded Music   "),
-    );
     this.getDownloadedTracks();
     this.download.subscriber.on(
       "YLocalSongsView",

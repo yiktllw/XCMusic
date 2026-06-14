@@ -7,6 +7,10 @@
       fontFamily: fonts.join(', '),
     }"
   >
+    <div class="bg-layer" aria-hidden="true">
+      <div class="bg-fluid bg-fluid-prev"></div>
+      <div class="bg-fluid bg-fluid-curr"></div>
+    </div>
     <div class="align-up">
       <div class="align-left">
         <!-- 侧边栏 -->
@@ -142,6 +146,31 @@
   bottom: 0;
   user-select: none;
 
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    .bg-fluid {
+      position: absolute;
+      inset: 0;
+      background-size: 100% 100%;
+      background-position: 0 0;
+      background-repeat: no-repeat;
+    }
+
+    .bg-fluid-prev {
+      background-image: var(--playui-fluid-prev-image);
+      opacity: calc(1 - var(--playui-fluid-opacity));
+    }
+
+    .bg-fluid-curr {
+      background-image: var(--playui-fluid-image);
+      opacity: var(--playui-fluid-opacity);
+    }
+  }
+
   .align-up {
     display: flex;
     justify-content: space-between;
@@ -194,7 +223,9 @@
     height: 85px;
 
     .playbar {
-      background-color: var(--panel-background-color);
+      background-color: rgba(var(--foreground-color-rgb), 0.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-top: 1px solid rgba(var(--foreground-color-rgb), 0.1);
       position: relative;
       height: 100%;

@@ -1,4 +1,3 @@
-import { YColor } from "@/utils/color";
 import { Message } from "@/dual/YMessageC";
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
@@ -103,8 +102,6 @@ export default defineComponent({
       }, 150);
     },
   },
-  mounted() {
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Test  View"));
-  },
+  mounted() {},
   beforeUnmount() {},
 });

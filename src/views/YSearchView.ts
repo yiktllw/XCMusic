@@ -8,7 +8,7 @@ import YLoading from "@/components/base/YLoading.vue";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 import { type ITrack } from "@/utils/tracks";
 import { YPageC } from "@/dual/YPageC";
-import { YColor } from "@/utils/color";
+
 import { Search } from "@/utils/api";
 import { markRaw, defineComponent } from "vue";
 import { type IPlaylist } from "@/dual/YPlaylistList";
@@ -376,8 +376,6 @@ export default defineComponent({
   },
   mounted() {
     this.fetchData(this.position);
-    // 设置背景颜色
-    YColor.setBackgroundColorHex2(YColor.stringToHexColor("Searchview"));
     // 当前位置为默认位置时, 跳转到上次搜索位置
     this.position === "default"
       ? this.$router.push({

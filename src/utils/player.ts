@@ -15,6 +15,7 @@ import i18n from "@/i18n";
 import { type ITrack } from "@/utils/tracks";
 import { type LrcItem, type LrcItem2, type YrcItem } from "@/utils/lyric";
 import { getStorage, StorageKey } from "@/utils/render_storage";
+import { extractCoverPalette, type Palette } from "@/utils/fluidBackground";
 
 const ipcRenderer = window.electron?.ipcRenderer;
 
@@ -50,6 +51,7 @@ export class Player {
   _quality: string = "exhigh";
   _volume_leveling: boolean = true;
   _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
+  _fluidPalette: Palette | null = null;
   songPicker: SongPicker | undefined;
   subscriber: Subscriber<PlayerEventCallbacks> =
     new Subscriber<PlayerEventCallbacks>(PlayerEvents);
@@ -182,6 +184,9 @@ export class Player {
           break;
       }
       this.subscriber.exec(eventName);
+      if (eventName === PlayerEvents.track) {
+        this._loadFluidPalette();
+      }
     });
 
     ipcRenderer.on("player-spectrum", (data: any) => {
@@ -239,6 +244,24 @@ export class Player {
   }
   tooglePlayState() {
     this.sendCommand("togglePlay");
+  }
+
+  get fluidPalette(): Palette | null {
+    return this._fluidPalette;
+  }
+
+  async _loadFluidPalette() {
+    this._fluidPalette = null;
+    const track = this.currentTrack;
+    if (!track?.al?.picUrl) return;
+    try {
+      const palette = await extractCoverPalette(
+        track.al.picUrl + "?param=120y120",
+      );
+      if (palette) this._fluidPalette = palette;
+    } catch {
+      // Silently fail
+    }
   }
 
   // Getters and Setters

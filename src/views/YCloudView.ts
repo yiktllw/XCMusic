@@ -5,7 +5,7 @@ import { useStore } from "vuex";
 import { type ITrack, Tracks } from "@/utils/tracks";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
-import { YColor } from "@/utils/color";
+
 import { Message } from "@/dual/YMessageC";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
 
@@ -27,8 +27,6 @@ export default defineComponent({
     YSongsTableSkeleton,
   },
   mounted() {
-    const color = YColor.stringToHexColor("CLOUD");
-    YColor.setBackgroundColorHex2(color);
     this.bindPageChange();
     void this.fetchTracks(true);
   },

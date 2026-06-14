@@ -1,5 +1,5 @@
 import { defineComponent, ref } from "vue";
-import { YColor } from "@/utils/color";
+
 import YHeader from "@/components/base/YHeader.vue";
 import { Message } from "@/dual/YMessageC";
 import { useStore } from "vuex";
@@ -175,7 +175,6 @@ export default defineComponent({
       this.theme = theme;
       document.body.className = `theme-${this.theme}`;
       this.setting.display.theme = this.theme;
-      YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
     },
     setClose(behavior: "minimize" | "quit") {
       this.closeBehavior = behavior;
@@ -605,7 +604,6 @@ export default defineComponent({
       );
     },
     init() {
-      YColor.setBackgroundColorHex2(YColor.stringToHexColor(str));
       this.theme = this.setting.display.theme;
       const userCustomThemes = this.setting.display.userCustomThemes.map(
         (item) => {

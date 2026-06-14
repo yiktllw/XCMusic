@@ -3,7 +3,6 @@ import YComment from "@/components/list/YComment.vue";
 import { YTrackC } from "@/dual/YTrackC";
 import { YColor } from "@/utils/color";
 import { useStore } from "vuex";
-import { type Theme1, type Theme2 } from "@/utils/theme";
 import type { ICommentInfo } from "@/dual/YCommentC";
 
 export default defineComponent({
@@ -58,13 +57,7 @@ export default defineComponent({
     },
     async trackLoaded() {
       try {
-        let theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBkColorFromImg(
-          this.track.picUrl,
-          document,
-          (theme as Theme1).type,
-          (theme as Theme2).background,
-        );
+        YColor.findTheme(this.setting.display.theme);
       } catch (error) {
         console.error("YCommentView", error);
       }
@@ -77,13 +70,7 @@ export default defineComponent({
     };
     if ((this.type === "album" || this.type === "playlist") && this.info) {
       try {
-        let theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBkColorFromImg(
-          this.info.cover,
-          document,
-          (theme as Theme1).type,
-          (theme as Theme2).background,
-        );
+        YColor.findTheme(this.setting.display.theme);
       } catch (error) {
         console.error("YCommentView", error);
       }

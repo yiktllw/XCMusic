@@ -9,6 +9,11 @@ import { Doc } from "@/utils/document";
 import { getStorage, StorageKey } from "@/utils/render_storage";
 import { setProxyUrl } from "@/utils/api";
 import type { FontList } from "font-list";
+import { PlayerEvents } from "@/dual/player";
+import {
+  applyFluidBackground,
+  clearFluidBackground,
+} from "@/utils/fluidBackground";
 
 export default defineComponent({
   name: "App",
@@ -23,8 +28,10 @@ export default defineComponent({
           window.fonts = fonts.reverse();
         });
     }
+    const player = store.state.player;
     return {
       setting: store.state.setting,
+      player,
     };
   },
   mounted() {
@@ -65,6 +72,17 @@ export default defineComponent({
       setProxyUrl(proxy);
       window.electron.ipcRenderer.send("set-proxy", proxy);
     }
+
+    // 监听歌曲变化，更新主界面流体背景
+    this.player.subscriber.on("app-fluid", PlayerEvents.track, () => {
+      void this.updateFluidBackground();
+    });
+    // 初始更新
+    if (this.player.currentTrack) {
+      void this.updateFluidBackground();
+    } else {
+      this.clearMainBackground();
+    }
   },
   beforeUnmount() {
     if (window.electron?.isElectron) {
@@ -81,6 +99,7 @@ export default defineComponent({
         this.handleNavigateToSetting,
       );
     }
+    this.player.subscriber.offAll("app-fluid");
   },
   methods: {
     handleFullScreen(event: { width: number; height: number }) {
@@ -102,8 +121,27 @@ export default defineComponent({
       );
     },
     handleNavigateToSetting() {
+      console.log("TEST_MULTI_MATCH");
       if (this.$route.path === "/setting") return;
       this.$router.push({ path: "/setting" }).catch(() => {});
+    },
+    clearMainBackground() {
+      const container = document.getElementById("mainContainer");
+      if (container) clearFluidBackground(container);
+    },
+    async updateFluidBackground() {
+      const track = this.player.currentTrack;
+      const container = document.getElementById("mainContainer");
+      if (!container) return;
+
+      if (!track?.al?.picUrl) {
+        this.clearMainBackground();
+        return;
+      }
+
+      const palette = this.player.fluidPalette;
+      if (!palette) return;
+      applyFluidBackground(container, palette.primary, palette.secondary, true);
     },
   },
 });

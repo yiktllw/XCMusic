@@ -3,7 +3,7 @@ import { useStore } from "vuex";
 import { Song } from "@/utils/api";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
-import { YColor } from "@/utils/color";
+
 import { type ISheet } from "@/dual/YSheetView";
 
 export default defineComponent({
@@ -122,7 +122,6 @@ export default defineComponent({
     this.bindPageChange();
     window.addEventListener("keydown", this.handleKeydown);
     window.addEventListener("keyup", this.handleKeyup);
-    YColor.setBackgroundColorTheme();
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.handleKeydown);
