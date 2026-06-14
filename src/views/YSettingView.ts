@@ -23,9 +23,6 @@ import {
   defaultPreferences as defaultLyricsPreferences,
 } from "@/components/base/YLyricsNew/utils";
 
-/** 用于生成设置界面的背景色 */
-const str = "setting_view";
-
 export default defineComponent({
   name: "YSettingView",
   components: {
