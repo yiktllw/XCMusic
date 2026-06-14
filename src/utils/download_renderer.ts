@@ -287,6 +287,34 @@ export class Download {
   }
 
   /**
+   * 从数组直接导入已下载歌曲（跳过 JSON 序列化）
+   */
+  async importFromArray(songs: IDownloadedSong[]) {
+    if (!Array.isArray(songs) || songs.length === 0) return;
+
+    if (
+      !songs.every((song) => "id" in song && "name" in song && "path" in song)
+    )
+      return;
+
+    let pushRequests: Array<Promise<void>> = [];
+    songs.forEach((song) => {
+      if (!this.downloadedSongIds.includes(song.id)) {
+        this.downloadedSongs.push(song);
+        pushRequests.push(
+          this.db.addDownloadedSong({
+            id: song.id,
+            name: song.name,
+            path: song.path,
+          }),
+        );
+      }
+    });
+    await Promise.all(pushRequests);
+    this.subscriber.exec(DownloadEvents.Complete);
+  }
+
+  /**
    * 暂停下载任务
    */
   pauseTask(taskId: string): boolean {

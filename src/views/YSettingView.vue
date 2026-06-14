@@ -905,39 +905,23 @@
                 </div>
               </div>
             </div>
-            <!-- 关于-备份 -->
+            <!-- 关于-用户数据备份 -->
             <div class="content-item item-backup">
               <div class="content-item-title">
                 {{ $t("setting_view.about.backup") }}
               </div>
               <div class="content-item-content backup-content">
-                <div>
-                  <div
-                    class="export backup-content-item"
-                    @click="exportToJSON_Setting"
-                  >
-                    {{ $t("setting_view.about.export") }}
-                  </div>
-                  <div
-                    class="import backup-content-item"
-                    @click="importFromJSON_Setting"
-                  >
-                    {{ $t("setting_view.about.import") }}
-                  </div>
+                <div
+                  class="export backup-content-item"
+                  @click="exportUserData_"
+                >
+                  {{ $t("setting_view.about.export_user_data") }}
                 </div>
-                <div>
-                  <div
-                    class="export backup-content-item"
-                    @click="exportToJSON_Download"
-                  >
-                    {{ $t("setting_view.about.export_download") }}
-                  </div>
-                  <div
-                    class="import backup-content-item"
-                    @click="importFromJSON_Download"
-                  >
-                    {{ $t("setting_view.about.import_download") }}
-                  </div>
+                <div
+                  class="import backup-content-item"
+                  @click="importUserData_"
+                >
+                  {{ $t("setting_view.about.import_user_data") }}
                 </div>
               </div>
             </div>
@@ -946,6 +930,21 @@
       </div>
     </YScroll>
   </div>
+  <YExportSelectWindow
+    v-if="showExportDialog"
+    :options="exportWindowOptions"
+    :callback="handleExportCallback"
+    title-key="setting_view.about.export_user_data"
+    @new-window-state="showExportDialog = $event"
+  />
+  <YExportSelectWindow
+    v-if="showImportDialog"
+    :options="importWindowOptions"
+    :callback="handleImportCallback"
+    :disabled-options="importDisabledOptions"
+    title-key="setting_view.about.import_user_data"
+    @new-window-state="showImportDialog = $event"
+  />
 </template>
 
 <script src="./YSettingView.ts" lang="ts"></script>

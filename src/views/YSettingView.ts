@@ -5,17 +5,19 @@ import { Message } from "@/dual/YMessageC";
 import { useStore } from "vuex";
 import { themes } from "@/utils/theme";
 import packageJson from "@/../package.json";
+import { qualities, type TSideBarItems } from "@/utils/setting";
 import {
-  exportToJSON,
-  importFromJSON,
-  qualities,
-  type TSideBarItems,
-} from "@/utils/setting";
-import { type ISaveJSONData } from "@/dual/YSettingView";
+  exportUserData,
+  importUserData,
+  writeImportedData,
+  type IImportData,
+} from "@/utils/userData";
 import YScroll from "@/components/base/YScroll.vue";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
 import { defaultFonts, type IEscapedFonts } from "@/utils/fonts";
+import YExportSelectWindow from "@/components/YWindows/YExportSelectWindow.vue";
+import type { IExportOptions } from "@/components/YWindows/YExportSelectWindow";
 import {
   type ILyricsPreferences,
   defaultPreferences as defaultLyricsPreferences,
@@ -29,6 +31,7 @@ export default defineComponent({
   components: {
     YHeader,
     YScroll,
+    YExportSelectWindow,
   },
   setup() {
     const store = useStore();
@@ -138,6 +141,27 @@ export default defineComponent({
       fonts: [...defaultFonts] as IEscapedFonts,
       /** 歌词样式 */
       lyricsPreferences: { ...defaultLyricsPreferences } as ILyricsPreferences,
+      /** 导出选择窗口 */
+      showExportDialog: false,
+      exportWindowOptions: {
+        settings: true,
+        playHistory: true,
+        downloadedSongs: true,
+      } as IExportOptions,
+      /** 导入选择窗口 */
+      showImportDialog: false,
+      importWindowOptions: {
+        settings: true,
+        playHistory: true,
+        downloadedSongs: true,
+      } as IExportOptions,
+      /** 导入暂存数据 */
+      importedData: null as IImportData | null,
+      importDisabledOptions: {
+        settings: false,
+        playHistory: false,
+        downloadedSongs: false,
+      } as IExportOptions,
     };
   },
   methods: {
@@ -412,59 +436,99 @@ export default defineComponent({
         Message.post("info", this.$t("setting_view.tools.proxy.only_desktop"));
       }
     },
-    async exportToJSON_Setting() {
+    async exportUserData_() {
       if (!window.electron?.isElectron) return;
-      const json = exportToJSON(this.setting);
-      const data: ISaveJSONData = {
-        json: json,
-        name: "XCMusic_Setting.json",
+      this.exportWindowOptions = {
+        settings: true,
+        playHistory: true,
+        downloadedSongs: true,
       };
-      const savedPath = await window.electron.ipcRenderer.invoke(
-        "save-json",
-        data,
+      this.showExportDialog = true;
+    },
+    async handleExportCallback(opts: IExportOptions) {
+      this.showExportDialog = false;
+      const result = await exportUserData(
+        this.setting,
+        this.download.downloadedSongs,
+        opts,
       );
-      if (savedPath) {
-        Message.post("success", this.$t("setting_view.about.export_success"));
+      if (result.success) {
+        Message.post(
+          "success",
+          this.$t("setting_view.about.export_user_data_success"),
+        );
       } else {
-        Message.post("error", this.$t("setting_view.about.export_fail"));
+        const msg =
+          result.message || this.$t("setting_view.about.export_user_data_fail");
+        Message.post("error", msg);
+        console.error("Export failed:", result.message);
       }
     },
-    async exportToJSON_Download() {
+    async importUserData_() {
       if (!window.electron?.isElectron) return;
-      const json = this.download.exportToJSON();
-      const data: ISaveJSONData = {
-        json: json,
-        name: "XCMusic_Downloads.json",
+
+      // 1. 先选文件，读取数据
+      const result = await importUserData();
+      if (!result.success) {
+        const msgMap: Record<string, string> = {
+          no_file: "setting_view.about.import_user_data_no_file",
+          invalid_format: "setting_view.about.import_user_data_invalid",
+          parse_error: "setting_view.about.import_user_data_parse_error",
+        };
+        const key =
+          msgMap[result.message || ""] ||
+          "setting_view.about.import_user_data_fail";
+        Message.post("error", this.$t(key));
+        return;
+      }
+
+      // 2. 检查文件中有哪些数据
+      const data = result.data!;
+      const hasSettings =
+        data.settings != null && Object.keys(data.settings).length > 0;
+      const hasPlayHistory =
+        data.playHistory != null && data.playHistory.length > 0;
+      const hasDownloaded =
+        data.downloadedSongs != null && data.downloadedSongs.length > 0;
+
+      this.importedData = data;
+      this.importDisabledOptions = {
+        settings: !hasSettings,
+        playHistory: !hasPlayHistory,
+        downloadedSongs: !hasDownloaded,
       };
-      const savedPath = await window.electron.ipcRenderer.invoke(
-        "save-json",
-        data,
+      this.importWindowOptions = {
+        settings: hasSettings,
+        playHistory: hasPlayHistory,
+        downloadedSongs: hasDownloaded,
+      };
+      this.showImportDialog = true;
+    },
+    async handleImportCallback(opts: IExportOptions) {
+      this.showImportDialog = false;
+      if (!this.importedData) return;
+
+      const result = await writeImportedData(
+        this.setting,
+        async (songs) => {
+          await this.download.importFromArray(songs);
+        },
+        this.importedData,
+        opts,
       );
-      if (savedPath) {
-        Message.post("success", this.$t("setting_view.about.export_success"));
+      this.importedData = null;
+
+      if (result.success) {
+        this.init();
+        Message.post(
+          "success",
+          this.$t("setting_view.about.import_user_data_success"),
+        );
       } else {
-        Message.post("error", this.$t("setting_view.about.export_fail"));
-      }
-    },
-    async importFromJSON_Setting() {
-      if (!window.electron?.isElectron) return;
-      const json = await window.electron.ipcRenderer.invoke("open-json");
-      if (json) {
-        importFromJSON(this.setting, json);
-        Message.post("success", this.$t("setting_view.about.import_success"));
-      } else {
-        Message.post("error", this.$t("setting_view.about.import_no_file"));
-      }
-      this.init();
-    },
-    async importFromJSON_Download() {
-      if (!window.electron?.isElectron) return;
-      const json = await window.electron.ipcRenderer.invoke("open-json");
-      if (json) {
-        this.download.importFromJSON(json);
-        Message.post("success", this.$t("setting_view.about.import_success"));
-      } else {
-        Message.post("error", this.$t("setting_view.about.import_no_file"));
+        Message.post(
+          "error",
+          this.$t("setting_view.about.import_user_data_fail"),
+        );
       }
     },
     initRectData() {

@@ -9,10 +9,11 @@ import { scanMusicDirectory } from "@/utils/localTracks";
 import { type ITrack } from "@/utils/tracks";
 import * as fs from "fs";
 import * as path from "path";
-import { type ISaveJSONData } from "@/dual/YSettingView";
 import { setProxy } from "@/utils/userProxy";
 import { type ProxyConfig } from "@/dual/userProxy.interface";
 import { getFonts, type FontList } from "font-list";
+import * as os from "os";
+import { DatabaseSync } from "node:sqlite";
 
 // 获取当前窗口
 const getCurrentWindow = () => BrowserWindow.getFocusedWindow();
@@ -96,52 +97,200 @@ ipcMain.handle("get-fonts", async (): Promise<FontList> => {
   return await getFonts();
 });
 
+/**
+ * 导出用户数据到 SQLite .xcmdb 文件
+ */
 ipcMain.handle(
-  "save-json",
-  async (event, data: ISaveJSONData): Promise<null | string> => {
-    const { canceled, filePath } = await dialog.showSaveDialog({
-      title: "导出设置JSON文件",
-      defaultPath: path.join(app.getPath("desktop"), data.name), // 默认路径为桌面
-      filters: [{ name: "JSON", extensions: ["json"] }],
-    });
+  "export-user-data",
+  async (
+    event,
+    request: {
+      version: string;
+      settings: Record<string, any>;
+      playHistory: any[];
+      downloadedSongs: any[];
+    },
+  ): Promise<{ success: boolean; message?: string }> => {
     try {
-      if (canceled) {
-        return null;
-      } else if (filePath) {
-        fs.writeFileSync(filePath, data.json, "utf-8");
-        return filePath;
-      } else {
-        console.error("No file path provided");
-        return null;
+      // 用临时文件建库
+      const tmpPath = path.join(os.tmpdir(), `xcmusic-export-${Date.now()}.db`);
+      const db = new DatabaseSync(tmpPath);
+
+      db.exec(`CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)`);
+      db.exec(
+        `CREATE TABLE settings (section TEXT, key TEXT, value TEXT, PRIMARY KEY (section, key))`,
+      );
+      db.exec(
+        `CREATE TABLE play_history (
+          id TEXT PRIMARY KEY,
+          track_id INTEGER,
+          started_at INTEGER,
+          ended_at INTEGER,
+          duration_ms INTEGER
+        )`,
+      );
+      db.exec(
+        `CREATE TABLE downloaded_songs (id INTEGER PRIMARY KEY, name TEXT, path TEXT)`,
+      );
+
+      // meta
+      {
+        const stmt = db.prepare("INSERT INTO meta VALUES (?, ?)");
+        stmt.run("version", request.version);
+        stmt.run("exported_at", String(Date.now()));
       }
+
+      // settings
+      if (request.settings) {
+        const stmt = db.prepare("INSERT INTO settings VALUES (?, ?, ?)");
+        for (const [section, values] of Object.entries(request.settings)) {
+          if (values && typeof values === "object") {
+            for (const [key, value] of Object.entries(
+              values as Record<string, any>,
+            )) {
+              stmt.run(section, key, JSON.stringify(value));
+            }
+          }
+        }
+      }
+
+      // play_history
+      if (request.playHistory) {
+        const stmt = db.prepare(
+          "INSERT INTO play_history VALUES (?, ?, ?, ?, ?)",
+        );
+        for (const record of request.playHistory) {
+          stmt.run(
+            record.id,
+            record.trackId != null ? record.trackId : null,
+            record.startedAt != null ? record.startedAt : 0,
+            record.endedAt != null ? record.endedAt : 0,
+            record.durationMs != null ? record.durationMs : 0,
+          );
+        }
+      }
+
+      // downloaded_songs
+      if (request.downloadedSongs) {
+        const stmt = db.prepare(
+          "INSERT INTO downloaded_songs VALUES (?, ?, ?)",
+        );
+        for (const song of request.downloadedSongs) {
+          stmt.run(song.id, song.name, song.path);
+        }
+      }
+
+      db.close();
+
+      // 读取临时文件 → 保存为用户选择的路径
+      const fileBuffer = fs.readFileSync(tmpPath);
+      fs.unlinkSync(tmpPath);
+
+      const { canceled, filePath } = await dialog.showSaveDialog({
+        title: "导出用户数据",
+        defaultPath: path.join(
+          app.getPath("desktop"),
+          "XCMusic_UserData.xcmdb",
+        ),
+        filters: [{ name: "XCMusic 用户数据", extensions: ["xcmdb"] }],
+      });
+
+      if (canceled || !filePath) {
+        return { success: false, message: "cancelled" };
+      }
+
+      fs.writeFileSync(filePath, fileBuffer);
+      return { success: true };
     } catch (err) {
-      console.error("Error saving JSON file:", err);
-      return null;
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Export user data failed:", message);
+      return { success: false, message };
     }
   },
 );
 
-ipcMain.handle("open-json", async (): Promise<null | string> => {
-  const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ["openFile"],
-    defaultPath: app.getPath("desktop"),
-    filters: [{ name: "JSON", extensions: ["json"] }],
-  });
-  try {
-    if (canceled) {
-      return null;
-    } else if (filePaths.length > 0) {
-      const json = fs.readFileSync(filePaths[0], "utf-8");
-      return json;
-    } else {
-      console.error("No file path provided");
-      return null;
+/**
+ * 从 SQLite .xcmdb 文件导入用户数据
+ */
+ipcMain.handle(
+  "import-user-data",
+  async (): Promise<{
+    success: boolean;
+    data?: {
+      settings: Record<string, any>;
+      playHistory: any[];
+      downloadedSongs: any[];
+    };
+    message?: string;
+  }> => {
+    try {
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ["openFile"],
+        defaultPath: app.getPath("desktop"),
+        filters: [{ name: "XCMusic 用户数据", extensions: ["xcmdb"] }],
+      });
+
+      if (canceled || filePaths.length === 0) {
+        return { success: false, message: "no_file" };
+      }
+
+      const db = new DatabaseSync(filePaths[0]);
+
+      // 校验 version
+      const versionRow = db
+        .prepare("SELECT value FROM meta WHERE key = ?")
+        .get("version");
+      if (!versionRow) {
+        db.close();
+        return { success: false, message: "invalid_format" };
+      }
+
+      // 读 settings
+      const settings: Record<string, any> = {};
+      const setRows = db
+        .prepare(
+          "SELECT section, key, value FROM settings ORDER BY section, key",
+        )
+        .all() as any[];
+      for (const row of setRows) {
+        if (!settings[row.section]) settings[row.section] = {};
+        settings[row.section][row.key] = JSON.parse(row.value);
+      }
+
+      // 读 play_history
+      const historyRows = db
+        .prepare("SELECT * FROM play_history")
+        .all() as any[];
+      const playHistory = historyRows.map((row: any) => ({
+        id: row.id,
+        trackId: row.track_id,
+        startedAt: row.started_at,
+        endedAt: row.ended_at,
+        durationMs: row.duration_ms,
+      }));
+
+      // 读 downloaded_songs
+      const dlRows = db
+        .prepare("SELECT * FROM downloaded_songs")
+        .all() as any[];
+      const downloadedSongs = dlRows.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        path: row.path,
+      }));
+
+      db.close();
+
+      return {
+        success: true,
+        data: { settings, playHistory, downloadedSongs },
+      };
+    } catch (err) {
+      console.error("Import user data failed:", err);
+      return { success: false, message: "parse_error" };
     }
-  } catch (err) {
-    console.error("Error opening JSON file:", err);
-    return null;
-  }
-});
+  },
+);
 
 // 保持旧的 API 以保持向后兼容
 ipcMain.on(

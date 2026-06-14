@@ -21,13 +21,15 @@ module.exports = defineConfig({
   },
   pluginOptions: {
     electronBuilder: {
+      chainWebpackMainProcess: (config) => {
+        config.externals({ "node:sqlite": "commonjs node:sqlite" });
+      },
       preload: "preload.js",
       builderOptions: {
         win: {
           icon: "src/assets/icons/icon.ico",
           target: [
             "nsis",
-            "portable",
           ]
         },
         mac: {
