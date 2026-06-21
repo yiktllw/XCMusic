@@ -31,6 +31,8 @@ export enum PlayerEvents {
   gain = "gain",
   /** 精确时间同步，高频率，用于歌词组件 */
   timeSync = "timeSync",
+  /** 流体背景色调色板就绪 */
+  fluidPalette = "fluidPalette",
 }
 
 /** 音频增益接口 */

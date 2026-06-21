@@ -17,10 +17,12 @@
 }
 
 .playui-slide-enter-active {
-  transition: all 0.3s ease-out;
+  transition:
+    transform 0.3s ease-out,
+    background 1s ease !important;
 }
 .playui-slide-leave-active {
-  transition: all 0.3s ease-in;
+  transition: transform 0.3s ease-in !important;
 }
 
 .playui-slide-enter-from,

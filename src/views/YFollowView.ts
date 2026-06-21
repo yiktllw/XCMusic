@@ -4,7 +4,7 @@ import { useApi } from "@/utils/api";
 import YArtistList from "@/components/list/YArtistList.vue";
 import YPage from "@/components/base/YPage.vue";
 import { YPageC } from "@/dual/YPageC";
-import { YColor } from "@/utils/color";
+
 import { type IArtist } from "@/dual/YArtistList";
 
 export default defineComponent({
@@ -102,7 +102,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorTheme();
     this.resetPager();
     void this.fetchData();
   },

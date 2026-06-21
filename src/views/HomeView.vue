@@ -140,6 +140,7 @@
   padding: 0;
   overflow: hidden;
   background-color: var(--background-color);
+  transition: background 1s ease;
   top: 0;
   left: 0;
   right: 0;

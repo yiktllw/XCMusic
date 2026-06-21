@@ -32,6 +32,7 @@ type PlayerEventCallbacks = {
   [PlayerEvents.mode]: () => void;
   [PlayerEvents.playerReady]: () => void;
   [PlayerEvents.gain]: () => void;
+  [PlayerEvents.fluidPalette]: () => void;
 };
 
 export class Player {
@@ -183,6 +184,10 @@ export class Player {
           this._history = data;
           break;
       }
+      if (eventName === PlayerEvents.track) {
+        // 先清除旧 palette，让组件返回不触发动画
+        this._fluidPalette = null;
+      }
       this.subscriber.exec(eventName);
       if (eventName === PlayerEvents.track) {
         this._loadFluidPalette();
@@ -258,7 +263,10 @@ export class Player {
       const palette = await extractCoverPalette(
         track.al.picUrl + "?param=120y120",
       );
-      if (palette) this._fluidPalette = palette;
+      if (palette) {
+        this._fluidPalette = palette;
+        this.subscriber.exec(PlayerEvents.fluidPalette);
+      }
     } catch {
       // Silently fail
     }

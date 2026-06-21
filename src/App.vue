@@ -77,6 +77,10 @@ export default defineComponent({
     this.player.subscriber.on("app-fluid", PlayerEvents.track, () => {
       void this.updateFluidBackground();
     });
+    // palette 延迟加载完成后自动刷新
+    this.player.subscriber.on("app-fluid", PlayerEvents.fluidPalette, () => {
+      void this.updateFluidBackground();
+    });
     // 初始更新
     if (this.player.currentTrack) {
       void this.updateFluidBackground();
@@ -141,7 +145,7 @@ export default defineComponent({
 
       const palette = this.player.fluidPalette;
       if (!palette) return;
-      applyFluidBackground(container, palette.primary, palette.secondary, true);
+      applyFluidBackground(container, palette.primary, palette.secondary);
     },
   },
 });

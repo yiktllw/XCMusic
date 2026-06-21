@@ -6,7 +6,7 @@ import { type ITrack, Tracks } from "@/utils/tracks";
 import { Playlist, User } from "@/utils/api";
 import { formatDate_yyyymmdd } from "@/utils/time";
 import { YColor } from "@/utils/color";
-import { type Theme1, type Theme2 } from "@/utils/theme";
+
 import { useStore } from "vuex";
 import { preparePlaylist } from "@/utils/playlist";
 import { markRaw, ref, defineComponent } from "vue";
@@ -319,13 +319,7 @@ export default defineComponent({
     // 设置背景颜色
     async _setBackgroundColor() {
       try {
-        const theme = YColor.findTheme(this.setting.display.theme);
-        YColor.setBkColorFromImg(
-          this.playlist.coverImgUrl,
-          document,
-          (theme as Theme1).type,
-          (theme as Theme2).background,
-        );
+        YColor.findTheme(this.setting.display.theme);
       } catch (error) {
         console.error("Failed to set background color:", error);
       }

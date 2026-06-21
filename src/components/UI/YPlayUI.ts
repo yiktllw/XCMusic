@@ -223,7 +223,6 @@ export default defineComponent({
           this.playuiContainer,
           palette.primary,
           palette.secondary,
-          true,
         );
       }
 
@@ -303,6 +302,10 @@ export default defineComponent({
       ];
       await Promise.all(requests);
       this.currentLine = 0;
+    });
+    // palette 延迟加载完成后自动刷新
+    this.player.subscriber.on("YPlayUI", PlayerEvents.fluidPalette, () => {
+      this.setBackgroundColor();
     });
     if (this.player.currentTrack?.id && isLocal(this.player.currentTrack?.id))
       await this.getWiki();

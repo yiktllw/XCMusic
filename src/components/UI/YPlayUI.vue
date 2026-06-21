@@ -216,6 +216,7 @@
   justify-content: space-between;
   width: 100%;
   height: 100%;
+  transition: background 1s ease;
   background-color: #131319;
   user-select: none;
 

@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------*
- * fluidBackground.ts — 严格参照 test/fbm_pipeline_test.html 重写
+ * fluidBackground.ts
  * 从专辑封面提取配色，生成流体动态背景
  * 供 PlayUI 和主界面共同使用
+ * 算法来自于 LightMusic
  *---------------------------------------------------------------*/
 
 // ──────────────── 工具类型 ────────────────
@@ -19,17 +20,11 @@ export interface Palette {
 
 // ──────────────── 基础工具 ────────────────
 
-function clampByte(value: number): number {
-  if (value < 0) return 0;
-  if (value > 255) return 255;
-  return value | 0;
-}
-
 function clampColorChannel(value: number): number {
   return Math.max(0, Math.min(255, Math.round(value)));
 }
 
-// ──────────────── HSL 工具 (Java LightMusic 写法) ────────────────
+// ──────────────── HSL 工具 ────────────────
 
 interface HSLObj {
   h: number;
@@ -38,76 +33,65 @@ interface HSLObj {
 }
 
 function rgbToHsl(color: RGBColor): HSLObj {
-  const r = color.r / 255;
-  const g = color.g / 255;
-  const b = color.b / 255;
+  let r = color.r / 255;
+  let g = color.g / 255;
+  let b = color.b / 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const delta = max - min;
-  let h = 0;
-  let s = 0;
   const l = (min + max) / 2;
-  if (delta === 0) return { h: h * 360, s: s * 100, l: l * 100 };
-  s = delta / (l <= 0.5 ? min + max : 2 - max - min);
-  if (r === max) h = g === min ? 5 + (max - b) / delta : 1 - (max - g) / delta;
-  else if (g === max)
-    h = b === min ? 1 + (max - r) / delta : 3 - (max - b) / delta;
-  else h = r === min ? 3 + (max - g) / delta : 5 - (max - r) / delta;
-  h /= 6;
-  if (h === 1) h = 0;
+  if (delta === 0) return { h: 0, s: 0, l: l * 100 };
+
+  const s = delta / (1 - Math.abs(2 * l - 1));
+  let h = 0;
+  if (max === r) h = ((g - b) / delta + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / delta + 2) / 6;
+  else h = ((r - g) / delta + 4) / 6;
+
   return { h: h * 360, s: s * 100, l: l * 100 };
 }
 
 function hslToRgb(hsl: HSLObj): RGBColor {
-  const h = hsl.h / 360;
-  const s = hsl.s / 100;
-  const l = hsl.l / 100;
-  const v = l <= 0.5 ? l * (1 + s) : l + s - l * s;
+  let h = hsl.h / 360;
+  let s = hsl.s / 100;
+  let l = hsl.l / 100;
   if (s === 0) {
     const gray = clampColorChannel(l * 255);
     return { r: gray, g: gray, b: gray };
   }
-  const y = 2 * l - v;
-  const v1 = (v - y) * (6 * h - Math.floor(6 * h));
-  const x = y + v1;
-  const z = v - v1;
-  let r: number, g: number, b: number;
-  switch (Math.floor(6 * h)) {
-    case 1:
-      r = z;
-      g = v;
-      b = y;
-      break;
-    case 2:
-      r = y;
-      g = v;
-      b = x;
-      break;
-    case 3:
-      r = y;
-      g = z;
-      b = v;
-      break;
-    case 4:
-      r = x;
-      g = y;
-      b = v;
-      break;
-    case 5:
-      r = v;
-      g = y;
-      b = z;
-      break;
-    default:
-      r = v;
-      g = x;
-      b = y;
-      break;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+  const m = l - c / 2;
+  const h6 = h * 6;
+
+  let r1 = 0,
+    g1 = 0,
+    b1 = 0;
+  if (h6 < 1) {
+    r1 = c;
+    g1 = x;
+  } else if (h6 < 2) {
+    r1 = x;
+    g1 = c;
+  } else if (h6 < 3) {
+    g1 = c;
+    b1 = x;
+  } else if (h6 < 4) {
+    g1 = x;
+    b1 = c;
+  } else if (h6 < 5) {
+    r1 = x;
+    b1 = c;
+  } else {
+    r1 = c;
+    b1 = x;
   }
+
   return {
-    r: clampColorChannel(r * 255),
-    g: clampColorChannel(g * 255),
-    b: clampColorChannel(b * 255),
+    r: clampColorChannel((r1 + m) * 255),
+    g: clampColorChannel((g1 + m) * 255),
+    b: clampColorChannel((b1 + m) * 255),
   };
 }
 
@@ -120,20 +104,22 @@ function hslDistance(a: HSLObj, b: HSLObj): number {
 }
 
 /**
- * 参照 test HTML：将饱和度限制 ≤50，亮度限制 [50, 70]
+ * 将饱和度限制 ≤50，亮度限制 [50, 70]
  */
 export function makeBestPaletteColor(color: RGBColor): RGBColor {
   const hsl = rgbToHsl(color);
-  const maxS = 50;
+  const minS = 40;
+  const maxS = 60;
   const minL = 50;
   const maxL = 70;
+  if (hsl.s < minS) hsl.s = minS;
   if (hsl.s > maxS) hsl.s = maxS;
   if (hsl.l < minL) hsl.l = minL;
   else if (hsl.l > maxL) hsl.l = maxL;
   return hslToRgb(hsl);
 }
 
-// ──────────────── Java 随机数 (参照 test HTML) ────────────────
+// ──────────────── 随机数 ────────────────
 
 function createJavaRandom(seed: number) {
   const multiplier = 0x5deece66dn;
@@ -168,7 +154,7 @@ function createJavaRandom(seed: number) {
   };
 }
 
-// ──────────────── Canvas 工具 (严格参照 test HTML) ────────────────
+// ──────────────── Canvas 工具 ────────────────
 
 function makeGaussianKernelJavaLike(radius: number): Float32Array {
   const f32 = Math.fround;
@@ -260,10 +246,10 @@ function convolveAndTransposeJavaLike(
         b = f32(b * invA);
       }
 
-      const ia = alpha ? clampByte(Math.trunc(f32(a) + 0.5)) : 255;
-      const ir = clampByte(Math.trunc(f32(r) + 0.5));
-      const ig = clampByte(Math.trunc(f32(g) + 0.5));
-      const ib = clampByte(Math.trunc(f32(b) + 0.5));
+      const ia = alpha ? clampColorChannel(Math.trunc(f32(a) + 0.5)) : 255;
+      const ir = clampColorChannel(Math.trunc(f32(r) + 0.5));
+      const ig = clampColorChannel(Math.trunc(f32(g) + 0.5));
+      const ib = clampColorChannel(Math.trunc(f32(b) + 0.5));
       outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
       index += height;
     }
@@ -415,7 +401,7 @@ function resizeCanvasBilinearJavaLike(
         const top = (p00 << 8) + (p10 - p00) * xFactor;
         const bottom = (p01 << 8) + (p11 - p01) * xFactor;
         const accum = (top << 8) + (bottom - top) * yFactor;
-        outPixels[dstIdx + c] = clampByte((accum + (1 << 15)) >> 16);
+        outPixels[dstIdx + c] = clampColorChannel((accum + (1 << 15)) >> 16);
       }
 
       xLong += dxdxLong;
@@ -442,7 +428,7 @@ function resizeImageBilinearJavaLike(
   return resizeCanvasBilinearJavaLike(srcCanvas, targetW, targetH);
 }
 
-// ──────────────── MMCQ 调色板提取 (严格参照 test HTML) ────────────────
+// ──────────────── MMCQ 调色板提取 ────────────────
 
 interface VBox {
   r1: number;
@@ -642,7 +628,7 @@ function extractCoverPaletteFromImage(image: HTMLImageElement): Palette | null {
       return {
         r: clampColorChannel(Math.trunc(((v.r1 + v.r2 + 1) * multiple) / 2)),
         g: clampColorChannel(Math.trunc(((v.g1 + v.g2 + 1) * multiple) / 2)),
-        b: clampColorChannel(Math.trunc(((v.b2 + v.b2 + 1) * multiple) / 2)),
+        b: clampColorChannel(Math.trunc(((v.b1 + v.b2 + 1) * multiple) / 2)),
       };
     }
     return {
@@ -821,11 +807,50 @@ function extractCoverPaletteFromImage(image: HTMLImageElement): Palette | null {
     g: themeColors[0].g,
     b: themeColors[0].b,
   });
-  const secondRaw = themeColors[1] ?? { r: 18, g: 150, b: 219 };
+
+  // 从候选色中找一个与主色色相差 ≥ 30° 的（按优先级顺序）
+  // 都没有的话取色相差最大的，补偿其色相到 30°
+  const pHsl = rgbToHsl(primary);
+  let bestSecond: { r: number; g: number; b: number } = {
+    r: 18,
+    g: 150,
+    b: 219,
+  };
+  if (themeColors.length === 1) {
+    // 保持默认 fallback
+  } else {
+    let maxDiff = -1;
+    let fallback = themeColors[1];
+    let found = false;
+    for (let i = 1; i < themeColors.length; i++) {
+      const h = rgbToHsl(themeColors[i]).h;
+      const diff = Math.min(Math.abs(pHsl.h - h), 360 - Math.abs(pHsl.h - h));
+      if (diff >= 30) {
+        bestSecond = themeColors[i];
+        found = true;
+        break;
+      }
+      if (diff > maxDiff) {
+        maxDiff = diff;
+        fallback = themeColors[i];
+      }
+    }
+    if (!found) {
+      // 色相补偿：把 fallback 的色相往远离主色的方向推到差 30°
+      const fbHsl = rgbToHsl(fallback);
+      let rawDiff = (fbHsl.h - pHsl.h + 360) % 360;
+      const offset = 30 - maxDiff;
+      fbHsl.h =
+        rawDiff > 180
+          ? (fbHsl.h - offset + 360) % 360
+          : (fbHsl.h + offset) % 360;
+      bestSecond = hslToRgb(fbHsl);
+    }
+  }
   const secondary = makeBestPaletteColor({
-    r: secondRaw.r,
-    g: secondRaw.g,
-    b: secondRaw.b,
+    r: bestSecond.r,
+    g: bestSecond.g,
+    b: bestSecond.b,
   });
 
   return { primary, secondary };
@@ -858,26 +883,25 @@ export async function extractCoverPalette(
   }
 }
 
-// ──────────────── 流体纹理生成 (严格参照 test HTML) ────────────────
-
-const FIXED_SEED = 0x5a17c9ef;
+// ──────────────── 流体纹理生成 ────────────────
 
 /**
- * 生成流体背景纹理的 data URL
- * 管线：FBM(output尺寸) → resize至256 → Twirl → GaussianBlur → resize回output尺寸 → Darken
+ * 生成流体背景纹理的 canvas
  */
-export function createFluidTextureDataUrl(
+function createFluidTextureCanvas(
   primary: RGBColor,
   secondary: RGBColor,
   targetWidth: number,
   targetHeight: number,
-): string | null {
+): HTMLCanvasElement | null {
   const outputWidth = Math.max(320, Math.floor(targetWidth));
   const outputHeight = Math.max(220, Math.floor(targetHeight));
 
   const createJavaRandomLocal = (seed: number) => createJavaRandom(seed);
-  const noiseRandom = createJavaRandomLocal(FIXED_SEED);
-  const angleRandom = createJavaRandomLocal(FIXED_SEED);
+
+  const SEED = Date.now();
+  const noiseRandom = createJavaRandomLocal(SEED);
+  const angleRandom = createJavaRandomLocal(SEED);
 
   const fbmCanvas = document.createElement("canvas");
   fbmCanvas.width = outputWidth;
@@ -1186,7 +1210,7 @@ export function createFluidTextureDataUrl(
   }
   finalCtx.putImageData(finalData, 0, 0);
 
-  return finalCanvas.toDataURL("image/png");
+  return finalCanvas;
 }
 
 // ──────────────── 应用到容器 ────────────────
@@ -1198,18 +1222,12 @@ export function applyFluidBackground(
   container: HTMLElement,
   primary: RGBColor,
   secondary: RGBColor,
-  fade = true,
 ): void {
   const width = container.clientWidth || window.innerWidth;
   const height = container.clientHeight || window.innerHeight;
-  const textureDataUrl = createFluidTextureDataUrl(
-    primary,
-    secondary,
-    width,
-    height,
-  );
   const style = container.style;
 
+  // ── Phase 1: 颜色立即可用 ──
   style.setProperty("--playui-rgb", `${primary.r}, ${primary.g}, ${primary.b}`);
   style.setProperty(
     "--playui-rgb-dark",
@@ -1220,34 +1238,74 @@ export function applyFluidBackground(
     `${primary.r}, ${primary.g}, ${primary.b}`,
   );
 
-  const nextTexture = textureDataUrl ? `url("${textureDataUrl}")` : "none";
+  // ── Phase 2: 纹理延迟生成 ──
+  setTimeout(() => {
+    const finalCanvas = createFluidTextureCanvas(
+      primary,
+      secondary,
+      width,
+      height,
+    );
+    if (!finalCanvas) return;
 
-  if (fade) {
-    const previousTexture = style
-      .getPropertyValue("--playui-fluid-image")
-      .trim();
-    if (previousTexture && previousTexture !== "none") {
-      style.setProperty("--playui-fluid-prev-image", previousTexture);
-    }
-    style.setProperty("--playui-fluid-image", nextTexture);
-    style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
+    finalCanvas.toBlob((blob) => {
+      if (!blob) return;
+      const blobUrl = URL.createObjectURL(blob);
 
-    if (
-      previousTexture &&
-      previousTexture !== "none" &&
-      nextTexture !== "none"
-    ) {
-      style.setProperty("--playui-fluid-opacity", "0");
-      startFadeAnimation(style);
-    } else {
-      style.setProperty("--playui-fluid-opacity", "1");
-    }
-  } else {
-    style.setProperty("--playui-fluid-prev-image", "none");
-    style.setProperty("--playui-fluid-image", nextTexture);
-    style.setProperty("--playui-fluid-opacity", "1");
-    style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
-  }
+      const img = new Image();
+      img.onload = () => {
+        const nextTexture = `url("${blobUrl}")`;
+        const oldUrl = style.getPropertyValue("--playui-fluid-image").trim();
+
+        // 始终保留背景底色
+        style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
+
+        if (oldUrl && oldUrl !== "none" && oldUrl !== 'url("")') {
+          // ---- 有旧图：CSS cross-fade 动画 ----
+          style.setProperty("--playui-fluid-opacity", "1");
+
+          let start: number | null = null;
+          const duration = 700;
+
+          function step(ts: number) {
+            if (!start) start = ts;
+            const t = Math.min((ts - start) / duration, 1);
+            // cross-fade(旧图, 新图, 新图百分比)  0=全旧，100=全新
+            style.setProperty(
+              "--playui-fluid-image",
+              `-webkit-cross-fade(${oldUrl}, ${nextTexture}, ${t * 100}%)`,
+            );
+
+            if (t < 1) {
+              requestAnimationFrame(step);
+            } else {
+              // 动画结束：换成标准 url 形式，避免跨环境意外
+              style.setProperty("--playui-fluid-image", nextTexture);
+              style.setProperty("--playui-fluid-prev-image", "none");
+            }
+          }
+
+          requestAnimationFrame(step);
+        } else {
+          // ---- 无旧图：直接显示，简单淡入 ----
+          style.setProperty("--playui-fluid-image", nextTexture);
+          style.setProperty("--playui-fluid-opacity", "0");
+          const curr = container.querySelector<HTMLElement>(".bg-fluid-curr");
+          if (curr) {
+            curr.animate([{ opacity: 0 }, { opacity: 1 }], {
+              duration: 700,
+              easing: "linear",
+              fill: "forwards",
+            });
+          }
+          setTimeout(() => {
+            style.setProperty("--playui-fluid-opacity", "1");
+          }, 700);
+        }
+      };
+      img.src = blobUrl;
+    }, "image/png");
+  }, 0);
 }
 
 /**
@@ -1262,26 +1320,4 @@ export function clearFluidBackground(container: HTMLElement): void {
   style.removeProperty("--playui-fluid-image");
   style.removeProperty("--playui-fluid-opacity");
   style.background = "";
-}
-
-let _fadeFrame: number | null = null;
-
-function startFadeAnimation(style: CSSStyleDeclaration): void {
-  if (_fadeFrame !== null) {
-    cancelAnimationFrame(_fadeFrame);
-  }
-  const start = performance.now();
-  const duration = 400;
-
-  const step = (now: number) => {
-    const t = Math.min(1, (now - start) / duration);
-    style.setProperty("--playui-fluid-opacity", `${t}`);
-    if (t < 1) {
-      _fadeFrame = requestAnimationFrame(step);
-    } else {
-      style.setProperty("--playui-fluid-prev-image", "none");
-      _fadeFrame = null;
-    }
-  };
-  _fadeFrame = requestAnimationFrame(step);
 }

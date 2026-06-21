@@ -83,6 +83,7 @@ type PlayerEventCallbacks = {
   [PlayerEvents.playerReady]: () => void;
   [PlayerEvents.gain]: () => void;
   [PlayerEvents.timeSync]: () => void;
+  [PlayerEvents.fluidPalette]: () => void;
 };
 
 const WORKLET_PROCESSOR_NAME = "xc-audio-engine-processor";

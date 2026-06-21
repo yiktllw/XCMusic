@@ -281,7 +281,6 @@ import {
 import { type ITrack } from "@/utils/tracks";
 import { YColor } from "@/utils/color";
 import { getStorage, StorageKey } from "@/utils/render_storage";
-import type { Theme1, Theme2 } from "@/utils/theme";
 import play_svg from "@/assets/play.svg";
 import addToPlaylist_svg from "@/assets/addtoplaylist.svg";
 import download_svg from "@/assets/download.svg";
@@ -458,14 +457,8 @@ export default defineComponent({
     },
     setBkgColor() {
       try {
-        const theme = YColor.findTheme(
+        YColor.findTheme(
           getStorage(StorageKey.Setting_Display_Theme) ?? "dark",
-        );
-        YColor.setBkColorFromImg(
-          this.playlistDetail.cover,
-          document,
-          (theme as Theme1).type,
-          (theme as Theme2).background,
         );
       } catch (error) {
         console.error("Failed to set background color:", error);

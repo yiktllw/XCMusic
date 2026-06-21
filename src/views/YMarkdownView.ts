@@ -3,7 +3,6 @@ import { marked } from "marked";
 import README from "@/../README.md";
 import CHANGELOG from "@/../CHANGELOG.md";
 import PRIVILEGES from "@/../docs/PRIVILEGES.md";
-import { YColor } from "@/utils/color";
 
 // let path: null | any = null,
 let shell: null | any = null;
@@ -76,9 +75,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    YColor.setBackgroundColorHex2(
-      YColor.stringToHexColor(this.file === "README" ? "README" : "CHANGELOG"),
-    );
     this.md?.addEventListener("click", this.handleLinkClick);
   },
   beforeUnmount() {
