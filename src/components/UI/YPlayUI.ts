@@ -229,7 +229,7 @@ export default defineComponent({
       // 设置进度条颜色
       let progressDOM = this.playBar?.progressBarNoTrack?.progressDOM;
       if (progressDOM) {
-        progressDOM.style.background = `linear-gradient(to right, rgba(${palette.primary.r}, ${palette.primary.g}, ${palette.primary.b}, .4321), rgb(${palette.primary.r}, ${palette.primary.g}, ${palette.primary.b} ))`;
+        progressDOM.style.background = `rgba(${palette.primary.r}, ${palette.primary.g}, ${palette.primary.b},0.642 )`;
       }
       progressDOM = null;
     },

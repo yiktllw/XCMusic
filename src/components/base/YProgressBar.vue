@@ -115,7 +115,7 @@
 
     .progress-no-track {
       height: 75%;
-      background: linear-gradient(to right, rgba(200, 135, 165, 0.1), #cc88aa);
+      background: #cc88aa;
       border-radius: 10px;
       transition:
         clip-path var(--transition-track-time) linear,

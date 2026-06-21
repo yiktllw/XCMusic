@@ -249,8 +249,7 @@
 
   .title-bar,
   .main-content,
-  .play-bar,
-  .spectrum-canvas {
+  .play-bar {
     position: relative;
     z-index: 1;
   }
