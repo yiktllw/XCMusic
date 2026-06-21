@@ -581,40 +581,27 @@
 
     .desktop-lyric-open-dot {
       position: absolute;
-      right: -2px;
+      right: -3px;
       top: -2px;
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: rgb(66, 185, 131);
       box-shadow: 0 0 4px rgba(66, 185, 131, 0.7);
-
-      &.is-locked {
-        background: rgb(230, 164, 50);
-        box-shadow: 0 0 4px rgba(230, 164, 50, 0.7);
-      }
     }
 
     .desktop-lyric-lock-badge {
       position: absolute;
-      right: -5px;
-      bottom: -5px;
+      right: -9px;
+      bottom: -7px;
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: var(--panel-background-color);
-      border: 1px solid rgba(var(--foreground-color-rgb), 0.25);
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
 
       .desktop-lyric-lock-icon {
         width: 12px;
         height: 12px;
         display: block;
-        transform: translateX(0.8px);
       }
     }
   }
