@@ -47,6 +47,7 @@ export interface ITrack {
   dt: number; // 歌曲时长
   pop: number; // 歌曲流行度, 0-100的整数
   playCount: number; // 歌曲播放次数
+  fee: number; // 付费状态: 0=免费, 1=VIP, 4=付费
   lyrics: Array<string>; // 歌词
   h: any; // higher信息
   l: any; // standard信息
@@ -105,6 +106,7 @@ export class Tracks {
         dt: 0,
         pop: 0,
         playCount: 0,
+        fee: 0,
         lyrics: [""],
         h: null,
         l: null,
@@ -259,6 +261,7 @@ export class Tracks {
         );
         resultTrack.dt = track.dt;
         resultTrack.pop = track.pop;
+        resultTrack.fee = track.fee ?? 0;
         resultTrack.h = track.h ? { size: track.h.size } : null;
         resultTrack.l = track.l ? { size: track.l.size } : null;
         resultTrack.sq = track.sq ? { size: track.sq.size } : null;

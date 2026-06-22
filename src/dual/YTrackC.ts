@@ -14,6 +14,7 @@ export class YTrackC implements ITrack {
   dt = 0;
   pop = 0;
   playCount = 0;
+  fee = 0;
   lyrics = [];
   h = null;
   l = null;

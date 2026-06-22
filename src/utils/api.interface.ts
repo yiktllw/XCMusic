@@ -14,7 +14,7 @@ namespace Public {
   export interface IPrivilege {
     /** 歌曲ID */
     id: number;
-    /** 未知参数 */
+    /** 是否 VIP */
     fee: number;
     /** 是否购买 */
     payed: number;

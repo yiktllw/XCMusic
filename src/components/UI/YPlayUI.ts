@@ -134,6 +134,7 @@ export default defineComponent({
         id: 0 as number | string,
         name: "",
         tns: "",
+        fee: 0,
         al: {
           id: 0,
           name: "",

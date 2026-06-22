@@ -85,6 +85,9 @@
                 :src="success_svg"
                 v-if="downloadedSongIds.includes(item.id)"
               />
+              <span class="vip-badge" v-if="item.fee === 1 || item.fee === 4"
+                >VIP</span
+              >
               <template
                 v-if="item.ar[0].name"
                 v-for="(artist, artist_index) in item.ar"
@@ -1040,5 +1043,16 @@ export default defineComponent({
     text-overflow: ellipsis;
     text-wrap: nowrap;
   }
+}
+.vip-badge {
+  padding: 1px 3px 0px 4px;
+  margin-right: 4px;
+  letter-spacing: 1px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: rgb(var(--highlight-color-rgb));
+  border: 1.5px solid rgba(var(--highlight-color-rgb), 0.8);
+  border-radius: 6px;
+  vertical-align: middle;
 }
 </style>
