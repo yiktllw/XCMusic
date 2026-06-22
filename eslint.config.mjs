@@ -23,6 +23,7 @@ export default [
         ...globals.browser,
         ...globals.node,
         NodeJS: true,
+        __GIT_COMMIT__: "readonly",
       },
     },
     rules: {

@@ -866,8 +866,15 @@
               <div class="content-item-title">
                 {{ $t("setting_view.about.version") }}
               </div>
-              <div class="content-item-content">
-                {{ version }}
+              <div style="font-style: italic" class="content-item-content">
+                {{ version
+                }}<span
+                  style="cursor: pointer"
+                  v-if="commitHash"
+                  @click="openGitRepo('commit')"
+                >
+                  ({{ commitHash }})</span
+                >
               </div>
             </div>
             <!-- 关于-介绍 -->

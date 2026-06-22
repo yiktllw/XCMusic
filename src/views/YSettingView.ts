@@ -50,6 +50,9 @@ export default defineComponent({
     version() {
       return packageJson.version;
     },
+    commitHash() {
+      return typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "";
+    },
   },
   watch: {},
   data() {
@@ -299,7 +302,9 @@ export default defineComponent({
       this.quality = quality;
       this.setting.download.quality = quality;
     },
-    openGitRepo(position: "default" | "issues" | "license" = "default") {
+    openGitRepo(
+      position: "default" | "issues" | "license" | "commit" = "default",
+    ) {
       if (!window.electron?.isElectron) return;
       if (position === "default") {
         window.electron.shell.openExternal(
@@ -313,6 +318,12 @@ export default defineComponent({
         window.electron.shell.openExternal(
           "https://github.com/yiktllw/XCMusic/blob/master/LICENSE",
         );
+      } else if (position === "commit") {
+        if (this.commitHash) {
+          window.electron.shell.openExternal(
+            `https://github.com/yiktllw/XCMusic/commit/${this.commitHash}`,
+          );
+        }
       }
     },
     openAuthor() {

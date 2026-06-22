@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { defineConfig } = require("@vue/cli-service");
 const webpack = require("webpack"); // 引入 webpack 以使用 DefinePlugin 插件
+const { execSync } = require("child_process");
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -54,6 +55,15 @@ module.exports = defineConfig({
         __VUE_OPTIONS_API__: JSON.stringify(true), // 启用 Options API
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // 禁用生产环境中的 Vue DevTools
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // 禁用生产环境的 hydration mismatch 错误详细信息
+        __GIT_COMMIT__: JSON.stringify(
+          (() => {
+            try {
+              return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+            } catch {
+              return "unknown";
+            }
+          })(),
+        ),
       }),
     ],
     resolve: {

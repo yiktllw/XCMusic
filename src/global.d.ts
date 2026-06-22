@@ -101,6 +101,7 @@ interface ViewTimelineOptions {
 }
 
 declare global {
+  const __GIT_COMMIT__: string;
   interface Window {
     electron: electron;
     api: api;
