@@ -102,6 +102,7 @@ interface ViewTimelineOptions {
 
 declare global {
   const __GIT_COMMIT__: string;
+  const __BUILD_DATE__: string;
   interface Window {
     electron: electron;
     api: api;

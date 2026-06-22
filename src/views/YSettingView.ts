@@ -53,6 +53,9 @@ export default defineComponent({
     commitHash() {
       return typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "";
     },
+    buildDate() {
+      return typeof __BUILD_DATE__ !== "undefined" ? __BUILD_DATE__ : "";
+    },
   },
   watch: {},
   data() {

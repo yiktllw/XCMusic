@@ -24,6 +24,7 @@ export default [
         ...globals.node,
         NodeJS: true,
         __GIT_COMMIT__: "readonly",
+        __BUILD_DATE__: "readonly",
       },
     },
     rules: {

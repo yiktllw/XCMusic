@@ -3,6 +3,22 @@ const { defineConfig } = require("@vue/cli-service");
 const webpack = require("webpack"); // 引入 webpack 以使用 DefinePlugin 插件
 const { execSync } = require("child_process");
 
+const gitHash = (() => {
+  try {
+    return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+  } catch {
+    return "unknown";
+  }
+})();
+
+const buildDate = (() => {
+  try {
+    return execSync("git log -1 --format=%cd --date=format:%Y%m%d", { encoding: "utf-8" }).trim();
+  } catch {
+    return new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  }
+})();
+
 module.exports = defineConfig({
   transpileDependencies: true,
   outputDir: "dist_electron",
@@ -39,6 +55,7 @@ module.exports = defineConfig({
         linux: {
           icon: "src/assets/icons/icon.png",
         },
+        artifactName: `XCMusic-\${version}-${gitHash}-${buildDate}-\${arch}.\${ext}`,
         nsis: {
           oneClick: false, // 禁用一键安装
           allowToChangeInstallationDirectory: true, // 允许用户选择安装路径
@@ -55,15 +72,8 @@ module.exports = defineConfig({
         __VUE_OPTIONS_API__: JSON.stringify(true), // 启用 Options API
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // 禁用生产环境中的 Vue DevTools
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // 禁用生产环境的 hydration mismatch 错误详细信息
-        __GIT_COMMIT__: JSON.stringify(
-          (() => {
-            try {
-              return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-            } catch {
-              return "unknown";
-            }
-          })(),
-        ),
+        __GIT_COMMIT__: JSON.stringify(gitHash),
+        __BUILD_DATE__: JSON.stringify(buildDate),
       }),
     ],
     resolve: {

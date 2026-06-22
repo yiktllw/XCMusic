@@ -873,7 +873,9 @@
                   v-if="commitHash"
                   @click="openGitRepo('commit')"
                 >
-                  ({{ commitHash }})</span
+                  ({{ commitHash
+                  }}<span v-if="buildDate">, {{ buildDate }}</span
+                  >)</span
                 >
               </div>
             </div>
