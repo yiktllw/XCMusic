@@ -38,12 +38,31 @@
         class="play-info"
         v-else-if="showInfo"
         :style="{
-          transform: `translateX(clamp(0px, calc(${mouseProgress * 100}vw - 30px), calc(100vw - 50px))`,
+          transform: `translateX(clamp(0px, calc(${mouseProgress * 100}vw - 25px), calc(100vw - 50px))`,
         }"
       >
-        {{ formatDuration(mouseProgress) }}
-        <div class="lyric">
-          <span class="txt"> &nbsp;{{ currentLyric }} </span>
+        <span
+          class="play-info-time"
+          :style="
+            mouseProgress >= 0.5
+              ? { borderRadius: '0 5px 5px 0' }
+              : { borderRadius: '5px 0 0 5px' }
+          "
+          >{{ formatDuration(mouseProgress) }}</span
+        >
+        <div
+          class="lyric"
+          v-if="currentLyric"
+          :style="
+            mouseProgress >= 0.5
+              ? {
+                  transform: 'translateX(calc(-100% - 40px))',
+                  borderRadius: '5px 0 0 5px',
+                }
+              : { transform: 'translateX(-10px)', borderRadius: '0 5px 5px 0' }
+          "
+        >
+          <span class="txt">{{ currentLyric }}</span>
         </div>
       </div>
       <div class="progress-track" v-if="showTrack"></div>
@@ -147,26 +166,48 @@
 
     .play-info {
       position: absolute;
-      top: -38px;
-      background-color: var(--panel-background-color);
+      top: -35px;
       color: var(--font-color-high);
       font-size: 14px;
       font-weight: bold;
-      padding: 5px 10px;
-      border-radius: 5px;
       z-index: 2;
-      box-shadow: rgba($color: #000, $alpha: 0.4) 0 0 3px 0;
 
       display: flex;
       flex-wrap: nowrap;
       align-items: center;
 
+      .play-info-time {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        background-color: var(--panel-background-color);
+        height: 25px;
+        width: 50px;
+        text-align: center;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          border-width: 10px 10px 0 10px;
+          border-style: solid;
+          border-color: var(--panel-background-color) transparent transparent
+            transparent;
+        }
+      }
+
       .lyric {
+        background-color: var(--panel-background-color);
+        padding: 0 10px;
         display: flex;
         align-items: center;
         line-height: 1.2;
-        height: 20px;
-        max-width: 160px;
+        height: 25px;
+        max-width: 321px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -174,20 +215,6 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: -10px;
-        /* 控制尖角距离矩形的距离 */
-        left: 30px;
-        /* 尖角居中对齐 */
-        transform: translateX(-50%);
-        border-width: 10px 10px 0 10px;
-        border-style: solid;
-        border-color: var(--panel-background-color) transparent transparent
-          transparent;
       }
     }
   }
