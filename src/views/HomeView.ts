@@ -15,6 +15,7 @@ import YCloseWindow from "@/components/YWindows/YCloseWindow.vue";
 import YEditPlaylistWindow from "@/components/YWindows/YEditPlaylistWindow.vue";
 import YEqualizerWindow from "@/components/YWindows/YEqualizerWindow.vue";
 import YFontsSelectWindow from "@/components/YWindows/YFontsSelectWindow.vue";
+import YPlaylistInfoWindow from "@/components/YWindows/YPlaylistInfoWindow.vue";
 import { useStore } from "vuex";
 import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
@@ -78,6 +79,11 @@ export default defineComponent({
       msgIdCounter: 0,
       maxVisibleMessages: 5,
       showPlayUI: false,
+      showPlaylistInfo: false,
+      playlistInfoDetail: null as
+        | import("@/views/YPlaylistViewNew/utils").IPlaylistDetail
+        | null,
+      playlistInfoType: "playlist" as "playlist" | "album",
     };
   },
   components: {
@@ -98,6 +104,7 @@ export default defineComponent({
     YEditPlaylistWindow,
     YEqualizerWindow,
     YFontsSelectWindow,
+    YPlaylistInfoWindow,
   },
   computed: {},
   setup() {
@@ -230,6 +237,16 @@ export default defineComponent({
       (ids) => {
         this.trackIds = ids.filter((id) => !isLocal(id));
         this.showAddToPlaylist = true;
+        this.showPreventContainer = true;
+      },
+    );
+    this.globalMsg.subscriber.on(
+      "HomeView",
+      GlobalMsgEvents.OpenPlaylistInfo,
+      (detail, type) => {
+        this.playlistInfoDetail = detail;
+        this.playlistInfoType = type;
+        this.showPlaylistInfo = true;
         this.showPreventContainer = true;
       },
     );
@@ -583,6 +600,12 @@ export default defineComponent({
     handleNewWindowState_songInfo(val: boolean) {
       if (val === false) {
         this.showSongInfo = false;
+        this.showPreventContainer = false;
+      }
+    },
+    handleNewWindowState_playlistInfo(val: boolean) {
+      if (val === false) {
+        this.showPlaylistInfo = false;
         this.showPreventContainer = false;
       }
     },

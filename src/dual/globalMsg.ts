@@ -33,4 +33,6 @@ export enum GlobalMsgEvents {
   RefreshPlaylist = "RefreshPlaylist",
   /** 打开收藏到歌单窗口 */
   OpenAddToPlaylistWindow = "OpenAddToPlaylistWindow",
+  /** 打开歌单/专辑信息窗口 */
+  OpenPlaylistInfo = "OpenPlaylistInfo",
 }

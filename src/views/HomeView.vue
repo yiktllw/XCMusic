@@ -100,6 +100,12 @@
         v-if="showFontsSelectWindow"
         @new-window-state="handleNewWindowState_fontsSelectWindow"
       />
+      <YPlaylistInfoWindow
+        v-if="showPlaylistInfo && playlistInfoDetail"
+        :detail="playlistInfoDetail"
+        :type="playlistInfoType"
+        @new-window-state="handleNewWindowState_playlistInfo"
+      />
     </div>
     <div class="message-container">
       <transition-group name="msg-list-transition" tag="div" class="msg-list">

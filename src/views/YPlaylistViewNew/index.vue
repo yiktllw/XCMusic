@@ -152,14 +152,7 @@
               <img :src="play_svg" class="icn" />
               {{ $t("playlist_view.play") }}
             </button>
-            <button
-              :tabindex="-1"
-              class="add-to-playlist-btn btn"
-              @click="addToPlaylist"
-            >
-              <img :src="addToPlaylist_svg" class="icn g-icon" />
-              {{ $t("playlist_view.add_to_playlist") }}
-            </button>
+
             <button :tabindex="-1" class="btn" @click="downloadAll">
               <img :src="download_svg" class="icn g-icon" />
               <span>{{ $t("playlist_view.download") }}</span>
@@ -183,6 +176,49 @@
               <img :src="multichoice_svg" class="icn g-icon" />
               {{ $t("playlist_view.multi_select") }}
             </button>
+            <button
+              ref="moreBtn"
+              :tabindex="-1"
+              class="btn"
+              @click="morePanel?.tooglePanel()"
+            >
+              <img :src="more_svg" class="icn g-icon" />
+              {{ $t("songs_table.more") }}
+            </button>
+            <YPanel
+              :trigger="moreBtn as HTMLElement"
+              :slide-direction="0"
+              :animation-time="0.1"
+              :hide-mode="'show'"
+              ref="morePanel"
+            >
+              <div id="panel" class="more-dropdown">
+                <div
+                  class="more-item"
+                  @click="
+                    addToPlaylist;
+                    morePanel?.closePanel();
+                  "
+                >
+                  <img :src="addToPlaylist_svg" class="icn" />
+                  {{ $t("playlist_view.add_to_playlist") }}
+                </div>
+                <div
+                  class="more-item"
+                  @click="
+                    openInfo();
+                    morePanel?.closePanel();
+                  "
+                >
+                  <img :src="detail_svg" class="icn" />
+                  {{
+                    type === "playlist"
+                      ? $t("playlist_view.playlist_info")
+                      : $t("playlist_view.album_info")
+                  }}
+                </div>
+              </div>
+            </YPanel>
           </div>
         </div>
       </div>
@@ -223,6 +259,7 @@
       </div>
     </template>
   </YSongsTableNew>
+
   <!-- 多选功能 -->
   <div class="multi-select-buttons" v-if="isMultiSelect">
     <div class="left">
@@ -272,6 +309,8 @@
 <script lang="ts">
 import { defineComponent, useTemplateRef } from "vue";
 import YSongsTableNew from "@/components/list/YSongsTableNew/index.vue";
+import YPanel from "@/components/base/YPanel.vue";
+
 import { getSongsTableOptions } from "@/components/list/YSongsTableNew/utils";
 import {
   getAlbumDetail,
@@ -289,6 +328,8 @@ import multichoice_svg from "@/assets/multichoice.svg";
 import search_svg from "@/assets/search.svg";
 import clear_svg from "@/assets/clear2.svg";
 import delete_svg from "@/assets/delete.svg";
+import more_svg from "@/assets/more.svg";
+import detail_svg from "@/assets/detail.svg";
 import { useStore } from "vuex";
 import { Playlist } from "@/utils/api";
 import { LoginEvents } from "@/dual/login";
@@ -301,6 +342,7 @@ export default defineComponent({
   name: "YPlaylistViewNew",
   components: {
     YSongsTableNew,
+    YPanel,
     ContentLoader,
   },
   props: {
@@ -352,6 +394,8 @@ export default defineComponent({
     const store = useStore();
     const songsTable =
       useTemplateRef<ComponentExposed<typeof YSongsTableNew>>("songsTable");
+    const moreBtn = useTemplateRef<HTMLElement>("moreBtn");
+    const morePanel = useTemplateRef<InstanceType<typeof YPanel>>("morePanel");
 
     return {
       player: store.state.player,
@@ -359,6 +403,8 @@ export default defineComponent({
       login: store.state.login,
       globalMsg: store.state.globalMsg,
       songsTable,
+      moreBtn,
+      morePanel,
     };
   },
   data() {
@@ -377,6 +423,8 @@ export default defineComponent({
       search_svg,
       clear_svg,
       delete_svg,
+      more_svg,
+      detail_svg,
       userSubscribeIds: [] as number[],
       userSubscribeAlbumIds: [] as number[],
       userCreateIds: [] as number[],
@@ -590,6 +638,13 @@ export default defineComponent({
       }
       // console.log(type, res);
     },
+    openInfo() {
+      this.globalMsg.post(
+        GlobalMsgEvents.OpenPlaylistInfo,
+        this.playlistDetail,
+        this.type,
+      );
+    },
     multiChoice() {
       this.isMultiSelect = !this.isMultiSelect;
     },
@@ -790,16 +845,16 @@ export default defineComponent({
 
     .right {
       margin: 0 0 0 15px;
-      overflow: hidden;
+      width: calc(100% - 180px);
       .title {
         margin: 8px 0;
-        overflow: hidden;
+        overflow-x: hidden;
         text-overflow: ellipsis;
         text-wrap: nowrap;
       }
       .artists {
         margin-top: 12px;
-        overflow: hidden;
+        overflow-x: hidden;
         text-overflow: ellipsis;
         text-wrap: nowrap;
         .creator {
@@ -857,6 +912,37 @@ export default defineComponent({
           background: rgba(var(--highlight-color-rgb), 1);
           &:hover {
             background: rgba(var(--highlight-color-rgb), 0.8);
+          }
+        }
+
+        .more-dropdown {
+          position: absolute;
+          left: -90px;
+          top: 43.21px;
+          min-width: 180px;
+          background: var(--panel-background-color);
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          padding: 4px 0;
+
+          .more-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0.8;
+
+            &:hover {
+              opacity: 1;
+              background: rgba(var(--foreground-color-rgb), 0.1);
+            }
+
+            .icn {
+              width: 16px;
+              opacity: 0.6;
+            }
           }
         }
       }

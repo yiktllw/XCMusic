@@ -39,6 +39,10 @@ type GlobalMsgFuncs = {
   [GlobalMsgEvents.RefreshSidebar]: () => void;
   [GlobalMsgEvents.RefreshPlaylist]: (playlistId: number) => void;
   [GlobalMsgEvents.OpenAddToPlaylistWindow]: (ids: number[]) => void;
+  [GlobalMsgEvents.OpenPlaylistInfo]: (
+    detail: import("@/views/YPlaylistViewNew/utils").IPlaylistDetail,
+    type: "playlist" | "album",
+  ) => void;
 };
 
 export class GlobalMsg {

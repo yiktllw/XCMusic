@@ -261,6 +261,23 @@
   "playlist_biglist": {
     "song_count": "首"
   },
+  "playlist_info": {
+    "album_info": "专辑信息",
+    "artist": "艺术家",
+    "click_to_copy": "点击复制",
+    "click_to_view": "点击查看详情",
+    "created_time": "创建时间",
+    "creator": "创建者",
+    "id": "ID",
+    "link": "链接",
+    "name": "名称",
+    "play_count": "播放次数",
+    "playlist_info": "歌单信息",
+    "published_time": "发行时间",
+    "title": "歌单信息",
+    "tns_name": "译名",
+    "track_count": "歌曲数量"
+  },
   "playlist_list": {
     "author": "作者",
     "create_time": "创建时间",
@@ -272,6 +289,7 @@
   },
   "playlist_view": {
     "add_to_playlist": "添加到播放列表",
+    "album_info": "专辑信息",
     "author": "作者",
     "comments": "评论",
     "complete": "完成",
@@ -285,6 +303,7 @@
     "multi_select": "多选",
     "my_favorite_musics": "我喜欢的音乐",
     "play": "播放",
+    "playlist_info": "歌单信息",
     "published_time": "发布",
     "search": "搜索",
     "select_all": "全选",

@@ -261,6 +261,22 @@
   "playlist_biglist": {
     "song_count": ""
   },
+  "playlist_info": {
+    "album_info": "Album Information",
+    "artist": "Artist",
+    "click_to_copy": "Click to copy",
+    "click_to_view": "Click to view details",
+    "created_time": "Created",
+    "creator": "Creator",
+    "id": "ID",
+    "link": "Link",
+    "name": "Playlist Name",
+    "play_count": "Plays",
+    "playlist_info": "Playlist Information",
+    "published_time": "Published",
+    "tns_name": "Translated Name",
+    "track_count": "Tracks"
+  },
   "playlist_list": {
     "author": "Author",
     "create_time": "Release Date",
@@ -272,6 +288,7 @@
   },
   "playlist_view": {
     "add_to_playlist": "Add to playlist",
+    "album_info": "Album information",
     "author": "Author",
     "comments": "Comments",
     "complete": "Complete",
@@ -285,6 +302,7 @@
     "multi_select": "Multi Select",
     "my_favorite_musics": "My Favorites",
     "play": "Play",
+    "playlist_info": "Playlist information",
     "published_time": "Published",
     "search": "Search",
     "select_all": "Select All",
