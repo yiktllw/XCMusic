@@ -1907,6 +1907,7 @@ export class Player {
     this._audio.src = "";
     this.clearHistory();
     this.subscriber.exec(PlayerEvents.playlist);
+    this.subscriber.exec(PlayerEvents.track);
   }
   /**
    * 下一首播放指定歌曲
