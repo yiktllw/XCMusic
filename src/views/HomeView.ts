@@ -16,6 +16,7 @@ import YEditPlaylistWindow from "@/components/YWindows/YEditPlaylistWindow.vue";
 import YEqualizerWindow from "@/components/YWindows/YEqualizerWindow.vue";
 import YFontsSelectWindow from "@/components/YWindows/YFontsSelectWindow.vue";
 import YPlaylistInfoWindow from "@/components/YWindows/YPlaylistInfoWindow.vue";
+import type { IPlaylistDetail } from "@/views/YPlaylistViewNew/utils";
 import { useStore } from "vuex";
 import { defineComponent, ref, toRaw } from "vue";
 import { Message } from "@/dual/YMessageC";
@@ -80,9 +81,7 @@ export default defineComponent({
       maxVisibleMessages: 5,
       showPlayUI: false,
       showPlaylistInfo: false,
-      playlistInfoDetail: null as
-        | import("@/views/YPlaylistViewNew/utils").IPlaylistDetail
-        | null,
+      playlistInfoDetail: null as IPlaylistDetail | null,
       playlistInfoType: "playlist" as "playlist" | "album",
     };
   },

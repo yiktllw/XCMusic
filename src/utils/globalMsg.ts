@@ -6,10 +6,11 @@
  * 2. 要求用户确认某些操作
  *---------------------------------------------------------------*/
 
-import { type IPlaylistCtxData } from "@/dual/YContextMenuItemC";
+import type { IPlaylistCtxData } from "@/dual/YContextMenuItemC";
+import type { IPlaylistDetail } from "@/views/YPlaylistViewNew/utils";
 import { Subscriber } from "@/utils/subscribe";
 import { GlobalMsgEvents } from "@/dual/globalMsg";
-import { type IEscapedFonts } from "./fonts";
+import type { IEscapedFonts } from "./fonts";
 
 export interface IConfirm {
   /** 显示在确认窗口的内容 */
@@ -40,7 +41,7 @@ type GlobalMsgFuncs = {
   [GlobalMsgEvents.RefreshPlaylist]: (playlistId: number) => void;
   [GlobalMsgEvents.OpenAddToPlaylistWindow]: (ids: number[]) => void;
   [GlobalMsgEvents.OpenPlaylistInfo]: (
-    detail: import("@/views/YPlaylistViewNew/utils").IPlaylistDetail,
+    detail: IPlaylistDetail,
     type: "playlist" | "album",
   ) => void;
 };
