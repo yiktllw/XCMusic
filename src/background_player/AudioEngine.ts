@@ -59,11 +59,9 @@ export class AudioEngine {
     this._preloadSourceNode = this._audioContext.createMediaElementSource(
       this.host._preloadAudio,
     );
-    if (!this._directOutput) {
-      this._destination = this._audioContext.createMediaStreamDestination();
-      this.host._outputAudio.srcObject = this._destination.stream;
-      void this.host._outputAudio.play().catch(() => undefined);
-    }
+    this._destination = this._audioContext.createMediaStreamDestination();
+    this.host._outputAudio.srcObject = this._destination.stream;
+    void this.host._outputAudio.play().catch(() => undefined);
 
     this._workletSetupPromise = this.setupAudioWorklet();
     this._workletSetupPromise.catch((error) => {
@@ -72,17 +70,19 @@ export class AudioEngine {
   }
 
   private async setupAudioWorklet() {
-    if (!this._audioContext || !this._sourceNode || !this._preloadSourceNode) {
+    if (
+      !this._audioContext ||
+      !this._sourceNode ||
+      !this._preloadSourceNode ||
+      !this._destination
+    ) {
       return;
     }
-    if (!this._directOutput && !this._destination) return;
 
     const audioContext = this._audioContext;
     const sourceNode = this._sourceNode;
     const preloadSourceNode = this._preloadSourceNode;
-    const outputNode: AudioNode = this._directOutput
-      ? audioContext.destination
-      : this._destination!;
+    const destinationNode = this._destination;
 
     try {
       await audioContext.audioWorklet.addModule(getWorkletModuleURL());
@@ -92,7 +92,7 @@ export class AudioEngine {
         this._audioContext !== audioContext ||
         this._sourceNode !== sourceNode ||
         this._preloadSourceNode !== preloadSourceNode ||
-        (!this._directOutput && this._destination !== outputNode)
+        this._destination !== destinationNode
       ) {
         return;
       }
@@ -107,7 +107,11 @@ export class AudioEngine {
 
       sourceNode.connect(workletNode);
       preloadSourceNode.connect(workletNode);
-      workletNode.connect(outputNode);
+      if (this._directOutput) {
+        workletNode.connect(audioContext.destination);
+      } else {
+        workletNode.connect(this._destination);
+      }
       this._workletNode = workletNode;
       this._workletReady = true;
       this._workletErrorNotified = false;
@@ -161,7 +165,7 @@ export class AudioEngine {
       !this._audioContext ||
       !this._sourceNode ||
       !this._preloadSourceNode ||
-      (!this._directOutput && !this._destination)
+      !this._destination
     ) {
       this.initAudioContext();
     }
