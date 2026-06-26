@@ -162,6 +162,8 @@ export default defineComponent({
       downloadedSongIds: [] as number[],
       /** 用来等待面板加载完成后再加载歌曲 */
       showSongs: false,
+      /** 滚动到当前歌曲后，才允许显示真实列表 */
+      scrollCompleted: false,
       desktopLyricOpened: false,
       desktopLyricLocked: false,
     };
@@ -351,9 +353,18 @@ export default defineComponent({
     },
     scrollToCurrentTrack() {
       setTimeout(() => {
-        if (this.songstable) {
-          this.songstable.scrollToCurrentTrack(true);
-        }
+        // 第一步：让 YSongsTableNew 挂载到 DOM（但还被骨架屏遮住）
+        this.showSongs = true;
+        this.$nextTick(() => {
+          // 第二步：DOM 更新后 songstable ref 可用，执行滚动
+          if (this.songstable) {
+            this.songstable.scrollToCurrentTrack(true);
+          }
+          // 第三步：滚动完成后揭开真实列表，隐藏骨架屏
+          this.$nextTick(() => {
+            this.scrollCompleted = true;
+          });
+        });
       }, 300);
     },
     async downloadCurrentTrack() {
@@ -375,10 +386,7 @@ export default defineComponent({
     },
     handlePlaylistClose() {
       this.showSongs = false;
-    },
-    handlePlaylistPanelMounted() {
-      // console.log("playlist panel mounted");
-      this.showSongs = true;
+      this.scrollCompleted = false;
     },
     handleSort(list: ITrack[]) {
       // 此处设置 _playlist 是为了避免在设置 playlist 时触发事件 PlayerEvents.playlist

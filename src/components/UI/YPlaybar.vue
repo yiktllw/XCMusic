@@ -451,7 +451,6 @@
         <!-- 播放列表面板 -->
         <YPanel
           ref="playlist_panel"
-          @mounted="handlePlaylistPanelMounted"
           @close-panel="handlePlaylistClose"
           :trigger="playlist_panel_trigger as HTMLElement"
           :slide-direction="4"
@@ -501,14 +500,21 @@
                 {{ $t("playbar.playlist_panel.like") }}
               </div>
             </div>
-            <YSongsTableNew
-              v-if="showSongs"
-              :options="songs_table_options"
-              @sort="handleSort"
-              class="songs-table"
-              ref="songstable"
-            />
-            <YSongsTableSkeleton type="small" style="margin-top: 10px" v-else />
+            <div class="playlist-table-area">
+              <YSongsTableNew
+                v-if="showSongs"
+                :options="songs_table_options"
+                @sort="handleSort"
+                class="songs-table"
+                :style="{ visibility: scrollCompleted ? 'visible' : 'hidden' }"
+                ref="songstable"
+              />
+              <YSongsTableSkeleton
+                v-if="!scrollCompleted"
+                type="small"
+                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
+              />
+            </div>
           </div>
         </YPanel>
       </div>
@@ -1089,6 +1095,12 @@
           margin-left: 10px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           justify-content: space-between;
+        }
+
+        .playlist-table-area {
+          position: relative;
+          flex: 1;
+          overflow: hidden;
         }
       }
     }
