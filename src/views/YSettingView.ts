@@ -138,6 +138,7 @@ export default defineComponent({
       proxy_port: "",
       allowConsecutiveAlbums: false,
       gaplessPlayback: false,
+      directOutput: true,
       /** 使用新歌词组件 */
       showNewLyrics: false,
       /** 字体 */
@@ -243,6 +244,11 @@ export default defineComponent({
           this.$t("setting_view.play.gapless_playback.volume_leveling_notice"),
         );
       }
+    },
+    setDirectOutput(bool: boolean) {
+      this.setting.play.directOutput = bool;
+      this.directOutput = this.setting.play.directOutput;
+      this.player.sendCommand("restartPlayer");
     },
     setShowNewLyrics(bool: boolean) {
       this.setting.playui.showNewLyrics = bool;
@@ -639,6 +645,7 @@ export default defineComponent({
       this.allowConsecutiveAlbums = this.setting.play.allowConsecutiveAlbums;
       this.gaplessPlayback = this.setting.play.gaplessPlayback;
       this.player.setGaplessPlayback(this.gaplessPlayback);
+      this.directOutput = this.setting.play.directOutput;
       this.showNewLyrics = this.setting.playui.showNewLyrics;
       (
         ["favorite", "album", "local", "download", "cloud"] as TSideBarItems[]

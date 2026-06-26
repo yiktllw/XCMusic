@@ -72,6 +72,8 @@ export interface ISettings {
     allowConsecutiveAlbums: boolean;
     /** 无缝播放歌曲 */
     gaplessPlayback: boolean;
+    /** 直接输出到默认设备（绕过 MediaStream，避免爆音，但无法切换输出设备） */
+    directOutput: boolean;
   };
   /** 播放界面设置 */
   playui: {
@@ -312,10 +314,19 @@ export const settingGroup: SettingGroup = {
       value: getStorage(StorageKey.Setting_Play_GaplessPlayback) ?? false,
       default: false,
       validation: (value: boolean) => {
+        if (typeof value === "string") value = strToBool(value);
+        setStorage(StorageKey.Setting_Play_GaplessPlayback, value);
+        return value;
+      },
+    },
+    directOutput: {
+      value: getStorage(StorageKey.Setting_Play_DirectOutput) ?? true,
+      default: true,
+      validation: (value: boolean) => {
         let valid = validBoolean(value);
         if (valid) {
           value = strToBool(value);
-          setStorage(StorageKey.Setting_Play_GaplessPlayback, value);
+          setStorage(StorageKey.Setting_Play_DirectOutput, value);
         }
         return valid;
       },

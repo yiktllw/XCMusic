@@ -66,7 +66,7 @@ export class Player {
     play: async () => {},
     pause: () => {},
   };
-  _outputAudio: any = { setSinkId: async () => {} };
+  _outputAudio: any = { sinkId: "default", setSinkId: async () => {} };
   _audioContext: any = null;
   _gainNode: any = null;
   _spectrumData: Uint8Array | null = null;

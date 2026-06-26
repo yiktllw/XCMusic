@@ -419,6 +419,10 @@
       "dbclick_playall": "Double-click the playlist to add all songs to the playlist.",
       "dbclick_playsingle": "Double-click the playlist to add the current song to the playlist.",
       "device": "Device",
+      "direct_output": {
+        "label": "Output directly to default device",
+        "title": "Troubleshooting"
+      },
       "gapless_playback": {
         "label": "Reduce hiccups between tracks",
         "title": "Gapless Playback",

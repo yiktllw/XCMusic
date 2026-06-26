@@ -90,6 +90,8 @@ export enum StorageKey {
   Setting_Play_AllowConsecutiveAlbums = "setting.play.allowConsecutiveAlbums",
   /** 设置-播放-无缝播放歌曲 */
   Setting_Play_GaplessPlayback = "setting.play.gaplessPlayback",
+  /** 设置-播放-直接输出到默认设备（绕过 MediaStream，避免 Windows 音频时钟漂移导致爆音） */
+  Setting_Play_DirectOutput = "setting.play.directOutput",
   /** 设置-播放界面-显示新版歌词 */
   Setting_PlayUI_ShowNewLyrics = "setting.playUI.showNewLyrics",
   /** 设置-播放界面-歌词偏好 */
@@ -167,6 +169,7 @@ export type StorageMap = {
   [StorageKey.Setting_Play_Equalizer]: IEqualizer;
   [StorageKey.Setting_Play_AllowConsecutiveAlbums]: boolean;
   [StorageKey.Setting_Play_GaplessPlayback]: boolean;
+  [StorageKey.Setting_Play_DirectOutput]: boolean;
   [StorageKey.Setting_PlayUI_ShowNewLyrics]: boolean;
   [StorageKey.Setting_PlayUI_LyricsPreference]: ILyricsPreferences;
   [StorageKey.Setting_PlayUI_ShowLyricsTranslate]: boolean;

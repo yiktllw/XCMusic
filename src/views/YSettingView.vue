@@ -682,6 +682,24 @@
                 </div>
               </div>
             </div>
+            <!-- 播放-直接输出 -->
+            <div class="content-item">
+              <div class="content-item-title">
+                {{ $t("setting_view.play.direct_output.title") }}
+              </div>
+              <div class="content-item-content">
+                <input
+                  type="checkbox"
+                  id="setting_direct_output"
+                  name="direct_output"
+                  v-model="directOutput"
+                  @change="setDirectOutput(directOutput)"
+                />
+                <label for="setting_direct_output">
+                  {{ $t("setting_view.play.direct_output.label") }}
+                </label>
+              </div>
+            </div>
             <!-- 播放-输出设备 -->
             <div class="content-item">
               <div class="content-item-title">
@@ -690,6 +708,7 @@
               <div class="content-item-content">
                 <select
                   v-model="selectedDevice"
+                  :disabled="directOutput"
                   @change="selectAudioOutputDevice(selectedDevice)"
                 >
                   <option v-for="device in devices" :value="device.deviceId">

@@ -420,6 +420,10 @@
       "dbclick_playall": "双击歌单时，将所有歌曲添加到播放列表",
       "dbclick_playsingle": "双击歌单时，仅将当前歌曲添加到播放列表",
       "device": "输出设备",
+      "direct_output": {
+        "label": "直接输出到默认设备",
+        "title": "故障排查"
+      },
       "gapless_playback": {
         "label": "尽量减少曲目衔接卡顿",
         "title": "无缝播放",
