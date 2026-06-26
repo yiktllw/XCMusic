@@ -55,7 +55,7 @@ module.exports = defineConfig({
         linux: {
           icon: "src/assets/icons/icon.png",
         },
-        artifactName: `XCMusic-\${version}-${gitHash}-${buildDate}-\${arch}.\${ext}`,
+        artifactName: `XCMusic-\${version}-${buildDate}-${gitHash}-\${arch}.\${ext}`,
         nsis: {
           oneClick: false, // 禁用一键安装
           allowToChangeInstallationDirectory: true, // 允许用户选择安装路径
