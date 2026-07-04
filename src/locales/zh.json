@@ -516,9 +516,9 @@
       "artist_ascending": "歌手升序",
       "artist_descending": "歌手降序",
       "default": "默认排序",
-      "duration_ascending": "",
-      "duration_default": "",
-      "duration_descending": "",
+      "duration_ascending": "时长升序",
+      "duration_default": "时长默认",
+      "duration_descending": "时长降序",
       "title_ascending": "标题升序",
       "title_descending": "标题降序"
     },
@@ -528,6 +528,15 @@
     "unknown_name": "未知名称"
   },
   "subscribed_album": "收藏的专辑",
+  "time": {
+    "day": "天",
+    "hour": "时",
+    "min": "分",
+    "month": "月",
+    "sec": "秒",
+    "week": "周",
+    "year": "年"
+  },
   "titlebar": {
     "about": "关于XCMusic",
     "back": "后退",

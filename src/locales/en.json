@@ -516,7 +516,7 @@
       "artist_descending": "Artist Descending",
       "default": "Default",
       "duration_ascending": "Duration Ascending",
-      "duration_default": "",
+      "duration_default": "Duration Default",
       "duration_descending": "Duration Descending",
       "title_ascending": "Title Ascending",
       "title_descending": "Title Descending"
@@ -527,6 +527,15 @@
     "unknown_name": "Unknown Name"
   },
   "subscribed_album": "My Albums",
+  "time": {
+    "day": "d",
+    "hour": "h",
+    "min": "m",
+    "month": "mo",
+    "sec": "s",
+    "week": "w",
+    "year": "y"
+  },
   "titlebar": {
     "about": "About",
     "back": "Back",
