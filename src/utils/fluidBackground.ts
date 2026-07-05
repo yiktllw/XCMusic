@@ -617,11 +617,6 @@ function extractCoverPaletteFromImage(image: HTMLImageElement): Palette | null {
 export async function extractCoverPalette(
   picUrl: string,
 ): Promise<Palette | null> {
-  const fallback = (): Palette => ({
-    primary: { r: 88, g: 86, b: 214 },
-    secondary: { r: 19, g: 19, b: 25 },
-  });
-
   try {
     const img = await new Promise<HTMLImageElement>((resolve, reject) => {
       const i = new Image();
@@ -630,9 +625,9 @@ export async function extractCoverPalette(
       i.onerror = () => reject(new Error("Image load failed"));
       i.src = picUrl;
     });
-    return extractCoverPaletteFromImage(img) ?? fallback();
+    return extractCoverPaletteFromImage(img);
   } catch {
-    return fallback();
+    return null;
   }
 }
 

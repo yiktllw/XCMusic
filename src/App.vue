@@ -138,10 +138,10 @@ export default defineComponent({
       const container = document.getElementById("mainContainer");
       if (!container) return;
 
-      if (!track?.al?.picUrl) {
-        this.clearMainBackground();
-        return;
-      }
+      // if (!track?.al?.picUrl) {
+      //   this.clearMainBackground();
+      //   return;
+      // }
 
       const palette = this.player.fluidPalette;
       if (!palette) return;
