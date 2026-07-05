@@ -134,7 +134,6 @@ export default defineComponent({
       if (container) clearFluidBackground(container);
     },
     async updateFluidBackground() {
-      const track = this.player.currentTrack;
       const container = document.getElementById("mainContainer");
       if (!container) return;
 
