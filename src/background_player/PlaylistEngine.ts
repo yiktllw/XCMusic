@@ -94,13 +94,44 @@ export class PlaylistEngine {
       (a, b) => a.originalIndex - b.originalIndex,
     );
     if (ot) this._current = this.findIndexById(ot.id);
+    this.subscriber.exec(PlayerEvents.playlist);
     return ot;
   }
 
-  shuffleRandom(): ITrack | undefined {
+  /**
+   * 洗牌播放列表
+   * @param groupByAlbum true=以专辑为单位洗牌，同一专辑内歌曲保持原始顺序
+   */
+  shuffleRandom(groupByAlbum: boolean = false): ITrack | undefined {
     const ot = this._playlist[this._current];
-    this._playlist = this._playlist.sort(() => Math.random() * 2 - 1);
+    if (groupByAlbum) {
+      this._playlist = this._shuffleByAlbum(this._playlist);
+    } else {
+      this._playlist = this._playlist.sort(() => Math.random() * 2 - 1);
+    }
     if (ot) this._current = this.findIndexById(ot.id);
+    this.subscriber.exec(PlayerEvents.playlist);
     return ot;
+  }
+
+  /**
+   * 以专辑为单位洗牌，同一专辑内的歌曲保持原始顺序（originalIndex）
+   */
+  private _shuffleByAlbum(tracks: ITrack[]): ITrack[] {
+    // 1. 按专辑ID分组（Map 保持插入顺序，与原列表中的 originalIndex 顺序一致）
+    const groups = new Map<number, ITrack[]>();
+    for (const t of tracks) {
+      const albumId = t.al?.id ?? 0;
+      if (!groups.has(albumId)) groups.set(albumId, []);
+      groups.get(albumId)!.push(t);
+    }
+    // 2. 以专辑为单位 Fisher-Yates 洗牌
+    const arr = Array.from(groups.values());
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    // 3. 展平
+    return arr.flat();
   }
 }

@@ -612,7 +612,17 @@ export class Player {
   playAll(tracks: ITrack[]) {
     this.clearPlaylist();
     this.playlistEngine.playAll(tracks);
-    if (tracks.length > 0) this.playTrack(tracks[0]);
+    if (this._mode === "listrandom") {
+      const groupByAlbum =
+        getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums) ?? false;
+      this.playlistEngine.shuffleRandom(groupByAlbum);
+      this.playlistEngine._current = 0;
+    }
+    if (tracks.length > 0) {
+      this.playTrack(
+        this.playlistEngine._playlist[this.playlistEngine._current],
+      );
+    }
   }
 
   addPlaylist(tracks: ITrack[]) {
@@ -648,7 +658,9 @@ export class Player {
     ) {
       this.playlistEngine.sortByOriginalIndex();
     } else if (value === "listrandom") {
-      this.playlistEngine.shuffleRandom();
+      const groupByAlbum =
+        getStorage(StorageKey.Setting_Play_AllowConsecutiveAlbums) ?? false;
+      this.playlistEngine.shuffleRandom(groupByAlbum);
     }
   }
 
