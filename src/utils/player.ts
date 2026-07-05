@@ -270,10 +270,19 @@ export class Player {
     this.sendCommand("setManualGain", value);
   }
 
+  _lastPaletteTrackId: number | null = null;
+
   async _loadFluidPalette() {
-    this._fluidPalette = null;
     const track = this.currentTrack;
-    if (!track?.al?.picUrl) return;
+    if (!track?.al?.picUrl) {
+      this._lastPaletteTrackId = null;
+      this._fluidPalette = null;
+      return;
+    }
+    // 同一首歌不重复提取颜色和计算纹理
+    if (track.id === this._lastPaletteTrackId && this._fluidPalette) return;
+    this._lastPaletteTrackId = track.id;
+    this._fluidPalette = null;
     try {
       const palette = await extractCoverPalette(
         track.al.picUrl + "?param=120y120",

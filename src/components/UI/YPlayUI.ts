@@ -165,9 +165,7 @@ export default defineComponent({
     show(newVal) {
       if (newVal) {
         this.$emit("show-panel");
-        this.$nextTick(() => {
-          this.setBackgroundColor();
-        });
+        setTimeout(() => this.setBackgroundColor(), 300);
       } else {
         setTimeout(() => {
           this.$emit("close-panel");

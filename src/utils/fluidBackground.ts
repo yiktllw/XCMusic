@@ -14,18 +14,10 @@ import {
   type RGBColor,
   type Palette,
   clampColorChannel,
-  createJavaRandom,
-  makeGaussianKernelJavaLike,
-  convolveAndTransposeJavaLike,
   hslToRgb,
   rgbToHsl,
   hslDistance,
   makeBestPaletteColor,
-  generateFBMTextureData,
-  applyTwirlFilter,
-  computeAverageLuminance,
-  applyBrightnessContrast,
-  computeTextureSizes,
 } from "@/utils/fluidTextureCore";
 
 // 重新导出类型（兼容旧 import）
@@ -33,74 +25,6 @@ export type { RGBColor, Palette };
 
 // 重新导出 makeBestPaletteColor（App.vue 直接使用）
 export { makeBestPaletteColor };
-
-// ──────────────── Canvas 工具（DOM 依赖，仅主线程） ────────────────
-
-function gaussianBlurCanvasJavaLike(
-  sourceCanvas: HTMLCanvasElement,
-  radius: number,
-): HTMLCanvasElement | null {
-  const width = sourceCanvas.width;
-  const height = sourceCanvas.height;
-  const srcCtx = sourceCanvas.getContext("2d", { willReadFrequently: true });
-  if (!srcCtx) return null;
-  const srcImage = srcCtx.getImageData(0, 0, width, height);
-  const srcPixels = srcImage.data;
-
-  const inPixels = new Int32Array(width * height);
-  const convOutPixels = new Int32Array(width * height);
-  for (let i = 0, p = 0; p < inPixels.length; p++, i += 4) {
-    const r = srcPixels[i];
-    const g = srcPixels[i + 1];
-    const b = srcPixels[i + 2];
-    const a = srcPixels[i + 3];
-    inPixels[p] = (a << 24) | (r << 16) | (g << 8) | b;
-  }
-
-  if (radius > 0) {
-    const kernel = makeGaussianKernelJavaLike(radius);
-    const CLAMP_EDGES = 1;
-    convolveAndTransposeJavaLike(
-      kernel,
-      inPixels,
-      convOutPixels,
-      width,
-      height,
-      true,
-      true,
-      false,
-      CLAMP_EDGES,
-    );
-    convolveAndTransposeJavaLike(
-      kernel,
-      convOutPixels,
-      inPixels,
-      height,
-      width,
-      true,
-      false,
-      true,
-      CLAMP_EDGES,
-    );
-  }
-
-  const outCanvas = document.createElement("canvas");
-  outCanvas.width = width;
-  outCanvas.height = height;
-  const outCtx = outCanvas.getContext("2d", { willReadFrequently: true });
-  if (!outCtx) return null;
-  const outImage = outCtx.createImageData(width, height);
-  const outPixels = outImage.data;
-
-  for (let i = 0, p = 0; p < inPixels.length; p++, i += 4) {
-    outPixels[i] = (inPixels[p] >>> 16) & 0xff;
-    outPixels[i + 1] = (inPixels[p] >>> 8) & 0xff;
-    outPixels[i + 2] = inPixels[p] & 0xff;
-    outPixels[i + 3] = (inPixels[p] >>> 24) & 0xff;
-  }
-  outCtx.putImageData(outImage, 0, 0);
-  return outCanvas;
-}
 
 function resizeCanvasBilinearJavaLike(
   sourceCanvas: HTMLCanvasElement,
@@ -634,114 +558,15 @@ export async function extractCoverPalette(
 // ──────────────── Worker 管理 ────────────────
 
 let _worker: Worker | null = null;
-let _workerFailed = false;
 
-function getFluidTextureWorker(): Worker | null {
-  if (_workerFailed) return null;
+function getFluidTextureWorker(): Worker {
   if (_worker) return _worker;
-
-  try {
-    // webpack 5 原生支持 new Worker(new URL(...))，自动分割为独立 chunk
-    _worker = new Worker(
-      // @ts-expect-error -- import.meta.url 需要 ES2020+ module；webpack 在构建时解析 URL
-      new URL("../workers/fluidTexture.worker.ts", import.meta.url),
-    );
-    return _worker;
-  } catch {
-    console.warn("[fluidBackground] Web Worker 创建失败，回退到主线程同步渲染");
-    _workerFailed = true;
-    return null;
-  }
+  _worker = new Worker(
+    // @ts-expect-error -- import.meta.url 需要 ES2020+ module；webpack 在构建时解析 URL
+    new URL("../workers/fluidTexture.worker.ts", import.meta.url),
+  );
+  return _worker;
 }
-
-// ──────────────── 同步回退路径（Worker 不可用时使用） ────────────────
-
-function createFluidTextureCanvasSync(
-  primary: RGBColor,
-  secondary: RGBColor,
-  targetWidth: number,
-  targetHeight: number,
-): HTMLCanvasElement | null {
-  const { fbmW, fbmH, reducedW, reducedH } = computeTextureSizes(
-    targetWidth,
-    targetHeight,
-  );
-  const SEED = Date.now();
-  const angleRandom = createJavaRandom(SEED);
-
-  // Phase 1: FBM 噪声
-  const fbmData = generateFBMTextureData(
-    primary,
-    secondary,
-    fbmW,
-    fbmH,
-    SEED,
-    SEED,
-  );
-
-  const fbmCanvas = document.createElement("canvas");
-  fbmCanvas.width = fbmW;
-  fbmCanvas.height = fbmH;
-  const fbmCtx = fbmCanvas.getContext("2d", { willReadFrequently: true });
-  if (!fbmCtx) return null;
-  const imageData = fbmCtx.createImageData(fbmW, fbmH);
-  imageData.data.set(fbmData);
-  fbmCtx.putImageData(imageData, 0, 0);
-
-  // Phase 2: Scale to 256
-  const reducedCanvas = resizeCanvasBilinearJavaLike(
-    fbmCanvas,
-    reducedW,
-    reducedH,
-  );
-  if (!reducedCanvas) return null;
-  const reducedCtx = reducedCanvas.getContext("2d", {
-    willReadFrequently: true,
-  });
-  if (!reducedCtx) return null;
-
-  // Phase 3: Twirl
-  const twirlCanvas = document.createElement("canvas");
-  twirlCanvas.width = reducedW;
-  twirlCanvas.height = reducedH;
-  const twirlCtx = twirlCanvas.getContext("2d", { willReadFrequently: true });
-  if (!twirlCtx) return null;
-
-  const sourceData = reducedCtx.getImageData(0, 0, reducedW, reducedH);
-  const twirledData = twirlCtx.createImageData(reducedW, reducedH);
-  const twirlAngle = ((angleRandom.nextInt(340) + 10) * Math.PI) / 180;
-
-  applyTwirlFilter(
-    sourceData.data as Uint8ClampedArray,
-    twirledData.data as Uint8ClampedArray,
-    reducedW,
-    reducedH,
-    twirlAngle,
-  );
-  twirlCtx.putImageData(twirledData, 0, 0);
-
-  // Phase 4: Gaussian blur
-  const gaussianRadius = Math.max(1, reducedW * 0.3);
-  const blurCanvas = gaussianBlurCanvasJavaLike(twirlCanvas, gaussianRadius);
-  if (!blurCanvas) return null;
-
-  // Phase 5: Scale to output
-  const finalCanvas = resizeCanvasBilinearJavaLike(blurCanvas, fbmW, fbmH);
-  if (!finalCanvas) return null;
-  const finalCtx = finalCanvas.getContext("2d");
-  if (!finalCtx) return null;
-
-  // Phase 6: Brightness/contrast
-  const finalData = finalCtx.getImageData(0, 0, fbmW, fbmH);
-  const finalPixels = finalData.data as Uint8ClampedArray;
-  const avgLum = computeAverageLuminance(finalPixels, fbmW, fbmH);
-  applyBrightnessContrast(finalPixels, avgLum);
-  finalCtx.putImageData(finalData, 0, 0);
-
-  return finalCanvas;
-}
-
-// ──────────────── CSS 应用逻辑（主线程） ────────────────
 
 interface FluidTextureResult {
   type: "success";
@@ -759,6 +584,60 @@ interface FluidTextureError {
  * Phase 1（同步，立即可用）：CSS 颜色变量
  * Phase 2（Worker/异步，不阻塞 UI）：流体纹理生成 + cross-fade 动画
  */
+// ── 纹理缓存：同颜色+尺寸不重复生成 ──
+const _textureCache = new Map<string, string>();
+
+function _cacheKey(
+  primary: RGBColor,
+  secondary: RGBColor,
+  w: number,
+  h: number,
+): string {
+  return `${primary.r},${primary.g},${primary.b}|${secondary.r},${secondary.g},${secondary.b}|${w}x${h}`;
+}
+
+function _applyTextureToDom(
+  style: CSSStyleDeclaration,
+  container: HTMLElement,
+  secondary: RGBColor,
+  nextTexture: string,
+) {
+  const oldUrl = style.getPropertyValue("--playui-fluid-image").trim();
+  style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
+
+  if (oldUrl && oldUrl !== "none" && oldUrl !== 'url("")') {
+    style.setProperty("--playui-fluid-opacity", "1");
+    let start: number | null = null;
+    const duration = 700;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const t = Math.min((ts - start) / duration, 1);
+      style.setProperty(
+        "--playui-fluid-image",
+        `-webkit-cross-fade(${oldUrl}, ${nextTexture}, ${t * 100}%)`,
+      );
+      if (t < 1) requestAnimationFrame(step);
+      else {
+        style.setProperty("--playui-fluid-image", nextTexture);
+        style.setProperty("--playui-fluid-prev-image", "none");
+      }
+    }
+    requestAnimationFrame(step);
+  } else {
+    style.setProperty("--playui-fluid-image", nextTexture);
+    style.setProperty("--playui-fluid-opacity", "0");
+    const curr = container.querySelector<HTMLElement>(".bg-fluid-curr");
+    if (curr) {
+      curr.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 700,
+        easing: "linear",
+        fill: "forwards",
+      });
+    }
+    setTimeout(() => style.setProperty("--playui-fluid-opacity", "1"), 700);
+  }
+}
+
 export function applyFluidBackground(
   container: HTMLElement,
   primary: RGBColor,
@@ -779,171 +658,42 @@ export function applyFluidBackground(
     `${primary.r}, ${primary.g}, ${primary.b}`,
   );
 
-  // ── Phase 2: 纹理生成（尝试 Worker，回退同步） ──
+  // ── Phase 2: 纹理生成（缓存 + Worker） ──
+  const cacheKey = _cacheKey(primary, secondary, width, height);
+  const cached = _textureCache.get(cacheKey);
+  if (cached) {
+    _applyTextureToDom(style, container, secondary, cached);
+    return;
+  }
+
+  function onTextureReady(nextTexture: string) {
+    _textureCache.set(cacheKey, nextTexture);
+    _applyTextureToDom(style, container, secondary, nextTexture);
+  }
+
   const worker = getFluidTextureWorker();
 
-  if (worker) {
-    // 非阻塞路径：委托给 Worker
-    const onMessage = (
-      e: MessageEvent<FluidTextureResult | FluidTextureError>,
-    ) => {
-      worker.removeEventListener("message", onMessage);
-      const result = e.data;
-
-      if (result.type === "error") {
-        console.warn("[fluidBackground] Worker 纹理生成失败:", result.message);
-        // 回退到同步路径
-        applyTextureFallback(
-          style,
-          container,
-          primary,
-          secondary,
-          width,
-          height,
-        );
-        return;
-      }
-
-      const blobUrl = URL.createObjectURL(result.blob);
-
-      const img = new Image();
-      img.onload = () => {
-        const nextTexture = `url("${blobUrl}")`;
-        const oldUrl = style.getPropertyValue("--playui-fluid-image").trim();
-
-        // 始终保留背景底色
-        style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
-
-        if (oldUrl && oldUrl !== "none" && oldUrl !== 'url("")') {
-          // 有旧图：CSS cross-fade 动画
-          style.setProperty("--playui-fluid-opacity", "1");
-
-          let start: number | null = null;
-          const duration = 700;
-
-          function step(ts: number) {
-            if (!start) start = ts;
-            const t = Math.min((ts - start) / duration, 1);
-            style.setProperty(
-              "--playui-fluid-image",
-              `-webkit-cross-fade(${oldUrl}, ${nextTexture}, ${t * 100}%)`,
-            );
-
-            if (t < 1) {
-              requestAnimationFrame(step);
-            } else {
-              style.setProperty("--playui-fluid-image", nextTexture);
-              style.setProperty("--playui-fluid-prev-image", "none");
-            }
-          }
-
-          requestAnimationFrame(step);
-        } else {
-          // 无旧图：直接显示 + 简单淡入
-          style.setProperty("--playui-fluid-image", nextTexture);
-          style.setProperty("--playui-fluid-opacity", "0");
-          const curr = container.querySelector<HTMLElement>(".bg-fluid-curr");
-          if (curr) {
-            curr.animate([{ opacity: 0 }, { opacity: 1 }], {
-              duration: 700,
-              easing: "linear",
-              fill: "forwards",
-            });
-          }
-          setTimeout(() => {
-            style.setProperty("--playui-fluid-opacity", "1");
-          }, 700);
-        }
-      };
-      img.src = blobUrl;
-    };
-
-    worker.addEventListener("message", onMessage);
-    worker.postMessage({
-      primary,
-      secondary,
-      targetWidth: width,
-      targetHeight: height,
-    });
-  } else {
-    // 回退到同步路径
-    applyTextureFallback(style, container, primary, secondary, width, height);
-  }
-}
-
-/**
- * 同步回退路径：主线程生成纹理
- */
-function applyTextureFallback(
-  style: CSSStyleDeclaration,
-  container: HTMLElement,
-  primary: RGBColor,
-  secondary: RGBColor,
-  width: number,
-  height: number,
-): void {
-  setTimeout(() => {
-    const finalCanvas = createFluidTextureCanvasSync(
-      primary,
-      secondary,
-      width,
-      height,
-    );
-    if (!finalCanvas) return;
-
-    finalCanvas.toBlob((blob) => {
-      if (!blob) return;
-      const blobUrl = URL.createObjectURL(blob);
-
-      const img = new Image();
-      img.onload = () => {
-        const nextTexture = `url("${blobUrl}")`;
-        const oldUrl = style.getPropertyValue("--playui-fluid-image").trim();
-
-        style.background = `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`;
-
-        if (oldUrl && oldUrl !== "none" && oldUrl !== 'url("")') {
-          style.setProperty("--playui-fluid-opacity", "1");
-
-          let start: number | null = null;
-          const duration = 700;
-
-          function step(ts: number) {
-            if (!start) start = ts;
-            const t = Math.min((ts - start) / duration, 1);
-            style.setProperty(
-              "--playui-fluid-image",
-              `-webkit-cross-fade(${oldUrl}, ${nextTexture}, ${t * 100}%)`,
-            );
-
-            if (t < 1) {
-              requestAnimationFrame(step);
-            } else {
-              style.setProperty("--playui-fluid-image", nextTexture);
-              style.setProperty("--playui-fluid-prev-image", "none");
-            }
-          }
-
-          requestAnimationFrame(step);
-        } else {
-          style.setProperty("--playui-fluid-image", nextTexture);
-          style.setProperty("--playui-fluid-opacity", "0");
-          const curr = container.querySelector<HTMLElement>(".bg-fluid-curr");
-          if (curr) {
-            curr.animate([{ opacity: 0 }, { opacity: 1 }], {
-              duration: 700,
-              easing: "linear",
-              fill: "forwards",
-            });
-          }
-          setTimeout(() => {
-            style.setProperty("--playui-fluid-opacity", "1");
-          }, 700);
-        }
-      };
-      img.src = blobUrl;
-    }, "image/png");
-  }, 0);
+  const onMessage = (
+    e: MessageEvent<FluidTextureResult | FluidTextureError>,
+  ) => {
+    worker.removeEventListener("message", onMessage);
+    const result = e.data;
+    if (result.type === "error") {
+      console.warn("[fluidBackground] Worker 纹理生成失败:", result.message);
+      return;
+    }
+    const blobUrl = URL.createObjectURL(result.blob);
+    const img = new Image();
+    img.onload = () => onTextureReady(`url("${blobUrl}")`);
+    img.src = blobUrl;
+  };
+  worker.addEventListener("message", onMessage);
+  worker.postMessage({
+    primary,
+    secondary,
+    targetWidth: width,
+    targetHeight: height,
+  });
 }
 
 /**
