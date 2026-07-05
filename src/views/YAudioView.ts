@@ -17,12 +17,12 @@ export default defineComponent({
   },
   methods: {
     applyGain() {
-      this.player._gainNode!.gain.value = this.currentGain!;
+      this.player.setManualGain(this.currentGain ?? 1);
     },
   },
   mounted() {
     this.player.subscriber.on("YAudioView", PlayerEvents.gain, () => {
-      this.currentGain = this.player._gainNode?.gain.value;
+      this.currentGain = this.player.currentGain;
     })?.();
   },
   beforeUnmount() {

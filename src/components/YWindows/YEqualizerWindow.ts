@@ -46,7 +46,7 @@ export default defineComponent({
   },
   emits: ["new-window-state"],
   mounted() {
-    this.equalizer = this.player.getEqualizer();
+    this.equalizer = this.setting.play.equalizer;
     this.$nextTick(() => {
       this.drawCurve();
     });

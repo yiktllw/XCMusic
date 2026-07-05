@@ -53,6 +53,7 @@ export class Player {
   _volume_leveling: boolean = true;
   _lyrics: Array<LrcItem | LrcItem2 | YrcItem> = [];
   _fluidPalette: Palette | null = null;
+  _currentGain: number = 1;
   songPicker: SongPicker | undefined;
   subscriber: Subscriber<PlayerEventCallbacks> =
     new Subscriber<PlayerEventCallbacks>(PlayerEvents);
@@ -183,6 +184,9 @@ export class Player {
         case PlayerEvents.history:
           this._history = data;
           break;
+        case PlayerEvents.gain:
+          this._currentGain = data;
+          break;
       }
       if (eventName === PlayerEvents.track) {
         // 先清除旧 palette，让组件返回不触发动画
@@ -253,6 +257,14 @@ export class Player {
 
   get fluidPalette(): Palette | null {
     return this._fluidPalette;
+  }
+
+  get currentGain(): number {
+    return this._currentGain;
+  }
+
+  setManualGain(value: number) {
+    this.sendCommand("setManualGain", value);
   }
 
   async _loadFluidPalette() {

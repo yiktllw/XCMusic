@@ -84,6 +84,9 @@ if (ipcRenderer) {
         case "reload":
           void player.rebuildAudioSystem();
           break;
+        case "setManualGain":
+          player.setManualGain(args);
+          break;
         case "toggleSpectrum":
           player.toggleSpectrum(args);
           break;
@@ -125,6 +128,7 @@ if (ipcRenderer) {
           });
           send(PlayerEvents.lyrics, player.lyrics);
           send(PlayerEvents.history, player.history);
+          send(PlayerEvents.gain, player.currentGain);
           break;
         }
       }
@@ -188,6 +192,7 @@ if (ipcRenderer) {
             data = player.history;
             break;
           case PlayerEvents.gain:
+            data = player.currentGain;
             break;
         }
         ipcRenderer.send("player-event", {

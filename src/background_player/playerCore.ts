@@ -573,7 +573,11 @@ export class Player {
   }
   set currentTrack(track: ITrack | null) {
     if (track === null) return;
-    this.playlistEngine._current = this.playlistEngine.findIndexById(track.id);
+    const idx = this.playlistEngine.findIndexById(track.id);
+    if (idx !== -1) {
+      this.playlistEngine._playlist[idx] = track;
+      this.playlistEngine._current = idx;
+    }
   }
 
   get playlist(): ITrack[] {
@@ -906,6 +910,15 @@ export class Player {
   set volumeLeveling(v: boolean) {
     this._volume_leveling = v;
     if (this.currentTrack) this.gainTrack(this.currentTrack.id);
+  }
+
+  get currentGain(): number {
+    return this.audioEngine._workletPostGain;
+  }
+  setManualGain(value: number) {
+    this.audioEngine._workletPostGain = value;
+    this.audioEngine.applyPostGainToWorklet();
+    this.subscriber.exec(PlayerEvents.gain);
   }
 
   get device() {
