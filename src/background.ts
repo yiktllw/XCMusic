@@ -266,8 +266,9 @@ const setDesktopLyricState = (opened: boolean, locked: boolean) => {
 const applyLyricWindowLockState = (locked: boolean, ignoreMouse: boolean) => {
   if (!lyricWin) return;
   lyricWin.setResizable(!locked);
+  lyricWin.setAlwaysOnTop(true, "screen-saver");
   if (ignoreMouse) {
-    lyricWin.setIgnoreMouseEvents(true, { forward: true });
+    lyricWin.setIgnoreMouseEvents(true);
   } else {
     lyricWin.setIgnoreMouseEvents(false);
   }
