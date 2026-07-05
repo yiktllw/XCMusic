@@ -88,7 +88,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 12px 25px;
+  margin: 0 0 12px 20px;
   font-size: 13px;
   color: var(--font-color-standard);
   user-select: none;
@@ -123,7 +123,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 12px 25px;
+  margin: 0 0 12px 24px;
   color: var(--font-color-standard);
   user-select: none;
 
