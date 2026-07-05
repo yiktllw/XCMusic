@@ -153,22 +153,25 @@ export class Player {
           this._playState = data;
           break;
         case PlayerEvents.track:
-          // data is currentTrack.
-          // Update _current index if possible
           if (data) {
             const idx = this._playlist.findIndex((t) => t.id === data.id);
             if (idx !== -1) {
               this._current = idx;
             }
-            // Update track info in playlist
             if (this._playlist[this._current]) {
               this._playlist[this._current] = data;
             }
           }
           break;
-        case PlayerEvents.playlist:
+        case PlayerEvents.playlist: {
+          const prevTrackId = this.currentTrack?.id;
           this._playlist = data;
+          if (prevTrackId != null && this._playlist.length > 0) {
+            const idx = this._playlist.findIndex((t) => t.id === prevTrackId);
+            if (idx !== -1) this._current = idx;
+          }
           break;
+        }
         case PlayerEvents.volume:
           this._volume = data;
           break;
