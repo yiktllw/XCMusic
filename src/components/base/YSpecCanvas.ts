@@ -1,5 +1,7 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
+import { rgbToHsl } from "@/utils/fluidTextureCore";
+import { PlayerEvents } from "@/dual/player";
 
 export default defineComponent({
   name: "YSpecCanvas",
@@ -17,12 +19,16 @@ export default defineComponent({
       dataArray: null as null | Uint8Array,
       showSpectrum: true,
       animationFrameId: null as number | null,
+      specHue: 42,
+      specSaturation: 14,
+      specBaseLightness: 70,
     };
   },
   beforeUnmount() {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
+    this.player.subscriber.offAll("YSpecCanvas");
     this.canvas = null;
   },
   mounted() {
@@ -33,8 +39,32 @@ export default defineComponent({
       );
       this.setupCanvas();
     }
+    this.refreshSpecColor();
+    this.player.subscriber.on("YSpecCanvas", PlayerEvents.fluidPalette, () =>
+      this.refreshSpecColor(),
+    );
   },
   methods: {
+    /**
+     * 根据 fluidPalette 更新缓存的频谱颜色基准。
+     * 仅在 palette 变化时（切歌/mounted）调用，draw() 中直接用缓存值。
+     */
+    refreshSpecColor() {
+      const palette = this.player.fluidPalette;
+      if (!palette) {
+        this.specHue = 42;
+        this.specSaturation = 14;
+        this.specBaseLightness = 70;
+        return;
+      }
+      const pHsl = rgbToHsl(palette.primary);
+      const sHsl = rgbToHsl(palette.secondary);
+      const _sign = pHsl.h > sHsl.h ? 1 : -1;
+      this.specHue = pHsl.h + 20 * _sign * (Math.random() + 0.5);
+      this.specSaturation = (pHsl.s + sHsl.s) * 0.5;
+      this.specBaseLightness = (pHsl.l + sHsl.l) * 0.5;
+    },
+
     setupCanvas() {
       const canvas = this.canvas;
       if (!canvas) {
@@ -121,11 +151,16 @@ export default defineComponent({
             canvas.clientHeight,
           );
 
-          // 使用青绿色系渐变
-          const hue = 160 + (value / 255) * 40; // 从青色到绿色
-          const lightness = 45 + (value / 255) * 15; // 动态亮度
-          gradient.addColorStop(0, `hsl(${hue}, 70%, ${lightness + 15}%)`);
-          gradient.addColorStop(1, `hsl(${hue}, 70%, ${lightness}%)`);
+          // 频谱颜色：hue/saturation 来自缓存，lightness 随音量微调
+          const l = this.specBaseLightness + (value / 255) * 12;
+          gradient.addColorStop(
+            0,
+            `hsl(${this.specHue}, ${this.specSaturation}%, ${Math.min(92, l + 10)}%)`,
+          );
+          gradient.addColorStop(
+            1,
+            `hsl(${this.specHue}, ${this.specSaturation}%, ${Math.max(45, l - 8)}%)`,
+          );
 
           if (i === 0) {
             // 第0条只在中心显示一条
