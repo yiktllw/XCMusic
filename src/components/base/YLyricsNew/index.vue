@@ -444,11 +444,9 @@ const calcClosestLine = () => {
 };
 
 onMounted(() => {
-  // Direct IPC listener for time sync
   if (window.electron?.ipcRenderer) {
     timeSyncListener = (payload: any) => {
       if (payload?.event === "timeSync") {
-        // Update sync reference point for accurate time calculation
         lastSyncTime.value = payload.data.currentTime;
         lastSyncTimestamp.value = performance.now();
         localTime.value = payload.data.currentTime;
@@ -572,7 +570,7 @@ const handleAnimationIndexChange = () => {
   if (animationIndex.value === -1) {
     // 如果没有匹配的动画索引，设置为第一行（时间在第一句之前）
     currentLineIndex.value = 0;
-    return;
+    // return;
   }
 
   currentLineIndex.value =
@@ -582,6 +580,7 @@ const handleAnimationIndexChange = () => {
     if (index === animationIndex.value) {
       // 播放当前逐字动画
       item.play();
+      if (!isPlaying.value) item.pause();
     } else if (
       index < animationIndex.value &&
       currentLineIndex.value ===
