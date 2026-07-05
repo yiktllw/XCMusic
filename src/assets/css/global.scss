@@ -76,3 +76,7 @@ html {
   filter: var(--icon-invert);
   -webkit-user-drag: none;
 }
+
+*:focus {
+  outline: none;
+}
