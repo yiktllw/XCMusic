@@ -44,6 +44,10 @@ export default defineComponent({
     mergeAlbum(val: boolean) {
       setStorage(StorageKey.User_SongsRank_MergeAlbum, val);
     },
+    userId(val) {
+      this.fetchUserSongsRank();
+      this.checkUserId();
+    },
   },
   computed: {
     displayTracks() {
@@ -137,6 +141,7 @@ export default defineComponent({
       localAlltimeTracks: [] as ITrack[],
       mixedRecentTracks: [] as ITrack[],
       mixedAlltimeTracks: [] as ITrack[],
+      globalUserID: getStorage(StorageKey.LoginUserId) ?? 0,
     };
   },
   methods: {
@@ -171,9 +176,27 @@ export default defineComponent({
       this.mixedRecentTracks = mixedRecent;
       this.mixedAlltimeTracks = mixedAlltime;
       this.loading = false;
+      console.log(this.recentTracks);
+    },
+    checkUserId() {
+      if (this.globalUserID !== this.userId) {
+        this.sortMode = "count";
+        this.mergeAlbum = false;
+        this.source = "netease";
+      } else {
+        this.sortMode =
+          getStorage(StorageKey.User_SongsRank_SortMode) ??
+          ("count" as "count" | "duration");
+        this.mergeAlbum =
+          getStorage(StorageKey.User_SongsRank_MergeAlbum) ?? false;
+        this.source = normalizeSongsRankSource(
+          getStorage(StorageKey.User_SongsRank_Source),
+        );
+      }
     },
   },
   mounted() {
     this.fetchUserSongsRank();
+    this.checkUserId();
   },
 });

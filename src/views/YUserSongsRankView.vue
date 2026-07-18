@@ -1,7 +1,7 @@
 <template>
   <!-- 用户听歌排行界面 -->
   <YHeader :switcher="switcher" @new-position="handleNewPosition" />
-  <div class="source-row">
+  <div class="source-row" v-if="globalUserID === userId">
     <span class="source-title">{{
       $t("user_songs_rank_view.source_title")
     }}</span>
@@ -38,7 +38,10 @@
       </div>
     </div>
   </div>
-  <div class="local-options" v-if="source === 'local'">
+  <div
+    class="local-options"
+    v-if="source === 'local' && globalUserID === userId"
+  >
     <button
       :tabindex="-1"
       class="option-item"
