@@ -9,7 +9,7 @@
 export interface IArtist {
   id: number;
   name: string;
-  _picUrl: string;
+  _picUrl: string | null;
   albumSize: number;
 }
 
@@ -20,6 +20,6 @@ export interface IArtist {
 export interface IArtist {
   userId: number;
   nickname: string;
-  _picUrl: string;
+  _picUrl: string | null;
   followeds: number;
 }

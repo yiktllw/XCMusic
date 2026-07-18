@@ -1,8 +1,14 @@
 import { defineComponent } from "vue";
 import { type IArtist } from "@/dual/YArtistList";
+import default_avatar_svg from "@/assets/default_avatar.svg";
 
 export default defineComponent({
   name: "YArtistList",
+  data() {
+    return {
+      default_avatar_svg,
+    };
+  },
   props: {
     // 歌手列表
     artists: {

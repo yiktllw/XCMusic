@@ -254,9 +254,12 @@ export default defineComponent({
           if (!this.isLatestSearchRequest("artists", requestId)) return;
 
           this.switcher[3].artists = result.artists?.map((artist) => {
+            const _picUrl = artist.picUrl
+              ? artist.picUrl + "?param=130y130"
+              : null;
             return {
               ...artist,
-              _picUrl: artist.picUrl + "?param=130y130",
+              _picUrl,
             };
           });
           this.switcher[3].total = result.artistCount;
@@ -321,9 +324,12 @@ export default defineComponent({
           if (!this.isLatestSearchRequest("users", requestId)) return;
 
           this.switcher[5].users = result.userprofiles?.map((user) => {
+            const _picUrl = user.avatarUrl
+              ? user.avatarUrl + "?param=130y130"
+              : null;
             return {
               ...user,
-              _picUrl: user.avatarUrl + "?param=130y130",
+              _picUrl,
             };
           });
           this.switcher[5].total = result.userprofileCount;

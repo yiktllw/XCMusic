@@ -9,7 +9,10 @@
         :title="artist.name ?? artist.nickname"
       >
         <!-- 头像 -->
-        <img :src="artist._picUrl" class="artists-avatar" />
+        <img
+          :src="artist._picUrl ?? default_avatar_svg"
+          class="artists-avatar"
+        />
         <!-- 歌手名 -->
         <div class="artists-name-text font-color-high">
           {{ type === "artist" ? artist.name : artist.nickname }}
