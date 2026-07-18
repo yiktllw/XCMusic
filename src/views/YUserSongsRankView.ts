@@ -44,7 +44,7 @@ export default defineComponent({
     mergeAlbum(val: boolean) {
       setStorage(StorageKey.User_SongsRank_MergeAlbum, val);
     },
-    userId(val) {
+    userId() {
       this.fetchUserSongsRank();
       this.checkUserId();
     },

@@ -65,19 +65,14 @@
         </div>
       </div>
     </div>
-    <ContentLoader
-      :speed="1.5"
-      :width="400"
-      :height="176"
-      primaryColor="rgba(var(--foreground-color-rgb), 0.2)"
-      secondaryColor="rgba(var(--foreground-color-rgb), 0.1)"
-      v-else
-    >
-      <rect x="0" y="0" rx="80" ry="80" width="160" height="160" />
-      <rect x="180" y="35" rx="8" ry="8" width="200" height="16" />
-      <rect x="180" y="70" rx="8" ry="8" width="100" height="16" />
-      <rect x="180" y="105" rx="8" ry="8" width="100" height="16" />
-    </ContentLoader>
+    <div class="skel-user" v-else>
+      <div class="skel-avatar"></div>
+      <div class="skel-user-text">
+        <div class="skel-line skel-line--long"></div>
+        <div class="skel-line skel-line--medium"></div>
+        <div class="skel-line skel-line--medium"></div>
+      </div>
+    </div>
     <!-- 导航 -->
     <div class="switcher font-color-standard" v-if="user">
       <!-- 导航元素 -->
@@ -111,24 +106,39 @@
           v-if="item.position === user.position"
         ></div>
       </button>
-      <!-- 右侧切换视图 -->
+      <!-- 右侧工具栏：筛选框 + 视图切换 -->
       <div
-        v-if="showRightSwitcher"
-        class="right-switcher"
-        style="
-          display: flex;
-          flex: 1;
-          justify-content: flex-end;
-          margin-right: 30px;
+        class="right-toolbar"
+        v-if="
+          type === 'artist' &&
+          (user.position === 'song' || user.position === 'album')
         "
       >
+        <div class="input-wrapper">
+          <input
+            type="text"
+            class="search-input font-color-main"
+            :placeholder="$t('search_view.filter') + '...'"
+            spellcheck="false"
+            v-model="filterQuery"
+          />
+          <img src="@/assets/search.svg" class="img-search g-icon" />
+          <img
+            v-if="filterQuery !== ''"
+            class="img-clear"
+            src="@/assets/clear2.svg"
+            @click="filterQuery = ''"
+          />
+        </div>
         <img
+          v-if="showRightSwitcher"
           src="@/assets/biglist.svg"
           class="list-icon g-icon"
           @click="(user as IUser).listType = false"
           :style="{ opacity: (user as IUser).listType ? 0.6 : 1 }"
         />
         <img
+          v-if="showRightSwitcher"
           src="@/assets/smalllist.svg"
           class="list-icon g-icon"
           @click="(user as IUser).listType = true"
@@ -183,18 +193,61 @@
             (user as IArtist).tracks.length === 0 && user.position === 'song'
           "
         />
+        <!-- 专辑骨架屏（列表模式） -->
+        <div
+          class="skeleton-list"
+          v-if="
+            loadingAlbums &&
+            (user as IUser).listType &&
+            user.position === 'album'
+          "
+        >
+          <div class="skeleton-row" v-for="i in 8" :key="'skl-' + i">
+            <div class="skel-cover"></div>
+            <div class="skel-text">
+              <div class="skel-line skel-line--long"></div>
+              <div class="skel-line skel-line--short"></div>
+            </div>
+            <div class="skel-line skel-line--col"></div>
+            <div class="skel-line skel-line--col"></div>
+            <div class="skel-line skel-line--col"></div>
+          </div>
+        </div>
         <!-- 歌单界面 -->
         <div
           class="playlist-list"
-          v-if="(user as IUser).listType && user.position === 'album'"
+          v-if="
+            !loadingAlbums &&
+            (user as IUser).listType &&
+            user.position === 'album'
+          "
         >
           <!-- 歌手专辑列表 -->
           <YPlaylistList type="album" :playlists="(user as IArtist).albums" />
         </div>
+        <!-- 专辑骨架屏（大图模式） -->
+        <div
+          class="skeleton-biglist"
+          v-if="
+            loadingAlbums &&
+            !(user as IUser).listType &&
+            user.position === 'album'
+          "
+        >
+          <div class="skel-card" v-for="i in 8" :key="'skb-' + i">
+            <div class="skel-cover skel-cover--big"></div>
+            <div class="skel-line skel-line--full"></div>
+            <div class="skel-line skel-line--short"></div>
+          </div>
+        </div>
         <!-- 大歌单界面 -->
         <div
           class="playlist-biglist"
-          v-if="!(user as IUser).listType && user.position === 'album'"
+          v-if="
+            !loadingAlbums &&
+            !(user as IUser).listType &&
+            user.position === 'album'
+          "
         >
           <YPlaylistBiglist
             type="album"
@@ -232,10 +285,7 @@
   </div>
 </template>
 
-<script src="./YUserView.ts" lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { IArtist, IUser } from "@/dual/YUserView";
-</script>
+<script src="./YUserView.ts" lang="ts"></script>
 
 <style lang="scss" scoped>
 .container {
@@ -306,6 +356,7 @@ import type { IArtist, IUser } from "@/dual/YUserView";
     padding-top: 10px;
     margin-left: 10px;
     padding-bottom: 20px;
+    height: 30px;
     top: 0px;
     z-index: 1;
     width: 100%;
@@ -326,12 +377,63 @@ import type { IArtist, IUser } from "@/dual/YUserView";
       }
     }
 
-    .right-switcher {
+    .right-toolbar {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+      margin-right: 10px;
+      gap: 10px;
+
       .list-icon {
         width: 20px;
         height: 20px;
-        margin: 0px 10px;
         cursor: pointer;
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        opacity: 0.5;
+
+        .search-input {
+          padding: 8px 30px 8px 30px;
+          background-color: rgba(var(--foreground-color-rgb), 0.05);
+          border-style: none;
+          border-radius: 100px;
+          width: 50px;
+          transition-duration: 0.3s;
+
+          &::placeholder {
+            user-select: none;
+            color: inherit;
+          }
+
+          &:focus {
+            width: 150px;
+            outline: none;
+          }
+        }
+
+        .img-search {
+          position: absolute;
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 15px;
+          height: 15px;
+          -webkit-user-drag: none;
+        }
+
+        .img-clear {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 15px;
+          height: 15px;
+          -webkit-user-drag: none;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -356,6 +458,134 @@ import type { IArtist, IUser } from "@/dual/YUserView";
         line-height: 1.8em;
       }
     }
+  }
+}
+
+// ---- 骨架屏 ----
+// 用户信息骨架
+.skel-user {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.skel-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(var(--foreground-color-rgb), 0.15);
+  flex-shrink: 0;
+}
+
+.skel-user-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  height: 54px;
+  padding: 7px 0;
+  gap: 12px;
+}
+
+.skeleton-biglist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skel-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  padding: 10px;
+  max-width: 230px;
+  min-width: 180px;
+  border-radius: 10px;
+  gap: 8px;
+}
+
+.skel-cover {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  background: rgba(var(--foreground-color-rgb), 0.15);
+  flex-shrink: 0;
+
+  &--big {
+    width: 180px;
+    height: 180px;
+    border-radius: 10px;
+  }
+}
+
+.skel-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.skel-line {
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(var(--foreground-color-rgb), 0.15);
+
+  &--long {
+    width: 70%;
+  }
+
+  &--short {
+    width: 45%;
+  }
+
+  &--medium {
+    width: 55%;
+  }
+
+  &--col {
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  &--full {
+    width: 180px;
+  }
+}
+
+// shimmer 动画
+.skel-cover,
+.skel-line,
+.skel-card .skel-cover,
+.skel-card .skel-line {
+  animation: shimmer 1.8s ease-in-out infinite;
+  background-size: 200% 100%;
+  background-image: linear-gradient(
+    90deg,
+    rgba(var(--foreground-color-rgb), 0.08) 0%,
+    rgba(var(--foreground-color-rgb), 0.2) 40%,
+    rgba(var(--foreground-color-rgb), 0.08) 80%
+  );
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 </style>

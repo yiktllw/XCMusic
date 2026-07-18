@@ -48,6 +48,10 @@ export default defineComponent({
     search() {
       this.fetchData(this.position);
     },
+    // 监听筛选查询变化, 重新过滤当前结果
+    filterQuery() {
+      this.applyCurrentFilter();
+    },
   },
   components: {
     YSongsTable,
@@ -125,6 +129,17 @@ export default defineComponent({
         lyrics: 0,
         users: 0,
       } as Record<SearchPagerKey, number>,
+      // 筛选框查询文本
+      filterQuery: "" as string,
+      // 原始搜索结果（用于筛选时保留原始数据）
+      rawData: {
+        tracks: [] as ITrack[],
+        albums: [] as IPlaylist[],
+        playlists: [] as IPlaylist[],
+        artists: [] as IArtist[],
+        lyrics: [] as ITrack[],
+        users: [] as IArtist[],
+      } as Record<string, ITrack[] | IPlaylist[] | IArtist[]>,
     };
   },
   methods: {
@@ -157,7 +172,8 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("songs", requestId)) return;
 
-          this.switcher[0].tracks = markRaw(result.songs);
+          this.rawData.tracks = result.songs;
+          this.switcher[0].tracks = markRaw(this.filterTracks(result.songs));
           this.switcher[0].total = result.songCount;
           const totalPages = this.resolveSearchTotalPages(result.songCount);
 
@@ -185,12 +201,15 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("playlists", requestId)) return;
 
-          this.switcher[2].playlists = result.playlists?.map((playlist) => {
-            return {
-              ...playlist,
-              _picUrl: playlist.coverImgUrl + "?param=80y80",
-            };
-          });
+          const mappedPlaylists =
+            result.playlists?.map((playlist) => {
+              return {
+                ...playlist,
+                _picUrl: playlist.coverImgUrl + "?param=80y80",
+              };
+            }) || [];
+          this.rawData.playlists = mappedPlaylists;
+          this.switcher[2].playlists = this.filterPlaylists(mappedPlaylists);
           this.switcher[2].total = result.playlistCount;
           const totalPages = this.resolveSearchTotalPages(result.playlistCount);
 
@@ -220,12 +239,15 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("albums", requestId)) return;
 
-          this.switcher[1].playlists = result.albums?.map((album) => {
-            return {
-              ...album,
-              _picUrl: album.picUrl + "?param=80y80",
-            };
-          });
+          const mappedAlbums =
+            result.albums?.map((album) => {
+              return {
+                ...album,
+                _picUrl: album.picUrl + "?param=80y80",
+              };
+            }) || [];
+          this.rawData.albums = mappedAlbums;
+          this.switcher[1].playlists = this.filterPlaylists(mappedAlbums);
           this.switcher[1].total = result.albumCount;
           const totalPages = this.resolveSearchTotalPages(result.albumCount);
 
@@ -253,15 +275,18 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("artists", requestId)) return;
 
-          this.switcher[3].artists = result.artists?.map((artist) => {
-            const _picUrl = artist.picUrl
-              ? artist.picUrl + "?param=130y130"
-              : null;
-            return {
-              ...artist,
-              _picUrl,
-            };
-          });
+          const mappedArtists =
+            result.artists?.map((artist) => {
+              const _picUrl = artist.picUrl
+                ? artist.picUrl + "?param=130y130"
+                : null;
+              return {
+                ...artist,
+                _picUrl,
+              };
+            }) || [];
+          this.rawData.artists = mappedArtists;
+          this.switcher[3].artists = this.filterArtists(mappedArtists);
           this.switcher[3].total = result.artistCount;
           const totalPages = this.resolveSearchTotalPages(result.artistCount);
 
@@ -295,7 +320,10 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("lyrics", requestId)) return;
 
-          this.switcher[4].lyricsList = markRaw(result.songs);
+          this.rawData.lyrics = result.songs;
+          this.switcher[4].lyricsList = markRaw(
+            this.filterTracks(result.songs),
+          );
           this.switcher[4].total = result.songCount;
           const totalPages = this.resolveSearchTotalPages(result.songCount);
 
@@ -323,15 +351,18 @@ export default defineComponent({
         .then((result) => {
           if (!this.isLatestSearchRequest("users", requestId)) return;
 
-          this.switcher[5].users = result.userprofiles?.map((user) => {
-            const _picUrl = user.avatarUrl
-              ? user.avatarUrl + "?param=130y130"
-              : null;
-            return {
-              ...user,
-              _picUrl,
-            };
-          });
+          const mappedUsers =
+            result.userprofiles?.map((user) => {
+              const _picUrl = user.avatarUrl
+                ? user.avatarUrl + "?param=130y130"
+                : null;
+              return {
+                ...user,
+                _picUrl,
+              };
+            }) || [];
+          this.rawData.users = mappedUsers;
+          this.switcher[5].users = this.filterUsers(mappedUsers);
           this.switcher[5].total = result.userprofileCount;
           const totalPages = this.resolveSearchTotalPages(
             result.userprofileCount,
@@ -352,6 +383,97 @@ export default defineComponent({
         this.Loading.users = false;
       }
     },
+    // ========== 筛选相关方法 ==========
+    // 筛选歌曲/歌词类型的 track 数据
+    filterTracks(tracks: ITrack[]): ITrack[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return tracks;
+      return tracks.filter((track) => {
+        const trackName = track.name?.toLowerCase() || "";
+        const trackNameTns = track.tns?.[0]?.toLowerCase() || "";
+        const trackArtist =
+          track.ar
+            ?.map((artist) => artist.name?.toLowerCase() || "")
+            .join(" / ") || "";
+        const trackAlbum = track.al?.name?.toLowerCase() || "";
+        return (
+          trackName.includes(query) ||
+          trackNameTns.includes(query) ||
+          trackArtist.includes(query) ||
+          trackAlbum.includes(query)
+        );
+      });
+    },
+    // 筛选歌单/专辑类型的数据
+    filterPlaylists(playlists: IPlaylist[]): IPlaylist[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return playlists;
+      return playlists.filter((item) => {
+        const name = item.name?.toLowerCase() || "";
+        const creator = item.creator?.nickname?.toLowerCase() || "";
+        const artist = (item as any).artist?.name?.toLowerCase() || "";
+        return (
+          name.includes(query) ||
+          creator.includes(query) ||
+          artist.includes(query)
+        );
+      });
+    },
+    // 筛选歌手类型的数据
+    filterArtists(artists: IArtist[]): IArtist[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return artists;
+      return artists.filter((item) => {
+        const name = item.name?.toLowerCase() || "";
+        return name.includes(query);
+      });
+    },
+    // 筛选用户类型的数据
+    filterUsers(users: IArtist[]): IArtist[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return users;
+      return users.filter((item) => {
+        const nickname = (item as any).nickname?.toLowerCase() || "";
+        return nickname.includes(query);
+      });
+    },
+    // 对当前显示的类型重新应用筛选
+    applyCurrentFilter() {
+      const pos = this.position;
+      switch (pos) {
+        case "song":
+          this.switcher[0].tracks = markRaw(
+            this.filterTracks(this.rawData.tracks as ITrack[]),
+          );
+          break;
+        case "album":
+          this.switcher[1].playlists = this.filterPlaylists(
+            this.rawData.albums as IPlaylist[],
+          );
+          break;
+        case "playlist":
+          this.switcher[2].playlists = this.filterPlaylists(
+            this.rawData.playlists as IPlaylist[],
+          );
+          break;
+        case "artist":
+          this.switcher[3].artists = this.filterArtists(
+            this.rawData.artists as IArtist[],
+          );
+          break;
+        case "lyric":
+          this.switcher[4].lyricsList = markRaw(
+            this.filterTracks(this.rawData.lyrics as ITrack[]),
+          );
+          break;
+        case "user":
+          this.switcher[5].users = this.filterUsers(
+            this.rawData.users as IArtist[],
+          );
+          break;
+      }
+    },
+    // ========== 数据获取方法 ==========
     fetchData(position: string) {
       switch (position) {
         case "song":

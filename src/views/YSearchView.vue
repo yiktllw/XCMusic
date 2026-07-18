@@ -60,10 +60,27 @@
         v-if="item.position === position"
       ></div>
     </button>
+    <!-- 筛选框 -->
+    <div class="input-wrapper">
+      <input
+        type="text"
+        class="search-input font-color-main"
+        :placeholder="$t('search_view.filter') + '...'"
+        spellcheck="false"
+        v-model="filterQuery"
+      />
+      <img src="@/assets/search.svg" class="img-search g-icon" />
+      <img
+        v-if="filterQuery !== ''"
+        class="img-clear"
+        src="@/assets/clear2.svg"
+        @click="filterQuery = ''"
+      />
+    </div>
   </div>
   <YScroll
     :style="{
-      maxHeight: 'calc(100vh - 230px)',
+      maxHeight: 'calc(100vh - 250px)',
     }"
   >
     <div class="content">
@@ -176,6 +193,54 @@
       background-color: rgb(var(--highlight-color-rgb));
       transform: translateY(1px);
       transform: translateX(1px);
+    }
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    margin-left: auto;
+    margin-right: 20px;
+    opacity: 0.5;
+
+    .search-input {
+      padding: 8px 30px 8px 30px;
+      background-color: rgba(var(--foreground-color-rgb), 0.05);
+      border-style: none;
+      border-radius: 100px;
+      width: 50px;
+      transition-duration: 0.3s;
+
+      &::placeholder {
+        user-select: none;
+        color: inherit;
+      }
+
+      &:focus {
+        width: 150px;
+        outline: none;
+      }
+    }
+
+    .img-search {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      -webkit-user-drag: none;
+    }
+
+    .img-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      -webkit-user-drag: none;
+      cursor: pointer;
     }
   }
 }

@@ -5,13 +5,14 @@ import YSongsTable from "@/components/list/YSongsTable.vue";
 import YLoading from "@/components/base/YLoading.vue";
 import YPage from "@/components/base/YPage.vue";
 import YSongsTableSkeleton from "@/components/list/YSongsTableSkeleton.vue";
-import { ContentLoader } from "vue-content-loader";
 import { User } from "@/utils/api";
 import { useStore } from "vuex";
 import { YPageC } from "@/dual/YPageC";
 import { markRaw, defineComponent } from "vue";
 import songsRank from "@/assets/songsrank.svg";
 import { type IArtist, type IUser } from "@/dual/YUserView";
+import { type ITrack } from "@/utils/tracks";
+import { type IPlaylist } from "@/dual/YPlaylistList";
 
 export default defineComponent({
   name: "YUserView",
@@ -32,6 +33,10 @@ export default defineComponent({
     userId() {
       this.fetchUser();
     },
+    // 监听筛选查询变化
+    filterQuery() {
+      this.applyCurrentFilter();
+    },
   },
   components: {
     YScroll,
@@ -40,7 +45,6 @@ export default defineComponent({
     YSongsTable,
     YLoading,
     YPage,
-    ContentLoader,
     YSongsTableSkeleton,
   },
   data() {
@@ -49,6 +53,10 @@ export default defineComponent({
       user: null as IUser | IArtist | null,
       page: new YPageC(1),
       artistWorkRequestId: 0,
+      loadingAlbums: false,
+      filterQuery: "" as string,
+      rawTracks: [] as ITrack[],
+      rawAlbums: [] as IPlaylist[],
     };
   },
   setup() {
@@ -246,14 +254,55 @@ export default defineComponent({
         }
       });
     },
+    // ========== 筛选相关 ==========
+    filterTracks(tracks: ITrack[]): ITrack[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return tracks;
+      return tracks.filter((track) => {
+        const trackName = track.name?.toLowerCase() || "";
+        const trackArtist =
+          track.ar
+            ?.map((artist) => artist.name?.toLowerCase() || "")
+            .join(" / ") || "";
+        const trackAlbum = track.al?.name?.toLowerCase() || "";
+        return (
+          trackName.includes(query) ||
+          trackArtist.includes(query) ||
+          trackAlbum.includes(query)
+        );
+      });
+    },
+    filterAlbums(albums: IPlaylist[]): IPlaylist[] {
+      const query = this.filterQuery.toLowerCase().trim();
+      if (!query) return albums;
+      return albums.filter((item) => {
+        const name = item.name?.toLowerCase() || "";
+        return name.includes(query);
+      });
+    },
+    applyCurrentFilter() {
+      if (!this.user) return;
+      const pos = (this.user as IArtist).position;
+      if (pos === "song") {
+        (this.user as IArtist).tracks = markRaw(
+          this.filterTracks(this.rawTracks),
+        );
+      } else if (pos === "album") {
+        (this.user as IArtist).albums = this.filterAlbums(this.rawAlbums);
+      }
+    },
     // 获取歌手的专辑
     async fetchArtistAlbums() {
       //  如果不是歌手界面，返回
       if (this.type !== "artist") {
         return;
       }
+      this.loadingAlbums = true;
       // 获取歌手的专辑
-      (this.user as IArtist)!.albums = await User.getArtistAlbums(this.userId);
+      const albums = await User.getArtistAlbums(this.userId);
+      this.rawAlbums = albums;
+      (this.user as IArtist)!.albums = this.filterAlbums(albums);
+      this.loadingAlbums = false;
     },
     // 按页获取歌手的作品
     async fetchArtistWorks(page: number, newPage = false) {
@@ -280,7 +329,10 @@ export default defineComponent({
             this.page.total = totalPages;
           }
 
-          (this.user as IArtist).tracks = markRaw(response.songs);
+          this.rawTracks = response.songs;
+          (this.user as IArtist).tracks = markRaw(
+            this.filterTracks(response.songs),
+          );
         })
         .catch(() => {
           // console.log("fetch artist songs error:", err);

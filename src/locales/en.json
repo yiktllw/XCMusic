@@ -337,6 +337,7 @@
   "search_view": {
     "albums": " albums",
     "artists": " artists",
+    "filter": "Filter",
     "playlists": " playlists",
     "search_info_after": "are as follows: found",
     "search_info_before": "The search results for",
