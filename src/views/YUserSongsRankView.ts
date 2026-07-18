@@ -176,7 +176,6 @@ export default defineComponent({
       this.mixedRecentTracks = mixedRecent;
       this.mixedAlltimeTracks = mixedAlltime;
       this.loading = false;
-      console.log(this.recentTracks);
     },
     checkUserId() {
       if (this.globalUserID !== this.userId) {

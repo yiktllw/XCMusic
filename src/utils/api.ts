@@ -612,6 +612,7 @@ export namespace Playlist {
     return res;
   }
 
+  /** 排序歌曲列表 */
   export async function sortPlaylist(playlistId: number, ids: number[]) {
     const cookie = getStorage(StorageKey.LoginCookie);
     if (!cookie) {
@@ -621,6 +622,16 @@ export namespace Playlist {
     return await useApi(
       `/song/order/update?ids=[${ids}]&pid=${playlistId}&cookie=${cookie}`,
     );
+  }
+
+  /** 专辑简要百科 */
+  export async function albumSimpleWiki(albumId: number | string) {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    return await useApi(`/ugc/album/get?id=${albumId}&cookie=${cookie}`);
   }
 }
 
@@ -774,6 +785,16 @@ export namespace Song {
     return {
       data: res.data,
     };
+  }
+
+  /** 歌曲简要百科 */
+  export async function songSimpleWiki(songId: number | string) {
+    const cookie = getStorage(StorageKey.LoginCookie);
+    if (!cookie) {
+      console.error("No login cookie found");
+      return null;
+    }
+    return await useApi(`/ugc/song/get?id=${songId}&cookie=${cookie}`);
   }
 }
 

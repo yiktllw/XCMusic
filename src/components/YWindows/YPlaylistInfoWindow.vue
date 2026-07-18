@@ -10,7 +10,7 @@
           }}
         </span>
       </template>
-      <YScroll>
+      <YScroll style="max-height: 50vh">
         <div class="playlist-info-content">
           <!-- 歌单/专辑名称 -->
           <div class="info-item">
@@ -198,6 +198,62 @@
               :title="$t('playlist_info.click_to_copy')"
             />
           </div>
+
+          <!-- 发行公司（专辑） -->
+          <div class="info-item" v-if="type === 'album' && albumCompany">
+            <div class="left">
+              <span class="info-item-title">
+                {{ $t("playlist_info.company") }} ：
+              </span>
+              <span class="info-item-content">{{ albumCompany }}</span>
+            </div>
+            <div class="right">
+              <img
+                class="icon-copy g-icon"
+                @click="copy(albumCompany)"
+                src="@/assets/copy.svg"
+                :title="$t('playlist_info.click_to_copy')"
+              />
+            </div>
+          </div>
+
+          <!-- 语种（专辑）-->
+          <div class="info-item" v-if="type === 'album' && albumLanguage">
+            <div class="left">
+              <span class="info-item-title">
+                {{ $t("playlist_info.language") }} ：
+              </span>
+              <span class="info-item-content">{{ albumLanguage }}</span>
+            </div>
+            <div class="right">
+              <img
+                class="icon-copy g-icon"
+                @click="copy(albumLanguage)"
+                src="@/assets/copy.svg"
+                :title="$t('playlist_info.click_to_copy')"
+              />
+            </div>
+          </div>
+
+          <!-- 专辑简介 -->
+          <div class="info-item" v-if="type === 'album' && albumProduction">
+            <div class="left">
+              <span class="info-item-title">
+                {{ $t("playlist_info.description") }} ：
+              </span>
+              <span class="info-item-content link-text">{{
+                albumProduction
+              }}</span>
+            </div>
+            <div class="right">
+              <img
+                class="icon-copy g-icon"
+                @click="copy(albumProduction)"
+                src="@/assets/copy.svg"
+                :title="$t('playlist_info.click_to_copy')"
+              />
+            </div>
+          </div>
         </div>
       </YScroll>
     </YWindow>
@@ -210,6 +266,7 @@ import YWindow from "@/components/base/YWindow.vue";
 import YScroll from "@/components/base/YScroll.vue";
 import { Message } from "@/dual/YMessageC";
 import { type IPlaylistDetail } from "@/views/YPlaylistViewNew/utils";
+import { Playlist } from "@/utils/api";
 
 export default defineComponent({
   name: "YPlaylistInfo",
@@ -226,6 +283,13 @@ export default defineComponent({
   components: {
     YWindow,
     YScroll,
+  },
+  data() {
+    return {
+      albumCompany: "",
+      albumProduction: "",
+      albumLanguage: "",
+    };
   },
   emits: ["new-window-state"],
   methods: {
@@ -245,6 +309,20 @@ export default defineComponent({
     openArtist(artistId: number) {
       this.$router.push(`/artist/${artistId}`);
     },
+    getAlbumSimpleWiki(albumId: number) {
+      Playlist.albumSimpleWiki(albumId).then((res) => {
+        const data = res?.data;
+        if (!data) return;
+        this.albumCompany = data.company ?? "";
+        this.albumProduction = data.production ?? "";
+        this.albumLanguage = data.language ?? "";
+      });
+    },
+  },
+  mounted() {
+    if (this.type === "album") {
+      this.getAlbumSimpleWiki(this.detail.id);
+    }
   },
 });
 </script>
